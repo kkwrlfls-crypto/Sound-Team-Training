@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>교회 방송실 트레이닝 & 3층 음향 시스템</title>
   <style>
     :root {
@@ -34,6 +34,7 @@
       align-items: center;
       min-height: 100vh;
       padding: 20px 12px;
+      overscroll-behavior-y: none; /* 모바일에서 당겨서 새로고침 방지 */
     }
 
     .tab-nav {
@@ -106,13 +107,13 @@
       background: var(--inner-bg);
       border: 2px dashed var(--border-color);
       border-radius: 16px;
-      overflow: auto; /* 모바일에서 잘리지 않도록 스크롤 허용 */
+      overflow: auto; 
       margin-bottom: 16px;
     }
     
     .canvas-inner {
       position: relative;
-      min-width: 920px; /* 모든 장비가 배치될 수 있는 최소 너비 */
+      min-width: 920px; 
       height: 860px;
     }
 
@@ -137,7 +138,6 @@
       z-index: 0;
     }
 
-    /* 모바일 터치 시 스크롤 안되게 touch-action 처리 */
     .draggable-gear {
       position: absolute;
       background: #1e293b;
@@ -342,7 +342,24 @@
       font-size: 1.25rem;
       font-weight: 800;
       color: #0f172a;
-      margin-bottom: 18px;
+      margin-bottom: 12px;
+    }
+
+    /* 재생 시작/정지 버튼 추가 */
+    .mix-master-play-btn {
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto 16px auto;
+      height: 40px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
     .mix-pill-group {
@@ -495,7 +512,7 @@
       text-overflow: ellipsis;
     }
 
-    /* 페이더 터치 스크롤 방지 */
+    /* 페이더 터치 시 완벽한 방어 */
     .fader-area-wrapper {
       position: relative;
       height: 190px;
@@ -504,7 +521,7 @@
       justify-content: center;
       align-items: center;
       cursor: pointer;
-      touch-action: none; 
+      touch-action: none !important; /* 스와이프 스크롤 완전 차단 */
     }
 
     .fader-scale-labels {
@@ -652,7 +669,6 @@
         <button style="padding:4px 10px; font-size:0.75rem; background:#334155; color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="resetCables()">선 초기화</button>
       </div>
 
-      <!-- 모바일 캔버스 최적화 레이아웃 -->
       <div class="workspace-canvas" id="workspaceCanvas">
         <div class="canvas-inner" id="canvasInner">
           <svg class="connection-svg" id="connectionSvg"></svg>
@@ -688,7 +704,7 @@
         <button class="btn" id="audioToggleBtn" onclick="togglePinkNoise()" style="max-width: 260px; margin-top: 6px;">🔊 핑크 노이즈 재생 시작</button>
       </div>
 
-      <!-- 2. 대역별 오디오 샘플 비교 청취 패널 (1~7번 파일 구조) -->
+      <!-- 2. 대역별 오디오 샘플 비교 청취 패널 -->
       <div class="voice-training-section">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div style="font-size: 0.95rem; font-weight: 800; color: var(--accent-cyan);">🗣 대역별 오디오 샘플 비교 청취</div>
@@ -707,10 +723,13 @@
         </div>
       </div>
 
-      <!-- 3. 멀티트랙 믹스 밸런스 훈련 UI (7채널 + 1 Sample) -->
+      <!-- 3. 멀티트랙 믹스 밸런스 훈련 UI -->
       <div class="mix-balance-section-light">
         <div class="mix-top-desc">Sample(All) 원본 소스와 똑같은 밸런스가 되도록 개별 트랙 페이더를 맞춰보세요</div>
         <div class="mix-main-title">멀티트랙 믹스 밸런스 맞추기</div>
+
+        <!-- 재생 제어 독립 버튼 -->
+        <button class="mix-master-play-btn" id="mixPlayBtn" onclick="toggleMixPlay()">▶️ 믹스 재생 시작</button>
 
         <div class="mix-pill-group">
           <button class="mix-pill-btn active" id="modeOriginal" onclick="setMixMode('original')">원본 (Sample)</button>
@@ -720,7 +739,7 @@
         <div class="exact-console-box">
           <div class="exact-strips-layout">
             
-            <!-- 채널 1: Sample (All) - 0dB 고정 -->
+            <!-- 채널 1: Sample -->
             <div class="exact-strip" style="background:#0f172a; border-color:#3b82f6;">
               <div class="exact-ch-top">
                 <span class="exact-ch-num" style="color:#38bdf8;">01</span>
@@ -952,10 +971,13 @@
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       
-      // 탭 이동 시 모든 재생 중인 오디오 확실히 차단
       stopPinkNoise(); 
       stopAllAudioFiles();
-      stopAllMixAudio();
+      
+      // 믹스 오디오 정지 및 버튼 리셋
+      if (isMixPlaying) {
+        toggleMixPlay();
+      }
 
       if(tabId==='tab1') { 
         document.querySelectorAll('.tab-btn')[0].classList.add('active'); 
@@ -987,14 +1009,13 @@
       { id: 'console', name: '콘솔 (믹서)', img: 'console.jpg', x: 400, y: 720, w: 90, h: 116 }
     ];
 
-    let canvasInner = document.getElementById('canvasInner'); // 캔버스 내부 고정 레이아웃
+    let canvasInner = document.getElementById('canvasInner');
     let svgLayer = document.getElementById('connectionSvg');
     let selectedGearForCable = null;
     let connectedCables = [];
 
     function initWorkspace() {
       canvasInner.querySelectorAll('.draggable-gear').forEach(el => el.remove());
-
       gearItems.forEach(item => {
         const div = document.createElement('div');
         div.className = 'draggable-gear';
@@ -1010,19 +1031,15 @@
           <div class="gear-label">${item.name}</div>
           <div class="resize-handle"></div>
         `;
-
         if (connectedCables.some(c => c.fromId === item.id || c.toId === item.id)) {
           div.classList.add('connected');
         }
-
         makeInteractive(div, item);
         canvasInner.appendChild(div);
       });
-
       drawCables();
     }
 
-    // [중요 수정] 모바일 터치 및 마우스 완벽 호환 (pointer events)
     function makeInteractive(elm, item) {
       let isResizing = false;
       let startX, startY, startW, startH, startLeft, startTop;
@@ -1257,7 +1274,8 @@
     let currentPlayingBtnId = null;
 
     function playSingleTrack(filename, btnId) {
-      stopAllMixAudio(); // 믹스 오디오 간섭 차단
+      // 믹스가 재생중이면 중단
+      if (isMixPlaying) { toggleMixPlay(); }
       stopAllAudioFiles();
       
       currentAudio = new Audio(filename);
@@ -1266,7 +1284,7 @@
       if (btn) btn.classList.add('playing');
 
       currentAudio.play().catch(err => {
-        alert(`오디오 파일(${filename})을 재생할 수 없습니다. 폴더 경로를 확인해주세요.\n(오류: ${err.message})`);
+        alert(`오디오 파일(${filename})을 재생할 수 없습니다. 폴더 경로를 확인해주세요.`);
         if (btn) btn.classList.remove('playing');
       });
 
@@ -1289,7 +1307,7 @@
       }
     }
 
-    // ========== 멀티트랙 믹스 로직 교정 및 동기화 ==========
+    // ========== 멀티트랙 믹스 로직 교정 (재생/볼륨 완전분리) ==========
     const trackKeys = ['sample', 'gg', 'ag', 'bass', 'drum', 'elec_rhythm', 'elec_solo', 'piano'];
     
     const mixFiles = {
@@ -1305,6 +1323,7 @@
     
     let multiAudioElements = {};
     let isMixInitialized = false;
+    let isMixPlaying = false; // 재생 상태 분리
 
     let faderValues = {
       sample: 0.0,
@@ -1321,30 +1340,46 @@
     let activeSolo = null;
     let mixMode = 'original';
 
+    // 1. 오디오 객체만 메모리에 로드 (재생은 안 함)
     function initMixAudio() {
-      stopAllAudioFiles(); // 단일트랙 파일(1~7번) 재생 중단
-      
       if (isMixInitialized) return;
       trackKeys.forEach(ch => {
         let audio = new Audio(mixFiles[ch]);
         audio.loop = true;
         audio.volume = 0; 
-        audio.muted = true; // 최초에는 모두 완벽하게 음소거
+        audio.muted = true;
         multiAudioElements[ch] = audio;
-        audio.play().catch(e => console.log(`${mixFiles[ch]} 자동재생 대기`));
       });
       isMixInitialized = true;
     }
 
-    function stopAllMixAudio() {
-      if (!isMixInitialized) return;
-      trackKeys.forEach(ch => {
-        if (multiAudioElements[ch]) {
+    // 2. 전체 재생/정지 통합 컨트롤 (모바일 자동재생 정책 방어)
+    function toggleMixPlay() {
+      if (!isMixInitialized) initMixAudio();
+      stopAllAudioFiles(); // 단일트랙 정지
+
+      const btn = document.getElementById('mixPlayBtn');
+
+      if (!isMixPlaying) {
+        // 재생 시작
+        let baseTime = 0;
+        trackKeys.forEach(ch => {
+          multiAudioElements[ch].currentTime = baseTime; // 싱크 맞추기
+          multiAudioElements[ch].play().catch(e => console.log("재생 대기됨", e));
+        });
+        isMixPlaying = true;
+        btn.innerText = "⏸️ 믹스 정지";
+        btn.style.background = "var(--accent-red)";
+        applyMixVolumes();
+      } else {
+        // 재생 정지
+        trackKeys.forEach(ch => {
           multiAudioElements[ch].pause();
-          multiAudioElements[ch].currentTime = 0;
-        }
-      });
-      isMixInitialized = false;
+        });
+        isMixPlaying = false;
+        btn.innerText = "▶️ 믹스 재생 시작";
+        btn.style.background = "var(--primary)";
+      }
     }
 
     function setMixMode(mode) {
@@ -1352,24 +1387,12 @@
       document.getElementById('modeOriginal').classList.remove('active');
       document.getElementById('modeMyMix').classList.remove('active');
 
-      if(mode === 'original') {
-        document.getElementById('modeOriginal').classList.add('active');
-      } else {
-        document.getElementById('modeMyMix').classList.add('active');
-      }
-
-      initMixAudio();
-      
-      trackKeys.forEach(ch => {
-        if (multiAudioElements[ch] && multiAudioElements[ch].paused) {
-          multiAudioElements[ch].play().catch(e => {});
-        }
-      });
+      if(mode === 'original') document.getElementById('modeOriginal').classList.add('active');
+      else document.getElementById('modeMyMix').classList.add('active');
 
       applyMixVolumes();
     }
 
-    // [중요 수정] 오디오 중복 재생 방지 로직 (muted 속성 적극 활용)
     function applyMixVolumes() {
       if (!isMixInitialized) return;
 
@@ -1380,7 +1403,7 @@
         let isActiveMode = (mixMode === 'original' && ch === 'sample') || (mixMode === 'mymix' && ch !== 'sample');
 
         if (!isActiveMode) {
-          audio.muted = true;  // 모드에 해당 안되는 오디오는 물리적 음소거
+          audio.muted = true;  
           audio.volume = 0;
           return;
         }
@@ -1393,7 +1416,7 @@
           audio.muted = true;
           audio.volume = 0;
         } else {
-          audio.muted = false; // 소리가 나야할 때만 뮤트 해제
+          audio.muted = false; 
           let vol = Math.pow(10, db / 20);
           audio.volume = Math.min(1, Math.max(0, vol));
         }
@@ -1401,19 +1424,14 @@
     }
 
     function toggleMute(ch) {
-      initMixAudio();
       trackMutes[ch] = !trackMutes[ch];
       const btn = document.getElementById(ch === 'sample' ? 'muteBtn_sample' : 'muteBtn_' + ch);
-      if(trackMutes[ch]) {
-        btn.classList.add('active-mute');
-      } else {
-        btn.classList.remove('active-mute');
-      }
+      if(trackMutes[ch]) btn.classList.add('active-mute');
+      else btn.classList.remove('active-mute');
       applyMixVolumes();
     }
 
     function toggleSolo(ch) {
-      initMixAudio();
       if(activeSolo === ch) {
         activeSolo = null;
         document.querySelectorAll('.sub-ctrl-btn').forEach(b => {
@@ -1429,12 +1447,13 @@
       applyMixVolumes();
     }
 
-    // [중요 수정] 페이더 모바일 호환을 위해 pointer 이벤트로 변경
+    // [중요 수정] 터치 좌표 고정 및 화면 스크롤 방어 완벽 적용 (setPointerCapture)
     function startFaderDrag(e, channel) {
-      e.preventDefault();
-      initMixAudio();
-
+      e.preventDefault(); 
+      
       const wrapper = document.getElementById('faderArea_' + channel);
+      wrapper.setPointerCapture(e.pointerId); // 터치가 삐져나가도 페이더가 계속 추적하도록 캡처
+
       const rect = wrapper.getBoundingClientRect();
       const slotHeight = 175;
       const minVal = -60;
@@ -1458,16 +1477,18 @@
       updateFaderFromMouse(e.clientY);
 
       function onPointerMove(moveEvent) {
+        moveEvent.preventDefault();
         updateFaderFromMouse(moveEvent.clientY);
       }
 
-      function onPointerUp() {
+      function onPointerUp(upEvent) {
+        wrapper.releasePointerCapture(upEvent.pointerId); // 캡처 해제
         window.removeEventListener('pointermove', onPointerMove);
         window.removeEventListener('pointerup', onPointerUp);
         window.removeEventListener('pointercancel', onPointerUp);
       }
 
-      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointermove', onPointerMove, { passive: false });
       window.addEventListener('pointerup', onPointerUp);
       window.addEventListener('pointercancel', onPointerUp);
     }
