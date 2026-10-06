@@ -345,7 +345,6 @@
       margin-bottom: 12px;
     }
 
-    /* 재생 시작/정지 버튼 추가 */
     .mix-master-play-btn {
       width: 100%;
       max-width: 280px;
@@ -512,7 +511,7 @@
       text-overflow: ellipsis;
     }
 
-    /* 페이더 터치 시 완벽한 방어 */
+    /* 페이더 터치 시 완벽한 방어 및 스크롤 차단 */
     .fader-area-wrapper {
       position: relative;
       height: 190px;
@@ -521,7 +520,7 @@
       justify-content: center;
       align-items: center;
       cursor: pointer;
-      touch-action: none !important; /* 스와이프 스크롤 완전 차단 */
+      touch-action: none !important;
     }
 
     .fader-scale-labels {
@@ -686,7 +685,7 @@
     <div id="tab3" class="tab-content">
       <div class="level-header">
         <div class="level-title">🎧 Ear Training (청음 및 밸런스 훈련)</div>
-        <div class="level-desc">핑크 노이즈 볼륨 트레이닝, 대역별 샘플 비교, 그리고 7개 멀티트랙 멀티믹스 밸런스 채점 훈련을 진행할 수 있습니다.</div>
+        <div class="level-desc">핑크 노이즈 볼륨 트레이닝, 대역별 샘플 비교, 그리고 멀티트랙 멀티믹스 밸런스 채점 훈련을 진행할 수 있습니다.</div>
       </div>
 
       <!-- 1. 볼륨 변화 트레이닝 패널 -->
@@ -974,7 +973,6 @@
       stopPinkNoise(); 
       stopAllAudioFiles();
       
-      // 믹스 오디오 정지 및 버튼 리셋
       if (isMixPlaying) {
         toggleMixPlay();
       }
@@ -1274,7 +1272,6 @@
     let currentPlayingBtnId = null;
 
     function playSingleTrack(filename, btnId) {
-      // 믹스가 재생중이면 중단
       if (isMixPlaying) { toggleMixPlay(); }
       stopAllAudioFiles();
       
@@ -1307,7 +1304,7 @@
       }
     }
 
-    // ========== 멀티트랙 믹스 로직 교정 (재생/볼륨 완전분리) ==========
+    // ========== [완벽한 박자 싱크 개선] Web Audio API 기반 멀티트랙 싱크 엔진 ==========
     const trackKeys = ['sample', 'gg', 'ag', 'bass', 'drum', 'elec_rhythm', 'elec_solo', 'piano'];
     
     const mixFiles = {
@@ -1321,9 +1318,14 @@
       piano: 'Piano.mp3'
     };
     
-    let multiAudioElements = {};
+    let mixAudioCtx = null;
+    let audioBuffers = {};
+    let activeSources = {};
+    let channelGainNodes = {};
     let isMixInitialized = false;
-    let isMixPlaying = false; // 재생 상태 분리
+    let isMixPlaying = false;
+    let audioStartTime = 0;
+    let pauseOffset = 0;
 
     let faderValues = {
       sample: 0.0,
@@ -1340,46 +1342,84 @@
     let activeSolo = null;
     let mixMode = 'original';
 
-    // 1. 오디오 객체만 메모리에 로드 (재생은 안 함)
-    function initMixAudio() {
-      if (isMixInitialized) return;
-      trackKeys.forEach(ch => {
-        let audio = new Audio(mixFiles[ch]);
-        audio.loop = true;
-        audio.volume = 0; 
-        audio.muted = true;
-        multiAudioElements[ch] = audio;
-      });
-      isMixInitialized = true;
+    // 1. 오디오 파일들을 미리 Fetch & Decode하여 완벽한 동기화 준비
+    async function initMixAudioContext() {
+      if (isMixInitialized) return true;
+      try {
+        mixAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        let loadPromises = trackKeys.map(async (ch) => {
+          let response = await fetch(mixFiles[ch]);
+          let arrayBuffer = await response.arrayBuffer();
+          let decodedBuffer = await mixAudioCtx.decodeAudioData(arrayBuffer);
+          audioBuffers[ch] = decodedBuffer;
+
+          let gNode = mixAudioCtx.createGain();
+          gNode.connect(mixAudioCtx.destination);
+          channelGainNodes[ch] = gNode;
+        });
+
+        await Promise.all(loadPromises);
+        isMixInitialized = true;
+        return true;
+      } catch (e) {
+        console.error("오디오 버퍼 로딩 실패:", e);
+        alert("멀티트랙 오디오 파일 로딩 중 오류가 발생했습니다. 파일 경로를 확인해주세요.");
+        return false;
+      }
     }
 
-    // 2. 전체 재생/정지 통합 컨트롤 (모바일 자동재생 정책 방어)
-    function toggleMixPlay() {
-      if (!isMixInitialized) initMixAudio();
+    // 2. 동기화된 멀티트랙 재생 및 정지 제어
+    async function toggleMixPlay() {
       stopAllAudioFiles(); // 단일트랙 정지
+
+      if (!isMixInitialized) {
+        let success = await initMixAudioContext();
+        if (!success) return;
+      }
+
+      if (mixAudioCtx.state === 'suspended') {
+        await mixAudioCtx.resume();
+      }
 
       const btn = document.getElementById('mixPlayBtn');
 
       if (!isMixPlaying) {
-        // 재생 시작
-        let baseTime = 0;
+        // 재생 시작 (모든 트랙을 동일한 AudioContext 타임라인에 스케줄링하여 박자 오차 제로화)
+        audioStartTime = mixAudioCtx.currentTime;
+        
         trackKeys.forEach(ch => {
-          multiAudioElements[ch].currentTime = baseTime; // 싱크 맞추기
-          multiAudioElements[ch].play().catch(e => console.log("재생 대기됨", e));
+          let source = mixAudioCtx.createBufferSource();
+          source.buffer = audioBuffers[ch];
+          source.loop = true;
+          source.connect(channelGainNodes[ch]);
+          
+          source.start(0, pauseOffset % audioBuffers[ch].duration);
+          activeSources[ch] = source;
         });
+
         isMixPlaying = true;
         btn.innerText = "⏸️ 믹스 정지";
         btn.style.background = "var(--accent-red)";
         applyMixVolumes();
       } else {
-        // 재생 정지
-        trackKeys.forEach(ch => {
-          multiAudioElements[ch].pause();
-        });
-        isMixPlaying = false;
+        // 정지 시점 기록 (일시정지 효과)
+        pauseOffset += (mixAudioCtx.currentTime - audioStartTime);
+        stopMixAudioInternal();
         btn.innerText = "▶️ 믹스 재생 시작";
         btn.style.background = "var(--primary)";
       }
+    }
+
+    function stopMixAudioInternal() {
+      trackKeys.forEach(ch => {
+        if (activeSources[ch]) {
+          try { activeSources[ch].stop(); } catch(e){}
+          activeSources[ch].disconnect();
+          activeSources[ch] = null;
+        }
+      });
+      isMixPlaying = false;
     }
 
     function setMixMode(mode) {
@@ -1397,14 +1437,13 @@
       if (!isMixInitialized) return;
 
       trackKeys.forEach(ch => {
-        let audio = multiAudioElements[ch];
-        if (!audio) return;
+        let gNode = channelGainNodes[ch];
+        if (!gNode) return;
 
         let isActiveMode = (mixMode === 'original' && ch === 'sample') || (mixMode === 'mymix' && ch !== 'sample');
 
         if (!isActiveMode) {
-          audio.muted = true;  
-          audio.volume = 0;
+          gNode.gain.setValueAtTime(0, mixAudioCtx.currentTime);
           return;
         }
 
@@ -1413,12 +1452,10 @@
 
         let db = faderValues[ch];
         if (isMuted || db <= -55) {
-          audio.muted = true;
-          audio.volume = 0;
+          gNode.gain.setValueAtTime(0, mixAudioCtx.currentTime);
         } else {
-          audio.muted = false; 
           let vol = Math.pow(10, db / 20);
-          audio.volume = Math.min(1, Math.max(0, vol));
+          gNode.gain.setValueAtTime(Math.min(1, Math.max(0, vol)), mixAudioCtx.currentTime);
         }
       });
     }
@@ -1447,12 +1484,12 @@
       applyMixVolumes();
     }
 
-    // [중요 수정] 터치 좌표 고정 및 화면 스크롤 방어 완벽 적용 (setPointerCapture)
+    // ========== 페이더 드래그 및 완벽한 스크롤 방어 (setPointerCapture 적용) ==========
     function startFaderDrag(e, channel) {
       e.preventDefault(); 
       
       const wrapper = document.getElementById('faderArea_' + channel);
-      wrapper.setPointerCapture(e.pointerId); // 터치가 삐져나가도 페이더가 계속 추적하도록 캡처
+      wrapper.setPointerCapture(e.pointerId); // 터치 이탈 방지 및 브라우저 스크롤 개입 차단
 
       const rect = wrapper.getBoundingClientRect();
       const slotHeight = 175;
@@ -1482,7 +1519,7 @@
       }
 
       function onPointerUp(upEvent) {
-        wrapper.releasePointerCapture(upEvent.pointerId); // 캡처 해제
+        wrapper.releasePointerCapture(upEvent.pointerId);
         window.removeEventListener('pointermove', onPointerMove);
         window.removeEventListener('pointerup', onPointerUp);
         window.removeEventListener('pointercancel', onPointerUp);
