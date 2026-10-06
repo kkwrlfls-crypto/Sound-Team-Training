@@ -6,17 +6,17 @@
   <title>교회 방송실 트레이닝 & 3층 음향 시스템</title>
   <style>
     :root {
-      --bg-dark: #0f172a;
-      --card-bg: #1e293b;
-      --inner-bg: #0b0f19;
+      --bg-dark: #f8fafc;
+      --card-bg: #ffffff;
+      --inner-bg: #f1f5f9;
       --primary: #3b82f6;
       --accent-green: #10b981;
-      --accent-yellow: #f59e0b;
+      --accent-yellow: #d97706;
       --accent-red: #ef4444;
-      --accent-cyan: #38bdf8;
-      --text-main: #f8fafc;
-      --text-sub: #94a3b8;
-      --border-color: #334155;
+      --accent-cyan: #0284c7;
+      --text-main: #0f172a;
+      --text-sub: #64748b;
+      --border-color: #cbd5e1;
     }
 
     * {
@@ -34,7 +34,7 @@
       align-items: center;
       min-height: 100vh;
       padding: 20px 12px;
-      overscroll-behavior-y: none; /* 모바일에서 당겨서 새로고침 방지 */
+      overscroll-behavior-y: none;
     }
 
     .tab-nav {
@@ -60,13 +60,14 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
     .tab-btn.active {
       background: var(--primary);
       color: #ffffff;
       border-color: var(--primary);
-      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
     }
 
     .game-container {
@@ -76,21 +77,21 @@
       border: 1px solid var(--border-color);
       border-radius: 20px;
       padding: 24px 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     }
 
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
     .level-header { margin-bottom: 16px; }
-    .level-title { font-size: 1.15rem; font-weight: 800; color: #ffffff; margin-bottom: 6px; }
+    .level-title { font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 6px; }
     .level-desc { font-size: 0.85rem; color: var(--text-sub); line-height: 1.4; }
 
     .control-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(15, 23, 42, 0.6);
+      background: #f1f5f9;
       border: 1px solid var(--border-color);
       border-radius: 10px;
       padding: 8px 14px;
@@ -99,7 +100,6 @@
       color: var(--text-sub);
     }
 
-    /* 캔버스 가로스크롤 최적화 */
     .workspace-canvas {
       position: relative;
       width: 100%;
@@ -130,17 +130,18 @@
       font-size: 0.85rem;
       font-weight: 800;
       color: var(--text-sub);
-      border: 1px dashed rgba(255,255,255,0.15);
+      border: 1px dashed rgba(0, 0, 0, 0.15);
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 8px;
       z-index: 0;
+      background: rgba(255, 255, 255, 0.5);
     }
 
     .draggable-gear {
       position: absolute;
-      background: #1e293b;
+      background: #ffffff;
       border: 2px solid var(--primary);
       border-radius: 10px;
       cursor: grab;
@@ -150,20 +151,20 @@
       justify-content: flex-start;
       padding: 4px;
       user-select: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       z-index: 2;
       transition: border-color 0.2s, box-shadow 0.2s;
       touch-action: none;
     }
 
     .draggable-gear:active { cursor: grabbing; }
-    .draggable-gear.selected-cable { border-color: var(--accent-yellow); box-shadow: 0 0 15px rgba(245, 158, 11, 0.6); }
-    .draggable-gear.connected { border-color: var(--accent-green); box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
+    .draggable-gear.selected-cable { border-color: var(--accent-yellow); box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
+    .draggable-gear.connected { border-color: var(--accent-green); box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
 
     .gear-img-wrap {
       width: 100%;
       flex: 1;
-      background: #0b0f19;
+      background: #f8fafc;
       border-radius: 6px;
       overflow: hidden;
       display: flex;
@@ -181,7 +182,7 @@
     .gear-label {
       font-size: 0.65rem;
       font-weight: 700;
-      color: #fff;
+      color: var(--text-main);
       margin-top: 4px;
       white-space: nowrap;
       text-align: center;
@@ -204,7 +205,7 @@
     }
 
     .cable-instruction {
-      background: rgba(59, 130, 246, 0.1);
+      background: #eff6ff;
       border: 1px solid var(--primary);
       border-radius: 10px;
       padding: 10px 14px;
@@ -214,6 +215,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-weight: 600;
     }
 
     .btn {
@@ -230,10 +232,11 @@
       width: 100%;
       background: var(--primary);
       color: #ffffff;
+      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
     }
 
     .theory-card {
-      background: rgba(15, 23, 42, 0.6);
+      background: #f8fafc;
       border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 16px;
@@ -243,7 +246,7 @@
     .theory-card p { font-size: 0.85rem; color: var(--text-sub); line-height: 1.5; }
 
     .training-panel {
-      background: rgba(15, 23, 42, 0.8);
+      background: #f8fafc;
       border: 1px solid var(--border-color);
       border-radius: 14px;
       padding: 24px;
@@ -258,7 +261,7 @@
       font-size: 2.2rem;
       font-weight: 900;
       color: var(--accent-yellow);
-      background: #0b0f19;
+      background: #ffffff;
       padding: 10px 20px;
       border-radius: 12px;
       border: 1px solid var(--border-color);
@@ -266,6 +269,7 @@
       text-align: center;
       outline: none;
       caret-color: var(--accent-yellow);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
     }
     .step-btn-group {
       display: flex;
@@ -275,18 +279,18 @@
     }
     .db-btn {
       padding: 8px 16px;
-      background: #334155;
-      color: #fff;
+      background: #e2e8f0;
+      color: var(--text-main);
       font-weight: 700;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       transition: background 0.2s;
     }
-    .db-btn:hover { background: var(--primary); }
+    .db-btn:hover { background: var(--primary); color: #fff; }
 
     .voice-training-section {
-      background: rgba(15, 23, 42, 0.8);
+      background: #f8fafc;
       border: 1px solid var(--border-color);
       border-radius: 14px;
       padding: 24px;
@@ -300,7 +304,7 @@
     }
     .voice-btn {
       padding: 14px 10px;
-      background: #1e293b;
+      background: #ffffff;
       border: 1px solid var(--border-color);
       border-radius: 10px;
       color: var(--text-main);
@@ -312,36 +316,39 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
     }
     .voice-btn:hover {
       background: var(--primary);
       border-color: var(--primary);
+      color: #ffffff;
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
     .voice-btn.playing {
       background: var(--accent-green);
       border-color: var(--accent-green);
-      color: #0b0f19;
+      color: #ffffff;
       animation: pulse 1.5s infinite;
     }
 
     .mix-balance-section-light {
-      background: #ffffff;
-      color: #1e293b;
+      background: #f8fafc;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
       border-radius: 14px;
       padding: 30px 20px;
       text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
     }
     .mix-top-desc {
       font-size: 0.85rem;
-      color: #64748b;
+      color: var(--text-sub);
       margin-bottom: 4px;
     }
     .mix-main-title {
       font-size: 1.25rem;
       font-weight: 800;
-      color: #0f172a;
+      color: var(--text-main);
       margin-bottom: 12px;
     }
 
@@ -358,12 +365,12 @@
       border-radius: 8px;
       cursor: pointer;
       transition: background 0.2s;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
     .mix-pill-group {
       display: inline-flex;
-      background: #f1f5f9;
+      background: #e2e8f0;
       border: 1px solid #cbd5e1;
       border-radius: 30px;
       padding: 4px;
@@ -375,7 +382,7 @@
       font-weight: 700;
       border: none;
       background: transparent;
-      color: #64748b;
+      color: var(--text-sub);
       border-radius: 20px;
       cursor: pointer;
       transition: all 0.2s;
@@ -389,12 +396,12 @@
     .exact-console-box {
       width: 100%;
       max-width: 840px;
-      background: linear-gradient(135deg, #2b3748 0%, #1a2230 100%);
-      border: 2px solid #334155;
+      background: linear-gradient(135deg, #334155 100%, #1e293b 0%);
+      border: 2px solid #475569;
       border-radius: 14px;
       margin: 0 auto 24px auto;
       padding: 14px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
       position: relative;
       overflow-x: auto;
     }
@@ -511,7 +518,6 @@
       text-overflow: ellipsis;
     }
 
-    /* 페이더 터치 시 완벽한 방어 및 스크롤 차단 */
     .fader-area-wrapper {
       position: relative;
       height: 190px;
@@ -660,12 +666,12 @@
 
       <div class="control-bar">
         <span>💡 안내: 스마트폰에서는 영역 안을 스와이프하여 화면을 이동할 수 있습니다.</span>
-        <button style="padding:4px 10px; font-size:0.75rem; background:#334155; color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="resetCardSizes()">크기 초기화</button>
+        <button style="padding:4px 10px; font-size:0.75rem; background:#cbd5e1; color:#0f172a; border:none; border-radius:6px; cursor:pointer;" onclick="resetCardSizes()">크기 초기화</button>
       </div>
 
       <div class="cable-instruction">
         <span id="cableStatusText">🔌 케이블 모드: 첫 번째 장비를 터치하세요 (예: 콘솔 ➔ 스테이지박스)</span>
-        <button style="padding:4px 10px; font-size:0.75rem; background:#334155; color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="resetCables()">선 초기화</button>
+        <button style="padding:4px 10px; font-size:0.75rem; background:#cbd5e1; color:#0f172a; border:none; border-radius:6px; cursor:pointer;" onclick="resetCables()">선 초기화</button>
       </div>
 
       <div class="workspace-canvas" id="workspaceCanvas">
@@ -727,7 +733,6 @@
         <div class="mix-top-desc">Sample(All) 원본 소스와 똑같은 밸런스가 되도록 개별 트랙 페이더를 맞춰보세요</div>
         <div class="mix-main-title">멀티트랙 믹스 밸런스 맞추기</div>
 
-        <!-- 재생 제어 독립 버튼 -->
         <button class="mix-master-play-btn" id="mixPlayBtn" onclick="toggleMixPlay()">▶️ 믹스 재생 시작</button>
 
         <div class="mix-pill-group">
@@ -1024,7 +1029,7 @@
         
         div.innerHTML = `
           <div class="gear-img-wrap">
-            <img src="${item.img}" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\'><rect width=\'60\' height=\'60\' fill=\'%23111\'/><text x=\'5\' y=\'30\' fill=\'red\' font-size=\'8\'>이미지없음</text><text x=\'5\' y=\'45\' fill=\'%2338bdf8\' font-size=\'6\'>${item.img}</text></svg>'">
+            <img src="${item.img}" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\'><rect width=\'60\' height=\'60\' fill=\'%23fff\'/><text x=\'5\' y=\'30\' fill=\'red\' font-size=\'8\'>이미지없음</text><text x=\'5\' y=\'45\' fill=\'%230284c7\' font-size=\'6\'>${item.img}</text></svg>'">
           </div>
           <div class="gear-label">${item.name}</div>
           <div class="resize-handle"></div>
@@ -1147,7 +1152,7 @@
           let line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
           line.setAttribute('x1', x1); line.setAttribute('y1', y1);
           line.setAttribute('x2', x2); line.setAttribute('y2', y2);
-          line.setAttribute('stroke', '#38bdf8'); line.setAttribute('stroke-width', '3');
+          line.setAttribute('stroke', '#0284c7'); line.setAttribute('stroke-width', '3');
           line.setAttribute('stroke-dasharray', '6,3');
           svgLayer.appendChild(line);
         }
@@ -1170,7 +1175,6 @@
       alert(`배치 및 케이블링 검증 완료! 총 ${connectedCables.length}개의 오디오 케이블 패치가 정상 확인되었습니다.`);
     }
 
-    // ========== 오디오 로직 (핑크노이즈) ==========
     let audioCtx = null;
     let pinkNoiseNode = null;
     let gainNode = null;
@@ -1267,7 +1271,6 @@
       }
     }
 
-    // ========== 단일 트랙 오디오 1~7 ==========
     let currentAudio = null;
     let currentPlayingBtnId = null;
 
@@ -1304,7 +1307,6 @@
       }
     }
 
-    // ========== [완벽한 박자 싱크 개선] Web Audio API 기반 멀티트랙 싱크 엔진 ==========
     const trackKeys = ['sample', 'gg', 'ag', 'bass', 'drum', 'elec_rhythm', 'elec_solo', 'piano'];
     
     const mixFiles = {
@@ -1342,7 +1344,6 @@
     let activeSolo = null;
     let mixMode = 'original';
 
-    // 1. 오디오 파일들을 미리 Fetch & Decode하여 완벽한 동기화 준비
     async function initMixAudioContext() {
       if (isMixInitialized) return true;
       try {
@@ -1369,9 +1370,8 @@
       }
     }
 
-    // 2. 동기화된 멀티트랙 재생 및 정지 제어
     async function toggleMixPlay() {
-      stopAllAudioFiles(); // 단일트랙 정지
+      stopAllAudioFiles();
 
       if (!isMixInitialized) {
         let success = await initMixAudioContext();
@@ -1385,7 +1385,6 @@
       const btn = document.getElementById('mixPlayBtn');
 
       if (!isMixPlaying) {
-        // 재생 시작 (모든 트랙을 동일한 AudioContext 타임라인에 스케줄링하여 박자 오차 제로화)
         audioStartTime = mixAudioCtx.currentTime;
         
         trackKeys.forEach(ch => {
@@ -1403,7 +1402,6 @@
         btn.style.background = "var(--accent-red)";
         applyMixVolumes();
       } else {
-        // 정지 시점 기록 (일시정지 효과)
         pauseOffset += (mixAudioCtx.currentTime - audioStartTime);
         stopMixAudioInternal();
         btn.innerText = "▶️ 믹스 재생 시작";
@@ -1484,12 +1482,11 @@
       applyMixVolumes();
     }
 
-    // ========== 페이더 드래그 및 완벽한 스크롤 방어 (setPointerCapture 적용) ==========
     function startFaderDrag(e, channel) {
       e.preventDefault(); 
       
       const wrapper = document.getElementById('faderArea_' + channel);
-      wrapper.setPointerCapture(e.pointerId); // 터치 이탈 방지 및 브라우저 스크롤 개입 차단
+      wrapper.setPointerCapture(e.pointerId);
 
       const rect = wrapper.getBoundingClientRect();
       const slotHeight = 175;
