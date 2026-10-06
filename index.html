@@ -311,24 +311,45 @@
       padding: 20px;
       color: var(--text-main);
     }
+    
+    /* PC/모바일 공용 믹서 채널 스트립 스타일 (콘솔 피지컬 페이더 느낌 강화) */
     .mixer-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 10px;
       margin-top: 14px;
       margin-bottom: 16px;
     }
-    .mobile-fader-card {
+    .fader-channel {
       background: #0b0f19;
       border: 1px solid var(--border-color);
       border-radius: 10px;
-      padding: 12px;
+      padding: 14px 8px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      align-items: center;
+      gap: 10px;
     }
-    .mobile-fader-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: bold; color: var(--accent-cyan); }
-    .mobile-fader-range { width: 100%; accent-color: var(--primary); cursor: pointer; }
+    .fader-channel-name { font-size: 0.75rem; font-weight: bold; color: var(--accent-cyan); text-align: center; height: 28px; display: flex; align-items: center; justify-content: center; }
+    .fader-val-badge { font-size: 0.7rem; color: var(--accent-yellow); background: rgba(245, 158, 11, 0.1); padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+    
+    /* 수직형 페이더 시뮬레이션 컨테이너 */
+    .fader-track-wrap {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 10px 0;
+    }
+    .vertical-range {
+      writing-mode: vertical-lr;
+      direction: rtl;
+      width: 24px;
+      height: 120px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -366,8 +387,8 @@
     <!-- TAB 2 -->
     <div id="tab2" class="tab-content">
       <div class="level-header">
-        <div class="level-title">3층 음향 시스템 배치 (모바일/PC 공용 드래그 캔버스)</div>
-        <div class="level-desc">장비를 손가락이나 마우스로 드래그하여 배치하고, 아이콘을 차례대로 터치해 케이블을 연결해보세요.</div>
+        <div class="level-title">3층 음향 시스템 배치 (드래그 캔버스)</div>
+        <div class="level-desc">장비를 마우스나 손가락으로 드래그하여 배치하고, 아이콘을 차례대로 터치해 케이블을 연결해보세요.</div>
       </div>
 
       <div class="control-bar">
@@ -422,7 +443,7 @@
         </div>
       </div>
 
-      <!-- 멀티트랙 믹스 밸런스 훈련 (가야금 GG 채널 포함) -->
+      <!-- 멀티트랙 믹스 밸런스 훈련 (가야금 GG 채널 포함, 피지컬 콘솔형 수직 페이더 UI) -->
       <div class="mixer-section">
         <div style="font-size: 1.1rem; font-weight: 800; margin-bottom: 6px;">🎚️ 멀티트랙 믹스 밸런스 훈련</div>
         <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 12px;">각 악기 채널(가야금 GG 포함)의 페이더를 조절하여 안정적인 밸런스를 맞춘 뒤 검증해보세요.</p>
@@ -441,7 +462,7 @@
       if (isMobileDevice) {
         badge.innerText = "📱 모바일 환경 감지됨 (터치 드래그 캔버스 실행)";
       } else {
-        badge.innerText = "💻 PC 환경 감지됨 (마우스 드래그 캔버스 실행)";
+        badge.innerText = "💻 PC 환경 감지됨 (콘솔 페이더 & 드래그 캔버스 실행)";
       }
       initWorkspace();
       initMixerUI();
@@ -458,7 +479,7 @@
       else if(tabId==='tab2') { 
         document.querySelectorAll('.tab-btn')[1].classList.add('active'); 
         document.getElementById('tab2').classList.add('active');
-        setTimeout(drawCables, 50); // 탭 전환 후 SVG 라인 재정렬
+        setTimeout(drawCables, 50); 
       }
       else { document.querySelectorAll('.tab-btn')[2].classList.add('active'); document.getElementById('tab3').classList.add('active'); }
     }
@@ -480,7 +501,6 @@
     function initWorkspace() {
       canvas.querySelectorAll('.draggable-gear').forEach(el => el.remove());
 
-      // 모바일 화면 폭에 맞춰 기본 좌표 스케일링 보정
       let canvasW = canvas.clientWidth || 350;
       if (canvasW < 400 && gearItems[1].x > 250) {
         gearItems[0].x = 10; gearItems[0].y = 110; gearItems[0].w = 70; gearItems[0].h = 90;
@@ -586,42 +606,44 @@
     function resetCables() { connectedCables = []; selectedGearForCable = null; initWorkspace(); }
     function checkLayoutComplete() { alert(`배치 및 케이블 검증 완료! 총 ${connectedCables.length}개 케이블 패치 확인.`); }
 
-    // 오디오 컨텍스트 및 트레이닝 기능
+    // 강력한 오디오 컨텍스트 초기화 및 제어 함수
     let audioCtx = null, pinkNoiseNode = null, gainNode = null, isPlaying = false, diffSpl = 0;
 
-    function initAudioContext() {
+    function getAudioContext() {
       if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
       }
       if (audioCtx.state === 'suspended') {
         audioCtx.resume();
       }
+      return audioCtx;
     }
 
     function togglePinkNoise() {
-      initAudioContext();
+      const ctx = getAudioContext();
 
       if (!pinkNoiseNode) {
-        pinkNoiseNode = audioCtx.createScriptProcessor(4096, 1, 1);
+        pinkNoiseNode = ctx.createScriptProcessor(4096, 1, 1);
         pinkNoiseNode.onaudioprocess = function(e) {
           let output = e.outputBuffer.getChannelData(0);
           for (let i = 0; i < 4096; i++) {
             output[i] = (Math.random() * 2 - 1) * 0.1;
           }
         };
-        gainNode = audioCtx.createGain();
+        gainNode = ctx.createGain();
         pinkNoiseNode.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        gainNode.connect(ctx.destination);
       }
 
       isPlaying = !isPlaying;
       const btn = document.getElementById('audioToggleBtn');
       if (isPlaying) {
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
         btn.innerText = "🔇 핑크 노이즈 정지"; 
         btn.style.background = "var(--accent-red)";
       } else {
-        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0, ctx.currentTime);
         btn.innerText = "🔊 핑크 노이즈 재생 시작"; 
         btn.style.background = "var(--primary)";
       }
@@ -634,7 +656,7 @@
 
     let currentAudio = null, currentPlayingBtnId = null;
     function playSingleTrack(file, btnId) {
-      initAudioContext();
+      getAudioContext();
       stopAllAudioFiles();
       
       currentAudio = new Audio(file);
@@ -642,7 +664,7 @@
       document.getElementById(btnId).classList.add('playing');
       
       currentAudio.play().catch(e => {
-        alert("⚠️ 오디오 파일 재생이 차단되었거나 파일이 존재하지 않습니다. 모바일 환경에서는 화면을 터치한 후 다시 시도해주세요.");
+        alert("⚠️ 오디오 파일 재생 에러: 해당 이름의 파일(1.mp3 등)이 동일 폴더에 없거나 브라우저 정책에 의해 차단되었습니다.");
         stopAllAudioFiles();
       });
       
@@ -665,7 +687,7 @@
       if(isPlaying) togglePinkNoise(); 
     }
 
-    // 멀티트랙 믹서 초기화 (가야금 GG 채널 포함)
+    // 멀티트랙 믹서 초기화 (가야금 GG 채널 포함, 수직 콘솔 페이더 스타일 적용)
     const mixerValues = {};
     function initMixerUI() {
       const container = document.getElementById('mixerContainer');
@@ -679,19 +701,19 @@
         { key: 'Bass', name: '베이스 (Bass)' },
         { key: 'Gayageum', name: '가야금 (GG)' },
         { key: 'Drum', name: '드럼 (Drum)' },
-        { key: 'Keyboard', name: '건반 (Piano/Pad)' }
+        { key: 'Keyboard', name: '건반 (Piano)' }
       ];
       
       tracks.forEach(t => {
         mixerValues[t.key] = 0;
         let div = document.createElement('div');
-        div.className = 'mobile-fader-card';
+        div.className = 'fader-channel';
         div.innerHTML = `
-          <div class="mobile-fader-header">
-            <span>${t.name}</span>
-            <span id="val_${t.key}">0 dB</span>
+          <div class="fader-channel-name">${t.name}</div>
+          <div class="fader-val-badge" id="val_${t.key}">0 dB</div>
+          <div class="fader-track-wrap">
+            <input type="range" class="vertical-range" min="-30" max="10" step="0.5" value="0" oninput="updateMixerVal('${t.key}', this.value)">
           </div>
-          <input type="range" class="mobile-fader-range" min="-30" max="10" step="0.5" value="0" oninput="updateMixerVal('${t.key}', this.value)">
         `;
         container.appendChild(div);
       });
@@ -711,7 +733,7 @@
       if (v >= -3 && v <= 3 && gg >= -4 && gg <= 2 && b >= -6 && b <= 2 && d >= -6 && d <= 2) {
         alert("🎉 훌륭합니다! 보컬과 가야금(GG), 리듬 파트의 밸런스가 매우 안정적으로 잘 잡혔습니다.");
       } else {
-        alert("⚠️️ 밸런스 조정이 필요합니다. 보컬과 가야금 페이더를 적정 레벨(-3 ~ +2dB)로 맞추고 저음역대(베이스, 드럼)가 과하지 않도록 조절해보세요.");
+        alert("⚠️ 밸런스 조정이 필요합니다. 보컬과 가야금 페이더를 적정 레벨(-3 ~ +2dB)로 맞추고 저음역대(베이스, 드럼)가 과하지 않도록 조절해보세요.");
       }
     }
   </script>
