@@ -312,10 +312,10 @@
       color: var(--text-main);
     }
     
-    /* PC/모바일 공용 믹서 채널 스트립 스타일 (콘솔 피지컬 페이더 느낌 강화) */
+    /* PC/모바일 환경 모두에서 실제 콘솔 피지컬 수직 페이더 형태로 보이도록 레이아웃 고정 */
     .mixer-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
       gap: 10px;
       margin-top: 14px;
       margin-bottom: 16px;
@@ -324,29 +324,33 @@
       background: #0b0f19;
       border: 1px solid var(--border-color);
       border-radius: 10px;
-      padding: 14px 8px;
+      padding: 14px 6px;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 10px;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
     }
-    .fader-channel-name { font-size: 0.75rem; font-weight: bold; color: var(--accent-cyan); text-align: center; height: 28px; display: flex; align-items: center; justify-content: center; }
+    .fader-channel-name { font-size: 0.72rem; font-weight: bold; color: var(--accent-cyan); text-align: center; height: 28px; display: flex; align-items: center; justify-content: center; }
     .fader-val-badge { font-size: 0.7rem; color: var(--accent-yellow); background: rgba(245, 158, 11, 0.1); padding: 2px 6px; border-radius: 4px; font-weight: bold; }
     
-    /* 수직형 페이더 시뮬레이션 컨테이너 */
+    /* 수직형 페이더 스타일 */
     .fader-track-wrap {
-      height: 140px;
+      height: 150px;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
       padding: 10px 0;
+      background: rgba(255,255,255,0.02);
+      border-radius: 6px;
+      width: 100%;
     }
     .vertical-range {
       writing-mode: vertical-lr;
       direction: rtl;
-      width: 24px;
-      height: 120px;
+      width: 28px;
+      height: 130px;
       accent-color: var(--primary);
       cursor: pointer;
     }
@@ -427,6 +431,7 @@
         <button class="btn" id="audioToggleBtn" onclick="togglePinkNoise()" style="max-width: 260px; margin-top: 6px;">🔊 핑크 노이즈 재생 시작</button>
       </div>
 
+      <!-- 대역별 샘플 트랙 비교 청취 (1~7번 복원) -->
       <div class="voice-training-section">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div style="font-size: 0.95rem; font-weight: 800; color: var(--accent-cyan);">🗣 대역별 오디오 샘플 비교 청취</div>
@@ -443,10 +448,10 @@
         </div>
       </div>
 
-      <!-- 멀티트랙 믹스 밸런스 훈련 (가야금 GG 채널 포함, 피지컬 콘솔형 수직 페이더 UI) -->
+      <!-- 멀티트랙 믹스 밸런스 훈련 (가야금 GG 채널 포함, 수직 페이더 UI 명확화) -->
       <div class="mixer-section">
         <div style="font-size: 1.1rem; font-weight: 800; margin-bottom: 6px;">🎚️ 멀티트랙 믹스 밸런스 훈련</div>
-        <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 12px;">각 악기 채널(가야금 GG 포함)의 페이더를 조절하여 안정적인 밸런스를 맞춘 뒤 검증해보세요.</p>
+        <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 12px;">각 악기 채널(가야금 GG 포함)의 수직 페이더를 조절하여 안정적인 밸런스를 맞춘 뒤 검증해보세요.</p>
         <div class="mixer-grid" id="mixerContainer"></div>
         <button class="btn" onclick="checkMixerBalance()">✨ 믹스 밸런스 검증하기</button>
       </div>
@@ -606,7 +611,7 @@
     function resetCables() { connectedCables = []; selectedGearForCable = null; initWorkspace(); }
     function checkLayoutComplete() { alert(`배치 및 케이블 검증 완료! 총 ${connectedCables.length}개 케이블 패치 확인.`); }
 
-    // 강력한 오디오 컨텍스트 초기화 및 제어 함수
+    // 강력한 오디오 컨텍스트 관리 및 초기화
     let audioCtx = null, pinkNoiseNode = null, gainNode = null, isPlaying = false, diffSpl = 0;
 
     function getAudioContext() {
@@ -661,10 +666,11 @@
       
       currentAudio = new Audio(file);
       currentPlayingBtnId = btnId;
-      document.getElementById(btnId).classList.add('playing');
+      const targetBtn = document.getElementById(btnId);
+      if (targetBtn) targetBtn.classList.add('playing');
       
       currentAudio.play().catch(e => {
-        alert("⚠️ 오디오 파일 재생 에러: 해당 이름의 파일(1.mp3 등)이 동일 폴더에 없거나 브라우저 정책에 의해 차단되었습니다.");
+        alert(`⚠️ 오디오 재생 실패: '${file}' 파일이 동일 폴더에 없거나 브라우저 권한에 의해 차단되었습니다.`);
         stopAllAudioFiles();
       });
       
@@ -687,7 +693,7 @@
       if(isPlaying) togglePinkNoise(); 
     }
 
-    // 멀티트랙 믹서 초기화 (가야금 GG 채널 포함, 수직 콘솔 페이더 스타일 적용)
+    // 멀티트랙 믹서 초기화 (콘솔 수직 페이더 스타일)
     const mixerValues = {};
     function initMixerUI() {
       const container = document.getElementById('mixerContainer');
