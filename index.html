@@ -96,10 +96,6 @@
     .level-title { font-size: 1.15rem; font-weight: 800; color: #ffffff; margin-bottom: 6px; }
     .level-desc { font-size: 0.85rem; color: var(--text-sub); line-height: 1.4; }
 
-    /* PC 전용 스타일 */
-    .pc-only-view { display: block; }
-    .mobile-only-view { display: none; }
-
     .control-bar {
       display: flex;
       justify-content: space-between;
@@ -116,7 +112,7 @@
     .workspace-canvas {
       position: relative;
       width: 100%;
-      height: 860px;
+      height: 750px;
       background: var(--inner-bg);
       border: 2px dashed var(--border-color);
       border-radius: 16px;
@@ -135,7 +131,7 @@
 
     .zone-guide {
       position: absolute;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       font-weight: 800;
       color: var(--text-sub);
       border: 1px dashed rgba(255,255,255,0.15);
@@ -245,27 +241,6 @@
     .theory-card h3 { color: var(--accent-cyan); font-size: 0.95rem; margin-bottom: 6px; }
     .theory-card p { font-size: 0.85rem; color: var(--text-sub); line-height: 1.5; }
 
-    /* 모바일 전용 UI 카드 스타일 */
-    .mobile-card {
-      background: #0b0f19;
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 12px;
-    }
-    .mobile-card h4 { color: var(--accent-yellow); font-size: 0.95rem; margin-bottom: 8px; }
-    
-    .mobile-select {
-      width: 100%;
-      padding: 10px;
-      background: #1e293b;
-      color: #fff;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      font-size: 0.85rem;
-      margin-top: 8px;
-    }
-
     .training-panel {
       background: rgba(15, 23, 42, 0.8);
       border: 1px solid var(--border-color);
@@ -329,7 +304,6 @@
     }
     .voice-btn.playing { background: var(--accent-green); color: #0b0f19; }
 
-    /* 멀티트랙 믹서 스타일 */
     .mixer-section {
       background: #1e293b;
       border: 1px solid var(--border-color);
@@ -339,7 +313,7 @@
     }
     .mixer-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 12px;
       margin-top: 14px;
       margin-bottom: 16px;
@@ -392,63 +366,25 @@
     <!-- TAB 2 -->
     <div id="tab2" class="tab-content">
       <div class="level-header">
-        <div class="level-title">3층 음향 시스템 배치</div>
-        <div class="level-desc" id="tab2Desc">장비를 배치하고 케이블을 연결해보세요.</div>
+        <div class="level-title">3층 음향 시스템 배치 (모바일/PC 공용 드래그 캔버스)</div>
+        <div class="level-desc">장비를 손가락이나 마우스로 드래그하여 배치하고, 아이콘을 차례대로 터치해 케이블을 연결해보세요.</div>
       </div>
 
-      <!-- PC 버전용 드래그 캔버스 -->
-      <div id="pcViewWorkspace" class="pc-only-view">
-        <div class="control-bar">
-          <span>💡 우측 하단 핸들을 잡아당겨 크기를 조절하세요.</span>
-          <button style="padding:4px 10px; font-size:0.75rem; background:#334155; color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="resetCardSizes()">크기 초기화</button>
-        </div>
-        <div class="cable-instruction">
-          <span id="cableStatusText">🔌 케이블 모드: 첫 번째 장비를 선택하세요</span>
-          <button style="padding:4px 10px; font-size:0.75rem; background:#334155; color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="resetCables()">선 초기화</button>
-        </div>
-        <div class="workspace-canvas" id="workspaceCanvas">
-          <svg class="connection-svg" id="connectionSvg"></svg>
-          <div class="zone-guide" style="top:15px; left:20px; width:200px; height:90px;">앰프룸</div>
-          <div class="zone-guide" style="top:15px; left:260px; width:360px; height:90px;">단상</div>
-          <div class="zone-guide" style="bottom:15px; left:360px; width:180px; height:80px;">방송실</div>
-        </div>
-        <button class="btn" onclick="checkLayoutComplete()">🔍 시스템 배치 및 케이블링 검증하기</button>
+      <div class="control-bar">
+        <span>💡 장비 이동 및 우측 하단 핸들로 크기 조절 가능</span>
+        <button style="padding:4px 10px; font-size:0.75rem; background:#334155; color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="resetCardSizes()">위치 초기화</button>
       </div>
-
-      <!-- 모바일 버전용 터치 선택형 퀴즈 UI -->
-      <div id="mobileViewWorkspace" class="mobile-only-view">
-        <div class="mobile-card">
-          <h4>📱 모바일 최적화 시스템 퀴즈</h4>
-          <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 12px;">스마트폰 화면에 맞춰 각 구역별 장비 연결을 선택하여 점검하세요.</p>
-          
-          <div style="margin-bottom: 10px; font-size: 0.85rem; font-weight: bold;">1. 스테이지박스 신호 입력 소스</div>
-          <select class="mobile-select" id="m_q1">
-            <option value="">-- 장비 선택 --</option>
-            <option value="correct">단상 마이크 라인</option>
-            <option value="wrong">메인 스피커</option>
-          </select>
-        </div>
-
-        <div class="mobile-card">
-          <div style="margin-bottom: 10px; font-size: 0.85rem; font-weight: bold;">2. 방송실 메인 믹서 연결</div>
-          <select class="mobile-select" id="m_q2">
-            <option value="">-- 장비 선택 --</option>
-            <option value="correct">스테이지 박스 (Dante/MADI)</option>
-            <option value="wrong">파워 앰프 직접 연결</option>
-          </select>
-        </div>
-
-        <div class="mobile-card">
-          <div style="margin-bottom: 10px; font-size: 0.85rem; font-weight: bold;">3. 앰프룸 출력 장비</div>
-          <select class="mobile-select" id="m_q3">
-            <option value="">-- 장비 선택 --</option>
-            <option value="correct">d&b 앰프 (40D / 10D)</option>
-            <option value="wrong">노트북 이어폰잭</option>
-          </select>
-        </div>
-
-        <button class="btn" onclick="checkMobileQuiz()">✨ 모바일 정답 확인하기</button>
+      <div class="cable-instruction">
+        <span id="cableStatusText">🔌 케이블 모드: 첫 번째 장비를 선택하세요</span>
+        <button style="padding:4px 10px; font-size:0.75rem; background:#334155; color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="resetCables()">선 초기화</button>
       </div>
+      <div class="workspace-canvas" id="workspaceCanvas">
+        <svg class="connection-svg" id="connectionSvg"></svg>
+        <div class="zone-guide" style="top:10px; left:10px; width:130px; height:80px;">앰프룸</div>
+        <div class="zone-guide" style="top:10px; left:150px; width:calc(100% - 160px); height:80px;">단상</div>
+        <div class="zone-guide" style="bottom:10px; left:25%; width:50%; height:75px;">방송실</div>
+      </div>
+      <button class="btn" onclick="checkLayoutComplete()" style="margin-top: 16px;">🔍 시스템 배치 및 케이블링 검증하기</button>
     </div>
 
     <!-- TAB 3 -->
@@ -486,10 +422,10 @@
         </div>
       </div>
 
-      <!-- 멀티트랙 믹스 밸런스 훈련 섹션 (보완됨) -->
+      <!-- 멀티트랙 믹스 밸런스 훈련 (가야금 GG 채널 포함) -->
       <div class="mixer-section">
         <div style="font-size: 1.1rem; font-weight: 800; margin-bottom: 6px;">🎚️ 멀티트랙 믹스 밸런스 훈련</div>
-        <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 12px;">각 악기 채널의 페이더를 조절하여 안정적인 밸런스를 맞춘 뒤 검증해보세요.</p>
+        <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 12px;">각 악기 채널(가야금 GG 포함)의 페이더를 조절하여 안정적인 밸런스를 맞춘 뒤 검증해보세요.</p>
         <div class="mixer-grid" id="mixerContainer"></div>
         <button class="btn" onclick="checkMixerBalance()">✨ 믹스 밸런스 검증하기</button>
       </div>
@@ -498,22 +434,16 @@
   </main>
 
   <script>
-    // 기기 감지 로직 (모바일 여부 확인)
     const isMobileDevice = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
 
     window.addEventListener('DOMContentLoaded', () => {
       const badge = document.getElementById('deviceBadge');
       if (isMobileDevice) {
-        badge.innerText = "📱 모바일 환경 감지됨 (터치 최적화 버전 실행)";
-        document.getElementById('pcViewWorkspace').style.display = 'none';
-        document.getElementById('mobileViewWorkspace').style.display = 'block';
-        document.getElementById('tab2Desc').innerText = "스마트폰 화면에 맞춘 터치 검증 퀴즈입니다.";
+        badge.innerText = "📱 모바일 환경 감지됨 (터치 드래그 캔버스 실행)";
       } else {
-        badge.innerText = "💻 PC 환경 감지됨 (드래그 & 풀 버전 실행)";
-        document.getElementById('pcViewWorkspace').style.display = 'block';
-        document.getElementById('mobileViewWorkspace').style.display = 'none';
-        initWorkspace();
+        badge.innerText = "💻 PC 환경 감지됨 (마우스 드래그 캔버스 실행)";
       }
+      initWorkspace();
       initMixerUI();
     });
 
@@ -525,27 +455,40 @@
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       
       if(tabId==='tab1') { document.querySelectorAll('.tab-btn')[0].classList.add('active'); document.getElementById('tab1').classList.add('active'); }
-      else if(tabId==='tab2') { document.querySelectorAll('.tab-btn')[1].classList.add('active'); document.getElementById('tab2').classList.add('active'); }
+      else if(tabId==='tab2') { 
+        document.querySelectorAll('.tab-btn')[1].classList.add('active'); 
+        document.getElementById('tab2').classList.add('active');
+        setTimeout(drawCables, 50); // 탭 전환 후 SVG 라인 재정렬
+      }
       else { document.querySelectorAll('.tab-btn')[2].classList.add('active'); document.getElementById('tab3').classList.add('active'); }
     }
 
-    // PC 드래그 관련 변수 및 함수
-    const gearItems = [
-      { id: 'vi10p_L', name: '메인 L', img: 'vi10p.jpg', x: 40, y: 180, w: 90, h: 116 },
-      { id: 'vi10p_R', name: '메인 R', img: 'vi10p.jpg', x: 800, y: 180, w: 90, h: 116 },
-      { id: 'amplifier', name: '앰프', img: '40D.jpg', x: 30, y: 25, w: 90, h: 116 },
-      { id: 'stagebox', name: '스테이지 박스', img: 'rio3224D2.jpg', x: 340, y: 130, w: 90, h: 116 },
-      { id: 'console', name: '콘솔 (믹서)', img: 'console.jpg', x: 400, y: 720, w: 90, h: 116 }
+    const defaultGearItems = [
+      { id: 'vi10p_L', name: '메인 L', img: 'vi10p.jpg', x: 20, y: 120, w: 80, h: 100 },
+      { id: 'vi10p_R', name: '메인 R', img: 'vi10p.jpg', x: 280, y: 120, w: 80, h: 100 },
+      { id: 'amplifier', name: '앰프', img: '40D.jpg', x: 20, y: 15, w: 80, h: 90 },
+      { id: 'stagebox', name: '스테이지 박스', img: 'rio3224D2.jpg', x: 180, y: 15, w: 90, h: 90 },
+      { id: 'console', name: '콘솔 (믹서)', img: 'console.jpg', x: 130, y: 600, w: 90, h: 100 }
     ];
 
+    let gearItems = JSON.parse(JSON.stringify(defaultGearItems));
     let canvas = document.getElementById('workspaceCanvas');
     let svgLayer = document.getElementById('connectionSvg');
     let selectedGearForCable = null;
     let connectedCables = [];
 
     function initWorkspace() {
-      if (isMobileDevice) return;
       canvas.querySelectorAll('.draggable-gear').forEach(el => el.remove());
+
+      // 모바일 화면 폭에 맞춰 기본 좌표 스케일링 보정
+      let canvasW = canvas.clientWidth || 350;
+      if (canvasW < 400 && gearItems[1].x > 250) {
+        gearItems[0].x = 10; gearItems[0].y = 110; gearItems[0].w = 70; gearItems[0].h = 90;
+        gearItems[1].x = 210; gearItems[1].y = 110; gearItems[1].w = 70; gearItems[1].h = 90;
+        gearItems[2].x = 10; gearItems[2].y = 15; gearItems[2].w = 70; gearItems[2].h = 80;
+        gearItems[3].x = 110; gearItems[3].y = 15; gearItems[3].w = 80; gearItems[3].h = 80;
+        gearItems[4].x = 100; gearItems[4].y = 590; gearItems[4].w = 85; gearItems[4].h = 95;
+      }
 
       gearItems.forEach(item => {
         const div = document.createElement('div');
@@ -564,6 +507,11 @@
         canvas.appendChild(div);
       });
       drawCables();
+    }
+
+    function resetCardSizes() {
+      gearItems = JSON.parse(JSON.stringify(defaultGearItems));
+      initWorkspace();
     }
 
     function makeInteractive(elm, item) {
@@ -636,42 +584,46 @@
     }
 
     function resetCables() { connectedCables = []; selectedGearForCable = null; initWorkspace(); }
-    function checkLayoutComplete() { alert(`배치 검증 완료! 총 ${connectedCables.length}개 케이블 패치 확인.`); }
-    function checkMobileQuiz() {
-      let q1 = document.getElementById('m_q1').value;
-      let q2 = document.getElementById('m_q2').value;
-      let q3 = document.getElementById('m_q3').value;
-      if(q1 === 'correct' && q2 === 'correct' && q3 === 'correct') {
-        alert("🎉 모바일 퀴즈 정답입니다! 모든 시스템 연결 구조를 완벽하게 이해하셨습니다.");
-      } else {
-        alert("❌ 오답이 포함되어 있습니다. 올바른 장비 연동 방식을 다시 확인해보세요.");
+    function checkLayoutComplete() { alert(`배치 및 케이블 검증 완료! 총 ${connectedCables.length}개 케이블 패치 확인.`); }
+
+    // 오디오 컨텍스트 및 트레이닝 기능
+    let audioCtx = null, pinkNoiseNode = null, gainNode = null, isPlaying = false, diffSpl = 0;
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
       }
     }
 
-    // 오디오 및 믹서 관련
-    let audioCtx = null, pinkNoiseNode = null, gainNode = null, isPlaying = false, diffSpl = 0;
-
     function togglePinkNoise() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      initAudioContext();
+
+      if (!pinkNoiseNode) {
         pinkNoiseNode = audioCtx.createScriptProcessor(4096, 1, 1);
         pinkNoiseNode.onaudioprocess = function(e) {
           let output = e.outputBuffer.getChannelData(0);
-          for (let i = 0; i < 4096; i++) output[i] = (Math.random() * 2 - 1) * 0.1;
+          for (let i = 0; i < 4096; i++) {
+            output[i] = (Math.random() * 2 - 1) * 0.1;
+          }
         };
         gainNode = audioCtx.createGain();
         pinkNoiseNode.connect(gainNode);
         gainNode.connect(audioCtx.destination);
       }
-      if (audioCtx.state === 'suspended') audioCtx.resume();
+
       isPlaying = !isPlaying;
       const btn = document.getElementById('audioToggleBtn');
       if (isPlaying) {
         gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        btn.innerText = "🔇 핑크 노이즈 정지"; btn.style.background = "var(--accent-red)";
+        btn.innerText = "🔇 핑크 노이즈 정지"; 
+        btn.style.background = "var(--accent-red)";
       } else {
         gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-        btn.innerText = "🔊 핑크 노이즈 재생 시작"; btn.style.background = "var(--primary)";
+        btn.innerText = "🔊 핑크 노이즈 재생 시작"; 
+        btn.style.background = "var(--primary)";
       }
     }
 
@@ -682,32 +634,50 @@
 
     let currentAudio = null, currentPlayingBtnId = null;
     function playSingleTrack(file, btnId) {
+      initAudioContext();
       stopAllAudioFiles();
+      
       currentAudio = new Audio(file);
       currentPlayingBtnId = btnId;
       document.getElementById(btnId).classList.add('playing');
-      currentAudio.play().catch(e => alert("오디오 파일 재생 대기 중"));
+      
+      currentAudio.play().catch(e => {
+        alert("⚠️ 오디오 파일 재생이 차단되었거나 파일이 존재하지 않습니다. 모바일 환경에서는 화면을 터치한 후 다시 시도해주세요.");
+        stopAllAudioFiles();
+      });
+      
       currentAudio.onended = () => stopAllAudioFiles();
     }
+    
     function stopAllAudioFiles() {
-      if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+      if (currentAudio) { 
+        currentAudio.pause(); 
+        currentAudio = null; 
+      }
       if (currentPlayingBtnId) {
         const b = document.getElementById(currentPlayingBtnId);
         if(b) b.classList.remove('playing');
         currentPlayingBtnId = null;
       }
     }
-    function stopPinkNoise() { if(isPlaying) togglePinkNoise(); }
+    
+    function stopPinkNoise() { 
+      if(isPlaying) togglePinkNoise(); 
+    }
 
-    // 멀티트랙 믹서 초기화
+    // 멀티트랙 믹서 초기화 (가야금 GG 채널 포함)
     const mixerValues = {};
     function initMixerUI() {
       const container = document.getElementById('mixerContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      
       const tracks = [
         { key: 'Vocals', name: '보컬 (Vocals)' },
         { key: 'Acoustic_Guitar', name: '통기타 (AG)' },
         { key: 'Electric_Guitar', name: '일렉기타 (EG)' },
         { key: 'Bass', name: '베이스 (Bass)' },
+        { key: 'Gayageum', name: '가야금 (GG)' },
         { key: 'Drum', name: '드럼 (Drum)' },
         { key: 'Keyboard', name: '건반 (Piano/Pad)' }
       ];
@@ -733,15 +703,15 @@
     }
 
     function checkMixerBalance() {
-      // 간단한 밸런스 평가 예시 (예: 보컬이 너무 작거나 드럼/베이스가 과도하지 않은지 체크)
-      let v = mixerValues['Vocals'];
-      let b = mixerValues['Bass'];
-      let d = mixerValues['Drum'];
+      let v = mixerValues['Vocals'] !== undefined ? mixerValues['Vocals'] : 0;
+      let b = mixerValues['Bass'] !== undefined ? mixerValues['Bass'] : 0;
+      let gg = mixerValues['Gayageum'] !== undefined ? mixerValues['Gayageum'] : 0;
+      let d = mixerValues['Drum'] !== undefined ? mixerValues['Drum'] : 0;
 
-      if (v >= -3 && v <= 3 && b >= -6 && b <= 2 && d >= -6 && d <= 2) {
-        alert("🎉 훌륭합니다! 보컬과 리듬 파트의 밸런스가 매우 안정적으로 잘 잡혔습니다.");
+      if (v >= -3 && v <= 3 && gg >= -4 && gg <= 2 && b >= -6 && b <= 2 && d >= -6 && d <= 2) {
+        alert("🎉 훌륭합니다! 보컬과 가야금(GG), 리듬 파트의 밸런스가 매우 안정적으로 잘 잡혔습니다.");
       } else {
-        alert("⚠️ 밸런스 조정이 필요합니다. 보컬 페이더를 메인 레벨(-3 ~ +3dB)로 맞추고 저음역대(베이스, 드럼)가 과하지 않도록 조절해보세요.");
+        alert("⚠️️ 밸런스 조정이 필요합니다. 보컬과 가야금 페이더를 적정 레벨(-3 ~ +2dB)로 맞추고 저음역대(베이스, 드럼)가 과하지 않도록 조절해보세요.");
       }
     }
   </script>
