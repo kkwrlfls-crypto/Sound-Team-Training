@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>교회 방송실 트레이닝 & 3층 음향 시스템</title>
   <style>
     :root {
@@ -24,6 +24,7 @@
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      touch-action: manipulation;
     }
 
     body {
@@ -107,6 +108,7 @@
       border-radius: 16px;
       overflow: hidden;
       margin-bottom: 16px;
+      touch-action: none;
     }
 
     .connection-svg {
@@ -144,7 +146,7 @@
       user-select: none;
       box-shadow: 0 4px 12px rgba(0,0,0,0.4);
       z-index: 2;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      touch-action: none;
     }
 
     .draggable-gear:active { cursor: grabbing; }
@@ -160,6 +162,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      pointer-events: none;
     }
 
     .gear-img {
@@ -167,6 +170,7 @@
       height: 100%;
       object-fit: contain;
       object-position: center;
+      pointer-events: none;
     }
 
     .gear-label {
@@ -179,16 +183,17 @@
       width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
+      pointer-events: none;
     }
 
     .resize-handle {
       position: absolute;
       right: 2px;
       bottom: 2px;
-      width: 14px;
-      height: 14px;
+      width: 22px;
+      height: 22px;
       background: var(--primary);
-      border-radius: 3px;
+      border-radius: 4px;
       cursor: se-resize;
       z-index: 5;
     }
@@ -255,7 +260,6 @@
       min-width: 200px;
       text-align: center;
       outline: none;
-      caret-color: var(--accent-yellow);
     }
     .step-btn-group {
       display: flex;
@@ -264,14 +268,13 @@
       flex-wrap: wrap;
     }
     .db-btn {
-      padding: 8px 16px;
+      padding: 10px 18px;
       background: #334155;
       color: #fff;
       font-weight: 700;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      transition: background 0.2s;
     }
     .db-btn:hover { background: var(--primary); }
 
@@ -297,22 +300,15 @@
       font-weight: 700;
       font-size: 0.85rem;
       cursor: pointer;
-      transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
     }
-    .voice-btn:hover {
-      background: var(--primary);
-      border-color: var(--primary);
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    }
     .voice-btn.playing {
       background: var(--accent-green);
       border-color: var(--accent-green);
       color: #0b0f19;
-      animation: pulse 1.5s infinite;
     }
 
     .mix-balance-section-light {
@@ -323,17 +319,8 @@
       text-align: center;
       box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
-    .mix-top-desc {
-      font-size: 0.85rem;
-      color: #64748b;
-      margin-bottom: 4px;
-    }
-    .mix-main-title {
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: #0f172a;
-      margin-bottom: 18px;
-    }
+    .mix-top-desc { font-size: 0.85rem; color: #64748b; margin-bottom: 4px; }
+    .mix-main-title { font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 18px; }
 
     .mix-pill-group {
       display: inline-flex;
@@ -352,7 +339,6 @@
       color: #64748b;
       border-radius: 20px;
       cursor: pointer;
-      transition: all 0.2s;
     }
     .mix-pill-btn.active {
       background: #1e293b;
@@ -369,8 +355,8 @@
       margin: 0 auto 24px auto;
       padding: 14px;
       box-shadow: 0 12px 30px rgba(0,0,0,0.4);
-      position: relative;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .exact-strips-layout {
@@ -401,12 +387,7 @@
       padding: 0 2px;
     }
 
-    .exact-ch-num {
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: #9ca3af;
-    }
-
+    .exact-ch-num { font-size: 0.7rem; font-weight: 700; color: #9ca3af; }
     .exact-meter-display {
       background: #030712;
       border: 1px solid #1f2937;
@@ -415,15 +396,9 @@
       font-family: monospace;
       font-size: 0.65rem;
       color: #34d399;
-      letter-spacing: -0.5px;
     }
 
-    .exact-btn-row {
-      display: flex;
-      gap: 2px;
-      width: 100%;
-      margin-bottom: 6px;
-    }
+    .exact-btn-row { display: flex; gap: 2px; width: 100%; margin-bottom: 6px; }
 
     .sub-ctrl-btn {
       flex: 1;
@@ -433,20 +408,12 @@
       font-size: 0.5rem;
       font-weight: 700;
       color: #9ca3af;
-      padding: 3px 0;
+      padding: 5px 0;
       text-align: center;
       cursor: pointer;
     }
-    .sub-ctrl-btn.active-solo {
-      background: #f59e0b;
-      color: #0b0f19;
-      border-color: #d97706;
-    }
-    .sub-ctrl-btn.active-mute {
-      background: #ef4444;
-      color: #ffffff;
-      border-color: #dc2626;
-    }
+    .sub-ctrl-btn.active-solo { background: #f59e0b; color: #0b0f19; border-color: #d97706; }
+    .sub-ctrl-btn.active-mute { background: #ef4444; color: #ffffff; border-color: #dc2626; }
 
     .lock-row {
       display: flex;
@@ -457,21 +424,12 @@
       color: #9ca3af;
       margin-bottom: 8px;
     }
-    .lock-dot {
-      width: 6px;
-      height: 6px;
-      background: #ef4444;
-      border-radius: 50%;
-      display: inline-block;
-    }
-    .lock-dot.green {
-      background: #10b981;
-    }
+    .lock-dot { width: 6px; height: 6px; background: #ef4444; border-radius: 50%; display: inline-block; }
+    .lock-dot.green { background: #10b981; }
 
     .track-name-banner {
       background: #f8fafc;
       color: #0f172a;
-      font-family: sans-serif;
       font-size: 0.7rem;
       font-weight: 800;
       padding: 3px 0;
@@ -479,7 +437,6 @@
       text-align: center;
       border-radius: 3px;
       margin-bottom: 12px;
-      letter-spacing: -0.5px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -493,6 +450,7 @@
       justify-content: center;
       align-items: center;
       cursor: pointer;
+      touch-action: none;
     }
 
     .fader-scale-labels {
@@ -522,11 +480,11 @@
 
     .fader-thumb-visual {
       position: absolute;
-      width: 30px;
-      height: 18px;
+      width: 34px;
+      height: 22px;
       background: linear-gradient(to bottom, #4b5563, #1f2937);
       border: 1px solid #6b7280;
-      border-radius: 3px;
+      border-radius: 4px;
       box-shadow: 0 3px 6px rgba(0,0,0,0.6);
       pointer-events: none;
       display: flex;
@@ -534,11 +492,7 @@
       justify-content: center;
       z-index: 5;
     }
-    .fader-thumb-line {
-      width: 20px;
-      height: 2px;
-      background: #9ca3af;
-    }
+    .fader-thumb-line { width: 22px; height: 2px; background: #9ca3af; }
 
     .reference-sticker {
       position: absolute;
@@ -550,7 +504,6 @@
       font-weight: 800;
       padding: 2px 6px;
       border-radius: 2px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
       transform: rotate(-5deg);
       z-index: 8;
       pointer-events: none;
@@ -565,29 +518,11 @@
       border-top: 1px solid #92400e;
       position: relative;
     }
-    .leather-screw {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      background: #d1d5db;
-      border-radius: 50%;
-      top: 6px;
-    }
+    .leather-screw { position: absolute; width: 6px; height: 6px; background: #d1d5db; border-radius: 50%; top: 6px; }
     .screw-left { left: 10px; }
     .screw-right { right: 10px; }
 
-    .mix-bottom-buttons {
-      display: flex;
-      gap: 12px;
-      max-width: 320px;
-      margin: 0 auto;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.7; }
-      100% { opacity: 1; }
-    }
+    .mix-bottom-buttons { display: flex; gap: 12px; max-width: 320px; margin: 0 auto; }
   </style>
 </head>
 <body>
@@ -600,7 +535,7 @@
 
   <main class="game-container">
     
-    <!-- TAB 1: 확성 시스템의 기본 -->
+    <!-- TAB 1 -->
     <div id="tab1" class="tab-content active">
       <div class="level-header">
         <div class="level-title">확성 시스템의 기본 구조 학습</div>
@@ -623,26 +558,25 @@
       </div>
     </div>
 
-    <!-- TAB 2: 3층 음향 시스템 -->
+    <!-- TAB 2 -->
     <div id="tab2" class="tab-content">
       <div class="level-header">
         <div class="level-title">3층 음향 시스템</div>
-        <div class="level-desc">장비를 드래그해 배치하고, 우측 하단의 파란색 핸들을 잡아당겨 원하는 카드만 개별적으로 크기(비율)를 조절해보세요! 장비를 클릭하면 케이블이 연결됩니다.</div>
+        <div class="level-desc">장비를 드래그해 배치하고, 우측 하단의 파란색 핸들을 잡아당겨 크기를 조절해보세요! 장비를 터치/클릭하면 케이블이 연결됩니다.</div>
       </div>
 
       <div class="control-bar">
-        <span>💡 안내: 카드 우측 하단 모서리를 마우스로 드래그하면 가로/세로 크기가 자유롭게 조절됩니다.</span>
+        <span>💡 안내: 카드 우측 하단 핸들을 터치해 크기를 자유롭게 조절하세요.</span>
         <button style="padding:4px 10px; font-size:0.75rem; background:#334155; color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="resetCardSizes()">크기 초기화</button>
       </div>
 
       <div class="cable-instruction">
-        <span id="cableStatusText">🔌 케이블 모드: 첫 번째 장비를 클릭하세요 (예: 콘솔 ➔ 스테이지박스 ➔ 앰프 ➔ 스피커)</span>
+        <span id="cableStatusText">🔌 케이블 모드: 첫 번째 장비를 선택하세요</span>
         <button style="padding:4px 10px; font-size:0.75rem; background:#334155; color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="resetCables()">선 초기화</button>
       </div>
 
       <div class="workspace-canvas" id="workspaceCanvas">
         <svg class="connection-svg" id="connectionSvg"></svg>
-        
         <div class="zone-guide" style="top:15px; left:20px; width:200px; height:90px;">앰프룸</div>
         <div class="zone-guide" style="top:15px; left:260px; width:360px; height:90px;">단상</div>
         <div class="zone-guide" style="bottom:15px; left:360px; width:180px; height:80px;">방송실</div>
@@ -651,16 +585,15 @@
       <button class="btn" onclick="checkLayoutComplete()">🔍 시스템 배치 및 케이블링 검증하기</button>
     </div>
 
-    <!-- TAB 3: Ear Training -->
+    <!-- TAB 3 -->
     <div id="tab3" class="tab-content">
       <div class="level-header">
         <div class="level-title">🎧 Ear Training (청음 및 밸런스 훈련)</div>
-        <div class="level-desc">핑크 노이즈 볼륨 트레이닝, 대역별 샘플 비교, 그리고 7개 멀티트랙 멀티믹스 밸런스 채점 훈련을 진행할 수 있습니다.</div>
+        <div class="level-desc">핑크 노이즈 볼륨 트레이닝, 대역별 샘플 비교, 멀티트랙 믹스 밸런스 훈련을 진행할 수 있습니다.</div>
       </div>
 
-      <!-- 1. 볼륨 변화 트레이닝 패널 -->
       <div class="training-panel">
-        <div style="font-size: 0.9rem; color: var(--text-sub); font-weight: 700;">🔊 볼륨 변화 트레이닝 (현재 레벨 변화량)</div>
+        <div style="font-size: 0.9rem; color: var(--text-sub); font-weight: 700;">🔊 볼륨 변화 트레이닝</div>
         <div class="spl-display" id="splDisplay" contenteditable="true" spellcheck="false" onblur="handleSplInput(this)" onkeydown="handleSplKeyDown(event)">+0 dB</div>
         
         <div class="step-btn-group">
@@ -673,28 +606,26 @@
         <button class="btn" id="audioToggleBtn" onclick="togglePinkNoise()" style="max-width: 260px; margin-top: 6px;">🔊 핑크 노이즈 재생 시작</button>
       </div>
 
-      <!-- 2. 대역별 오디오 샘플 비교 청취 패널 (1~7번 파일 구조) -->
       <div class="voice-training-section">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div style="font-size: 0.95rem; font-weight: 800; color: var(--accent-cyan);">🗣 대역별 오디오 샘플 비교 청취</div>
           <button style="padding:6px 12px; font-size:0.75rem; background:var(--accent-red); color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="stopAllAudioFiles()">전체 정지</button>
         </div>
-        <div style="font-size: 0.8rem; color: var(--text-sub); margin-top: 4px;">1번부터 7번까지의 대역별 샘플 파일을 클릭하여 직접 비교 청취할 수 있습니다.</div>
+        <div style="font-size: 0.8rem; color: var(--text-sub); margin-top: 4px;">대역별 샘플 버튼을 터치하여 비교 청취하세요.</div>
 
         <div class="voice-grid">
           <button class="voice-btn" id="btn_1" onclick="playSingleTrack('1.mp3', 'btn_1')">🎵 1. 원본</button>
-          <button class="voice-btn" id="btn_2" onclick="playSingleTrack('2.mp3', 'btn_2')">🔽 2. 저음이 강할 때</button>
-          <button class="voice-btn" id="btn_3" onclick="playSingleTrack('3.mp3', 'btn_3')">🔼 3. 저음이 약할 때</button>
-          <button class="voice-btn" id="btn_4" onclick="playSingleTrack('4.mp3', 'btn_4')">🔽 4. 중음이 강할 때</button>
-          <button class="voice-btn" id="btn_5" onclick="playSingleTrack('5.mp3', 'btn_5')">🔼 5. 중음이 약할 때</button>
-          <button class="voice-btn" id="btn_6" onclick="playSingleTrack('6.mp3', 'btn_6')">🔽 6. 고음이 강할 때</button>
-          <button class="voice-btn" id="btn_7" onclick="playSingleTrack('7.mp3', 'btn_7')">🔼 7. 고음이 약할 때</button>
+          <button class="voice-btn" id="btn_2" onclick="playSingleTrack('2.mp3', 'btn_2')">🔽 2. 저음 강함</button>
+          <button class="voice-btn" id="btn_3" onclick="playSingleTrack('3.mp3', 'btn_3')">🔼 3. 저음 약함</button>
+          <button class="voice-btn" id="btn_4" onclick="playSingleTrack('4.mp3', 'btn_4')">🔽 4. 중음 강함</button>
+          <button class="voice-btn" id="btn_5" onclick="playSingleTrack('5.mp3', 'btn_5')">🔼 5. 중음 약함</button>
+          <button class="voice-btn" id="btn_6" onclick="playSingleTrack('6.mp3', 'btn_6')">🔽 6. 고음 강함</button>
+          <button class="voice-btn" id="btn_7" onclick="playSingleTrack('7.mp3', 'btn_7')">🔼 7. 고음 약함</button>
         </div>
       </div>
 
-      <!-- 3. 멀티트랙 믹스 밸런스 훈련 UI (7채널 + 1 Sample) -->
       <div class="mix-balance-section-light">
-        <div class="mix-top-desc">Sample(All) 원본 소스와 똑같은 밸런스가 되도록 개별 트랙 페이더를 맞춰보세요</div>
+        <div class="mix-top-desc">Sample(All) 원본 소스와 똑같은 밸런스가 되도록 페이더를 맞춰보세요</div>
         <div class="mix-main-title">멀티트랙 믹스 밸런스 맞추기</div>
 
         <div class="mix-pill-group">
@@ -705,8 +636,8 @@
         <div class="exact-console-box">
           <div class="exact-strips-layout">
             
-            <!-- 채널 1: Sample (All) - 0dB 고정 -->
-            <div class="exact-strip" id="strip_sample" style="background:#0f172a; border-color:#3b82f6;">
+            <!-- 채널 1: Sample -->
+            <div class="exact-strip" style="background:#0f172a; border-color:#3b82f6;">
               <div class="exact-ch-top">
                 <span class="exact-ch-num" style="color:#38bdf8;">01</span>
                 <span class="exact-meter-display" id="meterSample">0.0</span>
@@ -715,211 +646,50 @@
                 <div class="sub-ctrl-btn active-solo" onclick="toggleSolo('sample')">SOLO</div>
                 <div class="sub-ctrl-btn" id="muteBtn_sample" onclick="toggleMute('sample')">MUTE</div>
               </div>
-              <div class="lock-row">
-                <span class="lock-dot green"></span> FIXED (0dB)
-              </div>
+              <div class="lock-row"><span class="lock-dot green"></span> FIXED</div>
               <div class="track-name-banner" style="background:#38bdf8; color:#0f172a;">Sample</div>
 
               <div class="fader-area-wrapper" id="faderAreaSample">
-                <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
-                </div>
+                <div class="fader-scale-labels"><span>+10</span><span>0</span><span>-20</span><span>-40</span><span>&infin;</span></div>
                 <div class="fader-slot-line"></div>
-                <div class="fader-thumb-visual" id="thumbSample" style="bottom: 147px;">
-                  <div class="fader-thumb-line"></div>
-                </div>
+                <div class="fader-thumb-visual" id="thumbSample" style="bottom: 147px;"><div class="fader-thumb-line"></div></div>
               </div>
               <div class="reference-sticker">기준</div>
             </div>
 
-            <!-- 채널 2: GG -->
-            <div class="exact-strip" id="strip_gg">
-              <div class="exact-ch-top">
-                <span class="exact-ch-num">02</span>
-                <span class="exact-meter-display" id="meter_gg">-&infin;</span>
-              </div>
-              <div class="exact-btn-row">
-                <div class="sub-ctrl-btn" id="soloBtn_gg" onclick="toggleSolo('gg')">SOLO</div>
-                <div class="sub-ctrl-btn" id="muteBtn_gg" onclick="toggleMute('gg')">MUTE</div>
-              </div>
-              <div class="lock-row">
-                <span class="lock-dot"></span> LOCK
-              </div>
-              <div class="track-name-banner">GG</div>
-
-              <div class="fader-area-wrapper" id="faderArea_gg" onmousedown="startFaderDrag(event, 'gg')">
-                <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
-                </div>
-                <div class="fader-slot-line"></div>
-                <div class="fader-thumb-visual" id="thumb_gg" style="bottom: 10px;">
-                  <div class="fader-thumb-line"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 채널 3: AG -->
-            <div class="exact-strip" id="strip_ag">
-              <div class="exact-ch-top">
-                <span class="exact-ch-num">03</span>
-                <span class="exact-meter-display" id="meter_ag">-&infin;</span>
-              </div>
-              <div class="exact-btn-row">
-                <div class="sub-ctrl-btn" id="soloBtn_ag" onclick="toggleSolo('ag')">SOLO</div>
-                <div class="sub-ctrl-btn" id="muteBtn_ag" onclick="toggleMute('ag')">MUTE</div>
-              </div>
-              <div class="lock-row">
-                <span class="lock-dot"></span> LOCK
-              </div>
-              <div class="track-name-banner">AG</div>
-
-              <div class="fader-area-wrapper" id="faderArea_ag" onmousedown="startFaderDrag(event, 'ag')">
-                <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
-                </div>
-                <div class="fader-slot-line"></div>
-                <div class="fader-thumb-visual" id="thumb_ag" style="bottom: 10px;">
-                  <div class="fader-thumb-line"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 채널 4: Bass -->
-            <div class="exact-strip" id="strip_bass">
-              <div class="exact-ch-top">
-                <span class="exact-ch-num">04</span>
-                <span class="exact-meter-display" id="meter_bass">-&infin;</span>
-              </div>
-              <div class="exact-btn-row">
-                <div class="sub-ctrl-btn" id="soloBtn_bass" onclick="toggleSolo('bass')">SOLO</div>
-                <div class="sub-ctrl-btn" id="muteBtn_bass" onclick="toggleMute('bass')">MUTE</div>
-              </div>
-              <div class="lock-row">
-                <span class="lock-dot"></span> LOCK
-              </div>
-              <div class="track-name-banner">Bass</div>
-
-              <div class="fader-area-wrapper" id="faderArea_bass" onmousedown="startFaderDrag(event, 'bass')">
-                <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
-                </div>
-                <div class="fader-slot-line"></div>
-                <div class="fader-thumb-visual" id="thumb_bass" style="bottom: 10px;">
-                  <div class="fader-thumb-line"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 채널 5: Drum -->
-            <div class="exact-strip" id="strip_drum">
-              <div class="exact-ch-top">
-                <span class="exact-ch-num">05</span>
-                <span class="exact-meter-display" id="meter_drum">-&infin;</span>
-              </div>
-              <div class="exact-btn-row">
-                <div class="sub-ctrl-btn" id="soloBtn_drum" onclick="toggleSolo('drum')">SOLO</div>
-                <div class="sub-ctrl-btn" id="muteBtn_drum" onclick="toggleMute('drum')">MUTE</div>
-              </div>
-              <div class="lock-row">
-                <span class="lock-dot"></span> LOCK
-              </div>
-              <div class="track-name-banner">Drum</div>
-
-              <div class="fader-area-wrapper" id="faderArea_drum" onmousedown="startFaderDrag(event, 'drum')">
-                <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
-                </div>
-                <div class="fader-slot-line"></div>
-                <div class="fader-thumb-visual" id="thumb_drum" style="bottom: 10px;">
-                  <div class="fader-thumb-line"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 채널 6: Elec rythm -->
-            <div class="exact-strip" id="strip_elec_rhythm">
-              <div class="exact-ch-top">
-                <span class="exact-ch-num">06</span>
-                <span class="exact-meter-display" id="meter_elec_rhythm">-&infin;</span>
-              </div>
-              <div class="exact-btn-row">
-                <div class="sub-ctrl-btn" id="soloBtn_elec_rhythm" onclick="toggleSolo('elec_rhythm')">SOLO</div>
-                <div class="sub-ctrl-btn" id="muteBtn_elec_rhythm" onclick="toggleMute('elec_rhythm')">MUTE</div>
-              </div>
-              <div class="lock-row">
-                <span class="lock-dot"></span> LOCK
-              </div>
-              <div class="track-name-banner">Elec rythm</div>
-
-              <div class="fader-area-wrapper" id="faderArea_elec_rhythm" onmousedown="startFaderDrag(event, 'elec_rhythm')">
-                <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
-                </div>
-                <div class="fader-slot-line"></div>
-                <div class="fader-thumb-visual" id="thumb_elec_rhythm" style="bottom: 10px;">
-                  <div class="fader-thumb-line"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 채널 7: Elec solo -->
-            <div class="exact-strip" id="strip_elec_solo">
-              <div class="exact-ch-top">
-                <span class="exact-ch-num">07</span>
-                <span class="exact-meter-display" id="meter_elec_solo">-&infin;</span>
-              </div>
-              <div class="exact-btn-row">
-                <div class="sub-ctrl-btn" id="soloBtn_elec_solo" onclick="toggleSolo('elec_solo')">SOLO</div>
-                <div class="sub-ctrl-btn" id="muteBtn_elec_solo" onclick="toggleMute('elec_solo')">MUTE</div>
-              </div>
-              <div class="lock-row">
-                <span class="lock-dot"></span> LOCK
-              </div>
-              <div class="track-name-banner">Elec solo</div>
-
-              <div class="fader-area-wrapper" id="faderArea_elec_solo" onmousedown="startFaderDrag(event, 'elec_solo')">
-                <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
-                </div>
-                <div class="fader-slot-line"></div>
-                <div class="fader-thumb-visual" id="thumb_elec_solo" style="bottom: 10px;">
-                  <div class="fader-thumb-line"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 채널 8: Piano -->
-            <div class="exact-strip" id="strip_piano">
-              <div class="exact-ch-top">
-                <span class="exact-ch-num">08</span>
-                <span class="exact-meter-display" id="meter_piano">-&infin;</span>
-              </div>
-              <div class="exact-btn-row">
-                <div class="sub-ctrl-btn" id="soloBtn_piano" onclick="toggleSolo('piano')">SOLO</div>
-                <div class="sub-ctrl-btn" id="muteBtn_piano" onclick="toggleMute('piano')">MUTE</div>
-              </div>
-              <div class="lock-row">
-                <span class="lock-dot"></span> LOCK
-              </div>
-              <div class="track-name-banner">Piano</div>
-
-              <div class="fader-area-wrapper" id="faderArea_piano" onmousedown="startFaderDrag(event, 'piano')">
-                <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
-                </div>
-                <div class="fader-slot-line"></div>
-                <div class="fader-thumb-visual" id="thumb_piano" style="bottom: 10px;">
-                  <div class="fader-thumb-line"></div>
-                </div>
-              </div>
-            </div>
+            <!-- 채널 2~8 생성 템플릿 (GG, AG, Bass, Drum, Elec_rhythm, Elec_solo, Piano) -->
+            <script>
+              const channels = [
+                {id: 'gg', name: 'GG'}, {id: 'ag', name: 'AG'}, {id: 'bass', name: 'Bass'},
+                {id: 'drum', name: 'Drum'}, {id: 'elec_rhythm', name: 'Elec rythm'},
+                {id: 'elec_solo', name: 'Elec solo'}, {id: 'piano', name: 'Piano'}
+              ];
+              channels.forEach((ch, idx) => {
+                let num = String(idx + 2).padStart(2, '0');
+                document.write(`
+                  <div class="exact-strip" id="strip_${ch.id}">
+                    <div class="exact-ch-top">
+                      <span class="exact-ch-num">${num}</span>
+                      <span class="exact-meter-display" id="meter_${ch.id}">-&infin;</span>
+                    </div>
+                    <div class="exact-btn-row">
+                      <div class="sub-ctrl-btn" id="soloBtn_${ch.id}" onclick="toggleSolo('${ch.id}')">SOLO</div>
+                      <div class="sub-ctrl-btn" id="muteBtn_${ch.id}" onclick="toggleMute('${ch.id}')">MUTE</div>
+                    </div>
+                    <div class="lock-row"><span class="lock-dot"></span> LOCK</div>
+                    <div class="track-name-banner">${ch.name}</div>
+                    <div class="fader-area-wrapper" id="faderArea_${ch.id}" data-channel="${ch.id}">
+                      <div class="fader-scale-labels"><span>+10</span><span>0</span><span>-20</span><span>-40</span><span>&infin;</span></div>
+                      <div class="fader-slot-line"></div>
+                      <div class="fader-thumb-visual" id="thumb_${ch.id}" style="bottom: 10px;"><div class="fader-thumb-line"></div></div>
+                    </div>
+                  </div>
+                `);
+              });
+            </script>
 
           </div>
-
-          <div class="console-leather-base">
-            <div class="leather-screw screw-left"></div>
-            <div class="leather-screw screw-right"></div>
-          </div>
+          <div class="console-leather-base"><div class="leather-screw screw-left"></div><div class="leather-screw screw-right"></div></div>
         </div>
 
         <div class="mix-bottom-buttons">
@@ -929,15 +699,19 @@
       </div>
 
     </div>
-
   </main>
 
   <script>
     function switchTab(tabId) {
+      stopPinkNoise();
+      stopAllAudioFiles();
+      stopAllMixAudio();
+
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
       if(tabId==='tab1') { document.querySelectorAll('.tab-btn')[0].classList.add('active'); document.getElementById('tab1').classList.add('active'); }
-      else if(tabId==='tab2') { document.querySelectorAll('.tab-btn')[1].classList.add('active'); document.getElementById('tab2').classList.add('active'); stopPinkNoise(); stopAllAudioFiles(); }
+      else if(tabId==='tab2') { document.querySelectorAll('.tab-btn')[1].classList.add('active'); document.getElementById('tab2').classList.add('active'); }
       else { document.querySelectorAll('.tab-btn')[2].classList.add('active'); document.getElementById('tab3').classList.add('active'); }
     }
 
@@ -975,7 +749,7 @@
         
         div.innerHTML = `
           <div class="gear-img-wrap">
-            <img src="${item.img}" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\'><rect width=\'60\' height=\'60\' fill=\'%23111\'/><text x=\'5\' y=\'30\' fill=\'red\' font-size=\'8\'>이미지없음</text><text x=\'5\' y=\'45\' fill=\'%2338bdf8\' font-size=\'6\'>${item.img}</text></svg>'">
+            <img src="${item.img}" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\'><rect width=\'60\' height=\'60\' fill=\'%23111\'/><text x=\'5\' y=\'30\' fill=\'red\' font-size=\'8\'>이미지없음</text></svg>'">
           </div>
           <div class="gear-label">${item.name}</div>
           <div class="resize-handle"></div>
@@ -988,92 +762,82 @@
         makeInteractive(div, item);
         canvas.appendChild(div);
       });
-
       drawCables();
     }
 
     function makeInteractive(elm, item) {
-      let isResizing = false;
-      let startX, startY, startW, startH, startLeft, startTop;
       const handle = elm.querySelector('.resize-handle');
-
-      handle.onmousedown = function(e) {
+      
+      handle.addEventListener('pointerdown', function(e) {
         e.stopPropagation();
-        isResizing = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        startW = elm.offsetWidth;
-        startH = elm.offsetHeight;
-        document.onmousemove = onResizeMove;
-        document.onmouseup = onResizeUp;
-      };
+        e.preventDefault();
+        let startX = e.clientX, startY = e.clientY;
+        let startW = elm.offsetWidth, startH = elm.offsetHeight;
 
-      function onResizeMove(e) {
-        if (!isResizing) return;
-        let newW = startW + (e.clientX - startX);
-        let newH = startH + (e.clientY - startY);
-        if (newW < 50) newW = 50;
-        if (newH < 50) newH = 50;
-        elm.style.width = newW + 'px';
-        elm.style.height = newH + 'px';
-        item.w = newW;
-        item.h = newH;
-        drawCables();
-      }
+        function onResizeMove(me) {
+          let newW = startW + (me.clientX - startX);
+          let newH = startH + (me.clientY - startY);
+          if (newW < 50) newW = 50;
+          if (newH < 50) newH = 50;
+          elm.style.width = newW + 'px';
+          elm.style.height = newH + 'px';
+          item.w = newW; item.h = newH;
+          drawCables();
+        }
 
-      function onResizeUp() {
-        isResizing = false;
-        document.onmousemove = null;
-        document.onmouseup = null;
-      }
+        function onResizeUp() {
+          window.removeEventListener('pointermove', onResizeMove);
+          window.removeEventListener('pointerup', onResizeUp);
+        }
+
+        window.addEventListener('pointermove', onResizeMove);
+        window.addEventListener('pointerup', onResizeUp);
+      });
 
       let hasMoved = false;
-      elm.onmousedown = function(e) {
-        if (isResizing) return;
+      elm.addEventListener('pointerdown', function(e) {
+        if (e.target === handle) return;
         e.preventDefault();
         hasMoved = false;
-        startX = e.clientX;
-        startY = e.clientY;
-        startLeft = elm.offsetLeft;
-        startTop = elm.offsetTop;
-        document.onmousemove = onDragMove;
-        document.onmouseup = onDragUp;
-      };
+        let startX = e.clientX, startY = e.clientY;
+        let startLeft = elm.offsetLeft, startTop = elm.offsetTop;
 
-      function onDragMove(e) {
-        let dx = e.clientX - startX;
-        let dy = e.clientY - startY;
-        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasMoved = true;
-        let newLeft = startLeft + dx;
-        let newTop = startTop + dy;
-        if(newTop < 0) newTop = 0;
-        if(newLeft < 0) newLeft = 0;
-        if(newTop > canvas.clientHeight - elm.offsetHeight) newTop = canvas.clientHeight - elm.offsetHeight;
-        if(newLeft > canvas.clientWidth - elm.offsetWidth) newLeft = canvas.clientWidth - elm.offsetWidth;
-        elm.style.top = newTop + "px";
-        elm.style.left = newLeft + "px";
-        item.x = newLeft;
-        item.y = newTop;
-        drawCables();
-      }
+        function onDragMove(me) {
+          let dx = me.clientX - startX, dy = me.clientY - startY;
+          if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasMoved = true;
+          let newLeft = startLeft + dx;
+          let newTop = startTop + dy;
+          if(newTop < 0) newTop = 0;
+          if(newLeft < 0) newLeft = 0;
+          if(newTop > canvas.clientHeight - elm.offsetHeight) newTop = canvas.clientHeight - elm.offsetHeight;
+          if(newLeft > canvas.clientWidth - elm.offsetWidth) newLeft = canvas.clientWidth - elm.offsetWidth;
+          elm.style.top = newTop + "px";
+          elm.style.left = newLeft + "px";
+          item.x = newLeft; item.y = newTop;
+          drawCables();
+        }
 
-      function onDragUp(e) {
-        document.onmousemove = null;
-        document.onmouseup = null;
-        if (!hasMoved) handleGearCableClick(item, elm);
-      }
+        function onDragUp() {
+          window.removeEventListener('pointermove', onDragMove);
+          window.removeEventListener('pointerup', onDragUp);
+          if (!hasMoved) handleGearCableClick(item, elm);
+        }
+
+        window.addEventListener('pointermove', onDragMove);
+        window.addEventListener('pointerup', onDragUp);
+      });
     }
 
     function handleGearCableClick(item, el) {
       if (!selectedGearForCable) {
         selectedGearForCable = item;
         el.classList.add('selected-cable');
-        document.getElementById('cableStatusText').innerText = `🔗 [${item.name}] 선택됨. 연결할 다음 장비를 클릭하세요.`;
+        document.getElementById('cableStatusText').innerText = `🔗 [${item.name}] 선택됨. 연결할 다음 장비를 선택하세요.`;
       } else {
         if (selectedGearForCable.id !== item.id) {
           connectedCables = connectedCables.filter(c => !(c.fromId === selectedGearForCable.id && c.toId === item.id));
           connectedCables.push({ fromId: selectedGearForCable.id, fromName: selectedGearForCable.name, toId: item.id, toName: item.name });
-          document.getElementById('cableStatusText').innerText = `✨ 케이블 연결 완료: ${selectedGearForCable.name} ➔ ${item.name}`;
+          document.getElementById('cableStatusText').innerText = `✨ 연결 완료: ${selectedGearForCable.name} ➔ ${item.name}`;
         }
         selectedGearForCable = null;
         initWorkspace();
@@ -1086,10 +850,8 @@
         let fromGear = gearItems.find(g => g.id === cable.fromId);
         let toGear = gearItems.find(g => g.id === cable.toId);
         if (fromGear && toGear) {
-          let x1 = fromGear.x + (fromGear.w / 2);
-          let y1 = fromGear.y + (fromGear.h / 2);
-          let x2 = toGear.x + (toGear.w / 2);
-          let y2 = toGear.y + (toGear.h / 2);
+          let x1 = fromGear.x + (fromGear.w / 2), y1 = fromGear.y + (fromGear.h / 2);
+          let x2 = toGear.x + (toGear.w / 2), y2 = toGear.y + (toGear.h / 2);
           let line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
           line.setAttribute('x1', x1); line.setAttribute('y1', y1);
           line.setAttribute('x2', x2); line.setAttribute('y2', y2);
@@ -1108,7 +870,7 @@
     function resetCables() {
       connectedCables = [];
       selectedGearForCable = null;
-      document.getElementById('cableStatusText').innerText = "🔌 케이블 초기화됨. 첫 번째 장비를 클릭하세요.";
+      document.getElementById('cableStatusText').innerText = "🔌 케이블 초기화됨. 첫 번째 장비를 선택하세요.";
       initWorkspace();
     }
 
@@ -1116,6 +878,7 @@
       alert(`배치 및 케이블링 검증 완료! 총 ${connectedCables.length}개의 오디오 케이블 패치가 정상 확인되었습니다.`);
     }
 
+    // Audio & Fader logic
     let audioCtx = null;
     let pinkNoiseNode = null;
     let gainNode = null;
@@ -1153,8 +916,7 @@
 
     function updateGainValue() {
       if (!gainNode) return;
-      let currentTotalSpl = baseSpl + diffSpl;
-      let dbDiffFromBase = currentTotalSpl - 60; 
+      let dbDiffFromBase = (baseSpl + diffSpl) - 60; 
       let gainVal = Math.pow(10, dbDiffFromBase / 20) / 120; 
       if (gainVal < 0.00001) gainVal = 0.00001;
       if (gainVal > 0.4) gainVal = 0.4;
@@ -1196,20 +958,15 @@
         btn.innerText = "🔇 핑크 노이즈 정지";
         btn.style.background = "var(--accent-red)";
       } else {
-        isPlaying = false;
-        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-        btn.innerText = "🔊 핑크 노이즈 재생 시작";
-        btn.style.background = "var(--primary)";
+        stopPinkNoise();
       }
     }
 
     function stopPinkNoise() {
-      if (isPlaying && audioCtx) {
-        isPlaying = false;
-        if(gainNode) gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-        const btn = document.getElementById('audioToggleBtn');
-        if(btn) { btn.innerText = "🔊 핑크 노이즈 재생 시작"; btn.style.background = "var(--primary)"; }
-      }
+      isPlaying = false;
+      if(gainNode && audioCtx) gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+      const btn = document.getElementById('audioToggleBtn');
+      if(btn) { btn.innerText = "🔊 핑크 노이즈 재생 시작"; btn.style.background = "var(--primary)"; }
     }
 
     let currentAudio = null;
@@ -1223,7 +980,7 @@
       if (btn) btn.classList.add('playing');
 
       currentAudio.play().catch(err => {
-        alert(`오디오 파일(${filename})을 재생할 수 없습니다. 폴더 경로를 확인해주세요.\n(오류: ${err.message})`);
+        alert(`오디오 파일(${filename}) 재생 오류: ${err.message}`);
         if (btn) btn.classList.remove('playing');
       });
 
@@ -1247,67 +1004,50 @@
     }
 
     const trackKeys = ['sample', 'gg', 'ag', 'bass', 'drum', 'elec_rhythm', 'elec_solo', 'piano'];
-    let faderValues = {
-      sample: 0.0,   // 0dB 고정
-      gg: -60,
-      ag: -60,
-      bass: -60,
-      drum: -60,
-      elec_rhythm: -60,
-      elec_solo: -60,
-      piano: -60
-    };
-
+    let faderValues = { sample: 0.0, gg: -60, ag: -60, bass: -60, drum: -60, elec_rhythm: -60, elec_solo: -60, piano: -60 };
     let trackMutes = { sample: false, gg: false, ag: false, bass: false, drum: false, elec_rhythm: false, elec_solo: false, piano: false };
     let activeSolo = null;
     let mixMode = 'original';
     let multiAudioElements = {};
 
-    function startFaderDrag(e, channel) {
-      e.preventDefault();
-      const wrapper = document.getElementById('faderArea_' + channel);
-      const rect = wrapper.getBoundingClientRect();
-      const slotHeight = 175;
-      const minVal = -60;
-      const maxVal = 10;
+    // 페이더 터치/마우스 이벤트 연결
+    document.querySelectorAll('.fader-area-wrapper[data-channel]').forEach(wrapper => {
+      let ch = wrapper.getAttribute('data-channel');
+      wrapper.addEventListener('pointerdown', function(e) {
+        e.preventDefault();
+        const rect = wrapper.getBoundingClientRect();
+        const slotHeight = 175;
 
-      function updateFaderFromMouse(clientY) {
-        let offsetY = clientY - (rect.top + 10);
-        if (offsetY < 0) offsetY = 0;
-        if (offsetY > slotHeight) offsetY = slotHeight;
+        function updateFader(clientY) {
+          let offsetY = clientY - (rect.top + 10);
+          if (offsetY < 0) offsetY = 0;
+          if (offsetY > slotHeight) offsetY = slotHeight;
+          let ratio = 1 - (offsetY / slotHeight);
+          let val = -60 + ratio * (10 - (-60));
+          val = Math.round(val * 10) / 10;
+          if(val < -55) val = -60;
+          
+          faderValues[ch] = val;
+          renderFaderPosition(ch, val);
+          applyMixVolumes();
+        }
 
-        let ratio = 1 - (offsetY / slotHeight);
-        let val = minVal + ratio * (maxVal - minVal);
-        val = Math.round(val * 10) / 10;
-        if(val < -55) val = -60;
-        
-        faderValues[channel] = val;
-        renderFaderPosition(channel, val);
-        applyMixVolumes();
-      }
+        updateFader(e.clientY);
 
-      updateFaderFromMouse(e.clientY);
+        function onPointerMove(me) { updateFader(me.clientY); }
+        function onPointerUp() {
+          window.removeEventListener('pointermove', onPointerMove);
+          window.removeEventListener('pointerup', onPointerUp);
+        }
 
-      function onMouseMove(moveEvent) {
-        updateFaderFromMouse(moveEvent.clientY);
-      }
-
-      function onMouseUp() {
-        window.removeEventListener('mousemove', onMouseMove);
-        window.removeEventListener('mouseup', onMouseUp);
-      }
-
-      window.addEventListener('mousemove', onMouseMove);
-      window.addEventListener('mouseup', onMouseUp);
-    }
+        window.addEventListener('pointermove', onPointerMove);
+        window.addEventListener('pointerup', onPointerUp);
+      });
+    });
 
     function renderFaderPosition(channel, val) {
-      const minVal = -60;
-      const maxVal = 10;
-      let ratio = (val - minVal) / (maxVal - minVal);
-      let minPx = 10;
-      let maxPx = 170;
-      let currentPx = minPx + ratio * (maxPx - minPx);
+      let ratio = (val - (-60)) / (10 - (-60));
+      let currentPx = 10 + ratio * 160;
 
       if(channel === 'sample') {
         document.getElementById('thumbSample').style.bottom = currentPx + 'px';
@@ -1321,25 +1061,18 @@
     function toggleMute(ch) {
       trackMutes[ch] = !trackMutes[ch];
       const btn = document.getElementById(ch === 'sample' ? 'muteBtn_sample' : 'muteBtn_' + ch);
-      if(trackMutes[ch]) {
-        btn.classList.add('active-mute');
-      } else {
-        btn.classList.remove('active-mute');
-      }
+      if(trackMutes[ch]) btn.classList.add('active-mute');
+      else btn.classList.remove('active-mute');
       applyMixVolumes();
     }
 
     function toggleSolo(ch) {
       if(activeSolo === ch) {
         activeSolo = null;
-        document.querySelectorAll('.sub-ctrl-btn[id^="soloBtn_"], #strip_sample .sub-ctrl-btn').forEach(b => {
-          if(b.innerText === 'SOLO') b.classList.remove('active-solo');
-        });
+        document.querySelectorAll('.sub-ctrl-btn').forEach(b => { if(b.innerText === 'SOLO') b.classList.remove('active-solo'); });
       } else {
         activeSolo = ch;
-        document.querySelectorAll('.sub-ctrl-btn[id^="soloBtn_"], #strip_sample .sub-ctrl-btn').forEach(b => {
-          if(b.innerText === 'SOLO') b.classList.remove('active-solo');
-        });
+        document.querySelectorAll('.sub-ctrl-btn').forEach(b => { if(b.innerText === 'SOLO') b.classList.remove('active-solo'); });
         event.target.classList.add('active-solo');
       }
       applyMixVolumes();
@@ -1349,7 +1082,6 @@
       mixMode = mode;
       document.getElementById('modeOriginal').classList.remove('active');
       document.getElementById('modeMyMix').classList.remove('active');
-      
       stopAllMixAudio();
 
       if(mode === 'original') {
@@ -1366,26 +1098,17 @@
       currentAudio.loop = true;
       let db = faderValues['sample'];
       currentAudio.volume = db <= -55 ? 0 : Math.min(1, Math.pow(10, db / 20));
-      currentAudio.play().catch(e => console.log("All.mp3 재생 대기 중"));
+      currentAudio.play().catch(e => console.log("All.mp3 대기중"));
     }
 
     function playMultiTracks() {
-      const fileMap = {
-        gg: 'GG.mp3',
-        ag: 'AG.mp3',
-        bass: 'Bass.mp3',
-        drum: 'Drum.mp3',
-        elec_rhythm: 'Elec_rhythm.mp3',
-        elec_solo: 'Elec_solo.mp3',
-        piano: 'Piano.mp3'
-      };
-
+      const fileMap = { gg: 'GG.mp3', ag: 'AG.mp3', bass: 'Bass.mp3', drum: 'Drum.mp3', elec_rhythm: 'Elec_rhythm.mp3', elec_solo: 'Elec_solo.mp3', piano: 'Piano.mp3' };
       trackKeys.forEach(ch => {
         if(ch === 'sample') return;
         let audio = new Audio(fileMap[ch]);
         audio.loop = true;
         multiAudioElements[ch] = audio;
-        audio.play().catch(e => console.log(`${fileMap[ch]} 재생 대기 중`));
+        audio.play().catch(e => console.log(`${fileMap[ch]} 대기중`));
       });
       applyMixVolumes();
     }
@@ -1393,10 +1116,7 @@
     function stopAllMixAudio() {
       if(currentAudio) { currentAudio.pause(); currentAudio = null; }
       Object.keys(multiAudioElements).forEach(ch => {
-        if(multiAudioElements[ch]) {
-          multiAudioElements[ch].pause();
-          multiAudioElements[ch] = null;
-        }
+        if(multiAudioElements[ch]) { multiAudioElements[ch].pause(); multiAudioElements[ch] = null; }
       });
     }
 
@@ -1418,18 +1138,13 @@
         if(activeSolo && activeSolo !== ch) isMuted = true;
         if(trackMutes[activeSolo]) isMuted = true;
 
-        if(isMuted) {
-          audio.volume = 0;
-          return;
-        }
+        if(isMuted) { audio.volume = 0; return; }
 
         let db = faderValues[ch];
-        if(db <= -55) {
-          audio.volume = 0;
-        } else {
+        if(db <= -55) audio.volume = 0;
+        else {
           let vol = Math.pow(10, db / 20);
-          if(vol > 1) vol = 1;
-          audio.volume = vol;
+          audio.volume = vol > 1 ? 1 : vol;
         }
       });
     }
@@ -1444,31 +1159,19 @@
     }
 
     function checkMixBalance() {
-      let totalScore = 100;
-      let penalty = 0;
+      let totalScore = 100, penalty = 0;
       const idealValues = { gg: -3.0, ag: -5.0, bass: -1.5, drum: 0.0, elec_rhythm: -4.0, elec_solo: -2.0, piano: -3.5 };
-
       trackKeys.forEach(ch => {
         if(ch === 'sample') return;
-        let diff = Math.abs(faderValues[ch] - idealValues[ch]);
-        penalty += diff * 1.5;
+        penalty += Math.abs(faderValues[ch] - idealValues[ch]) * 1.5;
       });
-
       let finalScore = Math.max(0, Math.round(totalScore - penalty));
-      
-      let message = `🎯 믹스 밸런스 채점 결과: ${finalScore}점 / 100점\n\n`;
-      if(finalScore >= 90) message += "🏆 완벽합니다! 원본 Sample(All)과 구별할 수 없는 훌륭한 밸런스입니다.";
-      else if(finalScore >= 70) message += "👍 아주 좋습니다! 조금만 더 세밀하게 악기별 볼륨을 조절해보세요.";
-      else message += "💪 분발하세요! 각 악기(GG, Bass, Drum 등)의 페이더 위치를 다시 조정해보세요.";
-
-      alert(message);
+      alert(`🎯 믹스 밸런스 채점 결과: ${finalScore}점 / 100점\n\n` + (finalScore >= 90 ? "🏆 완벽합니다!" : finalScore >= 70 ? "👍 아주 좋습니다!" : "💪 분발하세요!"));
     }
 
     initWorkspace();
     renderFaderPosition('sample', 0.0);
-    trackKeys.forEach(ch => {
-      if(ch !== 'sample') renderFaderPosition(ch, -60);
-    });
+    trackKeys.forEach(ch => { if(ch !== 'sample') renderFaderPosition(ch, -60); });
   </script>
 </body>
 </html>
