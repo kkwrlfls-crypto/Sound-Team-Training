@@ -6,45 +6,47 @@
     <title>교회 방송실 트레이닝 & 3층 음향 시스템</title>
     <style>
         * { box-sizing: border-box; touch-action: manipulation; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1a1a1a; color: #f0f0f0; margin: 0; padding: 15px; }
-        h1, h2 { text-align: center; color: #fff; margin-bottom: 10px; }
-        .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab-btn { background: #333; color: #fff; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; transition: background 0.3s; }
-        .tab-btn.active { background: #007bff; font-weight: bold; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #e0e0e0; margin: 0; padding: 10px; }
+        h1, h2 { text-align: center; color: #fff; margin-bottom: 10px; font-size: 20px; }
+        
+        .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .tab-btn { background: #2a2a2a; color: #ccc; border: 1px solid #444; padding: 8px 16px; font-size: 14px; cursor: pointer; border-radius: 4px; transition: all 0.2s; }
+        .tab-btn.active { background: #007bff; color: white; border-color: #007bff; font-weight: bold; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* 믹서 및 페이더 스타일 (크기 확대 및 부드러운 조작감 반영) */
-        .mixer-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; justify-content: center; }
-        .channel-strip { background: #2a2a2a; border: 1px solid #444; border-radius: 8px; padding: 12px; width: 120px; display: flex; flex-direction: column; align-items: center; gap: 10px; flex-shrink: 0; }
-        .channel-strip.sample-channel { border-color: #ffc107; background: #2f2a1a; }
+        /* 멀티트랙 믹서 스타일 (넉넉한 페이더 크기 및 기존 UI 감성 유지) */
+        .mixer-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; justify-content: flex-start; }
+        @media (min-width: 768px) { .mixer-container { justify-content: center; } }
         
-        /* 페이더 높이와 트랙을 넉넉하게 키워 정밀 조작 가능 */
+        .channel-strip { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; padding: 10px; width: 110px; display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; }
+        .channel-strip.sample-channel { border-color: #ffc107; background: #252216; }
+        
         .fader-container { height: 260px; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; cursor: pointer; }
-        .fader-track { width: 12px; height: 100%; background: #444; border-radius: 6px; position: absolute; }
-        .fader-thumb { width: 50px; height: 32px; background: #007bff; border-radius: 6px; position: absolute; left: calc(50% - 25px); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: white; user-select: none; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .fader-track { width: 8px; height: 100%; background: #333; border-radius: 4px; position: absolute; }
+        .fader-thumb { width: 50px; height: 32px; background: #007bff; border-radius: 6px; position: absolute; left: calc(50% - 25px); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: white; user-select: none; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
         .sample-channel .fader-thumb { background: #ffc107; color: #000; cursor: not-allowed; }
         
-        button { background: #444; color: white; border: none; padding: 8px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; width: 100%; }
-        button:active { background: #555; }
-        button.active-mute { background: #dc3545 !important; }
-        button.active-solo { background: #ffc107 !important; color: #000 !important; }
+        button { background: #333; color: white; border: 1px solid #444; padding: 6px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; width: 100%; transition: background 0.2s; }
+        button:active { background: #444; }
+        button.active-mute { background: #dc3545 !important; border-color: #bd2130 !important; }
+        button.active-solo { background: #ffc107 !important; border-color: #d39e00 !important; color: #000 !important; font-weight: bold; }
 
         /* 귀 트레이닝 스타일 */
-        .ear-training-container { max-width: 600px; margin: 0 auto; background: #2a2a2a; padding: 20px; border-radius: 8px; text-align: center; }
-        .ear-btn-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
-        .ear-btn { padding: 12px; font-size: 14px; background: #007bff; border-radius: 5px; font-weight: bold; }
+        .ear-training-container { max-width: 600px; margin: 0 auto; background: #1e1e1e; padding: 15px; border-radius: 6px; text-align: center; border: 1px solid #333; }
+        .ear-btn-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 12px; }
+        .ear-btn { padding: 10px; font-size: 13px; background: #007bff; border: none; border-radius: 4px; font-weight: bold; }
 
         /* 3층 음향 시스템 배치도 스타일 */
-        #workspace { width: 100%; max-width: 900px; height: 750px; background: #0d1b2a; border: 2px solid #415a77; border-radius: 10px; position: relative; margin: 0 auto; overflow: hidden; }
+        #workspace { width: 100%; max-width: 900px; height: 700px; background: #0d1b2a; border: 2px solid #415a77; border-radius: 8px; position: relative; margin: 0 auto; overflow: hidden; }
         .gear-card { position: absolute; width: 90px; height: 116px; background: #1b263b; border: 2px solid #778da9; border-radius: 6px; cursor: grab; display: flex; flex-direction: column; align-items: center; padding: 4px; user-select: none; touch-action: none; }
         .gear-card:active { cursor: grabbing; }
-        .gear-card img { width: 100%; height: 75px; object-fit: contain; background: #000; border-radius: 4px; pointer-events: none; }
-        .gear-card span { font-size: 11px; margin-top: 4px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .gear-card img { width: 100%; height: 72px; object-fit: contain; background: #000; border-radius: 3px; pointer-events: none; }
+        .gear-card span { font-size: 11px; margin-top: 3px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .resize-handle { position: absolute; right: 2px; bottom: 2px; width: 12px; height: 12px; background: #007bff; border-radius: 2px; cursor: se-resize; }
 
-        .control-panel { text-align: center; margin-top: 15px; margin-bottom: 15px; }
-        .score-box { background: #222; padding: 15px; border-radius: 8px; margin-top: 15px; max-width: 600px; margin-left: auto; margin-right: auto; text-align: center; }
+        .control-panel { text-align: center; margin-bottom: 12px; }
+        .score-box { background: #1e1e1e; padding: 12px; border-radius: 6px; margin-top: 12px; max-width: 600px; margin-left: auto; margin-right: auto; text-align: center; border: 1px solid #333; }
     </style>
 </head>
 <body>
@@ -53,21 +55,21 @@
 
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('mixer')">멀티트랙 믹서 & 밸런스</button>
-        <button class="tab-btn" onclick="switchTab('ear')">귀 트레이닝 (Ear Training)</button>
-        <button class="tab-btn" onclick="switchTab('system')">3층 음향 시스템 배치</button>
+        <button class="tab-btn" onclick="switchTab('ear')">귀 트레이닝</button>
+        <button class="tab-btn" onclick="switchTab('system')">3층 음향 시스템</button>
     </div>
 
-    <!-- 탭 1: 멀티트랙 믹서 (샘플 0dB 고정 및 확대된 스무스 페이더) -->
+    <!-- 탭 1: 멀티트랙 믹서 -->
     <div id="mixer" class="tab-content active">
         <h2>멀티트랙 믹서 실습 (Sample: 0dB 고정)</h2>
         <div class="control-panel">
-            <button onclick="togglePlayAll()" id="playAllBtn" style="background: #28a745; font-size: 16px; padding: 10px 20px; width: auto;">전체 재생 / 정지</button>
+            <button onclick="togglePlayAll()" id="playAllBtn" style="background: #28a745; border-color: #218838; font-size: 15px; padding: 8px 18px; width: auto;">전체 재생 / 정지</button>
         </div>
         <div class="mixer-container" id="mixerContainer"></div>
         <div class="score-box">
-            <h3>밸런스 트레이닝 채점</h3>
-            <p id="scoreText">전체 재생 버튼을 누르고 밸런스를 맞춰보세요.</p>
-            <button onclick="checkBalance()" style="background: #17a2b8; width: auto; padding: 8px 16px;">결과 채점하기</button>
+            <h3 style="margin: 0 0 8px 0; font-size: 15px;">밸런스 트레이닝 채점</h3>
+            <p id="scoreText" style="margin: 0 0 10px 0; font-size: 13px; color: #aaa;">전체 재생 버튼을 누르고 밸런스를 맞춰보세요.</p>
+            <button onclick="checkBalance()" style="background: #17a2b8; border-color: #117a8b; width: auto; padding: 6px 14px;">결과 채점하기</button>
         </div>
     </div>
 
@@ -75,9 +77,9 @@
     <div id="ear" class="tab-content">
         <h2>귀 트레이닝 (주파수 대역별 청취 훈련)</h2>
         <div class="ear-training-container">
-            <p>버튼을 눌러 원본 소스와 주파수 변형된 상태를 비교해보세요.</p>
+            <p style="margin-top: 0; font-size: 13px;">버튼을 눌러 원본 소스와 주파수 변형된 상태를 비교해보세요.</p>
             <div class="ear-btn-group" id="earBtnGroup"></div>
-            <button onclick="stopAllEarAudio()" style="background: #dc3545; margin-top: 20px; padding: 10px; width: auto;">모든 음원 정지</button>
+            <button onclick="stopAllEarAudio()" style="background: #dc3545; border-color: #bd2130; margin-top: 15px; padding: 8px; width: auto;">모든 음원 정지</button>
         </div>
     </div>
 
@@ -85,14 +87,13 @@
     <div id="system" class="tab-content">
         <h2>3층 음향 시스템 배치 및 케이블링</h2>
         <div class="control-panel">
-            <button onclick="resetSystem()" style="width: auto;">배치 초기화</button>
-            <button onclick="verifySystem()" style="background: #007bff; width: auto; margin-left: 10px;">시스템 배치 검증하기</button>
+            <button onclick="resetSystem()" style="width: auto; display: inline-block;">배치 초기화</button>
+            <button onclick="verifySystem()" style="background: #007bff; border-color: #0062cc; width: auto; display: inline-block; margin-left: 8px;">시스템 배치 검증하기</button>
         </div>
         <div id="workspace"></div>
     </div>
 
     <script>
-        // --- 탭 전환 함수 ---
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -100,7 +101,6 @@
             event.currentTarget.classList.add('active');
         }
 
-        // --- 1. 멀티트랙 믹서 데이터 (샘플 0dB 고정) ---
         const channels = [
             { id: 'sample', name: 'Sample (0dB)', file: 'All.mp3', target: 100, isSample: true, vol: 100 },
             { id: 'gg', name: 'G.G', file: 'GG.mp3', target: 50, vol: 50 },
@@ -122,13 +122,14 @@
             channels.forEach(ch => {
                 const audio = new Audio(ch.file);
                 audio.loop = true;
+                audio.preload = 'auto';
                 audio.volume = ch.isSample ? 1.0 : ch.vol / 100;
                 audioElements[ch.id] = audio;
 
                 const strip = document.createElement('div');
                 strip.className = `channel-strip ${ch.isSample ? 'sample-channel' : ''}`;
                 strip.innerHTML = `
-                    <div style="font-weight:bold; font-size:12px; text-align:center;">${ch.name}</div>
+                    <div style="font-weight:bold; font-size:11px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">${ch.name}</div>
                     <div class="fader-container" id="fader-${ch.id}">
                         <div class="fader-track"></div>
                         <div class="fader-thumb" id="thumb-${ch.id}">${ch.vol}</div>
@@ -138,16 +139,10 @@
                 `;
                 container.appendChild(strip);
 
-                if (!ch.isSample) {
-                    setupFader(ch.id);
-                } else {
-                    const thumb = document.getElementById(`thumb-${ch.id}`);
-                    thumb.style.top = `0px`;
-                }
+                setupFader(ch.id);
             });
         }
 
-        // 부드럽고 정밀한 터치/마우스 드래그 조작 구현
         function setupFader(id) {
             const faderContainer = document.getElementById(`fader-${id}`);
             const thumb = document.getElementById(`thumb-${id}`);
@@ -155,6 +150,7 @@
             let isDragging = false;
 
             function updatePosition(clientY) {
+                if (ch.isSample) return;
                 const rect = faderContainer.getBoundingClientRect();
                 let y = clientY - rect.top;
                 let height = rect.height - thumb.offsetHeight;
@@ -168,43 +164,55 @@
                 thumb.style.top = `${pos}px`;
                 thumb.innerText = percentage;
 
-                if(audioElements[id]) {
+                if (audioElements[id]) {
                     audioElements[id].volume = percentage / 100;
                 }
             }
 
+            // 초기 위치 설정
             const height = faderContainer.clientHeight - thumb.offsetHeight;
             let initialPos = height * (1 - (ch.vol / 100));
             thumb.style.top = `${initialPos}px`;
 
-            thumb.addEventListener('mousedown', (e) => { isDragging = true; e.preventDefault(); });
-            window.addEventListener('mousemove', (e) => { if (isDragging) updatePosition(e.clientY); });
-            window.addEventListener('mouseup', () => { isDragging = false; });
+            if (!ch.isSample) {
+                thumb.addEventListener('mousedown', (e) => { isDragging = true; e.preventDefault(); });
+                window.addEventListener('mousemove', (e) => { if (isDragging) updatePosition(e.clientY); });
+                window.addEventListener('mouseup', () => { isDragging = false; });
 
-            thumb.addEventListener('touchstart', (e) => { isDragging = true; e.preventDefault(); }, { passive: false });
-            window.addEventListener('touchmove', (e) => { 
-                if (isDragging && e.touches.length > 0) {
-                    updatePosition(e.touches[0].clientY);
-                } 
-            }, { passive: false });
-            window.addEventListener('touchend', () => { isDragging = false; });
-            
-            faderContainer.addEventListener('click', (e) => {
-                updatePosition(e.clientY);
-            });
+                thumb.addEventListener('touchstart', (e) => { isDragging = true; e.preventDefault(); }, { passive: false });
+                window.addEventListener('touchmove', (e) => { 
+                    if (isDragging && e.touches.length > 0) {
+                        updatePosition(e.touches[0].clientY);
+                    } 
+                }, { passive: false });
+                window.addEventListener('touchend', () => { isDragging = false; });
+                
+                faderContainer.addEventListener('click', (e) => {
+                    updatePosition(e.clientY);
+                });
+            }
         }
 
         function togglePlayAll() {
             isMasterPlaying = !isMasterPlaying;
             const btn = document.getElementById('playAllBtn');
             if (isMasterPlaying) {
-                Object.values(audioElements).forEach(audio => audio.play().catch(e => console.log(e)));
+                // 모바일 브라우저 정책 및 동시 재생 안정화 처리
+                Object.values(audioElements).forEach(audio => {
+                    audio.currentTime = 0;
+                    audio.play().catch(e => console.log("Play error:", e));
+                });
                 btn.innerText = "전체 정지";
                 btn.style.background = "#dc3545";
+                btn.style.borderColor = "#bd2130";
             } else {
-                Object.values(audioElements).forEach(audio => { audio.pause(); audio.currentTime = 0; });
+                Object.values(audioElements).forEach(audio => { 
+                    audio.pause(); 
+                    audio.currentTime = 0; 
+                });
                 btn.innerText = "전체 재생 / 정지";
                 btn.style.background = "#28a745";
+                btn.style.borderColor = "#218838";
             }
         }
 
@@ -242,8 +250,6 @@
             document.getElementById('scoreText').innerText = `현재 밸런스 점수: ${score}점 (목표 값과의 오차에 따라 산정되었습니다.)`;
         }
 
-
-        // --- 2. 귀 트레이닝 데이터 (1~7.mp3) ---
         const earSamples = [
             { id: 1, name: '원본', file: '1.mp3' },
             { id: 2, name: '1. 저음이 강할때', file: '2.mp3' },
@@ -259,7 +265,6 @@
         function initEarTraining() {
             const group = document.getElementById('earBtnGroup');
             group.innerHTML = '';
-
             earSamples.forEach(sample => {
                 const btn = document.createElement('button');
                 btn.className = 'ear-btn';
@@ -285,8 +290,6 @@
             }
         }
 
-
-        // --- 3. 3층 음향 시스템 배치 데이터 ---
         const gearItems = [
             { id: 'vi10p_L', name: '메인 L', img: 'vi10p.jpg', x: 40, y: 180, w: 90, h: 116 },
             { id: 'vi10p_R', name: '메인 R', img: 'vi10p.jpg', x: 800, y: 180, w: 90, h: 116 },
@@ -306,7 +309,6 @@
         function initSystemWorkspace() {
             const workspace = document.getElementById('workspace');
             workspace.innerHTML = '';
-
             gearItems.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'gear-card';
@@ -355,7 +357,6 @@
             function dragMove(e) {
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
                 let dx = clientX - startX;
                 let dy = clientY - startY;
 
@@ -397,7 +398,6 @@
             function resizeMove(e) {
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
                 let dw = clientX - startX;
                 let dh = clientY - startY;
 
