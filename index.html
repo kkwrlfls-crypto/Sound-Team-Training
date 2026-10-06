@@ -817,6 +817,388 @@
       resize: vertical;
       color: var(--text-main);
     }
+
+    /* ===== MG12XU 콘솔 구축 게임 (탭1) ===== */
+    .mg12xu-game-card { background: #ffffff; }
+    .mg12xu-step { margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--border-color); }
+    .mg12xu-step:first-of-type { margin-top: 16px; }
+    .mg12xu-step-title { font-size: 0.85rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
+    .mg12xu-step-desc { font-size: 0.78rem; color: var(--text-sub); margin-bottom: 10px; line-height: 1.4; }
+    .mg12xu-item {
+      padding: 9px 10px;
+      min-height: 38px;
+      background: #e2e8f0;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.78rem;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+    }
+    .mg12xu-item.selected {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: #1d4ed8;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    }
+    .mg12xu-item.assigned { background: #ecfdf5; border-color: var(--accent-green); color: #065f46; }
+    .mg12xu-item.filled { background: #1e293b; color: #ffffff; }
+
+    /* ----- 1단계: 무대 → 콘솔 시각화 ----- */
+    .mg12xu-stage-scroll { overflow-x: auto; border-radius: 14px; }
+    .mg12xu-stage-wrap {
+      position: relative;
+      width: 1055px;
+      background: linear-gradient(#eef2f7, #e2e8f0);
+      border: 2px dashed var(--border-color);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .mg12xu-connect-svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .mg12xu-stage { position: relative; height: 190px; }
+    .mg12xu-source-item {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      width: 78px;
+      cursor: pointer;
+      z-index: 3;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .mg12xu-source-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.15s;
+    }
+    .mg12xu-source-item.selected .mg12xu-source-icon {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+    }
+    .mg12xu-source-item.assigned .mg12xu-source-icon { border-color: var(--accent-green); background: #ecfdf5; }
+    .mg12xu-source-label {
+      font-size: 0.66rem;
+      font-weight: 700;
+      color: var(--text-main);
+      text-align: center;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 1px 4px;
+      border-radius: 4px;
+      line-height: 1.2;
+    }
+    .mg12xu-source-ch-tag {
+      font-size: 0.62rem;
+      font-weight: 800;
+      color: #065f46;
+      background: #d1fae5;
+      padding: 1px 6px;
+      border-radius: 8px;
+    }
+    /* ----- 실제 콘솔 사진 기반 인터랙티브 레이어 ----- */
+    .mg12xu-console-scroll {
+      border-radius: 10px;
+      margin-top: 14px;
+    }
+    .mg12xu-realconsole-wrap {
+      position: relative;
+      width: 1055px;
+      max-width: 100%;
+      margin: 0 auto;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      user-select: none;
+      touch-action: none;
+    }
+    .mg12xu-realconsole-img {
+      display: block;
+      width: 100%;
+      height: auto;
+      pointer-events: none;
+    }
+    #mg12xuChannelTags, #mg12xuHotspotLayer, #mg12xuKnobLayer, #mg12xuFaderLayer, #mg12xuReadoutLayer, #mg12xuOnLayer, #mg12xuMuteLayer {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    #mg12xuHotspotLayer { z-index: 4; }
+    #mg12xuKnobLayer { z-index: 5; }
+    #mg12xuFaderLayer { z-index: 5; }
+    #mg12xuOnLayer { z-index: 6; }
+    #mg12xuMuteLayer { z-index: 7; }
+    #mg12xuChannelTags { z-index: 8; }
+    #mg12xuReadoutLayer { z-index: 9; }
+
+    .mg12xu-on-hotspot {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 6%;
+      height: 3.3%;
+      border-radius: 6px;
+      border: 2px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: all 0.15s;
+    }
+    .mg12xu-on-hotspot:hover { border-color: rgba(250, 204, 21, 0.7); }
+    .mg12xu-mute-col {
+      position: absolute;
+      top: 3.8%;
+      bottom: 0.5%;
+      transform: translateX(-50%);
+      width: 10.8%;
+      background: rgba(10, 12, 18, 0.72);
+      filter: grayscale(1);
+      border-radius: 4px;
+      display: none;
+    }
+    .mg12xu-mute-col.active { display: block; }
+    .mg12xu-mute-tag {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #dc2626;
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 3px 7px;
+      border-radius: 6px;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+
+    .mg12xu-hotspot {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 9.5%;
+      height: 3.6%;
+      border-radius: 6px;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      background: rgba(59, 130, 246, 0.0);
+      cursor: pointer;
+      transition: all 0.15s;
+      pointer-events: auto;
+    }
+    .mg12xu-hotspot:hover { background: rgba(59, 130, 246, 0.25); border-color: #93c5fd; }
+    .mg12xu-hotspot.selectable { background: rgba(250, 204, 21, 0.3); border-color: #facc15; animation: mg12xuPulse 1s infinite; }
+    .mg12xu-hotspot.filled { background: rgba(16, 185, 129, 0.25); border-color: var(--accent-green); animation: none; }
+    @keyframes mg12xuPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.5); }
+      50% { box-shadow: 0 0 0 6px rgba(250, 204, 21, 0); }
+    }
+    .mg12xu-channel-tag {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      background: #065f46;
+      color: #ffffff;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 8px;
+      white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .mg12xu-knob {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 7.2%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      cursor: grab;
+      touch-action: none;
+      box-shadow: 0 0 0 0 transparent;
+      pointer-events: auto;
+    }
+    .mg12xu-knob img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+      transform-origin: center center;
+    }
+    .mg12xu-knob.active { cursor: grabbing; }
+    .mg12xu-knob.active img { filter: drop-shadow(0 0 0 2px #3b82f6) drop-shadow(0 0 4px rgba(59,130,246,0.8)); }
+    .mg12xu-fader-hit {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 7.5%;
+      height: 30%;
+      cursor: pointer;
+      touch-action: none;
+      pointer-events: auto;
+    }
+    .mg12xu-fader-cap {
+      position: absolute;
+      left: 50%;
+      width: 5.7%;
+      height: 7%;
+      transform: translate(-50%, -50%);
+      cursor: grab;
+      pointer-events: none;
+    }
+    .mg12xu-fader-cap img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+    }
+    .mg12xu-fader-hit.active .mg12xu-fader-cap img { filter: drop-shadow(0 0 0 2px #3b82f6) drop-shadow(0 2px 4px rgba(0,0,0,0.6)); }
+    .mg12xu-readout {
+      position: absolute;
+      transform: translate(-50%, -120%);
+      background: rgba(15, 23, 42, 0.92);
+      color: #4ade80;
+      font-size: 0.68rem;
+      font-weight: 800;
+      font-family: 'SF Mono', Consolas, monospace;
+      padding: 3px 7px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .mg12xu-chain-order-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      min-height: 34px;
+      margin-bottom: 10px;
+    }
+    .mg12xu-order-chip {
+      background: #1e293b;
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .mg12xu-chain-area { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* ===== 10주 커리큘럼 탭 ===== */
+    .curriculum-progress-wrap { margin-bottom: 18px; }
+    .curriculum-progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .curriculum-progress-bar-fill {
+      height: 100%;
+      background: var(--accent-green);
+      border-radius: 6px;
+      transition: width 0.3s ease;
+    }
+    .curriculum-progress-text {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      margin-top: 6px;
+      font-weight: 700;
+    }
+
+    .phase-divider {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--text-sub);
+      margin: 18px 0 8px;
+      padding-bottom: 4px;
+      border-bottom: 2px solid var(--border-color);
+    }
+    .phase-divider.first { margin-top: 0; }
+
+    .week-card {
+      display: flex;
+      gap: 12px;
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      align-items: flex-start;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .week-card.done { background: #ecfdf5; border-color: var(--accent-green); }
+    .week-card.accent-cyan { border-left: 4px solid var(--accent-cyan); }
+    .week-card.accent-blue { border-left: 4px solid var(--primary); }
+    .week-card.accent-yellow { border-left: 4px solid var(--accent-yellow); }
+    .week-card.accent-green { border-left: 4px solid var(--accent-green); }
+    .week-check {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      cursor: pointer;
+      accent-color: var(--accent-green);
+    }
+    .week-body { flex: 1; min-width: 0; }
+    .week-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+    .week-title { font-weight: 800; font-size: 0.95rem; color: var(--text-main); }
+    .week-goal { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 6px; line-height: 1.4; }
+    .week-practice { font-size: 0.78rem; color: var(--text-main); margin-bottom: 8px; line-height: 1.55; }
+    .week-practice b { color: var(--text-sub); font-weight: 700; }
+    .week-tool-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: #e0f2fe;
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    .week-tool-text { font-size: 0.75rem; color: #0369a1; font-weight: 700; line-height: 1.4; }
+    .week-go-btn {
+      flex-shrink: 0;
+      padding: 6px 12px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .curriculum-reset-row { text-align: right; margin-top: 4px; }
+    .curriculum-reset-btn {
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      background: #cbd5e1;
+      color: #0f172a;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -825,6 +1207,7 @@
     <button class="tab-btn active" onclick="switchTab('tab1')">📢 확성 시스템의 기본</button>
     <button class="tab-btn" onclick="switchTab('tab2')">🗺 3층 음향 시스템</button>
     <button class="tab-btn" onclick="switchTab('tab3')">🎧 Ear Training</button>
+    <button class="tab-btn" onclick="switchTab('tab4')">📅 10주 커리큘럼</button>
   </div>
 
   <main class="game-container">
@@ -849,6 +1232,49 @@
       <div class="theory-card">
         <h3>3) 마이크 ➔ 콘솔 ➔ 스피커</h3>
         <p>콘솔에서 출력된 신호가 내장 앰프가 포함된 액티브(Powered) 스피커로 바로 전달되는 구조입니다.</p>
+      </div>
+
+      <div class="theory-card mg12xu-game-card">
+        <h3>🎚 실습 게임: MG12XU 콘솔로 음향 시스템 구축해보기</h3>
+        <p>실제 페이더·EQ 조작은 현장에서 배우지만, "무엇을 어디에 연결해야 하는지"는 미리 게임으로 연습할 수 있습니다. 2단계를 순서대로 완료해보세요.</p>
+
+        <div class="mg12xu-step">
+          <div class="mg12xu-step-title">1단계 · 무대 위 소스를 실제 MG12XU 콘솔 채널에 연결하기</div>
+          <div class="mg12xu-step-desc">무대 위 아이콘을 먼저 누르고, 아래 콘솔에서 채널 번호(헤더 부분)를 누르면 연결됩니다. 소스마다 서로 다른 채널을 써야 합니다. 연결 후에는 <b>GAIN·HIGH·MID·LOW 노브</b>를 돌리고 <b>페이더</b>를 직접 드래그해서 조작해볼 수 있고, <b>ON 버튼</b>을 눌러 채널을 뮤트/언뮤트할 수도 있어요.</div>
+          <div class="mg12xu-stage-scroll">
+            <div class="mg12xu-stage-wrap" id="mg12xuStageWrap">
+              <svg class="mg12xu-connect-svg" id="mg12xuConnectSvg"></svg>
+              <div class="mg12xu-stage" id="mg12xuStage"></div>
+            </div>
+          </div>
+          <div class="mg12xu-console-scroll">
+            <div class="mg12xu-realconsole-wrap" id="mg12xuRealConsoleWrap">
+              <img src="console_strip.jpg" class="mg12xu-realconsole-img" draggable="false" alt="Yamaha MG12XU 콘솔 (전체 12채널)">
+              <div id="mg12xuMuteLayer"></div>
+              <div id="mg12xuChannelTags"></div>
+              <div id="mg12xuHotspotLayer"></div>
+              <div id="mg12xuKnobLayer"></div>
+              <div id="mg12xuFaderLayer"></div>
+              <div id="mg12xuOnLayer"></div>
+              <div id="mg12xuReadoutLayer"></div>
+            </div>
+          </div>
+          <button class="btn" style="margin-top:10px;" onclick="checkMg12xuStep1()">✅ 채널 배정 확인하기</button>
+          <div class="result-panel" id="mg12xuStep1Result"></div>
+        </div>
+
+        <div class="mg12xu-step">
+          <div class="mg12xu-step-title">2단계 · 콘솔에서 스피커까지 출력 경로 연결하기</div>
+          <div class="mg12xu-step-desc">신호가 나가는 순서대로 블록을 눌러보세요.</div>
+          <div class="mg12xu-chain-order-row" id="mg12xuChainOrderRow"></div>
+          <div class="mg12xu-chain-area" id="mg12xuChainArea"></div>
+          <div class="result-panel" id="mg12xuStep2Result"></div>
+        </div>
+
+        <div id="mg12xuBestTag"></div>
+        <div style="text-align:right; margin-top:8px;">
+          <button class="curriculum-reset-btn" onclick="resetMg12xuGame()">게임 초기화</button>
+        </div>
       </div>
     </div>
 
@@ -1204,6 +1630,27 @@
 
     </div>
 
+    <!-- TAB 4: 사운드팀 신입 스텝 10주 커리큘럼 -->
+    <div id="tab4" class="tab-content">
+      <div class="level-header">
+        <div class="level-title">📅 사운드팀 신입 스텝 10주 커리큘럼</div>
+        <div class="level-desc">오리엔테이션 1주 + 모니터 스텝 4주 + 단상 스텝 2주 + 오퍼레이팅 교육 3주, 총 10주 과정입니다. 각 주차를 마치면 체크해서 진행 상황을 기록하세요. "이동" 버튼을 누르면 그 주차와 연계된 학습툴 탭으로 바로 이동합니다.</div>
+      </div>
+
+      <div class="curriculum-progress-wrap">
+        <div class="curriculum-progress-bar-bg">
+          <div class="curriculum-progress-bar-fill" id="curriculumProgressFill" style="width:0%;"></div>
+        </div>
+        <div class="curriculum-progress-text" id="curriculumProgressText">0 / 10주 완료</div>
+      </div>
+
+      <div id="curriculumList"></div>
+
+      <div class="curriculum-reset-row">
+        <button class="curriculum-reset-btn" onclick="resetCurriculumProgress()">진행 상황 초기화</button>
+      </div>
+    </div>
+
   </main>
 
   <div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlay(event)">
@@ -1256,6 +1703,487 @@
       el.innerHTML = `<span class="best-score-tag">🏅 ${label}: ${value}</span>`;
     }
 
+    /* ===== MG12XU 콘솔로 음향 시스템 구축해보기 (탭1 실습 게임) ===== */
+    /* 무대 좌표(px)는 .mg12xu-stage-wrap(width:1055px) 기준 고정 배치입니다 */
+    const mg12xuSources = [
+      { id: 'vocal1', name: '보컬 마이크 1', icon: '🎤', x: 420, y: 6 },
+      { id: 'wireless', name: '무선 마이크', icon: '🎙️', x: 620, y: 6 },
+      { id: 'vocal2', name: '보컬 마이크 2', icon: '🎤', x: 220, y: 58 },
+      { id: 'guitar', name: '통기타 (DI)', icon: '🎸', x: 40, y: 118 },
+      { id: 'keys', name: '건반', icon: '🎹', x: 850, y: 118 }
+    ];
+    let mg12xuSelected = null;
+    let mg12xuAssignments = {}; // sourceId -> channel id (ex: 'ch1', 'ch5_6')
+
+    // ----- 실제 콘솔 사진(전체 12채널)의 채널별 좌표(크롭 이미지 기준 %) -----
+    const MG12XU_REAL_CHANNELS = ['ch1', 'ch2', 'ch3', 'ch4', 'ch5_6', 'ch7_8', 'ch9_10', 'ch11_12'];
+    const MG12XU_CHANNEL_LABELS = { ch1: '1', ch2: '2', ch3: '3', ch4: '4', ch5_6: '5/6', ch7_8: '7/8', ch9_10: '9/10', ch11_12: '11/12' };
+    const MG12XU_KNOB_TYPES = ['gain', 'high', 'mid', 'low'];
+    // 채널별로 실제 보유한 노브만 (9/10, 11/12는 GAIN·MID 없이 HIGH·LOW만 있는 실제 콘솔 구성을 반영)
+    const MG12XU_CHANNEL_KNOBS = {
+      ch1: ['gain', 'high', 'mid', 'low'],
+      ch2: ['gain', 'high', 'mid', 'low'],
+      ch3: ['gain', 'high', 'mid', 'low'],
+      ch4: ['gain', 'high', 'mid', 'low'],
+      ch5_6: ['gain', 'high', 'mid', 'low'],
+      ch7_8: ['gain', 'high', 'mid', 'low'],
+      ch9_10: ['high', 'low'],
+      ch11_12: ['high', 'low']
+    };
+    const MG12XU_KNOB_X_PCT = { ch1: 13.839, ch2: 24.834, ch3: 36.114, ch4: 47.299, ch5_6: 58.673, ch7_8: 69.953, ch9_10: 83.223, ch11_12: 94.502 };
+    const MG12XU_FADER_X_PCT = { ch1: 11.848, ch2: 23.033, ch3: 34.028, ch4: 45.213, ch5_6: 56.398, ch7_8: 67.583, ch9_10: 80.664, ch11_12: 91.848 };
+    const MG12XU_ON_X_PCT = { ch1: 14.123, ch2: 25.308, ch3: 36.493, ch4: 47.678, ch5_6: 58.863, ch7_8: 69.858, ch9_10: 82.939, ch11_12: 94.123 };
+    const MG12XU_ON_Y_PCT = 60.909;
+    const MG12XU_KNOB_Y_PCT = { gain: 8.442, high: 25.130, mid: 30.844, low: 36.494 };
+    const MG12XU_HOTSPOT_Y_PCT = 2.597;
+    const MG12XU_FADER_TRAVEL_TOP_PCT = 68.896;
+    const MG12XU_FADER_TRAVEL_BOTTOM_PCT = 96.104;
+    // 실측한 페이더 인쇄 눈금(원본 사진 y px -> dB) 을 frac(0=맨 위,1=맨 아래)으로 환산한 보정 테이블
+    const MG12XU_FADER_SCALE = [
+      { frac: 0.0620, db: 10 },
+      { frac: 0.1766, db: 5 },
+      { frac: 0.2482, db: 0 },
+      { frac: 0.3198, db: -5 },
+      { frac: 0.4321, db: -10 },
+      { frac: 0.4988, db: -15 },
+      { frac: 0.5632, db: -20 },
+      { frac: 0.6229, db: -25 },
+      { frac: 0.6827, db: -30 },
+      { frac: 0.7494, db: -40 },
+      { frac: 0.92, db: -60 }
+    ];
+    let mg12xuKnobAngles = {};   // 'ch1_gain' -> degree(-135~135)
+    let mg12xuFaderFracs = {};  // 'ch1' -> 0(위)~1(아래)
+    let mg12xuChannelOn = {};   // 'ch1' -> true(언뮤트, 기본) / false(뮤트)
+
+    const mg12xuChainItems = [
+      { id: 'console', name: 'MG12XU 콘솔' },
+      { id: 'mainout', name: '메인 아웃 (Main L/R)' },
+      { id: 'amp', name: '파워앰프' },
+      { id: 'speaker', name: '스피커' }
+    ];
+    const mg12xuChainCorrectOrder = ['console', 'mainout', 'amp', 'speaker'];
+    let mg12xuChainShuffled = null;
+    let mg12xuChainPicks = [];
+
+    function buildMg12xuRealConsole() {
+      const knobLayer = document.getElementById('mg12xuKnobLayer');
+      const faderLayer = document.getElementById('mg12xuFaderLayer');
+      const hotspotLayer = document.getElementById('mg12xuHotspotLayer');
+      const onLayer = document.getElementById('mg12xuOnLayer');
+      const muteLayer = document.getElementById('mg12xuMuteLayer');
+      if (!knobLayer || !faderLayer || !hotspotLayer || !onLayer || !muteLayer) return;
+
+      knobLayer.innerHTML = '';
+      faderLayer.innerHTML = '';
+      hotspotLayer.innerHTML = '';
+      onLayer.innerHTML = '';
+      muteLayer.innerHTML = '';
+
+      MG12XU_REAL_CHANNELS.forEach(ch => {
+        const kx = MG12XU_KNOB_X_PCT[ch];
+
+        const hotspot = document.createElement('button');
+        hotspot.type = 'button';
+        hotspot.className = 'mg12xu-hotspot';
+        hotspot.style.left = kx + '%';
+        hotspot.style.top = MG12XU_HOTSPOT_Y_PCT + '%';
+        hotspot.dataset.ch = ch;
+        hotspot.title = `CH ${MG12XU_CHANNEL_LABELS[ch]}`;
+        hotspot.addEventListener('click', () => assignMg12xuRealChannel(ch));
+        hotspotLayer.appendChild(hotspot);
+
+        const knobTypes = MG12XU_CHANNEL_KNOBS[ch] || MG12XU_KNOB_TYPES;
+        knobTypes.forEach(type => {
+          const knob = document.createElement('div');
+          knob.className = 'mg12xu-knob';
+          knob.dataset.ch = ch;
+          knob.dataset.type = type;
+          knob.style.left = kx + '%';
+          knob.style.top = MG12XU_KNOB_Y_PCT[type] + '%';
+          const img = document.createElement('img');
+          img.src = `${ch}_${type}.png`;
+          img.draggable = false;
+          img.alt = `${MG12XU_CHANNEL_LABELS[ch]}번 채널 ${type.toUpperCase()} 노브`;
+          knob.appendChild(img);
+          knob.addEventListener('pointerdown', (e) => mg12xuKnobPointerDown(e, ch, type));
+          knobLayer.appendChild(knob);
+        });
+
+        const fx = MG12XU_FADER_X_PCT[ch];
+        const hit = document.createElement('div');
+        hit.className = 'mg12xu-fader-hit';
+        hit.dataset.ch = ch;
+        hit.style.left = fx + '%';
+        hit.style.top = ((MG12XU_FADER_TRAVEL_TOP_PCT + MG12XU_FADER_TRAVEL_BOTTOM_PCT) / 2) + '%';
+        hit.addEventListener('pointerdown', (e) => mg12xuFaderPointerDown(e, ch));
+        faderLayer.appendChild(hit);
+
+        const cap = document.createElement('div');
+        cap.className = 'mg12xu-fader-cap';
+        cap.dataset.ch = ch;
+        cap.style.left = fx + '%';
+        const capImg = document.createElement('img');
+        capImg.src = 'fader_cap.png';
+        capImg.draggable = false;
+        capImg.alt = `${MG12XU_CHANNEL_LABELS[ch]}번 채널 페이더`;
+        cap.appendChild(capImg);
+        faderLayer.appendChild(cap);
+
+        const onX = MG12XU_ON_X_PCT[ch];
+        const onBtn = document.createElement('button');
+        onBtn.type = 'button';
+        onBtn.className = 'mg12xu-on-hotspot';
+        onBtn.style.left = onX + '%';
+        onBtn.style.top = MG12XU_ON_Y_PCT + '%';
+        onBtn.dataset.ch = ch;
+        onBtn.title = `CH ${MG12XU_CHANNEL_LABELS[ch]} ON/MUTE`;
+        onBtn.addEventListener('click', () => toggleMg12xuOn(ch));
+        onLayer.appendChild(onBtn);
+
+        const muteCol = document.createElement('div');
+        muteCol.className = 'mg12xu-mute-col';
+        muteCol.dataset.ch = ch;
+        muteCol.style.left = kx + '%';
+        const muteTag = document.createElement('div');
+        muteTag.className = 'mg12xu-mute-tag';
+        muteTag.textContent = 'MUTE';
+        muteCol.appendChild(muteTag);
+        muteLayer.appendChild(muteCol);
+
+        if (!(ch + '_high' in mg12xuKnobAngles)) {
+          knobTypes.forEach(type => { mg12xuKnobAngles[ch + '_' + type] = 0; });
+          mg12xuFaderFracs[ch] = 0.75;
+        }
+        if (!(ch in mg12xuChannelOn)) mg12xuChannelOn[ch] = true;
+        knobTypes.forEach(type => mg12xuUpdateKnobVisual(ch, type));
+        mg12xuUpdateFaderVisual(ch);
+        mg12xuUpdateMuteVisual(ch);
+      });
+    }
+
+    function toggleMg12xuOn(ch) {
+      mg12xuChannelOn[ch] = !mg12xuChannelOn[ch];
+      mg12xuUpdateMuteVisual(ch);
+    }
+
+    function mg12xuUpdateMuteVisual(ch) {
+      const col = document.querySelector(`.mg12xu-mute-col[data-ch="${ch}"]`);
+      if (!col) return;
+      col.classList.toggle('active', mg12xuChannelOn[ch] === false);
+    }
+
+    function mg12xuKnobPointerDown(e, ch, type) {
+      e.preventDefault();
+      const knobEl = e.currentTarget;
+      knobEl.classList.add('active');
+      try { knobEl.setPointerCapture(e.pointerId); } catch (err) {}
+
+      const onMove = (ev) => {
+        const rect = knobEl.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = ev.clientX - cx;
+        const dy = ev.clientY - cy;
+        let angle = Math.atan2(dx, -dy) * 180 / Math.PI;
+        angle = Math.max(-135, Math.min(135, angle));
+        mg12xuKnobAngles[ch + '_' + type] = angle;
+        mg12xuUpdateKnobVisual(ch, type);
+        mg12xuShowReadout(knobEl, mg12xuKnobValueLabel(ch, type));
+      };
+      const onUp = (ev) => {
+        knobEl.classList.remove('active');
+        try { knobEl.releasePointerCapture(e.pointerId); } catch (err) {}
+        knobEl.removeEventListener('pointermove', onMove);
+        knobEl.removeEventListener('pointerup', onUp);
+        knobEl.removeEventListener('pointercancel', onUp);
+        mg12xuHideReadout();
+      };
+      knobEl.addEventListener('pointermove', onMove);
+      knobEl.addEventListener('pointerup', onUp);
+      knobEl.addEventListener('pointercancel', onUp);
+      mg12xuShowReadout(knobEl, mg12xuKnobValueLabel(ch, type));
+    }
+
+    function mg12xuFaderPointerDown(e, ch) {
+      e.preventDefault();
+      const hitEl = e.currentTarget;
+      const wrap = document.getElementById('mg12xuRealConsoleWrap');
+      if (!wrap) return;
+      hitEl.classList.add('active');
+      try { hitEl.setPointerCapture(e.pointerId); } catch (err) {}
+
+      const onMove = (ev) => {
+        const wrapRect = wrap.getBoundingClientRect();
+        const travelTopPx = wrapRect.top + wrapRect.height * (MG12XU_FADER_TRAVEL_TOP_PCT / 100);
+        const travelBottomPx = wrapRect.top + wrapRect.height * (MG12XU_FADER_TRAVEL_BOTTOM_PCT / 100);
+        let frac = (ev.clientY - travelTopPx) / (travelBottomPx - travelTopPx);
+        frac = Math.max(0, Math.min(1, frac));
+        mg12xuFaderFracs[ch] = frac;
+        mg12xuUpdateFaderVisual(ch);
+        const capEl = document.querySelector(`.mg12xu-fader-cap[data-ch="${ch}"]`);
+        mg12xuShowReadout(capEl || hitEl, mg12xuFaderValueLabel(ch));
+      };
+      const onUp = (ev) => {
+        hitEl.classList.remove('active');
+        try { hitEl.releasePointerCapture(e.pointerId); } catch (err) {}
+        hitEl.removeEventListener('pointermove', onMove);
+        hitEl.removeEventListener('pointerup', onUp);
+        hitEl.removeEventListener('pointercancel', onUp);
+        mg12xuHideReadout();
+      };
+      hitEl.addEventListener('pointermove', onMove);
+      hitEl.addEventListener('pointerup', onUp);
+      hitEl.addEventListener('pointercancel', onUp);
+      const capEl = document.querySelector(`.mg12xu-fader-cap[data-ch="${ch}"]`);
+      mg12xuShowReadout(capEl || hitEl, mg12xuFaderValueLabel(ch));
+    }
+
+    function mg12xuUpdateKnobVisual(ch, type) {
+      const img = document.querySelector(`.mg12xu-knob[data-ch="${ch}"][data-type="${type}"] img`);
+      if (!img) return;
+      img.style.transform = `rotate(${mg12xuKnobAngles[ch + '_' + type] || 0}deg)`;
+    }
+
+    function mg12xuUpdateFaderVisual(ch) {
+      const cap = document.querySelector(`.mg12xu-fader-cap[data-ch="${ch}"]`);
+      if (!cap) return;
+      const frac = mg12xuFaderFracs[ch] ?? 0.75;
+      const topPct = MG12XU_FADER_TRAVEL_TOP_PCT + frac * (MG12XU_FADER_TRAVEL_BOTTOM_PCT - MG12XU_FADER_TRAVEL_TOP_PCT);
+      cap.style.top = topPct + '%';
+    }
+
+    function mg12xuKnobValueLabel(ch, type) {
+      const angle = mg12xuKnobAngles[ch + '_' + type] || 0;
+      if (type === 'gain') {
+        const v = -6 + (angle + 135) / 270 * 76;
+        return `CH${MG12XU_CHANNEL_LABELS[ch]} GAIN ${v.toFixed(0)}dB`;
+      }
+      const v = angle / 135 * 15;
+      return `CH${MG12XU_CHANNEL_LABELS[ch]} ${type.toUpperCase()} ${v >= 0 ? '+' : ''}${v.toFixed(1)}dB`;
+    }
+
+    function mg12xuFaderDbFromFrac(frac) {
+      const table = MG12XU_FADER_SCALE;
+      if (frac <= table[0].frac) return table[0].db;
+      for (let i = 0; i < table.length - 1; i++) {
+        const a = table[i], b = table[i + 1];
+        if (frac >= a.frac && frac <= b.frac) {
+          const t = (frac - a.frac) / (b.frac - a.frac);
+          return a.db + t * (b.db - a.db);
+        }
+      }
+      return null; // 마지막 구간을 넘어서면 -∞
+    }
+
+    function mg12xuFaderValueLabel(ch) {
+      const frac = mg12xuFaderFracs[ch] ?? 0.75;
+      const db = mg12xuFaderDbFromFrac(frac);
+      if (db === null) return `CH${MG12XU_CHANNEL_LABELS[ch]} FADER −∞`;
+      return `CH${MG12XU_CHANNEL_LABELS[ch]} FADER ${db >= 0 ? '+' : ''}${db.toFixed(1)}dB`;
+    }
+
+    function mg12xuShowReadout(targetEl, text) {
+      const layer = document.getElementById('mg12xuReadoutLayer');
+      const wrap = document.getElementById('mg12xuRealConsoleWrap');
+      if (!layer || !wrap || !targetEl) return;
+      const wrapRect = wrap.getBoundingClientRect();
+      const tRect = targetEl.getBoundingClientRect();
+      if (wrapRect.width === 0) return;
+      const x = tRect.left + tRect.width / 2 - wrapRect.left;
+      const y = tRect.top - wrapRect.top;
+      layer.innerHTML = `<div class="mg12xu-readout" style="left:${x}px; top:${y}px;">${text}</div>`;
+    }
+
+    function mg12xuHideReadout() {
+      const layer = document.getElementById('mg12xuReadoutLayer');
+      if (layer) layer.innerHTML = '';
+    }
+
+    function renderMg12xuStep1() {
+      const stageEl = document.getElementById('mg12xuStage');
+      if (!stageEl) return;
+
+      stageEl.innerHTML = mg12xuSources.map(s => {
+        const ch = mg12xuAssignments[s.id];
+        const cls = ['mg12xu-source-item'];
+        if (mg12xuSelected === s.id) cls.push('selected');
+        else if (ch) cls.push('assigned');
+        const tag = ch ? `<span class="mg12xu-source-ch-tag">CH ${MG12XU_CHANNEL_LABELS[ch]}</span>` : '';
+        return `
+          <button class="${cls.join(' ')}" style="left:${s.x}px; top:${s.y}px;" onclick="clickMg12xuSource('${s.id}')" data-source="${s.id}">
+            <div class="mg12xu-source-icon">${s.icon}</div>
+            <div class="mg12xu-source-label">${s.name}</div>
+            ${tag}
+          </button>`;
+      }).join('');
+
+      renderMg12xuHotspotsAndTags();
+    }
+
+    function renderMg12xuHotspotsAndTags() {
+      const hotspotLayer = document.getElementById('mg12xuHotspotLayer');
+      const tagLayer = document.getElementById('mg12xuChannelTags');
+      if (!hotspotLayer || !tagLayer) return;
+
+      const usedChannels = Object.values(mg12xuAssignments);
+      const assignedBy = {};
+      Object.keys(mg12xuAssignments).forEach(sid => { assignedBy[mg12xuAssignments[sid]] = sid; });
+
+      hotspotLayer.querySelectorAll('.mg12xu-hotspot').forEach(el => {
+        const ch = el.dataset.ch;
+        const filled = usedChannels.includes(ch);
+        el.classList.toggle('filled', filled);
+        el.classList.toggle('selectable', !!mg12xuSelected && !filled);
+      });
+
+      tagLayer.innerHTML = MG12XU_REAL_CHANNELS.map(ch => {
+        const sid = assignedBy[ch];
+        if (!sid) return '';
+        const src = mg12xuSources.find(s => s.id === sid);
+        if (!src) return '';
+        return `<div class="mg12xu-channel-tag" style="left:${MG12XU_KNOB_X_PCT[ch]}%; top:${MG12XU_HOTSPOT_Y_PCT}%;">${src.icon} ${src.name}</div>`;
+      }).join('');
+    }
+
+    function clickMg12xuSource(id) {
+      mg12xuSelected = (mg12xuSelected === id) ? null : id;
+      renderMg12xuStep1();
+    }
+
+    function assignMg12xuRealChannel(ch) {
+      if (!mg12xuSelected) return;
+      Object.keys(mg12xuAssignments).forEach(sid => {
+        if (mg12xuAssignments[sid] === ch) delete mg12xuAssignments[sid];
+      });
+      mg12xuAssignments[mg12xuSelected] = ch;
+      mg12xuSelected = null;
+      renderMg12xuStep1();
+    }
+
+    function checkMg12xuStep1() {
+      const panel = document.getElementById('mg12xuStep1Result');
+      if (!panel) return;
+      const total = mg12xuSources.length;
+      const assignedCount = Object.keys(mg12xuAssignments).length;
+      const usedChannels = Object.values(mg12xuAssignments);
+      const uniqueChannels = new Set(usedChannels);
+
+      panel.classList.add('show');
+      if (assignedCount < total) {
+        panel.className = 'result-panel show result-warn';
+        panel.innerHTML = `<div class="result-title">⚠️ 아직 다 배정하지 않았어요</div><div class="result-line">${assignedCount} / ${total}개 소스를 채널에 배정했습니다. 남은 소스도 채널에 배정해보세요.</div>`;
+        return;
+      }
+      if (uniqueChannels.size < total) {
+        panel.className = 'result-panel show result-bad';
+        panel.innerHTML = `<div class="result-title">❌ 채널이 겹쳤어요</div><div class="result-line">서로 다른 소스가 같은 채널을 함께 쓰면 소리가 섞여버립니다. 소스마다 전용 채널을 하나씩 배정해주세요.</div>`;
+        return;
+      }
+      panel.className = 'result-panel show result-good';
+      panel.innerHTML = `<div class="result-title">✅ 채널 배정 완료!</div><div class="result-line">모든 입력 소스가 서로 다른 채널에 연결되었습니다. 실제 콘솔에서도 소스마다 전용 채널을 배정하는 것이 기본입니다.</div>`;
+      saveProgress({ mg12xuStep1Done: true });
+      renderMg12xuBestTag();
+    }
+
+    function renderMg12xuStep2() {
+      const orderRowEl = document.getElementById('mg12xuChainOrderRow');
+      const chainAreaEl = document.getElementById('mg12xuChainArea');
+      if (!orderRowEl || !chainAreaEl) return;
+
+      if (!mg12xuChainShuffled) {
+        mg12xuChainShuffled = [...mg12xuChainItems].sort(() => Math.random() - 0.5);
+      }
+
+      orderRowEl.innerHTML = mg12xuChainPicks.map((id, i) => {
+        const item = mg12xuChainItems.find(c => c.id === id);
+        return `<span class="mg12xu-order-chip">${i + 1}. ${item.name}</span>`;
+      }).join('');
+
+      chainAreaEl.innerHTML = mg12xuChainShuffled.map(item => {
+        const picked = mg12xuChainPicks.includes(item.id);
+        const cls = ['mg12xu-item'];
+        if (picked) cls.push('filled');
+        return `<button class="${cls.join(' ')}" ${picked ? 'disabled' : ''} onclick="pickMg12xuChain('${item.id}')">${item.name}</button>`;
+      }).join('');
+    }
+
+    function pickMg12xuChain(id) {
+      if (mg12xuChainPicks.includes(id)) return;
+      mg12xuChainPicks.push(id);
+      renderMg12xuStep2();
+      if (mg12xuChainPicks.length === mg12xuChainCorrectOrder.length) {
+        checkMg12xuStep2();
+      }
+    }
+
+    function checkMg12xuStep2() {
+      const panel = document.getElementById('mg12xuStep2Result');
+      if (!panel) return;
+      const correct = mg12xuChainCorrectOrder.every((id, i) => mg12xuChainPicks[i] === id);
+      if (correct) {
+        panel.className = 'result-panel show result-good';
+        panel.innerHTML = `<div class="result-title">✅ 출력 경로 완성!</div><div class="result-line">콘솔 → 메인 아웃 → 파워앰프 → 스피커, 올바른 순서로 연결했습니다.</div>`;
+        saveProgress({ mg12xuStep2Done: true });
+        renderMg12xuBestTag();
+      } else {
+        const hint = mg12xuChainCorrectOrder.map(id => mg12xuChainItems.find(c => c.id === id).name).join(' → ');
+        panel.className = 'result-panel show result-bad';
+        panel.innerHTML = `<div class="result-title">❌ 순서가 달라요</div><div class="result-line">정답 순서: ${hint}</div><div class="result-line">아래 "다시 하기"를 눌러 다시 시도해보세요.</div><button class="curriculum-reset-btn" style="margin-top:6px;" onclick="resetMg12xuChain()">↩️ 다시 하기</button>`;
+      }
+    }
+
+    function resetMg12xuChain() {
+      mg12xuChainPicks = [];
+      const panel = document.getElementById('mg12xuStep2Result');
+      if (panel) { panel.className = 'result-panel'; panel.innerHTML = ''; }
+      renderMg12xuStep2();
+    }
+
+    function renderMg12xuBestTag() {
+      const progress = loadProgress();
+      const el = document.getElementById('mg12xuBestTag');
+      if (!el) return;
+      if (progress.mg12xuStep1Done && progress.mg12xuStep2Done) {
+        el.innerHTML = '<span class="best-score-tag">🏅 2단계 모두 완료</span>';
+      } else if (progress.mg12xuStep1Done) {
+        el.innerHTML = '<span class="best-score-tag">🏅 1단계 완료</span>';
+      } else {
+        el.innerHTML = '';
+      }
+    }
+
+    function resetMg12xuGame() {
+      mg12xuSelected = null;
+      mg12xuAssignments = {};
+      mg12xuChainShuffled = null;
+      mg12xuChainPicks = [];
+      MG12XU_REAL_CHANNELS.forEach(ch => {
+        (MG12XU_CHANNEL_KNOBS[ch] || MG12XU_KNOB_TYPES).forEach(type => { mg12xuKnobAngles[ch + '_' + type] = 0; });
+        mg12xuFaderFracs[ch] = 0.75;
+        mg12xuChannelOn[ch] = true;
+      });
+      const p1 = document.getElementById('mg12xuStep1Result');
+      const p2 = document.getElementById('mg12xuStep2Result');
+      if (p1) { p1.className = 'result-panel'; p1.innerHTML = ''; }
+      if (p2) { p2.className = 'result-panel'; p2.innerHTML = ''; }
+      renderMg12xuStep1();
+      renderMg12xuStep2();
+      MG12XU_REAL_CHANNELS.forEach(ch => {
+        (MG12XU_CHANNEL_KNOBS[ch] || MG12XU_KNOB_TYPES).forEach(type => mg12xuUpdateKnobVisual(ch, type));
+        mg12xuUpdateFaderVisual(ch);
+        mg12xuUpdateMuteVisual(ch);
+      });
+      mg12xuHideReadout();
+    }
+
+    function initMg12xuGame() {
+      buildMg12xuRealConsole();
+      renderMg12xuStep1();
+      renderMg12xuStep2();
+      renderMg12xuBestTag();
+    }
+
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -1276,10 +2204,147 @@
         document.querySelectorAll('.tab-btn')[1].classList.add('active');
         document.getElementById('tab2').classList.add('active');
       }
-      else {
+      else if(tabId==='tab3') {
         document.querySelectorAll('.tab-btn')[2].classList.add('active');
         document.getElementById('tab3').classList.add('active');
       }
+      else {
+        document.querySelectorAll('.tab-btn')[3].classList.add('active');
+        document.getElementById('tab4').classList.add('active');
+        renderCurriculum();
+      }
+    }
+
+    /* ===== 사운드팀 신입 스텝 10주 커리큘럼 ===== */
+    const curriculumWeeks = [
+      { week: 1, phase: '오리엔테이션', phaseColor: 'cyan',
+        title: '1주차',
+        goal: '교회 음향 시스템과 스텝 기본 예절 이해',
+        practice: '스텝 예절(복장·태도·무전기 사용법), 강동교회 음향 시스템 설명, MG12XU 콘솔로 음향 시스템 구축해보기',
+        tool: '탭1 "MG12XU 콘솔로 음향 시스템 구축해보기" 게임으로 먼저 연습한 뒤, 탭2 "3층 음향 시스템"으로 실제 장비 배치와 신호 경로(스테이지박스→콘솔→앰프→스피커)를 예습해보세요.',
+        tab: 'tab2' },
+      { week: 2, phase: '모니터 스텝 1주', phaseColor: 'blue',
+        title: '2주차',
+        goal: '소리의 다름을 인지하고 좋은/나쁜 소리를 구분',
+        practice: '스피커 비교 청음, 예배 녹음 파일로 소리 비교, 대성전 모니터링 교육',
+        tool: '탭3 "대역별 오디오 샘플 비교 청취"로 저음·중음·고음 강약을 먼저 구분해보세요.',
+        tab: 'tab3' },
+      { week: 3, phase: '모니터 스텝 2주', phaseColor: 'blue',
+        title: '3주차',
+        goal: '관현악 마이크 세팅 및 모니터링 피드백 습득',
+        practice: '관현악 마이크 세팅 교육, 대성전 모니터링/볼륨 조절 교육',
+        tool: '탭3 "볼륨 변화 트레이닝" 퀴즈 모드로 dB 변화를 귀로 감지하는 연습을 해보세요.',
+        tab: 'tab3' },
+      { week: 4, phase: '모니터 스텝 3주', phaseColor: 'blue',
+        title: '4주차',
+        goal: '대성전·소성전 소리 크기와 밸런스 피드백',
+        practice: '관현악 마이크 세팅 반복, 대성전 모니터링/피드백 교육',
+        tool: '탭3 "멀티트랙 믹스 밸런스" 채점으로 악기별 밸런스 감각을 훈련해보세요.',
+        tab: 'tab3' },
+      { week: 5, phase: '모니터 스텝 4주', phaseColor: 'blue',
+        title: '5주차',
+        goal: '3주간 교육 내용 이해·습득 점검',
+        practice: '관현악 마이크 세팅 실전, 소/대성전 모니터링 실전',
+        tool: '실전 투입 전 탭3 퀴즈 연속 정답·믹스 채점 점수로 자가 점검해보세요.',
+        tab: 'tab3' },
+      { week: 6, phase: '단상 스텝 1주', phaseColor: 'yellow',
+        title: '6주차',
+        goal: '싱어·지휘자 모니터 스피커 운영 방법 습득',
+        practice: '모니터 스피커 특성·볼륨 조절 교육/실습, 이동식 단상 교육/실습',
+        tool: '탭3 "볼륨 변화 트레이닝"으로 모니터 스피커 볼륨 조절 감각을 반복 연습해보세요. (이동식 단상 실습은 현장에서만 가능)',
+        tab: 'tab3' },
+      { week: 7, phase: '단상 스텝 2주', phaseColor: 'yellow',
+        title: '7주차',
+        goal: '올바른 단상 마이크 운영 방법 습득',
+        practice: '단상 마이크 세팅(위치 조정: 설교자 키, 카메라 중앙 등), 단상 모니터링(메인, 설교자, 전자칠판, 좌식(독경), 사회자)',
+        tool: '탭2의 \'단상\' 구역 배치 개념과 느슨하게 연결되지만, 채널별 세부 모니터링 구분은 아직 다루지 않습니다.',
+        tab: 'tab2' },
+      { week: 8, phase: '오퍼레이팅 1주', phaseColor: 'green',
+        title: '8주차',
+        goal: '콘솔과 예배 음향 시스템의 기초 이해',
+        practice: '콘솔 기본 구조 및 예배 시스템 흐름 교육',
+        tool: '탭1 "확성 시스템의 기본"으로 신호 흐름과 기초 이론을 예습해보세요.',
+        tab: 'tab1' },
+      { week: 9, phase: '오퍼레이팅 2주', phaseColor: 'green',
+        title: '9주차',
+        goal: '실제 예배 중 콘솔 운영 관찰',
+        practice: '콘솔 운영 참관 (오퍼레이터 옆에서 실제 예배 운영을 관찰)',
+        tool: '탭2 "3층 음향 시스템"으로 참관 전 장비 배치·신호 경로를 재확인해보세요.',
+        tab: 'tab2' },
+      { week: 10, phase: '오퍼레이팅 3주', phaseColor: 'green',
+        title: '10주차',
+        goal: '콘솔 운영 실전 투입 준비',
+        practice: '콘솔 운영 실전 (직접 운영해보기)',
+        tool: '탭1·탭2·탭3 전체를 복습하고, 탭3 자가진단 점수로 실전 투입 전 최종 점검을 해보세요.',
+        tab: null }
+    ];
+
+    const CURRICULUM_KEY = 'soundTrainerCurriculumProgress_v1';
+    function loadCurriculumProgress() {
+      try {
+        return JSON.parse(localStorage.getItem(CURRICULUM_KEY)) || {};
+      } catch (e) {
+        return {};
+      }
+    }
+    function saveCurriculumProgress(progress) {
+      try {
+        localStorage.setItem(CURRICULUM_KEY, JSON.stringify(progress));
+      } catch (e) { /* ignore */ }
+    }
+    function toggleWeekDone(week) {
+      const progress = loadCurriculumProgress();
+      progress[week] = !progress[week];
+      saveCurriculumProgress(progress);
+      renderCurriculum();
+    }
+    function resetCurriculumProgress() {
+      saveCurriculumProgress({});
+      renderCurriculum();
+    }
+    function goToCurriculumTab(tabId) {
+      if (!tabId) return;
+      switchTab(tabId);
+    }
+    function renderCurriculum() {
+      const listEl = document.getElementById('curriculumList');
+      if (!listEl) return;
+      const progress = loadCurriculumProgress();
+      let doneCount = 0;
+      let lastPhase = null;
+      let html = '';
+      curriculumWeeks.forEach((w, idx) => {
+        if (progress[w.week]) doneCount++;
+        if (w.phase !== lastPhase) {
+          html += `<div class="phase-divider${idx === 0 ? ' first' : ''}">${w.phase.replace(/ \d주$/, '')}</div>`;
+          lastPhase = w.phase;
+        }
+        const isDone = !!progress[w.week];
+        const goBtn = w.tab
+          ? `<button class="week-go-btn" onclick="goToCurriculumTab('${w.tab}')">➜ 이동</button>`
+          : '';
+        html += `
+          <div class="week-card accent-${w.phaseColor}${isDone ? ' done' : ''}">
+            <input type="checkbox" class="week-check" ${isDone ? 'checked' : ''} onchange="toggleWeekDone(${w.week})" aria-label="${w.week}주차 완료">
+            <div class="week-body">
+              <div class="week-head">
+                <span class="week-title">${w.title}</span>
+              </div>
+              <div class="week-goal"><b>목표</b> · ${w.goal}</div>
+              <div class="week-practice"><b>실습 내용</b> · ${w.practice}</div>
+              <div class="week-tool-row">
+                <span class="week-tool-text">🔗 ${w.tool}</span>
+                ${goBtn}
+              </div>
+            </div>
+          </div>`;
+      });
+      listEl.innerHTML = html;
+      const pct = Math.round((doneCount / curriculumWeeks.length) * 100);
+      const fillEl = document.getElementById('curriculumProgressFill');
+      const textEl = document.getElementById('curriculumProgressText');
+      if (fillEl) fillEl.style.width = pct + '%';
+      if (textEl) textEl.textContent = `${doneCount} / ${curriculumWeeks.length}주 완료`;
     }
 
     const gearItems = [
@@ -1381,7 +2446,7 @@
         div.innerHTML = `
           <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('${item.id}')">i</button>
           <div class="gear-img-wrap">
-            <img src="${item.img}" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\'><rect width=\'60\' height=\'60\' fill=\'%23fff\'/><text x=\'5\' y=\'30\' fill=\'red\' font-size=\'8\'>이미지없음</text><text x=\'5\' y=\'45\' fill=\'%230284c7\' font-size=\'6\'>${item.img}</text></svg>'">
+            <img src="${item.img}" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;><rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/><text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;>이미지없음</text><text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;>${item.img}</text></svg>'">
           </div>
           <div class="gear-label">${item.name}</div>
           <div class="resize-handle"></div>
@@ -2163,6 +3228,7 @@
     }
 
     initWorkspace();
+    initMg12xuGame();
     renderFaderPosition('sample', 0.0);
     trackKeys.forEach(ch => {
       if(ch !== 'sample') renderFaderPosition(ch, -60);
