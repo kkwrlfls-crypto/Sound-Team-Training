@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>교회 방송실 트레이닝 & 3층 음향 시스템</title>
   <style>
     :root {
@@ -24,7 +24,6 @@
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      touch-action: manipulation;
     }
 
     body {
@@ -35,17 +34,6 @@
       align-items: center;
       min-height: 100vh;
       padding: 20px 12px;
-    }
-
-    .device-badge {
-      background: rgba(59, 130, 246, 0.2);
-      border: 1px solid var(--primary);
-      color: var(--accent-cyan);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin-bottom: 12px;
     }
 
     .tab-nav {
@@ -66,6 +54,7 @@
       font-weight: 700;
       color: var(--text-sub);
       cursor: pointer;
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -112,13 +101,12 @@
     .workspace-canvas {
       position: relative;
       width: 100%;
-      height: 750px;
+      height: 860px;
       background: var(--inner-bg);
       border: 2px dashed var(--border-color);
       border-radius: 16px;
       overflow: hidden;
       margin-bottom: 16px;
-      touch-action: none;
     }
 
     .connection-svg {
@@ -131,7 +119,7 @@
 
     .zone-guide {
       position: absolute;
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       font-weight: 800;
       color: var(--text-sub);
       border: 1px dashed rgba(255,255,255,0.15);
@@ -156,7 +144,12 @@
       user-select: none;
       box-shadow: 0 4px 12px rgba(0,0,0,0.4);
       z-index: 2;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
+
+    .draggable-gear:active { cursor: grabbing; }
+    .draggable-gear.selected-cable { border-color: var(--accent-yellow); box-shadow: 0 0 15px rgba(245, 158, 11, 0.6); }
+    .draggable-gear.connected { border-color: var(--accent-green); box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
 
     .gear-img-wrap {
       width: 100%;
@@ -167,14 +160,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      pointer-events: none;
     }
 
     .gear-img {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      pointer-events: none;
+      object-position: center;
     }
 
     .gear-label {
@@ -187,17 +179,16 @@
       width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
-      pointer-events: none;
     }
 
     .resize-handle {
       position: absolute;
       right: 2px;
       bottom: 2px;
-      width: 22px;
-      height: 22px;
+      width: 14px;
+      height: 14px;
       background: var(--primary);
-      border-radius: 4px;
+      border-radius: 3px;
       cursor: se-resize;
       z-index: 5;
     }
@@ -263,17 +254,26 @@
       border: 1px solid var(--border-color);
       min-width: 200px;
       text-align: center;
+      outline: none;
+      caret-color: var(--accent-yellow);
     }
-    .step-btn-group { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .step-btn-group {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
     .db-btn {
-      padding: 10px 18px;
+      padding: 8px 16px;
       background: #334155;
       color: #fff;
       font-weight: 700;
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      transition: background 0.2s;
     }
+    .db-btn:hover { background: var(--primary); }
 
     .voice-training-section {
       background: rgba(15, 23, 42, 0.8);
@@ -284,7 +284,7 @@
     }
     .voice-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 10px;
       margin-top: 14px;
     }
@@ -297,207 +297,681 @@
       font-weight: 700;
       font-size: 0.85rem;
       cursor: pointer;
+      transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
     }
-    .voice-btn.playing { background: var(--accent-green); color: #0b0f19; }
+    .voice-btn:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    .voice-btn.playing {
+      background: var(--accent-green);
+      border-color: var(--accent-green);
+      color: #0b0f19;
+      animation: pulse 1.5s infinite;
+    }
 
-    .mixer-section {
-      background: #1e293b;
-      border: 1px solid var(--border-color);
+    .mix-balance-section-light {
+      background: #ffffff;
+      color: #1e293b;
       border-radius: 14px;
-      padding: 20px;
-      color: var(--text-main);
+      padding: 30px 20px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
-    
-    /* PC/모바일 환경 모두에서 실제 콘솔 피지컬 수직 페이더 형태로 보이도록 레이아웃 고정 */
-    .mixer-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
-      gap: 10px;
-      margin-top: 14px;
-      margin-bottom: 16px;
+    .mix-top-desc {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 4px;
     }
-    .fader-channel {
-      background: #0b0f19;
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 14px 6px;
+    .mix-main-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 18px;
+    }
+
+    .mix-pill-group {
+      display: inline-flex;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 30px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+    .mix-pill-btn {
+      padding: 8px 24px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: none;
+      background: transparent;
+      color: #64748b;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mix-pill-btn.active {
+      background: #1e293b;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .exact-console-box {
+      width: 100%;
+      max-width: 840px;
+      background: linear-gradient(135deg, #2b3748 0%, #1a2230 100%);
+      border: 2px solid #334155;
+      border-radius: 14px;
+      margin: 0 auto 24px auto;
+      padding: 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+      position: relative;
+      overflow-x: auto;
+    }
+
+    .exact-strips-layout {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      min-width: 720px;
+    }
+
+    .exact-strip {
+      flex: 1;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 8px;
+      padding: 10px 4px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-      box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+      position: relative;
     }
-    .fader-channel-name { font-size: 0.72rem; font-weight: bold; color: var(--accent-cyan); text-align: center; height: 28px; display: flex; align-items: center; justify-content: center; }
-    .fader-val-badge { font-size: 0.7rem; color: var(--accent-yellow); background: rgba(245, 158, 11, 0.1); padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-    
-    /* 수직형 페이더 스타일 */
-    .fader-track-wrap {
-      height: 150px;
+
+    .exact-ch-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 8px;
+      padding: 0 2px;
+    }
+
+    .exact-ch-num {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #9ca3af;
+    }
+
+    .exact-meter-display {
+      background: #030712;
+      border: 1px solid #1f2937;
+      border-radius: 3px;
+      padding: 2px 4px;
+      font-family: monospace;
+      font-size: 0.65rem;
+      color: #34d399;
+      letter-spacing: -0.5px;
+    }
+
+    .exact-btn-row {
+      display: flex;
+      gap: 2px;
+      width: 100%;
+      margin-bottom: 6px;
+    }
+
+    .sub-ctrl-btn {
+      flex: 1;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 3px;
+      font-size: 0.5rem;
+      font-weight: 700;
+      color: #9ca3af;
+      padding: 3px 0;
+      text-align: center;
+      cursor: pointer;
+    }
+    .sub-ctrl-btn.active-solo {
+      background: #f59e0b;
+      color: #0b0f19;
+      border-color: #d97706;
+    }
+    .sub-ctrl-btn.active-mute {
+      background: #ef4444;
+      color: #ffffff;
+      border-color: #dc2626;
+    }
+
+    .lock-row {
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
-      padding: 10px 0;
-      background: rgba(255,255,255,0.02);
-      border-radius: 6px;
-      width: 100%;
+      gap: 3px;
+      font-size: 0.55rem;
+      color: #9ca3af;
+      margin-bottom: 8px;
     }
-    .vertical-range {
-      writing-mode: vertical-lr;
-      direction: rtl;
-      width: 28px;
-      height: 130px;
-      accent-color: var(--primary);
+    .lock-dot {
+      width: 6px;
+      height: 6px;
+      background: #ef4444;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .lock-dot.green {
+      background: #10b981;
+    }
+
+    .track-name-banner {
+      background: #f8fafc;
+      color: #0f172a;
+      font-family: sans-serif;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 3px 0;
+      width: 100%;
+      text-align: center;
+      border-radius: 3px;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fader-area-wrapper {
+      position: relative;
+      height: 190px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       cursor: pointer;
+    }
+
+    .fader-scale-labels {
+      position: absolute;
+      left: 1px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-size: 0.55rem;
+      color: #9ca3af;
+      font-weight: 600;
+      text-align: right;
+      padding: 4px 0;
+      pointer-events: none;
+    }
+
+    .fader-slot-line {
+      position: absolute;
+      width: 5px;
+      height: 175px;
+      background: #030712;
+      border-radius: 3px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+      pointer-events: none;
+    }
+
+    .fader-thumb-visual {
+      position: absolute;
+      width: 30px;
+      height: 18px;
+      background: linear-gradient(to bottom, #4b5563, #1f2937);
+      border: 1px solid #6b7280;
+      border-radius: 3px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.6);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+    }
+    .fader-thumb-line {
+      width: 20px;
+      height: 2px;
+      background: #9ca3af;
+    }
+
+    .reference-sticker {
+      position: absolute;
+      left: -12px;
+      top: 65px;
+      background: #fef08a;
+      color: #713f12;
+      font-size: 0.6rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 2px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      transform: rotate(-5deg);
+      z-index: 8;
+      pointer-events: none;
+      border: 1px dashed #ca8a04;
+    }
+
+    .console-leather-base {
+      margin-top: 10px;
+      height: 18px;
+      background: linear-gradient(to bottom, #78350f, #451a03);
+      border-radius: 0 0 8px 8px;
+      border-top: 1px solid #92400e;
+      position: relative;
+    }
+    .leather-screw {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #d1d5db;
+      border-radius: 50%;
+      top: 6px;
+    }
+    .screw-left { left: 10px; }
+    .screw-right { right: 10px; }
+
+    .mix-bottom-buttons {
+      display: flex;
+      gap: 12px;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
     }
   </style>
 </head>
 <body>
 
-  <div class="device-badge" id="deviceBadge">🔍 접속 환경 감지 중...</div>
-
   <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('tab1')">📢 확성 시스템</button>
+    <button class="tab-btn active" onclick="switchTab('tab1')">📢 확성 시스템의 기본</button>
     <button class="tab-btn" onclick="switchTab('tab2')">🗺 3층 음향 시스템</button>
     <button class="tab-btn" onclick="switchTab('tab3')">🎧 Ear Training</button>
   </div>
 
   <main class="game-container">
     
-    <!-- TAB 1 -->
+    <!-- TAB 1: 확성 시스템의 기본 -->
     <div id="tab1" class="tab-content active">
       <div class="level-header">
         <div class="level-title">확성 시스템의 기본 구조 학습</div>
-        <div class="level-desc">음향 신호가 전달되는 대표적인 3가지 기본 경로를 이해할 수 있습니다.</div>
+        <div class="level-desc">음향 신호가 전달되는 대표적인 3가지 기본 경로를 이해하고 습득할 수 있습니다.</div>
       </div>
+
       <div class="theory-card">
         <h3>1) 마이크 ➔ 스피커</h3>
-        <p>믹서나 앰프를 거치지 않고 마이크 신호가 직접 액티브 스피커로 입력되는 소규모 시스템 구조입니다.</p>
+        <p>믹서나 앰프를 거치지 않고 마이크 신호가 직접 스피커(또는 액티브 스피커)로 입력되는 소규모 시스템 구조입니다.</p>
       </div>
+
       <div class="theory-card">
         <h3>2) 마이크 ➔ 콘솔 ➔ 앰프 ➔ 스피커</h3>
-        <p>마이크 입력이 콘솔에서 믹싱을 거쳐 파워 앰프를 통해 증폭된 뒤 패시브 스피커로 출력되는 일반적인 본당 구조입니다.</p>
+        <p>마이크 입력이 콘솔(믹서)에서 믹싱 및 프로세싱을 거친 후, 파워 앰프를 통해 증폭되어 패시브 스피커로 출력되는 가장 일반적인 교회 본당 음향 구조입니다.</p>
       </div>
+
       <div class="theory-card">
         <h3>3) 마이크 ➔ 콘솔 ➔ 스피커</h3>
-        <p>콘솔 출력 신호가 내장 앰프가 포함된 액티브 스피커로 바로 전달되는 구조입니다.</p>
+        <p>콘솔에서 출력된 신호가 내장 앰프가 포함된 액티브(Powered) 스피커로 바로 전달되는 구조입니다.</p>
       </div>
     </div>
 
-    <!-- TAB 2 -->
+    <!-- TAB 2: 3층 음향 시스템 -->
     <div id="tab2" class="tab-content">
       <div class="level-header">
-        <div class="level-title">3층 음향 시스템 배치 (드래그 캔버스)</div>
-        <div class="level-desc">장비를 마우스나 손가락으로 드래그하여 배치하고, 아이콘을 차례대로 터치해 케이블을 연결해보세요.</div>
+        <div class="level-title">3층 음향 시스템</div>
+        <div class="level-desc">장비를 드래그해 배치하고, 우측 하단의 파란색 핸들을 잡아당겨 원하는 카드만 개별적으로 크기(비율)를 조절해보세요! 장비를 클릭하면 케이블이 연결됩니다.</div>
       </div>
 
       <div class="control-bar">
-        <span>💡 장비 이동 및 우측 하단 핸들로 크기 조절 가능</span>
-        <button style="padding:4px 10px; font-size:0.75rem; background:#334155; color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="resetCardSizes()">위치 초기화</button>
+        <span>💡 안내: 카드 우측 하단 모서리를 마우스로 드래그하면 가로/세로 크기가 자유롭게 조절됩니다.</span>
+        <button style="padding:4px 10px; font-size:0.75rem; background:#334155; color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="resetCardSizes()">크기 초기화</button>
       </div>
+
       <div class="cable-instruction">
-        <span id="cableStatusText">🔌 케이블 모드: 첫 번째 장비를 선택하세요</span>
+        <span id="cableStatusText">🔌 케이블 모드: 첫 번째 장비를 클릭하세요 (예: 콘솔 ➔ 스테이지박스 ➔ 앰프 ➔ 스피커)</span>
         <button style="padding:4px 10px; font-size:0.75rem; background:#334155; color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="resetCables()">선 초기화</button>
       </div>
+
       <div class="workspace-canvas" id="workspaceCanvas">
         <svg class="connection-svg" id="connectionSvg"></svg>
-        <div class="zone-guide" style="top:10px; left:10px; width:130px; height:80px;">앰프룸</div>
-        <div class="zone-guide" style="top:10px; left:150px; width:calc(100% - 160px); height:80px;">단상</div>
-        <div class="zone-guide" style="bottom:10px; left:25%; width:50%; height:75px;">방송실</div>
+        
+        <div class="zone-guide" style="top:15px; left:20px; width:200px; height:90px;">앰프룸</div>
+        <div class="zone-guide" style="top:15px; left:260px; width:360px; height:90px;">단상</div>
+        <div class="zone-guide" style="bottom:15px; left:360px; width:180px; height:80px;">방송실</div>
       </div>
-      <button class="btn" onclick="checkLayoutComplete()" style="margin-top: 16px;">🔍 시스템 배치 및 케이블링 검증하기</button>
+
+      <button class="btn" onclick="checkLayoutComplete()">🔍 시스템 배치 및 케이블링 검증하기</button>
     </div>
 
-    <!-- TAB 3 -->
+    <!-- TAB 3: Ear Training -->
     <div id="tab3" class="tab-content">
       <div class="level-header">
-        <div class="level-title">🎧 Ear Training (청음 훈련)</div>
-        <div class="level-desc">핑크 노이즈, 대역별 청취 및 멀티트랙 믹스 밸런스 조절 훈련을 진행합니다.</div>
+        <div class="level-title">🎧 Ear Training (청음 및 밸런스 훈련)</div>
+        <div class="level-desc">핑크 노이즈 볼륨 트레이닝, 대역별 샘플 비교, 그리고 7개 멀티트랙 멀티믹스 밸런스 채점 훈련을 진행할 수 있습니다.</div>
       </div>
 
+      <!-- 1. 볼륨 변화 트레이닝 패널 -->
       <div class="training-panel">
-        <div style="font-size: 0.9rem; color: var(--text-sub); font-weight: 700;">🔊 볼륨 변화 트레이닝</div>
-        <div class="spl-display" id="splDisplay">+0 dB</div>
+        <div style="font-size: 0.9rem; color: var(--text-sub); font-weight: 700;">🔊 볼륨 변화 트레이닝 (현재 레벨 변화량)</div>
+        <div class="spl-display" id="splDisplay" contenteditable="true" spellcheck="false" onblur="handleSplInput(this)" onkeydown="handleSplKeyDown(event)">+0 dB</div>
+        
         <div class="step-btn-group">
           <button class="db-btn" onclick="changeSpl(-3)">-3</button>
           <button class="db-btn" onclick="changeSpl(-1)">-1</button>
           <button class="db-btn" onclick="changeSpl(1)">+1</button>
           <button class="db-btn" onclick="changeSpl(3)">+3</button>
         </div>
+
         <button class="btn" id="audioToggleBtn" onclick="togglePinkNoise()" style="max-width: 260px; margin-top: 6px;">🔊 핑크 노이즈 재생 시작</button>
       </div>
 
-      <!-- 대역별 샘플 트랙 비교 청취 (1~7번 복원) -->
+      <!-- 2. 대역별 오디오 샘플 비교 청취 패널 (1~7번 파일 구조) -->
       <div class="voice-training-section">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div style="font-size: 0.95rem; font-weight: 800; color: var(--accent-cyan);">🗣 대역별 오디오 샘플 비교 청취</div>
           <button style="padding:6px 12px; font-size:0.75rem; background:var(--accent-red); color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="stopAllAudioFiles()">전체 정지</button>
         </div>
+        <div style="font-size: 0.8rem; color: var(--text-sub); margin-top: 4px;">1번부터 7번까지의 대역별 샘플 파일을 클릭하여 직접 비교 청취할 수 있습니다.</div>
+
         <div class="voice-grid">
           <button class="voice-btn" id="btn_1" onclick="playSingleTrack('1.mp3', 'btn_1')">🎵 1. 원본</button>
-          <button class="voice-btn" id="btn_2" onclick="playSingleTrack('2.mp3', 'btn_2')">🔽 2. 저음 강함</button>
-          <button class="voice-btn" id="btn_3" onclick="playSingleTrack('3.mp3', 'btn_3')">🔼 3. 저음 약함</button>
-          <button class="voice-btn" id="btn_4" onclick="playSingleTrack('4.mp3', 'btn_4')">🔽 4. 중음 강함</button>
-          <button class="voice-btn" id="btn_5" onclick="playSingleTrack('5.mp3', 'btn_5')">🔼 5. 중음 약함</button>
-          <button class="voice-btn" id="btn_6" onclick="playSingleTrack('6.mp3', 'btn_6')">🔽 6. 고음 강함</button>
-          <button class="voice-btn" id="btn_7" onclick="playSingleTrack('7.mp3', 'btn_7')">🔼 7. 고음 약함</button>
+          <button class="voice-btn" id="btn_2" onclick="playSingleTrack('2.mp3', 'btn_2')">🔽 2. 저음이 강할 때</button>
+          <button class="voice-btn" id="btn_3" onclick="playSingleTrack('3.mp3', 'btn_3')">🔼 3. 저음이 약할 때</button>
+          <button class="voice-btn" id="btn_4" onclick="playSingleTrack('4.mp3', 'btn_4')">🔽 4. 중음이 강할 때</button>
+          <button class="voice-btn" id="btn_5" onclick="playSingleTrack('5.mp3', 'btn_5')">🔼 5. 중음이 약할 때</button>
+          <button class="voice-btn" id="btn_6" onclick="playSingleTrack('6.mp3', 'btn_6')">🔽 6. 고음이 강할 때</button>
+          <button class="voice-btn" id="btn_7" onclick="playSingleTrack('7.mp3', 'btn_7')">🔼 7. 고음이 약할 때</button>
         </div>
       </div>
 
-      <!-- 멀티트랙 믹스 밸런스 훈련 (가야금 GG 채널 포함, 수직 페이더 UI 명확화) -->
-      <div class="mixer-section">
-        <div style="font-size: 1.1rem; font-weight: 800; margin-bottom: 6px;">🎚️ 멀티트랙 믹스 밸런스 훈련</div>
-        <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 12px;">각 악기 채널(가야금 GG 포함)의 수직 페이더를 조절하여 안정적인 밸런스를 맞춘 뒤 검증해보세요.</p>
-        <div class="mixer-grid" id="mixerContainer"></div>
-        <button class="btn" onclick="checkMixerBalance()">✨ 믹스 밸런스 검증하기</button>
+      <!-- 3. 멀티트랙 믹스 밸런스 훈련 UI (7채널 + 1 Sample) -->
+      <div class="mix-balance-section-light">
+        <div class="mix-top-desc">Sample(All) 원본 소스와 똑같은 밸런스가 되도록 개별 트랙 페이더를 맞춰보세요</div>
+        <div class="mix-main-title">멀티트랙 믹스 밸런스 맞추기</div>
+
+        <div class="mix-pill-group">
+          <button class="mix-pill-btn active" id="modeOriginal" onclick="setMixMode('original')">원본 (Sample)</button>
+          <button class="mix-pill-btn" id="modeMyMix" onclick="setMixMode('mymix')">내 믹스 (Multi)</button>
+        </div>
+
+        <div class="exact-console-box">
+          <div class="exact-strips-layout">
+            
+            <!-- 채널 1: Sample (All) - 0dB 고정 -->
+            <div class="exact-strip" style="background:#0f172a; border-color:#3b82f6;">
+              <div class="exact-ch-top">
+                <span class="exact-ch-num" style="color:#38bdf8;">01</span>
+                <span class="exact-meter-display" id="meterSample">0.0</span>
+              </div>
+              <div class="exact-btn-row">
+                <div class="sub-ctrl-btn active-solo" onclick="toggleSolo('sample')">SOLO</div>
+                <div class="sub-ctrl-btn" id="muteBtn_sample" onclick="toggleMute('sample')">MUTE</div>
+              </div>
+              <div class="lock-row">
+                <span class="lock-dot green"></span> FIXED (0dB)
+              </div>
+              <div class="track-name-banner" style="background:#38bdf8; color:#0f172a;">Sample</div>
+
+              <div class="fader-area-wrapper" id="faderAreaSample">
+                <div class="fader-scale-labels">
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
+                </div>
+                <div class="fader-slot-line"></div>
+                <div class="fader-thumb-visual" id="thumbSample" style="bottom: 147px;">
+                  <div class="fader-thumb-line"></div>
+                </div>
+              </div>
+              <div class="reference-sticker">기준</div>
+            </div>
+
+            <!-- 채널 2: GG -->
+            <div class="exact-strip" id="strip_gg">
+              <div class="exact-ch-top">
+                <span class="exact-ch-num">02</span>
+                <span class="exact-meter-display" id="meter_gg">-&infin;</span>
+              </div>
+              <div class="exact-btn-row">
+                <div class="sub-ctrl-btn" id="soloBtn_gg" onclick="toggleSolo('gg')">SOLO</div>
+                <div class="sub-ctrl-btn" id="muteBtn_gg" onclick="toggleMute('gg')">MUTE</div>
+              </div>
+              <div class="lock-row">
+                <span class="lock-dot"></span> LOCK
+              </div>
+              <div class="track-name-banner">GG</div>
+
+              <div class="fader-area-wrapper" id="faderArea_gg" onmousedown="startFaderDrag(event, 'gg')">
+                <div class="fader-scale-labels">
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
+                </div>
+                <div class="fader-slot-line"></div>
+                <div class="fader-thumb-visual" id="thumb_gg" style="bottom: 10px;">
+                  <div class="fader-thumb-line"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 채널 3: AG -->
+            <div class="exact-strip" id="strip_ag">
+              <div class="exact-ch-top">
+                <span class="exact-ch-num">03</span>
+                <span class="exact-meter-display" id="meter_ag">-&infin;</span>
+              </div>
+              <div class="exact-btn-row">
+                <div class="sub-ctrl-btn" id="soloBtn_ag" onclick="toggleSolo('ag')">SOLO</div>
+                <div class="sub-ctrl-btn" id="muteBtn_ag" onclick="toggleMute('ag')">MUTE</div>
+              </div>
+              <div class="lock-row">
+                <span class="lock-dot"></span> LOCK
+              </div>
+              <div class="track-name-banner">AG</div>
+
+              <div class="fader-area-wrapper" id="faderArea_ag" onmousedown="startFaderDrag(event, 'ag')">
+                <div class="fader-scale-labels">
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
+                </div>
+                <div class="fader-slot-line"></div>
+                <div class="fader-thumb-visual" id="thumb_ag" style="bottom: 10px;">
+                  <div class="fader-thumb-line"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 채널 4: Bass -->
+            <div class="exact-strip" id="strip_bass">
+              <div class="exact-ch-top">
+                <span class="exact-ch-num">04</span>
+                <span class="exact-meter-display" id="meter_bass">-&infin;</span>
+              </div>
+              <div class="exact-btn-row">
+                <div class="sub-ctrl-btn" id="soloBtn_bass" onclick="toggleSolo('bass')">SOLO</div>
+                <div class="sub-ctrl-btn" id="muteBtn_bass" onclick="toggleMute('bass')">MUTE</div>
+              </div>
+              <div class="lock-row">
+                <span class="lock-dot"></span> LOCK
+              </div>
+              <div class="track-name-banner">Bass</div>
+
+              <div class="fader-area-wrapper" id="faderArea_bass" onmousedown="startFaderDrag(event, 'bass')">
+                <div class="fader-scale-labels">
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
+                </div>
+                <div class="fader-slot-line"></div>
+                <div class="fader-thumb-visual" id="thumb_bass" style="bottom: 10px;">
+                  <div class="fader-thumb-line"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 채널 5: Drum -->
+            <div class="exact-strip" id="strip_drum">
+              <div class="exact-ch-top">
+                <span class="exact-ch-num">05</span>
+                <span class="exact-meter-display" id="meter_drum">-&infin;</span>
+              </div>
+              <div class="exact-btn-row">
+                <div class="sub-ctrl-btn" id="soloBtn_drum" onclick="toggleSolo('drum')">SOLO</div>
+                <div class="sub-ctrl-btn" id="muteBtn_drum" onclick="toggleMute('drum')">MUTE</div>
+              </div>
+              <div class="lock-row">
+                <span class="lock-dot"></span> LOCK
+              </div>
+              <div class="track-name-banner">Drum</div>
+
+              <div class="fader-area-wrapper" id="faderArea_drum" onmousedown="startFaderDrag(event, 'drum')">
+                <div class="fader-scale-labels">
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
+                </div>
+                <div class="fader-slot-line"></div>
+                <div class="fader-thumb-visual" id="thumb_drum" style="bottom: 10px;">
+                  <div class="fader-thumb-line"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 채널 6: Elec rythm -->
+            <div class="exact-strip" id="strip_elec_rhythm">
+              <div class="exact-ch-top">
+                <span class="exact-ch-num">06</span>
+                <span class="exact-meter-display" id="meter_elec_rhythm">-&infin;</span>
+              </div>
+              <div class="exact-btn-row">
+                <div class="sub-ctrl-btn" id="soloBtn_elec_rhythm" onclick="toggleSolo('elec_rhythm')">SOLO</div>
+                <div class="sub-ctrl-btn" id="muteBtn_elec_rhythm" onclick="toggleMute('elec_rhythm')">MUTE</div>
+              </div>
+              <div class="lock-row">
+                <span class="lock-dot"></span> LOCK
+              </div>
+              <div class="track-name-banner">Elec rythm</div>
+
+              <div class="fader-area-wrapper" id="faderArea_elec_rhythm" onmousedown="startFaderDrag(event, 'elec_rhythm')">
+                <div class="fader-scale-labels">
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
+                </div>
+                <div class="fader-slot-line"></div>
+                <div class="fader-thumb-visual" id="thumb_elec_rhythm" style="bottom: 10px;">
+                  <div class="fader-thumb-line"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 채널 7: Elec solo -->
+            <div class="exact-strip" id="strip_elec_solo">
+              <div class="exact-ch-top">
+                <span class="exact-ch-num">07</span>
+                <span class="exact-meter-display" id="meter_elec_solo">-&infin;</span>
+              </div>
+              <div class="exact-btn-row">
+                <div class="sub-ctrl-btn" id="soloBtn_elec_solo" onclick="toggleSolo('elec_solo')">SOLO</div>
+                <div class="sub-ctrl-btn" id="muteBtn_elec_solo" onclick="toggleMute('elec_solo')">MUTE</div>
+              </div>
+              <div class="lock-row">
+                <span class="lock-dot"></span> LOCK
+              </div>
+              <div class="track-name-banner">Elec solo</div>
+
+              <div class="fader-area-wrapper" id="faderArea_elec_solo" onmousedown="startFaderDrag(event, 'elec_solo')">
+                <div class="fader-scale-labels">
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
+                </div>
+                <div class="fader-slot-line"></div>
+                <div class="fader-thumb-visual" id="thumb_elec_solo" style="bottom: 10px;">
+                  <div class="fader-thumb-line"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 채널 8: Piano -->
+            <div class="exact-strip" id="strip_piano">
+              <div class="exact-ch-top">
+                <span class="exact-ch-num">08</span>
+                <span class="exact-meter-display" id="meter_piano">-&infin;</span>
+              </div>
+              <div class="exact-btn-row">
+                <div class="sub-ctrl-btn" id="soloBtn_piano" onclick="toggleSolo('piano')">SOLO</div>
+                <div class="sub-ctrl-btn" id="muteBtn_piano" onclick="toggleMute('piano')">MUTE</div>
+              </div>
+              <div class="lock-row">
+                <span class="lock-dot"></span> LOCK
+              </div>
+              <div class="track-name-banner">Piano</div>
+
+              <div class="fader-area-wrapper" id="faderArea_piano" onmousedown="startFaderDrag(event, 'piano')">
+                <div class="fader-scale-labels">
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
+                </div>
+                <div class="fader-slot-line"></div>
+                <div class="fader-thumb-visual" id="thumb_piano" style="bottom: 10px;">
+                  <div class="fader-thumb-line"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="console-leather-base">
+            <div class="leather-screw screw-left"></div>
+            <div class="leather-screw screw-right"></div>
+          </div>
+        </div>
+
+        <div class="mix-bottom-buttons">
+          <button class="db-btn" style="flex:1; background:#cbd5e1; color:#0f172a;" onclick="resetMixFaders()">초기화</button>
+          <button class="btn" style="flex:1; height:40px; font-size:0.85rem;" onclick="checkMixBalance()">채점</button>
+        </div>
       </div>
 
     </div>
+
   </main>
 
   <script>
-    const isMobileDevice = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const badge = document.getElementById('deviceBadge');
-      if (isMobileDevice) {
-        badge.innerText = "📱 모바일 환경 감지됨 (터치 드래그 캔버스 실행)";
-      } else {
-        badge.innerText = "💻 PC 환경 감지됨 (콘솔 페이더 & 드래그 캔버스 실행)";
-      }
-      initWorkspace();
-      initMixerUI();
-    });
-
     function switchTab(tabId) {
-      stopPinkNoise();
-      stopAllAudioFiles();
-      
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       
-      if(tabId==='tab1') { document.querySelectorAll('.tab-btn')[0].classList.add('active'); document.getElementById('tab1').classList.add('active'); }
+      // 탭 이동 시 모든 재생 중인 오디오 확실히 차단
+      stopPinkNoise(); 
+      stopAllAudioFiles();
+      stopAllMixAudio();
+
+      if(tabId==='tab1') { 
+        document.querySelectorAll('.tab-btn')[0].classList.add('active'); 
+        document.getElementById('tab1').classList.add('active'); 
+      }
       else if(tabId==='tab2') { 
         document.querySelectorAll('.tab-btn')[1].classList.add('active'); 
-        document.getElementById('tab2').classList.add('active');
-        setTimeout(drawCables, 50); 
+        document.getElementById('tab2').classList.add('active'); 
       }
-      else { document.querySelectorAll('.tab-btn')[2].classList.add('active'); document.getElementById('tab3').classList.add('active'); }
+      else { 
+        document.querySelectorAll('.tab-btn')[2].classList.add('active'); 
+        document.getElementById('tab3').classList.add('active'); 
+      }
     }
 
-    const defaultGearItems = [
-      { id: 'vi10p_L', name: '메인 L', img: 'vi10p.jpg', x: 20, y: 120, w: 80, h: 100 },
-      { id: 'vi10p_R', name: '메인 R', img: 'vi10p.jpg', x: 280, y: 120, w: 80, h: 100 },
-      { id: 'amplifier', name: '앰프', img: '40D.jpg', x: 20, y: 15, w: 80, h: 90 },
-      { id: 'stagebox', name: '스테이지 박스', img: 'rio3224D2.jpg', x: 180, y: 15, w: 90, h: 90 },
-      { id: 'console', name: '콘솔 (믹서)', img: 'console.jpg', x: 130, y: 600, w: 90, h: 100 }
+    const gearItems = [
+      { id: 'vi10p_L', name: '메인 L', img: 'vi10p.jpg', x: 40, y: 180, w: 90, h: 116 },
+      { id: 'vi10p_R', name: '메인 R', img: 'vi10p.jpg', x: 800, y: 180, w: 90, h: 116 },
+      { id: 'woofer_L', name: '우퍼 L', img: 'woofer.jpg', x: 280, y: 25, w: 90, h: 116 },
+      { id: 'woofer_R', name: '우퍼 R', img: 'woofer.jpg', x: 550, y: 25, w: 90, h: 116 },
+      { id: 'y7p_L', name: '1열 딜레이 L', img: 'y7p.jpg', x: 200, y: 350, w: 90, h: 116 },
+      { id: 'y10p_C', name: '1열 센터', img: 'y7p.jpg', x: 420, y: 350, w: 90, h: 116 },
+      { id: 'y7p_R', name: '1열 딜레이 R', img: 'y7p.jpg', x: 640, y: 350, w: 90, h: 116 },
+      { id: 'e8_L', name: '2열 딜레이 L', img: 'e8.jpg', x: 200, y: 530, w: 90, h: 116 },
+      { id: 'e8_R', name: '2열 딜레이 R', img: 'e8.jpg', x: 640, y: 530, w: 90, h: 116 },
+      { id: 'amp_40d', name: '40D 앰프', img: '40D.jpg', x: 30, y: 25, w: 90, h: 116 },
+      { id: 'amp_10d', name: '10D 앰프', img: '10D.jpg', x: 120, y: 25, w: 90, h: 116 },
+      { id: 'stagebox', name: '스테이지 박스', img: 'rio3224D2.jpg', x: 340, y: 130, w: 90, h: 116 },
+      { id: 'console', name: '콘솔 (믹서)', img: 'console.jpg', x: 400, y: 720, w: 90, h: 116 }
     ];
 
-    let gearItems = JSON.parse(JSON.stringify(defaultGearItems));
     let canvas = document.getElementById('workspaceCanvas');
     let svgLayer = document.getElementById('connectionSvg');
     let selectedGearForCable = null;
@@ -505,15 +979,6 @@
 
     function initWorkspace() {
       canvas.querySelectorAll('.draggable-gear').forEach(el => el.remove());
-
-      let canvasW = canvas.clientWidth || 350;
-      if (canvasW < 400 && gearItems[1].x > 250) {
-        gearItems[0].x = 10; gearItems[0].y = 110; gearItems[0].w = 70; gearItems[0].h = 90;
-        gearItems[1].x = 210; gearItems[1].y = 110; gearItems[1].w = 70; gearItems[1].h = 90;
-        gearItems[2].x = 10; gearItems[2].y = 15; gearItems[2].w = 70; gearItems[2].h = 80;
-        gearItems[3].x = 110; gearItems[3].y = 15; gearItems[3].w = 80; gearItems[3].h = 80;
-        gearItems[4].x = 100; gearItems[4].y = 590; gearItems[4].w = 85; gearItems[4].h = 95;
-      }
 
       gearItems.forEach(item => {
         const div = document.createElement('div');
@@ -524,224 +989,511 @@
         div.style.height = item.h + 'px';
         
         div.innerHTML = `
-          <div class="gear-img-wrap"><img src="${item.img}" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'50\\' height=\\'50\\\'><rect width=\\'50\\' height=\\'50\\' fill=\\'%23111\\'/><text x=\\'5\\' y=\\'25\\' fill=\\'red\\' font-size=\\'7\\'>이미지</text></svg>'"></div>
+          <div class="gear-img-wrap">
+            <img src="${item.img}" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\'><rect width=\'60\' height=\'60\' fill=\'%23111\'/><text x=\'5\' y=\'30\' fill=\'red\' font-size=\'8\'>이미지없음</text><text x=\'5\' y=\'45\' fill=\'%2338bdf8\' font-size=\'6\'>${item.img}</text></svg>'">
+          </div>
           <div class="gear-label">${item.name}</div>
           <div class="resize-handle"></div>
         `;
+
+        if (connectedCables.some(c => c.fromId === item.id || c.toId === item.id)) {
+          div.classList.add('connected');
+        }
+
         makeInteractive(div, item);
         canvas.appendChild(div);
       });
+
       drawCables();
     }
 
-    function resetCardSizes() {
-      gearItems = JSON.parse(JSON.stringify(defaultGearItems));
-      initWorkspace();
-    }
-
     function makeInteractive(elm, item) {
+      let isResizing = false;
+      let startX, startY, startW, startH, startLeft, startTop;
       const handle = elm.querySelector('.resize-handle');
-      handle.addEventListener('pointerdown', function(e) {
-        e.stopPropagation(); e.preventDefault();
-        let startX = e.clientX, startY = e.clientY, startW = elm.offsetWidth, startH = elm.offsetHeight;
-        function onResizeMove(me) {
-          elm.style.width = Math.max(50, startW + (me.clientX - startX)) + 'px';
-          elm.style.height = Math.max(50, startH + (me.clientY - startY)) + 'px';
-          item.w = elm.offsetWidth; item.h = elm.offsetHeight;
-          drawCables();
-        }
-        function onResizeUp() {
-          window.removeEventListener('pointermove', onResizeMove);
-          window.removeEventListener('pointerup', onResizeUp);
-        }
-        window.addEventListener('pointermove', onResizeMove);
-        window.addEventListener('pointerup', onResizeUp);
-      });
+
+      handle.onmousedown = function(e) {
+        e.stopPropagation();
+        isResizing = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        startW = elm.offsetWidth;
+        startH = elm.offsetHeight;
+        document.onmousemove = onResizeMove;
+        document.onmouseup = onResizeUp;
+      };
+
+      function onResizeMove(e) {
+        if (!isResizing) return;
+        let newW = startW + (e.clientX - startX);
+        let newH = startH + (e.clientY - startY);
+        if (newW < 50) newW = 50;
+        if (newH < 50) newH = 50;
+        elm.style.width = newW + 'px';
+        elm.style.height = newH + 'px';
+        item.w = newW;
+        item.h = newH;
+        drawCables();
+      }
+
+      function onResizeUp() {
+        isResizing = false;
+        document.onmousemove = null;
+        document.onmouseup = null;
+      }
 
       let hasMoved = false;
-      elm.addEventListener('pointerdown', function(e) {
-        if (e.target === handle) return;
+      elm.onmousedown = function(e) {
+        if (isResizing) return;
         e.preventDefault();
         hasMoved = false;
-        let startX = e.clientX, startY = e.clientY, startLeft = elm.offsetLeft, startTop = elm.offsetTop;
-        function onDragMove(me) {
-          if (Math.abs(me.clientX - startX) > 3 || Math.abs(me.clientY - startY) > 3) hasMoved = true;
-          elm.style.left = Math.max(0, Math.min(canvas.clientWidth - elm.offsetWidth, startLeft + (me.clientX - startX))) + 'px';
-          elm.style.top = Math.max(0, Math.min(canvas.clientHeight - elm.offsetHeight, startTop + (me.clientY - startY))) + 'px';
-          item.x = elm.offsetLeft; item.y = elm.offsetTop;
-          drawCables();
+        startX = e.clientX;
+        startY = e.clientY;
+        startLeft = elm.offsetLeft;
+        startTop = elm.offsetTop;
+        document.onmousemove = onDragMove;
+        document.onmouseup = onDragUp;
+      };
+
+      function onDragMove(e) {
+        let dx = e.clientX - startX;
+        let dy = e.clientY - startY;
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasMoved = true;
+        let newLeft = startLeft + dx;
+        let newTop = startTop + dy;
+        if(newTop < 0) newTop = 0;
+        if(newLeft < 0) newLeft = 0;
+        if(newTop > canvas.clientHeight - elm.offsetHeight) newTop = canvas.clientHeight - elm.offsetHeight;
+        if(newLeft > canvas.clientWidth - elm.offsetWidth) newLeft = canvas.clientWidth - elm.offsetWidth;
+        elm.style.top = newTop + "px";
+        elm.style.left = newLeft + "px";
+        item.x = newLeft;
+        item.y = newTop;
+        drawCables();
+      }
+
+      function onDragUp(e) {
+        document.onmousemove = null;
+        document.onmouseup = null;
+        if (!hasMoved) handleGearCableClick(item, elm);
+      }
+    }
+
+    function handleGearCableClick(item, el) {
+      if (!selectedGearForCable) {
+        selectedGearForCable = item;
+        el.classList.add('selected-cable');
+        document.getElementById('cableStatusText').innerText = `🔗 [${item.name}] 선택됨. 연결할 다음 장비를 클릭하세요.`;
+      } else {
+        if (selectedGearForCable.id !== item.id) {
+          connectedCables = connectedCables.filter(c => !(c.fromId === selectedGearForCable.id && c.toId === item.id));
+          connectedCables.push({ fromId: selectedGearForCable.id, fromName: selectedGearForCable.name, toId: item.id, toName: item.name });
+          document.getElementById('cableStatusText').innerText = `✨ 케이블 연결 완료: ${selectedGearForCable.name} ➔ ${item.name}`;
         }
-        function onDragUp() {
-          window.removeEventListener('pointermove', onDragMove);
-          window.removeEventListener('pointerup', onDragUp);
-          if (!hasMoved) {
-            if (!selectedGearForCable) {
-              selectedGearForCable = item;
-              document.getElementById('cableStatusText').innerText = `🔗 [${item.name}] 선택됨. 다음 장비를 선택하세요.`;
-            } else {
-              if (selectedGearForCable.id !== item.id) {
-                connectedCables.push({ fromName: selectedGearForCable.name, toName: item.name });
-                document.getElementById('cableStatusText').innerText = `✨ 연결 성공: ${selectedGearForCable.name} ➔ ${item.name}`;
-              }
-              selectedGearForCable = null;
-              initWorkspace();
-            }
-          }
-        }
-        window.addEventListener('pointermove', onDragMove);
-        window.addEventListener('pointerup', onDragUp);
-      });
+        selectedGearForCable = null;
+        initWorkspace();
+      }
     }
 
     function drawCables() {
       svgLayer.innerHTML = '';
-      connectedCables.forEach(c => {
-        let f = gearItems.find(g => g.name === c.fromName);
-        let t = gearItems.find(g => g.name === c.toName);
-        if (f && t) {
+      connectedCables.forEach(cable => {
+        let fromGear = gearItems.find(g => g.id === cable.fromId);
+        let toGear = gearItems.find(g => g.id === cable.toId);
+        if (fromGear && toGear) {
+          let x1 = fromGear.x + (fromGear.w / 2);
+          let y1 = fromGear.y + (fromGear.h / 2);
+          let x2 = toGear.x + (toGear.w / 2);
+          let y2 = toGear.y + (toGear.h / 2);
           let line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-          line.setAttribute('x1', f.x + f.w/2); line.setAttribute('y1', f.y + f.h/2);
-          line.setAttribute('x2', t.x + t.w/2); line.setAttribute('y2', t.y + t.h/2);
+          line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+          line.setAttribute('x2', x2); line.setAttribute('y2', y2);
           line.setAttribute('stroke', '#38bdf8'); line.setAttribute('stroke-width', '3');
+          line.setAttribute('stroke-dasharray', '6,3');
           svgLayer.appendChild(line);
         }
       });
     }
 
-    function resetCables() { connectedCables = []; selectedGearForCable = null; initWorkspace(); }
-    function checkLayoutComplete() { alert(`배치 및 케이블 검증 완료! 총 ${connectedCables.length}개 케이블 패치 확인.`); }
+    function resetCardSizes() {
+      gearItems.forEach(item => { item.w = 90; item.h = 116; });
+      initWorkspace();
+    }
 
-    // 강력한 오디오 컨텍스트 관리 및 초기화
-    let audioCtx = null, pinkNoiseNode = null, gainNode = null, isPlaying = false, diffSpl = 0;
+    function resetCables() {
+      connectedCables = [];
+      selectedGearForCable = null;
+      document.getElementById('cableStatusText').innerText = "🔌 케이블 초기화됨. 첫 번째 장비를 클릭하세요.";
+      initWorkspace();
+    }
 
-    function getAudioContext() {
+    function checkLayoutComplete() {
+      alert(`배치 및 케이블링 검증 완료! 총 ${connectedCables.length}개의 오디오 케이블 패치가 정상 확인되었습니다.`);
+    }
+
+    // ========== 오디오 로직 (핑크노이즈) ==========
+    let audioCtx = null;
+    let pinkNoiseNode = null;
+    let gainNode = null;
+    let isPlaying = false;
+    let baseSpl = 74; 
+    let diffSpl = 0;  
+
+    function initAudio() {
       if (!audioCtx) {
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContextClass();
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const bufferSize = 4096;
+        pinkNoiseNode = audioCtx.createScriptProcessor(bufferSize, 1, 1);
+        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+        pinkNoiseNode.onaudioprocess = function(e) {
+          let output = e.outputBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            let white = Math.random() * 2 - 1;
+            b0 = 0.99886 * b0 + white * 0.0555179;
+            b1 = 0.99332 * b1 + white * 0.0750759;
+            b2 = 0.96900 * b2 + white * 0.1538520;
+            b3 = 0.86650 * b3 + white * 0.3104856;
+            b4 = 0.55000 * b4 + white * 0.5329522;
+            b5 = -0.7616 * b5 - white * 0.0168980;
+            output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+            output[i] *= 0.12; 
+            b6 = white * 0.115926;
+          }
+        };
+        gainNode = audioCtx.createGain();
+        updateGainValue();
+        pinkNoiseNode.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
       }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
+    }
+
+    function updateGainValue() {
+      if (!gainNode) return;
+      let currentTotalSpl = baseSpl + diffSpl;
+      let dbDiffFromBase = currentTotalSpl - 60; 
+      let gainVal = Math.pow(10, dbDiffFromBase / 20) / 120; 
+      if (gainVal < 0.00001) gainVal = 0.00001;
+      if (gainVal > 0.4) gainVal = 0.4;
+      gainNode.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+    }
+
+    function changeSpl(amount) {
+      diffSpl += amount; 
+      updateDisplayAndAudio();
+    }
+
+    function updateDisplayAndAudio() {
+      let signStr = diffSpl >= 0 ? `+${diffSpl}` : `${diffSpl}`;
+      let displayEl = document.getElementById('splDisplay');
+      if (document.activeElement !== displayEl) {
+        displayEl.innerText = `${signStr} dB`;
       }
-      return audioCtx;
+      if (isPlaying) updateGainValue();
+    }
+
+    function handleSplInput(el) {
+      let text = el.innerText.replace(/[^0-9\-+]/g, ''); 
+      let parsed = parseInt(text, 10);
+      if (!isNaN(parsed)) diffSpl = parsed;
+      updateDisplayAndAudio();
+    }
+
+    function handleSplKeyDown(event) {
+      if (event.key === 'Enter') { event.preventDefault(); event.target.blur(); }
     }
 
     function togglePinkNoise() {
-      const ctx = getAudioContext();
-
-      if (!pinkNoiseNode) {
-        pinkNoiseNode = ctx.createScriptProcessor(4096, 1, 1);
-        pinkNoiseNode.onaudioprocess = function(e) {
-          let output = e.outputBuffer.getChannelData(0);
-          for (let i = 0; i < 4096; i++) {
-            output[i] = (Math.random() * 2 - 1) * 0.1;
-          }
-        };
-        gainNode = ctx.createGain();
-        pinkNoiseNode.connect(gainNode);
-        gainNode.connect(ctx.destination);
-      }
-
-      isPlaying = !isPlaying;
+      initAudio();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
       const btn = document.getElementById('audioToggleBtn');
-      if (isPlaying) {
-        gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
-        btn.innerText = "🔇 핑크 노이즈 정지"; 
+      if (!isPlaying) {
+        isPlaying = true;
+        updateGainValue();
+        btn.innerText = "🔇 핑크 노이즈 정지";
         btn.style.background = "var(--accent-red)";
       } else {
-        gainNode.gain.setValueAtTime(0, ctx.currentTime);
-        btn.innerText = "🔊 핑크 노이즈 재생 시작"; 
+        isPlaying = false;
+        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+        btn.innerText = "🔊 핑크 노이즈 재생 시작";
         btn.style.background = "var(--primary)";
       }
     }
 
-    function changeSpl(val) {
-      diffSpl += val;
-      document.getElementById('splDisplay').innerText = (diffSpl >= 0 ? `+${diffSpl}` : `${diffSpl}`) + " dB";
+    function stopPinkNoise() {
+      if (isPlaying && audioCtx) {
+        isPlaying = false;
+        if(gainNode) gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+        const btn = document.getElementById('audioToggleBtn');
+        if(btn) { btn.innerText = "🔊 핑크 노이즈 재생 시작"; btn.style.background = "var(--primary)"; }
+      }
     }
 
-    let currentAudio = null, currentPlayingBtnId = null;
-    function playSingleTrack(file, btnId) {
-      getAudioContext();
+    // ========== 단일 트랙 오디오 1~7 ==========
+    let currentAudio = null;
+    let currentPlayingBtnId = null;
+
+    function playSingleTrack(filename, btnId) {
       stopAllAudioFiles();
-      
-      currentAudio = new Audio(file);
+      currentAudio = new Audio(filename);
       currentPlayingBtnId = btnId;
-      const targetBtn = document.getElementById(btnId);
-      if (targetBtn) targetBtn.classList.add('playing');
-      
-      currentAudio.play().catch(e => {
-        alert(`⚠️ 오디오 재생 실패: '${file}' 파일이 동일 폴더에 없거나 브라우저 권한에 의해 차단되었습니다.`);
-        stopAllAudioFiles();
+      const btn = document.getElementById(btnId);
+      if (btn) btn.classList.add('playing');
+
+      currentAudio.play().catch(err => {
+        alert(`오디오 파일(${filename})을 재생할 수 없습니다. 폴더 경로를 확인해주세요.\n(오류: ${err.message})`);
+        if (btn) btn.classList.remove('playing');
       });
-      
-      currentAudio.onended = () => stopAllAudioFiles();
+
+      currentAudio.onended = function() {
+        if (btn) btn.classList.remove('playing');
+        currentPlayingBtnId = null;
+      };
     }
-    
+
     function stopAllAudioFiles() {
-      if (currentAudio) { 
-        currentAudio.pause(); 
-        currentAudio = null; 
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
       }
       if (currentPlayingBtnId) {
-        const b = document.getElementById(currentPlayingBtnId);
-        if(b) b.classList.remove('playing');
+        const btn = document.getElementById(currentPlayingBtnId);
+        if (btn) btn.classList.remove('playing');
         currentPlayingBtnId = null;
       }
     }
+
+    // ========== 멀티트랙 믹스 로직 교정 및 동기화 ==========
+    const trackKeys = ['sample', 'gg', 'ag', 'bass', 'drum', 'elec_rhythm', 'elec_solo', 'piano'];
     
-    function stopPinkNoise() { 
-      if(isPlaying) togglePinkNoise(); 
+    // sample 트랙은 All.mp3 에 확실히 매칭
+    const mixFiles = {
+      sample: 'All.mp3',
+      gg: 'GG.mp3',
+      ag: 'AG.mp3',
+      bass: 'Bass.mp3',
+      drum: 'Drum.mp3',
+      elec_rhythm: 'Elec_rhythm.mp3',
+      elec_solo: 'Elec_solo.mp3',
+      piano: 'Piano.mp3'
+    };
+    
+    let multiAudioElements = {};
+    let isMixInitialized = false;
+
+    let faderValues = {
+      sample: 0.0,   // 0dB 고정
+      gg: -60,
+      ag: -60,
+      bass: -60,
+      drum: -60,
+      elec_rhythm: -60,
+      elec_solo: -60,
+      piano: -60
+    };
+
+    let trackMutes = { sample: false, gg: false, ag: false, bass: false, drum: false, elec_rhythm: false, elec_solo: false, piano: false };
+    let activeSolo = null;
+    let mixMode = 'original';
+
+    // 실시간 동시 재생 동기화 함수
+    function initMixAudio() {
+      if (isMixInitialized) return;
+      trackKeys.forEach(ch => {
+        let audio = new Audio(mixFiles[ch]);
+        audio.loop = true;
+        audio.volume = 0; // 초기에 모두 소리 끔(볼륨 0)
+        multiAudioElements[ch] = audio;
+        audio.play().catch(e => console.log(`${mixFiles[ch]} 자동재생 대기`));
+      });
+      isMixInitialized = true;
     }
 
-    // 멀티트랙 믹서 초기화 (콘솔 수직 페이더 스타일)
-    const mixerValues = {};
-    function initMixerUI() {
-      const container = document.getElementById('mixerContainer');
-      if (!container) return;
-      container.innerHTML = '';
+    function stopAllMixAudio() {
+      if (!isMixInitialized) return;
+      trackKeys.forEach(ch => {
+        if (multiAudioElements[ch]) {
+          multiAudioElements[ch].pause();
+          multiAudioElements[ch].currentTime = 0;
+        }
+      });
+      isMixInitialized = false;
+    }
+
+    function setMixMode(mode) {
+      mixMode = mode;
+      document.getElementById('modeOriginal').classList.remove('active');
+      document.getElementById('modeMyMix').classList.remove('active');
+
+      if(mode === 'original') {
+        document.getElementById('modeOriginal').classList.add('active');
+      } else {
+        document.getElementById('modeMyMix').classList.add('active');
+      }
+
+      initMixAudio();
       
-      const tracks = [
-        { key: 'Vocals', name: '보컬 (Vocals)' },
-        { key: 'Acoustic_Guitar', name: '통기타 (AG)' },
-        { key: 'Electric_Guitar', name: '일렉기타 (EG)' },
-        { key: 'Bass', name: '베이스 (Bass)' },
-        { key: 'Gayageum', name: '가야금 (GG)' },
-        { key: 'Drum', name: '드럼 (Drum)' },
-        { key: 'Keyboard', name: '건반 (Piano)' }
-      ];
-      
-      tracks.forEach(t => {
-        mixerValues[t.key] = 0;
-        let div = document.createElement('div');
-        div.className = 'fader-channel';
-        div.innerHTML = `
-          <div class="fader-channel-name">${t.name}</div>
-          <div class="fader-val-badge" id="val_${t.key}">0 dB</div>
-          <div class="fader-track-wrap">
-            <input type="range" class="vertical-range" min="-30" max="10" step="0.5" value="0" oninput="updateMixerVal('${t.key}', this.value)">
-          </div>
-        `;
-        container.appendChild(div);
+      // 모드 변경 클릭 시, 차단되었던 오디오 강제 재생 재시도
+      trackKeys.forEach(ch => {
+        if (multiAudioElements[ch] && multiAudioElements[ch].paused) {
+          multiAudioElements[ch].play().catch(e => {});
+        }
+      });
+
+      applyMixVolumes();
+    }
+
+    function applyMixVolumes() {
+      if (!isMixInitialized) return;
+
+      trackKeys.forEach(ch => {
+        let audio = multiAudioElements[ch];
+        if (!audio) return;
+
+        // 원본(original) 모드에서는 'sample' 트랙(All.mp3)만 활성화
+        // 내 믹스(mymix) 모드에서는 'sample'을 제외한 나머지 트랙 활성화
+        let isActiveMode = (mixMode === 'original' && ch === 'sample') || (mixMode === 'mymix' && ch !== 'sample');
+
+        if (!isActiveMode) {
+          audio.volume = 0;
+          return;
+        }
+
+        // 솔로/뮤트 처리
+        let isMuted = trackMutes[ch];
+        if (activeSolo && activeSolo !== ch) isMuted = true;
+
+        let db = faderValues[ch];
+        if (isMuted || db <= -55) {
+          audio.volume = 0;
+        } else {
+          let vol = Math.pow(10, db / 20);
+          audio.volume = Math.min(1, Math.max(0, vol));
+        }
       });
     }
 
-    function updateMixerVal(track, val) {
-      mixerValues[track] = parseFloat(val);
-      document.getElementById(`val_${track}`).innerText = (val >= 0 ? `+${val}` : val) + " dB";
+    function toggleMute(ch) {
+      initMixAudio(); // 버튼 클릭 시 오디오 엔진 초기화 유도
+      trackMutes[ch] = !trackMutes[ch];
+      const btn = document.getElementById(ch === 'sample' ? 'muteBtn_sample' : 'muteBtn_' + ch);
+      if(trackMutes[ch]) {
+        btn.classList.add('active-mute');
+      } else {
+        btn.classList.remove('active-mute');
+      }
+      applyMixVolumes();
     }
 
-    function checkMixerBalance() {
-      let v = mixerValues['Vocals'] !== undefined ? mixerValues['Vocals'] : 0;
-      let b = mixerValues['Bass'] !== undefined ? mixerValues['Bass'] : 0;
-      let gg = mixerValues['Gayageum'] !== undefined ? mixerValues['Gayageum'] : 0;
-      let d = mixerValues['Drum'] !== undefined ? mixerValues['Drum'] : 0;
-
-      if (v >= -3 && v <= 3 && gg >= -4 && gg <= 2 && b >= -6 && b <= 2 && d >= -6 && d <= 2) {
-        alert("🎉 훌륭합니다! 보컬과 가야금(GG), 리듬 파트의 밸런스가 매우 안정적으로 잘 잡혔습니다.");
+    function toggleSolo(ch) {
+      initMixAudio();
+      if(activeSolo === ch) {
+        activeSolo = null;
+        document.querySelectorAll('.sub-ctrl-btn').forEach(b => {
+          if(b.innerText === 'SOLO') b.classList.remove('active-solo');
+        });
       } else {
-        alert("⚠️ 밸런스 조정이 필요합니다. 보컬과 가야금 페이더를 적정 레벨(-3 ~ +2dB)로 맞추고 저음역대(베이스, 드럼)가 과하지 않도록 조절해보세요.");
+        activeSolo = ch;
+        document.querySelectorAll('.sub-ctrl-btn').forEach(b => {
+          if(b.innerText === 'SOLO') b.classList.remove('active-solo');
+        });
+        event.target.classList.add('active-solo');
+      }
+      applyMixVolumes();
+    }
+
+    function startFaderDrag(e, channel) {
+      e.preventDefault();
+      initMixAudio(); // 페이더 조작 시 오디오 엔진 구동
+
+      const wrapper = document.getElementById('faderArea_' + channel);
+      const rect = wrapper.getBoundingClientRect();
+      const slotHeight = 175;
+      const minVal = -60;
+      const maxVal = 10;
+
+      function updateFaderFromMouse(clientY) {
+        let offsetY = clientY - (rect.top + 10);
+        if (offsetY < 0) offsetY = 0;
+        if (offsetY > slotHeight) offsetY = slotHeight;
+
+        let ratio = 1 - (offsetY / slotHeight);
+        let val = minVal + ratio * (maxVal - minVal);
+        val = Math.round(val * 10) / 10;
+        if(val < -55) val = -60;
+        
+        faderValues[channel] = val;
+        renderFaderPosition(channel, val);
+        applyMixVolumes();
+      }
+
+      updateFaderFromMouse(e.clientY);
+
+      function onMouseMove(moveEvent) {
+        updateFaderFromMouse(moveEvent.clientY);
+      }
+
+      function onMouseUp() {
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
+      }
+
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+    }
+
+    function renderFaderPosition(channel, val) {
+      const minVal = -60;
+      const maxVal = 10;
+      let ratio = (val - minVal) / (maxVal - minVal);
+      let minPx = 10;
+      let maxPx = 170;
+      let currentPx = minPx + ratio * (maxPx - minPx);
+
+      if(channel === 'sample') {
+        document.getElementById('thumbSample').style.bottom = currentPx + 'px';
+        document.getElementById('meterSample').innerText = val <= -55 ? '-&infin;' : (val >= 0 ? '+' + val.toFixed(1) : val.toFixed(1));
+      } else {
+        document.getElementById('thumb_' + channel).style.bottom = currentPx + 'px';
+        document.getElementById('meter_' + channel).innerText = val <= -55 ? '-&infin;' : (val >= 0 ? '+' + val.toFixed(1) : val.toFixed(1));
       }
     }
+
+    function resetMixFaders() {
+      trackKeys.forEach(ch => {
+        if(ch === 'sample') return;
+        faderValues[ch] = -60;
+        renderFaderPosition(ch, -60);
+      });
+      applyMixVolumes();
+    }
+
+    function checkMixBalance() {
+      let totalScore = 100;
+      let penalty = 0;
+      const idealValues = { gg: -3.0, ag: -5.0, bass: -1.5, drum: 0.0, elec_rhythm: -4.0, elec_solo: -2.0, piano: -3.5 };
+
+      trackKeys.forEach(ch => {
+        if(ch === 'sample') return;
+        let diff = Math.abs(faderValues[ch] - idealValues[ch]);
+        penalty += diff * 1.5;
+      });
+
+      let finalScore = Math.max(0, Math.round(totalScore - penalty));
+      
+      let message = `🎯 믹스 밸런스 채점 결과: ${finalScore}점 / 100점\n\n`;
+      if(finalScore >= 90) message += "🏆 완벽합니다! 원본 Sample(All)과 구별할 수 없는 훌륭한 밸런스입니다.";
+      else if(finalScore >= 70) message += "👍 아주 좋습니다! 조금만 더 세밀하게 악기별 볼륨을 조절해보세요.";
+      else message += "💪 분발하세요! 각 악기(GG, Bass, Drum 등)의 페이더 위치를 다시 조정해보세요.";
+
+      alert(message);
+    }
+
+    initWorkspace();
+    renderFaderPosition('sample', 0.0);
+    trackKeys.forEach(ch => {
+      if(ch !== 'sample') renderFaderPosition(ch, -60);
+    });
   </script>
 </body>
 </html>
