@@ -195,8 +195,8 @@
       position: absolute;
       right: 2px;
       bottom: 2px;
-      width: 14px;
-      height: 14px;
+      width: 18px;
+      height: 18px;
       background: var(--primary);
       border-radius: 3px;
       cursor: se-resize;
@@ -278,7 +278,8 @@
       flex-wrap: wrap;
     }
     .db-btn {
-      padding: 8px 16px;
+      padding: 10px 18px;
+      min-height: 40px;
       background: #e2e8f0;
       color: var(--text-main);
       font-weight: 700;
@@ -462,11 +463,15 @@
       flex: 1;
       background: #1f2937;
       border: 1px solid #374151;
-      border-radius: 3px;
-      font-size: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.62rem;
       font-weight: 700;
       color: #9ca3af;
-      padding: 3px 0;
+      padding: 7px 0;
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-align: center;
       cursor: pointer;
     }
@@ -622,6 +627,196 @@
       50% { opacity: 0.7; }
       100% { opacity: 1; }
     }
+
+    /* ===== 공통 모달 (alert 대체) ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-box {
+      background: #ffffff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 420px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      animation: modalPop 0.18s ease;
+    }
+    @keyframes modalPop {
+      from { opacity: 0; transform: translateY(8px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--text-main);
+    }
+    .modal-close {
+      background: #f1f5f9;
+      border: none;
+      border-radius: 8px;
+      width: 28px;
+      height: 28px;
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      cursor: pointer;
+    }
+    .modal-body {
+      padding: 18px;
+      font-size: 0.88rem;
+      color: var(--text-main);
+      line-height: 1.55;
+    }
+    .modal-body p { margin-bottom: 8px; }
+
+    /* ===== 결과/피드백 패널 (alert 대체) ===== */
+    .result-panel {
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      text-align: left;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      display: none;
+    }
+    .result-panel.show { display: block; }
+    .result-panel.result-good { background: #ecfdf5; border: 1px solid #10b981; color: #065f46; }
+    .result-panel.result-warn { background: #fffbeb; border: 1px solid #d97706; color: #92400e; }
+    .result-panel.result-bad { background: #fef2f2; border: 1px solid #ef4444; color: #991b1b; }
+    .result-panel .result-title { font-weight: 800; font-size: 0.95rem; margin-bottom: 8px; }
+    .result-panel .result-line { margin-bottom: 4px; }
+    .result-panel ul { margin: 4px 0 4px 16px; }
+    .result-panel li { margin-bottom: 3px; }
+
+    .best-score-tag {
+      display: inline-block;
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-top: 8px;
+    }
+
+    /* ===== 장비 정보 아이콘 ===== */
+    .gear-info-btn {
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      color: #fff;
+      border: none;
+      font-size: 0.68rem;
+      font-weight: 800;
+      line-height: 22px;
+      text-align: center;
+      cursor: pointer;
+      z-index: 6;
+      touch-action: none;
+      padding: 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+
+    /* ===== 퀴즈 모드 토글/패널 ===== */
+    .quiz-mode-box {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .quiz-mode-box.show { display: flex; }
+    .quiz-hidden-display {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--text-sub);
+      letter-spacing: 2px;
+    }
+    .guess-btn-group {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .guess-btn {
+      padding: 10px 12px;
+      min-width: 48px;
+      min-height: 40px;
+      background: #e2e8f0;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .guess-btn:hover { background: var(--primary); color: #fff; }
+    .guess-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ===== 기준음 vs 변화음 A/B 비교 ===== */
+    .ab-compare-group {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    .ab-btn {
+      flex: 1;
+      min-width: 140px;
+      padding: 12px 10px;
+      min-height: 44px;
+      background: #e2e8f0;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .ab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: #1d4ed8;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    }
+    .ab-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ===== 장비 설명 수정 textarea ===== */
+    .gear-info-edit {
+      width: 100%;
+      min-height: 130px;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      font-family: inherit;
+      resize: vertical;
+      color: var(--text-main);
+    }
   </style>
 </head>
 <body>
@@ -661,7 +856,8 @@
     <div id="tab2" class="tab-content">
       <div class="level-header">
         <div class="level-title">3층 음향 시스템</div>
-        <div class="level-desc">장비를 드래그해 배치하고, 우측 하단의 파란색 핸들을 잡아당겨 원하는 카드만 개별적으로 크기(비율)를 조절해보세요! 장비를 클릭하면 케이블이 연결됩니다.</div>
+        <div class="level-desc">장비를 드래그해 배치하고, 우측 하단의 파란색 핸들을 잡아당겨 원하는 카드만 개별적으로 크기(비율)를 조절해보세요! 장비를 클릭하면 케이블이 연결됩니다. 장비 왼쪽 위의 <b>ℹ️</b> 아이콘을 누르면 그 장비가 무엇인지 설명을 볼 수 있어요.</div>
+        <div id="layoutBestTag"></div>
       </div>
 
       <div class="control-bar">
@@ -685,6 +881,8 @@
       </div>
 
       <button class="btn" onclick="checkLayoutComplete()">🔍 시스템 배치 및 케이블링 검증하기</button>
+
+      <div class="result-panel" id="layoutResultPanel"></div>
     </div>
 
     <!-- TAB 3: Ear Training -->
@@ -696,14 +894,49 @@
 
       <!-- 1. 볼륨 변화 트레이닝 패널 -->
       <div class="training-panel">
-        <div style="font-size: 0.9rem; color: var(--text-sub); font-weight: 700;">🔊 볼륨 변화 트레이닝 (현재 레벨 변화량)</div>
-        <div class="spl-display" id="splDisplay" contenteditable="true" spellcheck="false" onblur="handleSplInput(this)" onkeydown="handleSplKeyDown(event)">+0 dB</div>
-        
-        <div class="step-btn-group">
-          <button class="db-btn" onclick="changeSpl(-3)">-3</button>
-          <button class="db-btn" onclick="changeSpl(-1)">-1</button>
-          <button class="db-btn" onclick="changeSpl(1)">+1</button>
-          <button class="db-btn" onclick="changeSpl(3)">+3</button>
+        <div style="font-size: 0.9rem; color: var(--text-sub); font-weight: 700;">🔊 볼륨 변화 트레이닝</div>
+
+        <div class="mix-pill-group" style="margin-bottom: 0;">
+          <button class="mix-pill-btn active" id="volModeFreeBtn" onclick="setVolMode('free')">✏️ 자유 연습</button>
+          <button class="mix-pill-btn" id="volModeQuizBtn" onclick="setVolMode('quiz')">🎯 퀴즈 모드</button>
+        </div>
+
+        <!-- 자유 연습: 숫자를 보면서 변화를 익히는 모드 -->
+        <div id="volFreeBox" style="display:flex; flex-direction:column; align-items:center; gap:16px; width:100%;">
+          <div class="spl-display" id="splDisplay" contenteditable="true" spellcheck="false" onblur="handleSplInput(this)" onkeydown="handleSplKeyDown(event)">+0 dB</div>
+          <div class="step-btn-group">
+            <button class="db-btn" onclick="changeSpl(-3)">-3</button>
+            <button class="db-btn" onclick="changeSpl(-1)">-1</button>
+            <button class="db-btn" onclick="changeSpl(1)">+1</button>
+            <button class="db-btn" onclick="changeSpl(3)">+3</button>
+          </div>
+        </div>
+
+        <!-- 퀴즈 모드: 기준음과 변화음을 직접 비교해서 맞혀보는 모드 -->
+        <div class="quiz-mode-box" id="volQuizBox">
+          <div style="font-size: 0.8rem; color: var(--text-sub); text-align:center;">먼저 <b>🔵 기준(원본)</b>을 듣고, <b>🟠 변화된 소리</b>를 번갈아 들으며 비교한 뒤 몇 dB가 바뀌었는지 맞혀보세요!</div>
+          <button class="btn" onclick="startVolQuiz()" style="max-width: 220px;">🎲 새 문제 내기</button>
+
+          <div class="ab-compare-group" id="abCompareGroup" style="display:none;">
+            <button class="ab-btn" id="abRefBtn" onclick="listenQuiz('ref')">🔵 기준(원본) 듣기</button>
+            <button class="ab-btn" id="abChangedBtn" onclick="listenQuiz('changed')">🟠 변화된 소리 듣기</button>
+          </div>
+
+          <div class="quiz-hidden-display" id="quizHiddenDisplay">🔒 ???</div>
+
+          <div style="font-size: 0.78rem; color: var(--text-sub); text-align:center;">기준 대비 몇 dB 변했는지 골라보세요</div>
+          <div class="guess-btn-group" id="guessBtnGroup">
+            <button class="guess-btn" disabled onclick="guessVolQuiz(-10)">-10</button>
+            <button class="guess-btn" disabled onclick="guessVolQuiz(-6)">-6</button>
+            <button class="guess-btn" disabled onclick="guessVolQuiz(-3)">-3</button>
+            <button class="guess-btn" disabled onclick="guessVolQuiz(-1)">-1</button>
+            <button class="guess-btn" disabled onclick="guessVolQuiz(1)">+1</button>
+            <button class="guess-btn" disabled onclick="guessVolQuiz(3)">+3</button>
+            <button class="guess-btn" disabled onclick="guessVolQuiz(6)">+6</button>
+            <button class="guess-btn" disabled onclick="guessVolQuiz(10)">+10</button>
+          </div>
+          <div class="result-panel" id="volQuizResultPanel" style="width:100%;"></div>
+          <div id="volQuizBestTag"></div>
         </div>
 
         <button class="btn" id="audioToggleBtn" onclick="togglePinkNoise()" style="max-width: 260px; margin-top: 6px;">🔊 핑크 노이즈 재생 시작</button>
@@ -964,35 +1197,88 @@
           <button class="db-btn" style="flex:1; background:#cbd5e1; color:#0f172a;" onclick="resetMixFaders()">초기화</button>
           <button class="btn" style="flex:1; height:40px; font-size:0.85rem;" onclick="checkMixBalance()">채점</button>
         </div>
+
+        <div class="result-panel" id="mixResultPanel" style="max-width: 840px; margin-left:auto; margin-right:auto;"></div>
+        <div id="mixBestTag"></div>
       </div>
 
     </div>
 
   </main>
 
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlay(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <span id="modalTitle">안내</span>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
   <script>
+    /* ===== 공통 모달 (alert 대체) ===== */
+    function showModal(title, bodyHtml) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalBody').innerHTML = bodyHtml;
+      document.getElementById('modalOverlay').classList.add('show');
+    }
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('show');
+    }
+    function closeModalOnOverlay(e) {
+      if (e.target.id === 'modalOverlay') closeModal();
+    }
+
+    /* ===== 진행도(최고 기록) 저장 — localStorage ===== */
+    const PROGRESS_KEY = 'soundTrainerProgress_v1';
+    function loadProgress() {
+      try {
+        return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {};
+      } catch (e) {
+        return {};
+      }
+    }
+    function saveProgress(patch) {
+      try {
+        const current = loadProgress();
+        const merged = Object.assign(current, patch);
+        localStorage.setItem(PROGRESS_KEY, JSON.stringify(merged));
+        return merged;
+      } catch (e) {
+        return loadProgress();
+      }
+    }
+    function renderBestTag(elementId, label, value) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      if (value === undefined || value === null) { el.innerHTML = ''; return; }
+      el.innerHTML = `<span class="best-score-tag">🏅 ${label}: ${value}</span>`;
+    }
+
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-      
-      stopPinkNoise(); 
+
+      stopPinkNoise();
       stopAllAudioFiles();
-      
+      closeModal();
+
       if (isMixPlaying) {
         toggleMixPlay();
       }
 
-      if(tabId==='tab1') { 
-        document.querySelectorAll('.tab-btn')[0].classList.add('active'); 
-        document.getElementById('tab1').classList.add('active'); 
+      if(tabId==='tab1') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('tab1').classList.add('active');
       }
-      else if(tabId==='tab2') { 
-        document.querySelectorAll('.tab-btn')[1].classList.add('active'); 
-        document.getElementById('tab2').classList.add('active'); 
+      else if(tabId==='tab2') {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('tab2').classList.add('active');
       }
-      else { 
-        document.querySelectorAll('.tab-btn')[2].classList.add('active'); 
-        document.getElementById('tab3').classList.add('active'); 
+      else {
+        document.querySelectorAll('.tab-btn')[2].classList.add('active');
+        document.getElementById('tab3').classList.add('active');
       }
     }
 
@@ -1017,6 +1303,71 @@
     let selectedGearForCable = null;
     let connectedCables = [];
 
+    /* ===== 장비 설명 (ℹ️ 아이콘용) — 기본값. 사용자가 직접 수정 가능 ===== */
+    const gearInfoDefaults = {
+      vi10p_L: '메인 스피커 (L)\n회중석 전체에 음악/말씀 소리를 전달하는 가장 중요한 스피커입니다. 패시브 타입이라 자체 앰프가 없고, 전용 파워앰프의 출력을 받아야 소리가 납니다.',
+      vi10p_R: '메인 스피커 (R)\n메인 L과 한 쌍으로 스테레오를 구성합니다. 역시 패시브 타입이라 파워앰프와 연결이 꼭 필요합니다.',
+      woofer_L: '서브우퍼 (L)\n베이스, 킥드럼 같은 저음을 보강합니다. 메인 스피커만으로는 저음이 약하게 느껴지는 공간에 추가합니다.',
+      woofer_R: '서브우퍼 (R)\n우퍼 L과 한 쌍으로, 저음역을 좌우로 균형 있게 보강합니다.',
+      y7p_L: '1열 딜레이 스피커 (L)\n메인 스피커에서 멀어서 소리가 늦게 도착하는 앞쪽 좌석을 위해, 타이밍을 맞춰 보조로 울려주는 스피커입니다.',
+      y10p_C: '1열 센터 딜레이 스피커\n1열 중앙 좌석 구역을 보강하는 딜레이 스피커입니다.',
+      y7p_R: '1열 딜레이 스피커 (R)\n1열 딜레이 L과 대칭으로 우측 구역을 보강합니다.',
+      e8_L: '2열 딜레이 스피커 (L)\n1열보다 더 먼 뒤쪽 구역을 위한 딜레이 스피커입니다. 거리가 머니 딜레이 타임도 1열보다 더 길게 설정됩니다.',
+      e8_R: '2열 딜레이 스피커 (R)\n2열 딜레이 L과 대칭으로 뒤쪽 우측 구역을 보강합니다.',
+      amp_40d: '40D 파워 앰프\n출력이 큰 모델로, 전력 소모가 큰 메인 스피커와 서브우퍼를 구동하는 데 사용합니다.',
+      amp_10d: '10D 파워 앰프\n상대적으로 출력이 작은 모델로, 딜레이 스피커처럼 적은 전력으로도 충분한 구역을 구동합니다.',
+      stagebox: '스테이지 박스 (디지털 스네이크)\n무대 위 여러 마이크/악기 신호를 한 곳에 모아, 디지털 케이블 한 줄로 방송실 콘솔까지 전송하는 장비입니다. 굵은 아날로그 멀티케이블을 대신합니다.',
+      console: '콘솔 (믹서)\n모든 입력 신호를 받아 레벨/이펙트를 조정(믹싱)한 뒤, 하나로 합쳐 앰프로 내보내는 음향 시스템의 두뇌입니다.'
+    };
+
+    const GEAR_INFO_KEY = 'soundTrainerGearInfoOverrides_v1';
+    function loadGearInfoOverrides() {
+      try { return JSON.parse(localStorage.getItem(GEAR_INFO_KEY)) || {}; } catch (e) { return {}; }
+    }
+    function getGearInfoText(id) {
+      const overrides = loadGearInfoOverrides();
+      if (overrides[id] !== undefined) return overrides[id];
+      return gearInfoDefaults[id] || '';
+    }
+    function escapeHtml(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function showGearInfo(id) {
+      const item = gearItems.find(g => g.id === id);
+      const text = getGearInfoText(id);
+      const body = `
+        <p style="font-size:0.78rem; color:var(--text-sub); margin-bottom:8px;">아래 내용을 직접 수정한 뒤 저장할 수 있어요. (이 기기에만 저장됩니다)</p>
+        <textarea class="gear-info-edit" id="gearInfoEditArea">${escapeHtml(text)}</textarea>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button class="btn" style="height:38px;" onclick="saveGearInfoEdit('${id}')">💾 저장</button>
+          <button class="db-btn" style="flex:1; height:38px;" onclick="resetGearInfoToDefault('${id}')">↩️ 기본값으로</button>
+        </div>
+        <div id="gearInfoSaveMsg" style="font-size:0.75rem; color:var(--accent-green); margin-top:6px; min-height:16px;"></div>
+      `;
+      showModal(`ℹ️ ${item ? item.name : ''}`, body);
+    }
+
+    function saveGearInfoEdit(id) {
+      const area = document.getElementById('gearInfoEditArea');
+      if (!area) return;
+      const overrides = loadGearInfoOverrides();
+      overrides[id] = area.value;
+      try {
+        localStorage.setItem(GEAR_INFO_KEY, JSON.stringify(overrides));
+        document.getElementById('gearInfoSaveMsg').innerText = '✅ 저장되었습니다.';
+      } catch (e) {
+        document.getElementById('gearInfoSaveMsg').innerText = '⚠️ 저장에 실패했습니다. (브라우저 저장공간을 확인해주세요)';
+      }
+    }
+
+    function resetGearInfoToDefault(id) {
+      const area = document.getElementById('gearInfoEditArea');
+      if (area) area.value = gearInfoDefaults[id] || '';
+      const msg = document.getElementById('gearInfoSaveMsg');
+      if (msg) msg.innerText = '↩️ 기본값을 불러왔습니다. 저장하려면 💾 저장을 눌러주세요.';
+    }
+
     function initWorkspace() {
       canvasInner.querySelectorAll('.draggable-gear').forEach(el => el.remove());
       gearItems.forEach(item => {
@@ -1026,8 +1377,9 @@
         div.style.top = item.y + 'px';
         div.style.width = item.w + 'px';
         div.style.height = item.h + 'px';
-        
+
         div.innerHTML = `
+          <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('${item.id}')">i</button>
           <div class="gear-img-wrap">
             <img src="${item.img}" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'60\'><rect width=\'60\' height=\'60\' fill=\'%23fff\'/><text x=\'5\' y=\'30\' fill=\'red\' font-size=\'8\'>이미지없음</text><text x=\'5\' y=\'45\' fill=\'%230284c7\' font-size=\'6\'>${item.img}</text></svg>'">
           </div>
@@ -1085,6 +1437,7 @@
       elm.onpointerdown = function(e) {
         if (isResizing) return;
         if (e.target.classList.contains('resize-handle')) return;
+        if (e.target.closest('.gear-info-btn')) return;
         e.preventDefault();
         hasMoved = false;
         startX = e.clientX;
@@ -1171,8 +1524,85 @@
       initWorkspace();
     }
 
+    /* ===== 정답 신호 경로 (스테이지박스 → 콘솔 → 앰프 → 스피커) ===== */
+    const correctConnections = [
+      ['stagebox', 'console'],
+      ['console', 'amp_40d'],
+      ['console', 'amp_10d'],
+      ['amp_40d', 'vi10p_L'],
+      ['amp_40d', 'vi10p_R'],
+      ['amp_40d', 'woofer_L'],
+      ['amp_40d', 'woofer_R'],
+      ['amp_10d', 'y7p_L'],
+      ['amp_10d', 'y10p_C'],
+      ['amp_10d', 'y7p_R'],
+      ['amp_10d', 'e8_L'],
+      ['amp_10d', 'e8_R']
+    ];
+
+    function gearName(id) {
+      const g = gearItems.find(g => g.id === id);
+      return g ? g.name : id;
+    }
+
+    function pairMatches(a, b, pair) {
+      return (a === pair[0] && b === pair[1]) || (a === pair[1] && b === pair[0]);
+    }
+
     function checkLayoutComplete() {
-      alert(`배치 및 케이블링 검증 완료! 총 ${connectedCables.length}개의 오디오 케이블 패치가 정상 확인되었습니다.`);
+      const correctFoundSet = new Set();
+      const wrongCables = [];
+
+      connectedCables.forEach(cable => {
+        const matchIdx = correctConnections.findIndex(pair => pairMatches(cable.fromId, cable.toId, pair));
+        if (matchIdx !== -1) {
+          correctFoundSet.add(matchIdx);
+        } else {
+          wrongCables.push(cable);
+        }
+      });
+
+      const missingPairs = correctConnections.filter((pair, idx) => !correctFoundSet.has(idx));
+      const correctCount = correctFoundSet.size;
+      const totalNeeded = correctConnections.length;
+      const accuracy = Math.round((correctCount / totalNeeded) * 100);
+
+      let html = `<div class="result-line"><b>정답 경로 중 맞게 연결된 케이블: ${correctCount} / ${totalNeeded}개 (정확도 ${accuracy}%)</b></div>`;
+
+      if (wrongCables.length > 0) {
+        html += `<div class="result-line" style="margin-top:8px;">❌ 잘못 연결된 케이블:</div><ul>`;
+        wrongCables.forEach(c => {
+          html += `<li>${gearName(c.fromId)} ➔ ${gearName(c.toId)} : 이 경로는 정답 신호 흐름에 없습니다.</li>`;
+        });
+        html += `</ul>`;
+      }
+
+      if (missingPairs.length > 0) {
+        html += `<div class="result-line" style="margin-top:8px;">⚠️ 아직 연결되지 않은 필수 경로:</div><ul>`;
+        missingPairs.forEach(pair => {
+          html += `<li>${gearName(pair[0])} ➔ ${gearName(pair[1])}</li>`;
+        });
+        html += `</ul>`;
+      }
+
+      const panel = document.getElementById('layoutResultPanel');
+      panel.className = 'result-panel show ' + (missingPairs.length === 0 && wrongCables.length === 0 ? 'result-good' : (correctCount > 0 ? 'result-warn' : 'result-bad'));
+
+      let titleLine = '';
+      if (missingPairs.length === 0 && wrongCables.length === 0) {
+        titleLine = '<div class="result-title">🏆 완벽합니다! 스테이지박스 → 콘솔 → 앰프 → 스피커까지 신호 경로가 모두 올바르게 연결되었습니다.</div>';
+      } else if (correctCount > 0) {
+        titleLine = '<div class="result-title">👍 절반 이상 맞혔어요. 아래 표시된 부분만 더 고쳐보세요.</div>';
+      } else {
+        titleLine = '<div class="result-title">💪 처음부터 다시 살펴볼까요? 힌트: 신호는 "스테이지박스 → 콘솔 → 앰프 → 스피커" 순서로 흘러요.</div>';
+      }
+      panel.innerHTML = titleLine + html;
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      const prog = loadProgress();
+      const best = Math.max(prog.layoutBestAccuracy || 0, accuracy);
+      saveProgress({ layoutBestAccuracy: best });
+      renderBestTag('layoutBestTag', '최고 정확도', best + '%');
     }
 
     let audioCtx = null;
@@ -1245,6 +1675,110 @@
       if (event.key === 'Enter') { event.preventDefault(); event.target.blur(); }
     }
 
+    /* ===== 볼륨 트레이닝: 자유 연습 / 퀴즈 모드 (기준음 A/B 비교) ===== */
+    let volMode = 'free';
+    let quizTargetDb = null;
+    let quizAnswered = false;
+    let quizListening = null; // 'ref' | 'changed' | null
+    const quizOptions = [-10, -6, -3, -1, 1, 3, 6, 10];
+
+    function setVolMode(mode) {
+      volMode = mode;
+      document.getElementById('volModeFreeBtn').classList.toggle('active', mode === 'free');
+      document.getElementById('volModeQuizBtn').classList.toggle('active', mode === 'quiz');
+      document.getElementById('volFreeBox').style.display = mode === 'free' ? 'flex' : 'none';
+      document.getElementById('volQuizBox').classList.toggle('show', mode === 'quiz');
+
+      if (mode === 'free') {
+        diffSpl = 0;
+        updateDisplayAndAudio();
+      } else {
+        resetQuizUI();
+      }
+    }
+
+    function resetQuizUI() {
+      quizTargetDb = null;
+      quizAnswered = false;
+      quizListening = null;
+      diffSpl = 0;
+      if (isPlaying) updateGainValue();
+      document.getElementById('quizHiddenDisplay').innerText = '🔒 ???';
+      document.getElementById('volQuizResultPanel').className = 'result-panel';
+      document.getElementById('volQuizResultPanel').innerHTML = '';
+      document.getElementById('abCompareGroup').style.display = 'none';
+      document.getElementById('abRefBtn').classList.remove('active');
+      document.getElementById('abChangedBtn').classList.remove('active');
+      document.querySelectorAll('#guessBtnGroup .guess-btn').forEach(b => b.disabled = true);
+    }
+
+    function startVolQuiz() {
+      quizTargetDb = quizOptions[Math.floor(Math.random() * quizOptions.length)];
+      quizAnswered = false;
+      quizListening = 'ref';
+      diffSpl = 0; // 항상 기준(원본)부터 들려준다
+
+      document.getElementById('quizHiddenDisplay').innerText = '🔒 ???';
+      document.getElementById('volQuizResultPanel').className = 'result-panel';
+      document.getElementById('volQuizResultPanel').innerHTML = '';
+      document.getElementById('abCompareGroup').style.display = 'flex';
+      document.getElementById('abRefBtn').classList.add('active');
+      document.getElementById('abChangedBtn').classList.remove('active');
+      document.querySelectorAll('#guessBtnGroup .guess-btn').forEach(b => b.disabled = false);
+
+      initAudio();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      isPlaying = true;
+      const btn = document.getElementById('audioToggleBtn');
+      btn.innerText = "🔇 핑크 노이즈 정지";
+      btn.style.background = "var(--accent-red)";
+      updateGainValue();
+    }
+
+    function listenQuiz(which) {
+      if (quizTargetDb === null) return;
+      quizListening = which;
+      diffSpl = which === 'ref' ? 0 : quizTargetDb;
+
+      if (!isPlaying) {
+        initAudio();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        isPlaying = true;
+        const btn = document.getElementById('audioToggleBtn');
+        btn.innerText = "🔇 핑크 노이즈 정지";
+        btn.style.background = "var(--accent-red)";
+      }
+      updateGainValue();
+      document.getElementById('abRefBtn').classList.toggle('active', which === 'ref');
+      document.getElementById('abChangedBtn').classList.toggle('active', which === 'changed');
+    }
+
+    function guessVolQuiz(guess) {
+      if (quizTargetDb === null || quizAnswered) return;
+      quizAnswered = true;
+      document.querySelectorAll('#guessBtnGroup .guess-btn').forEach(b => b.disabled = true);
+
+      const signStr = quizTargetDb >= 0 ? `+${quizTargetDb}` : `${quizTargetDb}`;
+      document.getElementById('quizHiddenDisplay').innerText = `${signStr} dB`;
+
+      const diff = Math.abs(guess - quizTargetDb);
+      const panel = document.getElementById('volQuizResultPanel');
+      let cls, msg;
+      if (diff === 0) { cls = 'result-good'; msg = '🎯 정확히 맞혔습니다!'; }
+      else if (diff <= 3) { cls = 'result-warn'; msg = `😮 거의 맞췄어요! 실제 변화는 ${signStr}dB 였어요.`; }
+      else { cls = 'result-bad'; msg = `🙏 실제 변화는 ${signStr}dB 였어요. 기준음과 다시 비교해보며 감을 잡아보세요.`; }
+
+      panel.className = 'result-panel show ' + cls;
+      panel.innerHTML = `<div class="result-title">${msg}</div><div class="result-line">내가 고른 답: ${guess >= 0 ? '+' : ''}${guess} dB</div><div class="result-line" style="margin-top:6px; color:var(--text-sub); font-size:0.78rem;">🔵/🟠 버튼으로 다시 비교해 들어볼 수 있어요.</div>`;
+
+      const prog = loadProgress();
+      let streak = prog.volQuizStreak || 0;
+      streak = diff === 0 ? streak + 1 : 0;
+      const bestStreak = Math.max(prog.volQuizBestStreak || 0, streak);
+      saveProgress({ volQuizStreak: streak, volQuizBestStreak: bestStreak });
+      renderBestTag('volQuizBestTag', '최고 연속 정답', bestStreak + '회');
+    }
+
     function togglePinkNoise() {
       initAudio();
       if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -1284,7 +1818,7 @@
       if (btn) btn.classList.add('playing');
 
       currentAudio.play().catch(err => {
-        alert(`오디오 파일(${filename})을 재생할 수 없습니다. 폴더 경로를 확인해주세요.`);
+        showModal('⚠️ 재생 오류', fileLoadErrorHtml([filename]));
         if (btn) btn.classList.remove('playing');
       });
 
@@ -1344,13 +1878,35 @@
     let activeSolo = null;
     let mixMode = 'original';
 
+    /* 파일을 못 불러왔을 때 공통으로 보여주는 안내 (같은 폴더 / 로컬 서버 체크리스트) */
+    function fileLoadErrorHtml(failedFiles) {
+      const isFileProtocol = location.protocol === 'file:';
+      return `
+        <p>다음 파일을 불러오지 못했습니다:</p>
+        <ul>${failedFiles.map(f => `<li><code>${escapeHtml(f)}</code></li>`).join('')}</ul>
+        <p style="margin-top:10px; font-weight:700;">확인해보세요</p>
+        <ul>
+          <li>위 파일들이 <code>index.html</code>과 <b>같은 폴더</b>에, <b>대소문자까지 정확히 같은 이름</b>으로 있는지</li>
+          <li>확장자가 정말 <code>.mp3</code> / <code>.jpg</code>가 맞는지 (예: <code>.JPG</code>, <code>.jpeg</code>면 이름을 맞춰주세요)</li>
+          ${isFileProtocol ? `<li style="color:#991b1b;"><b>지금 주소가 file:// 로 시작합니다.</b> 브라우저에서 html 파일을 더블클릭해서 열면 보안 정책 때문에 음원이 로딩되지 않을 수 있어요. VS Code의 Live Server 확장이나 <code>python3 -m http.server</code> 같은 간단한 로컬 서버로 열어보세요 (주소가 http://localhost 로 시작해야 합니다).</li>` : `<li>그래도 안 되면, 이 페이지를 로컬 웹서버(예: <code>http://localhost...</code>)로 열고 있는지 다시 확인해보세요.</li>`}
+        </ul>
+      `;
+    }
+
     async function initMixAudioContext() {
       if (isMixInitialized) return true;
       try {
         mixAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        let loadPromises = trackKeys.map(async (ch) => {
+      } catch (e) {
+        showModal('⚠️ 오디오 초기화 오류', '<p>이 브라우저에서 Web Audio 기능을 사용할 수 없습니다.</p>');
+        return false;
+      }
+
+      const failedFiles = [];
+      await Promise.all(trackKeys.map(async (ch) => {
+        try {
           let response = await fetch(mixFiles[ch]);
+          if (!response.ok) throw new Error('HTTP ' + response.status);
           let arrayBuffer = await response.arrayBuffer();
           let decodedBuffer = await mixAudioCtx.decodeAudioData(arrayBuffer);
           audioBuffers[ch] = decodedBuffer;
@@ -1358,16 +1914,19 @@
           let gNode = mixAudioCtx.createGain();
           gNode.connect(mixAudioCtx.destination);
           channelGainNodes[ch] = gNode;
-        });
+        } catch (err) {
+          console.error('오디오 버퍼 로딩 실패:', mixFiles[ch], err);
+          failedFiles.push(mixFiles[ch]);
+        }
+      }));
 
-        await Promise.all(loadPromises);
-        isMixInitialized = true;
-        return true;
-      } catch (e) {
-        console.error("오디오 버퍼 로딩 실패:", e);
-        alert("멀티트랙 오디오 파일 로딩 중 오류가 발생했습니다. 파일 경로를 확인해주세요.");
+      if (failedFiles.length > 0) {
+        showModal('⚠️ 오디오 파일 로딩 실패', fileLoadErrorHtml(failedFiles));
         return false;
       }
+
+      isMixInitialized = true;
+      return true;
     }
 
     async function toggleMixPlay() {
@@ -1553,25 +2112,54 @@
       applyMixVolumes();
     }
 
+    const trackDisplayNames = { gg: 'GG', ag: 'AG', bass: 'Bass', drum: 'Drum', elec_rhythm: 'Elec rythm', elec_solo: 'Elec solo', piano: 'Piano' };
+
     function checkMixBalance() {
       let totalScore = 100;
       let penalty = 0;
       const idealValues = { gg: -3.0, ag: -5.0, bass: -1.5, drum: 0.0, elec_rhythm: -4.0, elec_solo: -2.0, piano: -3.5 };
+      const channelResults = [];
 
       trackKeys.forEach(ch => {
         if(ch === 'sample') return;
-        let diff = Math.abs(faderValues[ch] - idealValues[ch]);
-        penalty += diff * 1.5;
+        let diff = faderValues[ch] - idealValues[ch];
+        let absDiff = Math.abs(diff);
+        penalty += absDiff * 1.5;
+        channelResults.push({ ch, diff, absDiff });
       });
 
       let finalScore = Math.max(0, Math.round(totalScore - penalty));
-      
-      let message = `🎯 믹스 밸런스 채점 결과: ${finalScore}점 / 100점\n\n`;
-      if(finalScore >= 90) message += "🏆 완벽합니다! 원본 Sample(All)과 구별할 수 없는 훌륭한 밸런스입니다.";
-      else if(finalScore >= 70) message += "👍 아주 좋습니다! 조금만 더 세밀하게 악기별 볼륨을 조절해보세요.";
-      else message += "💪 분발하세요! 각 악기(GG, Bass, Drum 등)의 페이더 위치를 다시 조정해보세요.";
 
-      alert(message);
+      // 오차가 큰 채널부터 보여주기
+      channelResults.sort((a, b) => b.absDiff - a.absDiff);
+
+      let detailHtml = '<ul>';
+      channelResults.forEach(r => {
+        const name = trackDisplayNames[r.ch] || r.ch;
+        if (r.absDiff <= 1) {
+          detailHtml += `<li>✅ ${name}: 기준과 거의 일치 (오차 ${r.absDiff.toFixed(1)}dB)</li>`;
+        } else {
+          const direction = r.diff > 0 ? '너무 큽니다. 페이더를 조금 내려보세요' : '너무 작습니다. 페이더를 조금 올려보세요';
+          detailHtml += `<li>⚠️ ${name}: ${direction} (기준 대비 ${r.diff > 0 ? '+' : ''}${r.diff.toFixed(1)}dB)</li>`;
+        }
+      });
+      detailHtml += '</ul>';
+
+      let titleMsg;
+      let cls;
+      if (finalScore >= 90) { cls = 'result-good'; titleMsg = '🏆 완벽합니다! 원본 Sample(All)과 구별할 수 없는 훌륭한 밸런스입니다.'; }
+      else if (finalScore >= 70) { cls = 'result-warn'; titleMsg = '👍 아주 좋습니다! 아래 오차가 큰 악기만 조금 더 다듬어보세요.'; }
+      else { cls = 'result-bad'; titleMsg = '💪 분발하세요! 아래 오차가 큰 악기부터 순서대로 조정해보세요.'; }
+
+      const panel = document.getElementById('mixResultPanel');
+      panel.className = 'result-panel show ' + cls;
+      panel.innerHTML = `<div class="result-title">🎯 믹스 밸런스 채점 결과: ${finalScore}점 / 100점</div><div class="result-line">${titleMsg}</div>${detailHtml}`;
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      const prog = loadProgress();
+      const best = Math.max(prog.mixBestScore || 0, finalScore);
+      saveProgress({ mixBestScore: best });
+      renderBestTag('mixBestTag', '최고 점수', best + '점');
     }
 
     initWorkspace();
@@ -1579,6 +2167,14 @@
     trackKeys.forEach(ch => {
       if(ch !== 'sample') renderFaderPosition(ch, -60);
     });
+
+    /* ===== 저장된 최고 기록 불러와서 표시 ===== */
+    (function initProgressTags() {
+      const prog = loadProgress();
+      if (prog.layoutBestAccuracy !== undefined) renderBestTag('layoutBestTag', '최고 정확도', prog.layoutBestAccuracy + '%');
+      if (prog.volQuizBestStreak !== undefined) renderBestTag('volQuizBestTag', '최고 연속 정답', prog.volQuizBestStreak + '회');
+      if (prog.mixBestScore !== undefined) renderBestTag('mixBestTag', '최고 점수', prog.mixBestScore + '점');
+    })();
   </script>
 </body>
 </html>
