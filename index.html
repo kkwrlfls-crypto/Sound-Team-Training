@@ -824,6 +824,9 @@
     .mg12xu-step:first-of-type { margin-top: 16px; }
     .mg12xu-step-title { font-size: 0.85rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
     .mg12xu-step-desc { font-size: 0.78rem; color: var(--text-sub); margin-bottom: 10px; line-height: 1.4; }
+    .mg12xu-audio-toggle-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; padding: 8px 10px; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); border-radius: 8px; }
+    #mg12xuAudioToggleBtn.on { background: var(--accent-green, #10b981); color: #fff; }
+    .mg12xu-audio-hint { font-size: 0.72rem; color: var(--text-sub); line-height: 1.3; }
     .mg12xu-item {
       padding: 9px 10px;
       min-height: 38px;
@@ -846,47 +849,66 @@
     .mg12xu-item.assigned { background: #ecfdf5; border-color: var(--accent-green); color: #065f46; }
     .mg12xu-item.filled { background: #1e293b; color: #ffffff; }
 
-    /* ----- 1단계: 무대 → 콘솔 시각화 ----- */
-    .mg12xu-stage-scroll { overflow-x: auto; border-radius: 14px; }
-    .mg12xu-stage-wrap {
+    /* ----- 패치베이: 무대(소스·스피커) → 잭 스트립 → 콘솔 전체를 케이블로 연결 ----- */
+    .mg12xu-patchbay-wrap {
       position: relative;
-      width: 1055px;
-      background: linear-gradient(#eef2f7, #e2e8f0);
-      border: 2px dashed var(--border-color);
-      border-radius: 14px;
-      overflow: hidden;
+      width: 1491px;
+      max-width: 100%;
+      margin: 0 auto;
     }
-    .mg12xu-connect-svg {
+    .mg12xu-patchbay-svg {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       pointer-events: none;
-      z-index: 2;
+      z-index: 50;
+      overflow: visible;
     }
-    .mg12xu-stage { position: relative; height: 190px; }
-    .mg12xu-source-item {
+    /* 실제 XLR 케이블처럼 보이도록: 굵은 그림자(바깥) + 색상 코어(안쪽) + 양끝 커넥터 플러그로 구성합니다. */
+    .mg12xu-cable-hit { fill: none; stroke: transparent; stroke-width: 18; stroke-linecap: round; pointer-events: stroke; cursor: pointer; }
+    .mg12xu-cable-shadow { fill: none; stroke: #0f172a; stroke-width: 7.5; stroke-linecap: round; opacity: 0.5; pointer-events: none; }
+    .mg12xu-cable-core { fill: none; stroke-width: 4; stroke-linecap: round; pointer-events: none; }
+    .mg12xu-cable-g:hover .mg12xu-cable-core { stroke: #dc2626 !important; }
+    .mg12xu-cable-g:hover .mg12xu-cable-shadow { opacity: 0.75; }
+    .mg12xu-cable-plug-body { fill: #1e293b; stroke: #94a3b8; stroke-width: 1.4; }
+    .mg12xu-cable-plug-pin { fill: #cbd5e1; }
+    .mg12xu-cable-path.drag-preview { fill: none; stroke: #f59e0b; stroke-width: 4; stroke-dasharray: 7 5; pointer-events: none; }
+    .mg12xu-stage-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1491 / 230;
+      min-height: 260px;
+      background: linear-gradient(#eef2f7, #e2e8f0);
+      border: 2px dashed var(--border-color);
+      border-radius: 14px 14px 0 0;
+      overflow: visible;
+    }
+    .mg12xu-stage { position: relative; width: 100%; height: 100%; }
+    .mg12xu-source-item, .mg12xu-speaker-item {
       position: absolute;
+      transform: translateX(-50%);
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 3px;
-      width: 78px;
+      width: 15%;
+      max-width: 80px;
       cursor: pointer;
       z-index: 3;
       background: none;
       border: none;
       padding: 0;
     }
-    .mg12xu-source-icon {
-      width: 50px;
-      height: 50px;
+    .mg12xu-source-icon, .mg12xu-speaker-icon {
+      width: 46px;
+      height: 46px;
       border-radius: 12px;
       background: #ffffff;
       border: 2px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       transition: all 0.15s;
     }
@@ -895,8 +917,9 @@
       box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
     }
     .mg12xu-source-item.assigned .mg12xu-source-icon { border-color: var(--accent-green); background: #ecfdf5; }
-    .mg12xu-source-label {
-      font-size: 0.66rem;
+    .mg12xu-speaker-item.connected .mg12xu-speaker-icon { border-color: var(--accent-green); background: #ecfdf5; }
+    .mg12xu-source-label, .mg12xu-speaker-label {
+      font-size: 0.62rem;
       font-weight: 700;
       color: var(--text-main);
       text-align: center;
@@ -913,41 +936,147 @@
       padding: 1px 6px;
       border-radius: 8px;
     }
+    .mg12xu-cable-nub {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #334155;
+      border: 2px solid #facc15;
+      cursor: grab;
+      pointer-events: auto;
+      box-shadow: 0 0 0 0 rgba(250,204,21,0.5);
+      transition: box-shadow 0.2s;
+    }
+    .mg12xu-cable-nub:hover { box-shadow: 0 0 0 5px rgba(250,204,21,0.35); }
+    .mg12xu-cable-nub.plugged { background: #16a34a; border-color: #16a34a; }
+    .mg12xu-jackstrip-wrap {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+    .mg12xu-jackstrip-img { display: block; width: 100%; height: auto; pointer-events: none; }
+    #mg12xuJackLayer {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    .mg12xu-jack-point {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px dashed rgba(250, 204, 21, 0.8);
+      pointer-events: auto;
+      cursor: pointer;
+    }
+    .mg12xu-jack-point.input { border-color: rgba(96, 165, 250, 0.85); }
+    .mg12xu-jack-point.output { border-color: rgba(248, 113, 113, 0.9); }
+    .mg12xu-jack-point.plugged { background: rgba(22, 163, 74, 0.35); border-style: solid; }
+    .mg12xu-jack-point.drop-ready { box-shadow: 0 0 0 6px rgba(250, 204, 21, 0.4); }
     /* ----- 실제 콘솔 사진 기반 인터랙티브 레이어 ----- */
     .mg12xu-console-scroll {
       border-radius: 10px;
       margin-top: 14px;
     }
-    .mg12xu-realconsole-wrap {
+    .mg12xu-full-console-row {
       position: relative;
-      width: 1055px;
+      display: flex;
+      align-items: stretch;
+      width: 1491px;
       max-width: 100%;
       margin: 0 auto;
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    }
+    .mg12xu-realconsole-wrap {
+      position: relative;
+      flex: 0 0 70.758%;
+      max-width: 70.758%;
+      margin: 0;
       user-select: none;
       touch-action: none;
     }
-    .mg12xu-realconsole-img {
+    .mg12xu-master-wrap {
+      position: relative;
+      flex: 0 0 29.242%;
+      max-width: 29.242%;
+      margin: 0;
+      user-select: none;
+      touch-action: none;
+      border-left: 1px solid rgba(0,0,0,0.4);
+    }
+    .mg12xu-realconsole-img, .mg12xu-master-img {
       display: block;
       width: 100%;
       height: auto;
       pointer-events: none;
     }
-    #mg12xuChannelTags, #mg12xuHotspotLayer, #mg12xuKnobLayer, #mg12xuFaderLayer, #mg12xuReadoutLayer, #mg12xuOnLayer, #mg12xuMuteLayer {
+    #mg12xuChannelTags, #mg12xuHotspotLayer, #mg12xuKnobLayer, #mg12xuFaderLayer, #mg12xuFaderScaleLayer, #mg12xuReadoutLayer, #mg12xuOnLayer, #mg12xuMuteLayer, #mg12xuRouteLayer, #mg12xuPeakLayer,
+    #mg12xuMasterFaderLayer, #mg12xuMasterScaleLayer, #mg12xuMasterReadoutLayer, #mg12xuMasterMeterLayer {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       pointer-events: none;
     }
     #mg12xuHotspotLayer { z-index: 4; }
+    #mg12xuFaderScaleLayer { z-index: 4; }
     #mg12xuKnobLayer { z-index: 5; }
     #mg12xuFaderLayer { z-index: 5; }
+    #mg12xuRouteLayer { z-index: 6; }
     #mg12xuOnLayer { z-index: 6; }
     #mg12xuMuteLayer { z-index: 7; }
     #mg12xuChannelTags { z-index: 8; }
+    #mg12xuPeakLayer { z-index: 8; }
     #mg12xuReadoutLayer { z-index: 9; }
+    #mg12xuMasterScaleLayer { z-index: 4; }
+    #mg12xuMasterFaderLayer { z-index: 5; }
+    #mg12xuMasterMeterLayer { z-index: 7; }
+    #mg12xuMasterReadoutLayer { z-index: 9; }
+
+    .mg12xu-fscale-tick {
+      position: absolute;
+      transform: translate(0, -50%);
+      width: 1%;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.55);
+      border-radius: 1px;
+    }
+    .mg12xu-fscale-tick.zero { background: rgba(250, 204, 21, 0.85); height: 2.5px; width: 1.3%; }
+    .mg12xu-fscale-tick.master { width: 2.4%; }
+    .mg12xu-fscale-tick.master.zero { width: 3%; }
+    .mg12xu-fscale-label {
+      position: absolute;
+      transform: translate(-100%, -50%);
+      font-size: 0.5rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.6);
+      white-space: nowrap;
+      font-family: 'Courier New', monospace;
+    }
+    .mg12xu-fscale-track {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 2px;
+      background: rgba(0, 0, 0, 0.55);
+      transform: translateX(-50%);
+    }
+
+    .mg12xu-route-btn {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 4.4%;
+      height: 2.3%;
+      border-radius: 4px;
+      border: 2px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: all 0.15s;
+    }
+    .mg12xu-route-btn:hover { border-color: rgba(255, 255, 255, 0.75); }
+    .mg12xu-route-btn.off { background: rgba(5, 6, 10, 0.78); filter: grayscale(1) brightness(0.6); }
+    .mg12xu-master-route-btn { width: 10%; }
 
     .mg12xu-on-hotspot {
       position: absolute;
@@ -1066,6 +1195,107 @@
       filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
     }
     .mg12xu-fader-hit.active .mg12xu-fader-cap img { filter: drop-shadow(0 0 0 2px #3b82f6) drop-shadow(0 2px 4px rgba(0,0,0,0.6)); }
+    .mg12xu-master-fader-hit {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 18%;
+      height: 30%;
+      cursor: pointer;
+      touch-action: none;
+      pointer-events: auto;
+    }
+    .mg12xu-master-fader-cap {
+      position: absolute;
+      left: 50%;
+      width: 13.8%;
+      height: 7%;
+      transform: translate(-50%, -50%);
+      cursor: grab;
+      pointer-events: none;
+    }
+    .mg12xu-master-fader-cap img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+    }
+    .mg12xu-master-fader-hit.active .mg12xu-master-fader-cap img { filter: drop-shadow(0 0 0 2px #3b82f6) drop-shadow(0 2px 4px rgba(0,0,0,0.6)); }
+    .mg12xu-master-label {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      background: #0f172a;
+      color: #fff;
+      font-size: 0.58rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 8px;
+      white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    /* 실제 사진 위에 겹쳐 그리면 YAMAHA 로고 등 인쇄된 글자와 부딪혀서, 사진 아래 별도의 깔끔한 띠로 뺐습니다. */
+    .mg12xu-bus-toggle-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      width: 1491px;
+      max-width: 100%;
+      margin: 10px auto 0;
+      padding: 10px;
+      background: #0f172a;
+      border-radius: 0 0 10px 10px;
+    }
+    .mg12xu-master-on-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 8px;
+      border: 2px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .mg12xu-master-on-btn::before {
+      content: '';
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: #64748b;
+      transition: all 0.15s;
+    }
+    .mg12xu-master-on-btn.on { background: #facc15; color: #111; border-color: #facc15; }
+    .mg12xu-master-on-btn.on::before { background: #16a34a; box-shadow: 0 0 5px 2px rgba(22,163,74,0.8); }
+    .mg12xu-master-on-btn:hover { border-color: #fff; }
+    .mg12xu-peak-led {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 1.3%;
+      height: 0.9%;
+      border-radius: 50%;
+      background: transparent;
+      box-shadow: none;
+      transition: all 0.1s;
+      pointer-events: none;
+    }
+    .mg12xu-peak-led.lit {
+      background: #ef4444;
+      box-shadow: 0 0 6px 3px rgba(239, 68, 68, 0.9);
+    }
+    .mg12xu-meter-seg {
+      position: absolute;
+      transform: translate(0, -50%);
+      width: 2.3%;
+      height: 0.9%;
+      border-radius: 1px;
+      opacity: 0.18;
+      transition: opacity 0.05s linear;
+    }
+    .mg12xu-meter-seg.on { opacity: 1; }
     .mg12xu-readout {
       position: absolute;
       transform: translate(-50%, -120%);
@@ -1240,24 +1470,43 @@
 
         <div class="mg12xu-step">
           <div class="mg12xu-step-title">1단계 · 무대 위 소스를 실제 MG12XU 콘솔 채널에 연결하기</div>
-          <div class="mg12xu-step-desc">무대 위 아이콘을 먼저 누르고, 아래 콘솔에서 채널 번호(헤더 부분)를 누르면 연결됩니다. 소스마다 서로 다른 채널을 써야 합니다. 연결 후에는 <b>GAIN·HIGH·MID·LOW 노브</b>를 돌리고 <b>페이더</b>를 직접 드래그해서 조작해볼 수 있고, <b>ON 버튼</b>을 눌러 채널을 뮤트/언뮤트할 수도 있어요.</div>
-          <div class="mg12xu-stage-scroll">
+          <div class="mg12xu-step-desc">무대 위 아이콘의 <b>노란 점(케이블 단자)</b>을 눌러서 그대로 아래 입력 단자까지 드래그하면 실제 케이블처럼 연결됩니다 (아이콘을 먼저 누르고 채널 헤더를 눌러 연결해도 됩니다). 오른쪽 <b>스피커</b>도 STEREO/GROUP OUT 단자에서 드래그해 연결해야 소리가 납니다. 연결 후에는 <b>GAIN·HIGH·MID·LOW·PAN·AUX1·AUX2 노브</b>를 돌리고 <b>페이더</b>를 드래그하고, <b>ON</b>으로 뮤트, <b>1-2/ST</b>로 버스 전송을 조절할 수 있어요. GAIN을 너무 올리면 <b>PEAK</b> 램프가 켜지고, 오른쪽 <b>GROUP 1-2 / STEREO 마스터 페이더</b>와 <b>ON/OFF 버튼</b>, 레벨 미터로 전체 출력을 관리합니다.</div>
+          <div class="mg12xu-audio-toggle-row">
+            <button class="btn" id="mg12xuAudioToggleBtn" onclick="toggleMg12xuAudio()">🔊 오디오 테스트 켜기 (채널 조작 시 실제 소리 변화)</button>
+            <span class="mg12xu-audio-hint" id="mg12xuAudioHint">꺼짐 — 켜면 각 소스마다 테스트 톤이 재생되고, 페이더·GAIN·EQ·ON·라우팅 조작이 실시간으로 소리에 반영됩니다.</span>
+          </div>
+          <div class="mg12xu-patchbay-wrap" id="mg12xuPatchbayWrap">
+            <svg class="mg12xu-patchbay-svg" id="mg12xuConnectSvg"></svg>
             <div class="mg12xu-stage-wrap" id="mg12xuStageWrap">
-              <svg class="mg12xu-connect-svg" id="mg12xuConnectSvg"></svg>
               <div class="mg12xu-stage" id="mg12xuStage"></div>
             </div>
-          </div>
-          <div class="mg12xu-console-scroll">
-            <div class="mg12xu-realconsole-wrap" id="mg12xuRealConsoleWrap">
-              <img src="console_strip.jpg" class="mg12xu-realconsole-img" draggable="false" alt="Yamaha MG12XU 콘솔 (전체 12채널)">
-              <div id="mg12xuMuteLayer"></div>
-              <div id="mg12xuChannelTags"></div>
-              <div id="mg12xuHotspotLayer"></div>
-              <div id="mg12xuKnobLayer"></div>
-              <div id="mg12xuFaderLayer"></div>
-              <div id="mg12xuOnLayer"></div>
-              <div id="mg12xuReadoutLayer"></div>
+            <div class="mg12xu-jackstrip-wrap" id="mg12xuJackstripWrap">
+              <img src="jack_strip.jpg" class="mg12xu-jackstrip-img" draggable="false" alt="Yamaha MG12XU 입출력 단자 패널">
+              <div id="mg12xuJackLayer"></div>
             </div>
+            <div class="mg12xu-full-console-row">
+              <div class="mg12xu-realconsole-wrap" id="mg12xuRealConsoleWrap">
+                <img src="console_strip.jpg" class="mg12xu-realconsole-img" draggable="false" alt="Yamaha MG12XU 콘솔 (1~12채널)">
+                <div id="mg12xuMuteLayer"></div>
+                <div id="mg12xuChannelTags"></div>
+                <div id="mg12xuHotspotLayer"></div>
+                <div id="mg12xuFaderScaleLayer"></div>
+                <div id="mg12xuKnobLayer"></div>
+                <div id="mg12xuFaderLayer"></div>
+                <div id="mg12xuRouteLayer"></div>
+                <div id="mg12xuOnLayer"></div>
+                <div id="mg12xuPeakLayer"></div>
+                <div id="mg12xuReadoutLayer"></div>
+              </div>
+              <div class="mg12xu-master-wrap" id="mg12xuMasterWrap">
+                <img src="master_section.jpg" class="mg12xu-master-img" draggable="false" alt="Yamaha MG12XU 마스터 섹션 (GROUP 1-2 / STEREO)">
+                <div id="mg12xuMasterScaleLayer"></div>
+                <div id="mg12xuMasterFaderLayer"></div>
+                <div id="mg12xuMasterMeterLayer"></div>
+                <div id="mg12xuMasterReadoutLayer"></div>
+              </div>
+            </div>
+            <div class="mg12xu-bus-toggle-row" id="mg12xuBusToggleRow"></div>
           </div>
           <button class="btn" style="margin-top:10px;" onclick="checkMg12xuStep1()">✅ 채널 배정 확인하기</button>
           <div class="result-panel" id="mg12xuStep1Result"></div>
@@ -1704,57 +1953,114 @@
     }
 
     /* ===== MG12XU 콘솔로 음향 시스템 구축해보기 (탭1 실습 게임) ===== */
-    /* 무대 좌표(px)는 .mg12xu-stage-wrap(width:1055px) 기준 고정 배치입니다 */
+    /* 무대 좌표는 .mg12xu-stage-wrap 기준 % 배치입니다 (반응형) */
     const mg12xuSources = [
-      { id: 'vocal1', name: '보컬 마이크 1', icon: '🎤', x: 420, y: 6 },
-      { id: 'wireless', name: '무선 마이크', icon: '🎙️', x: 620, y: 6 },
-      { id: 'vocal2', name: '보컬 마이크 2', icon: '🎤', x: 220, y: 58 },
-      { id: 'guitar', name: '통기타 (DI)', icon: '🎸', x: 40, y: 118 },
-      { id: 'keys', name: '건반', icon: '🎹', x: 850, y: 118 }
+      { id: 'vocal1', name: '보컬 마이크 1', icon: '🎤', x: 28.17, y: 4.35 },
+      { id: 'wireless', name: '무선 마이크', icon: '🎙️', x: 41.58, y: 4.35 },
+      { id: 'vocal2', name: '보컬 마이크 2', icon: '🎤', x: 14.76, y: 30.43 },
+      { id: 'guitar', name: '통기타 (DI)', icon: '🎸', x: 2.68, y: 60.87 },
+      { id: 'keys', name: '건반', icon: '🎹', x: 57.01, y: 60.87 }
+    ];
+    // 출력 스피커 — STEREO OUT / GROUP OUT 단자에서 케이블로 연결해야 소리가 납니다.
+    const mg12xuOutputs = [
+      { id: 'mainSpeaker', bus: 'stereo', name: '메인 스피커 (STEREO)', icon: '🔊', x: 79.14, y: 13.04 },
+      { id: 'groupSpeaker', bus: 'group', name: '모니터/그룹 스피커', icon: '📢', x: 91.21, y: 60.87 }
     ];
     let mg12xuSelected = null;
+    let mg12xuSelectedOutput = null; // 선택된 스피커 id (출력 케이블 연결용)
     let mg12xuAssignments = {}; // sourceId -> channel id (ex: 'ch1', 'ch5_6')
+    let mg12xuOutputConnected = { stereo: false, group: false }; // 출력 케이블 연결 여부
+    let mg12xuMasterBusOn = { group: true, stereo: true }; // GROUP OUT / STEREO OUT ON-OFF
 
     // ----- 실제 콘솔 사진(전체 12채널)의 채널별 좌표(크롭 이미지 기준 %) -----
     const MG12XU_REAL_CHANNELS = ['ch1', 'ch2', 'ch3', 'ch4', 'ch5_6', 'ch7_8', 'ch9_10', 'ch11_12'];
     const MG12XU_CHANNEL_LABELS = { ch1: '1', ch2: '2', ch3: '3', ch4: '4', ch5_6: '5/6', ch7_8: '7/8', ch9_10: '9/10', ch11_12: '11/12' };
-    const MG12XU_KNOB_TYPES = ['gain', 'high', 'mid', 'low'];
-    // 채널별로 실제 보유한 노브만 (9/10, 11/12는 GAIN·MID 없이 HIGH·LOW만 있는 실제 콘솔 구성을 반영)
+    const MG12XU_KNOB_TYPES = ['gain', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'];
+    // 채널별로 실제 보유한 노브만 (9/10, 11/12는 GAIN·MID 없이 HIGH·LOW·AUX1·AUX2·PAN만 있는 실제 콘솔 구성을 반영)
     const MG12XU_CHANNEL_KNOBS = {
-      ch1: ['gain', 'high', 'mid', 'low'],
-      ch2: ['gain', 'high', 'mid', 'low'],
-      ch3: ['gain', 'high', 'mid', 'low'],
-      ch4: ['gain', 'high', 'mid', 'low'],
-      ch5_6: ['gain', 'high', 'mid', 'low'],
-      ch7_8: ['gain', 'high', 'mid', 'low'],
-      ch9_10: ['high', 'low'],
-      ch11_12: ['high', 'low']
+      ch1: ['gain', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
+      ch2: ['gain', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
+      ch3: ['gain', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
+      ch4: ['gain', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
+      ch5_6: ['gain', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
+      ch7_8: ['gain', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
+      ch9_10: ['high', 'low', 'aux1', 'aux2', 'pan'],
+      ch11_12: ['high', 'low', 'aux1', 'aux2', 'pan']
     };
     const MG12XU_KNOB_X_PCT = { ch1: 13.839, ch2: 24.834, ch3: 36.114, ch4: 47.299, ch5_6: 58.673, ch7_8: 69.953, ch9_10: 83.223, ch11_12: 94.502 };
     const MG12XU_FADER_X_PCT = { ch1: 11.848, ch2: 23.033, ch3: 34.028, ch4: 45.213, ch5_6: 56.398, ch7_8: 67.583, ch9_10: 80.664, ch11_12: 91.848 };
     const MG12XU_ON_X_PCT = { ch1: 14.123, ch2: 25.308, ch3: 36.493, ch4: 47.678, ch5_6: 58.863, ch7_8: 69.858, ch9_10: 82.939, ch11_12: 94.123 };
     const MG12XU_ON_Y_PCT = 60.909;
-    const MG12XU_KNOB_Y_PCT = { gain: 8.442, high: 25.130, mid: 30.844, low: 36.494 };
+    const MG12XU_KNOB_Y_PCT = { gain: 8.442, high: 25.130, mid: 30.844, low: 36.494, aux1: 42.208, aux2: 49.870, pan: 55.455 };
     const MG12XU_HOTSPOT_Y_PCT = 2.597;
-    const MG12XU_FADER_TRAVEL_TOP_PCT = 68.896;
-    const MG12XU_FADER_TRAVEL_BOTTOM_PCT = 96.104;
+    // PEAK LED는 GAIN이 있는 6개 채널(1~4, 5/6, 7/8)에만 존재합니다.
+    const MG12XU_PEAK_LED_X_PCT = { ch1: 16.825, ch2: 28.009, ch3: 39.052, ch4: 50.284, ch5_6: 61.185, ch7_8: 72.417 };
+    const MG12XU_PEAK_LED_Y_PCT = 69.286;
+    let mg12xuPeakLit = {}; // 'ch1' -> true/false
+    // 실측 결과 기존 범위가 실제 트랙 끝보다 아래까지 내려가 있어, 사진상 트랙이 끝나는 지점에 맞춰 보정했습니다.
+    const MG12XU_FADER_TRAVEL_TOP_PCT = 69.156;
+    const MG12XU_FADER_TRAVEL_BOTTOM_PCT = 94.481;
     // 실측한 페이더 인쇄 눈금(원본 사진 y px -> dB) 을 frac(0=맨 위,1=맨 아래)으로 환산한 보정 테이블
+    // (페이더 손잡이가 사진에서 가리고 있던 구간은 복원이 불가능해, 동일한 간격 축소 패턴으로 자연스럽게 이어지도록
+    //  직접 그려주는 눈금·숫자 레이어(mg12xuFaderScaleLayer)로 전체 구간을 대체했습니다)
     const MG12XU_FADER_SCALE = [
-      { frac: 0.0620, db: 10 },
-      { frac: 0.1766, db: 5 },
-      { frac: 0.2482, db: 0 },
-      { frac: 0.3198, db: -5 },
-      { frac: 0.4321, db: -10 },
-      { frac: 0.4988, db: -15 },
-      { frac: 0.5632, db: -20 },
-      { frac: 0.6229, db: -25 },
-      { frac: 0.6827, db: -30 },
-      { frac: 0.7494, db: -40 },
-      { frac: 0.92, db: -60 }
+      { frac: 0.0436, db: 10 },
+      { frac: 0.1538, db: 5 },
+      { frac: 0.2692, db: 0 },
+      { frac: 0.3846, db: -5 },
+      { frac: 0.5000, db: -10 },
+      { frac: 0.5897, db: -15 },
+      { frac: 0.6538, db: -20 },
+      { frac: 0.6923, db: -25 },
+      { frac: 0.7564, db: -30 },
+      { frac: 0.8205, db: -40 },
+      { frac: 0.8974, db: -60 }
     ];
     let mg12xuKnobAngles = {};   // 'ch1_gain' -> degree(-135~135)
     let mg12xuFaderFracs = {};  // 'ch1' -> 0(위)~1(아래)
     let mg12xuChannelOn = {};   // 'ch1' -> true(언뮤트, 기본) / false(뮤트)
+    let mg12xuChannelRouting = {}; // 'ch1' -> { group:true, stereo:true } (1-2 / ST 버스 전송)
+
+    // ----- 채널별 1-2(GROUP) / ST(STEREO) 라우팅 버튼 좌표 (콘솔 이미지 기준 %) -----
+    const MG12XU_G12_X_PCT = { ch1: 16.872, ch2: 28.009, ch3: 39.147, ch4: 50.190, ch5_6: 61.280, ch7_8: 72.559, ch9_10: 85.640, ch11_12: 96.825 };
+    const MG12XU_G12_Y_PCT = 73.030;
+    const MG12XU_ST_X_PCT = { ch1: 16.635, ch2: 27.867, ch3: 39.052, ch4: 50.190, ch5_6: 61.374, ch7_8: 72.559, ch9_10: 85.735, ch11_12: 96.730 };
+    const MG12XU_ST_Y_PCT = 76.520;
+
+    // ----- 마스터 섹션(GROUP 1-2 / STEREO 메인 L·R) 좌표 (마스터 이미지 기준 %, 세로는 메인 콘솔과 동일 스케일) -----
+    const MG12XU_MASTER_BUSES = ['group', 'stereo'];
+    const MG12XU_MASTER_LABELS = { group: 'GROUP 1-2', stereo: 'STEREO (Main L/R)' };
+    const MG12XU_MASTER_FADER_X_PCT = { group: 35.780, stereo: 66.514 };
+    let mg12xuMasterFaderFracs = { group: 0.2692, stereo: 0.2692 }; // 기본값: 0dB(유니티)
+
+    // ----- 입출력 단자 패널(jack_strip.jpg, 1491x440) 좌표 (% 기준) -----
+    // 2026-10-07: jack_strip.jpg를 그리드 + Hough Circle 검출로 다시 정밀 측정해 좌표를 전면 수정했습니다.
+    // (이전 좌표는 AUX1/AUX2 SEND 단자와 GROUP/STEREO OUT 단자를 혼동해 엉뚱한 잭에 연결되는 문제가 있었습니다)
+    const MG12XU_INPUT_JACK_PCT = {
+      ch1: { x: 9.926, y: 40.455 }, ch2: { x: 17.841, y: 40.455 }, ch3: { x: 25.755, y: 40.455 }, ch4: { x: 33.669, y: 40.000 },
+      ch5_6: { x: 41.583, y: 40.455 }, ch7_8: { x: 49.362, y: 40.455 }, ch9_10: { x: 58.887, y: 67.727 }, ch11_12: { x: 66.667, y: 68.182 }
+    };
+    const MG12XU_OUTPUT_JACK_PCT = {
+      group: { x: 72.098, y: 39.318 },
+      stereo: { x: 86.486, y: 40.227 }
+    };
+
+    // ----- 마스터 섹션 레벨 미터 좌표 (master_section.jpg 기준 %) -----
+    const MG12XU_METER_L_X_PCT = 60.780;
+    const MG12XU_METER_R_X_PCT = 74.541;
+    const MG12XU_METER_SEGMENTS = [
+      { db: 10, y: 15.909, color: '#ef4444' },
+      { db: 6, y: 17.403, color: '#f59e0b' },
+      { db: 3, y: 18.831, color: '#f59e0b' },
+      { db: 0, y: 20.455, color: '#eab308' },
+      { db: -3, y: 22.727, color: '#22c55e' },
+      { db: -6, y: 23.896, color: '#22c55e' },
+      { db: -10, y: 25.195, color: '#22c55e' },
+      { db: -15, y: 26.623, color: '#22c55e' },
+      { db: -20, y: 28.442, color: '#22c55e' },
+      { db: -25, y: 29.870, color: '#22c55e' },
+      { db: -30, y: 31.169, color: '#22c55e' }
+    ];
 
     const mg12xuChainItems = [
       { id: 'console', name: 'MG12XU 콘솔' },
@@ -1766,19 +2072,309 @@
     let mg12xuChainShuffled = null;
     let mg12xuChainPicks = [];
 
+    /* ===== Web Audio 엔진: 콘솔 조작이 실제 소리 변화로 들리게 ===== */
+    // 소스마다 서로 다른 테스트 톤(오실레이터)을 흘려보내고, 각 채널의 GAIN·EQ·페이더·ON·1-2/ST 라우팅을
+    // 실제 오디오 그래프(GainNode·BiquadFilterNode)에 그대로 반영합니다. 마이크/음원 파일 없이도
+    // "조작 → 소리 변화"를 바로 체감할 수 있도록 만든 연습용 신호입니다.
+    let mg12xuAudioCtx = null;
+    let mg12xuAudioOn = false;
+    let mg12xuMasterCompressor = null;
+    let mg12xuBusGain = { group: null, stereo: null };       // 마스터 페이더
+    let mg12xuBusOnGain = { group: null, stereo: null };     // GROUP/STEREO OUT ON-OFF
+    let mg12xuBusConnGain = { group: null, stereo: null };   // 출력 케이블 연결 여부
+    let mg12xuStereoAnalyser = null;
+    let mg12xuMeterRAF = null;
+    let mg12xuSourceNodes = {};   // sourceId -> { osc, oscGain }
+    let mg12xuChannelNodes = {};  // ch -> { input, low, mid, high, panner, faderGain, muteGain, groupSend, stereoSend }
+
+    const MG12XU_SOURCE_TONE = {
+      vocal1:   { type: 'triangle', freq: 220 },
+      wireless: { type: 'sine',     freq: 330 },
+      vocal2:   { type: 'triangle', freq: 165 },
+      guitar:   { type: 'sawtooth', freq: 110 },
+      keys:     { type: 'sine',     freq: 440 }
+    };
+
+    function mg12xuDbToGain(db) {
+      if (db === null || db === undefined || !isFinite(db)) return 0;
+      return Math.pow(10, db / 20);
+    }
+
+    // GAIN 노브 각도(-135~+135) → dB. 실제 콘솔에 인쇄된 눈금과 동일하게 -20dB(맨 왼쪽/최소) ~ +64dB(맨 오른쪽/최대)로 매핑합니다.
+    function mg12xuGainDbFromAngle(angle) {
+      return -20 + (angle + 135) / 270 * 84;
+    }
+    // 노브 종류별 기본(초기) 각도 — GAIN은 과도한 초기 증폭을 피하기 위해 최소(맨 왼쪽)에서 시작하고,
+    // 나머지(EQ·PAN·AUX)는 중앙(0=플랫/센터)에서 시작합니다.
+    function mg12xuDefaultKnobAngle(type) {
+      return type === 'gain' ? -135 : 0;
+    }
+
+    function ensureMg12xuAudioCtx() {
+      if (mg12xuAudioCtx) return mg12xuAudioCtx;
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return null;
+      mg12xuAudioCtx = new Ctx();
+      mg12xuMasterCompressor = mg12xuAudioCtx.createDynamicsCompressor();
+      mg12xuMasterCompressor.connect(mg12xuAudioCtx.destination);
+
+      // STEREO 버스: 마스터 페이더 → ON/OFF 버튼 → 출력 케이블 연결 여부 → 레벨 미터(분석) → 최종 출력
+      const stereoGain = mg12xuAudioCtx.createGain();
+      stereoGain.gain.value = mg12xuDbToGain(mg12xuFaderDbFromFrac(mg12xuMasterFaderFracs.stereo ?? 0.2692));
+      mg12xuBusGain.stereo = stereoGain;
+
+      const stereoOnGain = mg12xuAudioCtx.createGain();
+      stereoOnGain.gain.value = mg12xuMasterBusOn.stereo ? 1 : 0;
+      mg12xuBusOnGain.stereo = stereoOnGain;
+
+      const stereoConnGain = mg12xuAudioCtx.createGain();
+      stereoConnGain.gain.value = mg12xuOutputConnected.stereo ? 1 : 0;
+      mg12xuBusConnGain.stereo = stereoConnGain;
+
+      const stereoAnalyser = mg12xuAudioCtx.createAnalyser();
+      stereoAnalyser.fftSize = 1024;
+      mg12xuStereoAnalyser = stereoAnalyser;
+
+      stereoGain.connect(stereoOnGain);
+      stereoOnGain.connect(stereoConnGain);
+      stereoConnGain.connect(stereoAnalyser);
+      stereoAnalyser.connect(mg12xuMasterCompressor);
+
+      // GROUP 버스: 독립된 모니터/그룹 스피커로 직접 연결 (실제 케이블이 꽂혀야 소리가 남)
+      const groupGain = mg12xuAudioCtx.createGain();
+      groupGain.gain.value = mg12xuDbToGain(mg12xuFaderDbFromFrac(mg12xuMasterFaderFracs.group ?? 0.2692));
+      mg12xuBusGain.group = groupGain;
+
+      const groupOnGain = mg12xuAudioCtx.createGain();
+      groupOnGain.gain.value = mg12xuMasterBusOn.group ? 1 : 0;
+      mg12xuBusOnGain.group = groupOnGain;
+
+      const groupConnGain = mg12xuAudioCtx.createGain();
+      groupConnGain.gain.value = mg12xuOutputConnected.group ? 1 : 0;
+      mg12xuBusConnGain.group = groupConnGain;
+
+      groupGain.connect(groupOnGain);
+      groupOnGain.connect(groupConnGain);
+      groupConnGain.connect(mg12xuMasterCompressor);
+
+      mg12xuStartMeterLoop();
+
+      return mg12xuAudioCtx;
+    }
+
+    // 레벨 미터: STEREO 버스(최종 출력 직전)의 실시간 RMS 레벨을 측정해 LED 바 그래프를 움직입니다.
+    function mg12xuStartMeterLoop() {
+      if (mg12xuMeterRAF) return;
+      const buf = new Float32Array(1024);
+      const tick = () => {
+        mg12xuMeterRAF = requestAnimationFrame(tick);
+        if (!mg12xuAudioOn || !mg12xuStereoAnalyser) { mg12xuUpdateMeterVisual(-Infinity); return; }
+        mg12xuStereoAnalyser.getFloatTimeDomainData(buf);
+        let sum = 0;
+        for (let i = 0; i < buf.length; i++) sum += buf[i] * buf[i];
+        const rms = Math.sqrt(sum / buf.length);
+        const db = rms > 0 ? 20 * Math.log10(rms) : -Infinity;
+        mg12xuUpdateMeterVisual(db);
+      };
+      mg12xuMeterRAF = requestAnimationFrame(tick);
+    }
+
+    function mg12xuUpdateMeterVisual(db) {
+      document.querySelectorAll('.mg12xu-meter-seg').forEach(seg => {
+        const segDb = parseFloat(seg.dataset.db);
+        seg.classList.toggle('on', isFinite(db) && db >= segDb);
+      });
+    }
+
+    function buildMg12xuSourceNode(sourceId) {
+      const ctx = ensureMg12xuAudioCtx();
+      if (!ctx) return null;
+      if (mg12xuSourceNodes[sourceId]) return mg12xuSourceNodes[sourceId];
+      const tone = MG12XU_SOURCE_TONE[sourceId] || { type: 'sine', freq: 220 };
+      const osc = ctx.createOscillator();
+      osc.type = tone.type;
+      osc.frequency.value = tone.freq;
+      const oscGain = ctx.createGain();
+      oscGain.gain.value = 0.1;
+      osc.connect(oscGain);
+      try { osc.start(); } catch (err) {}
+      const node = { osc, oscGain };
+      mg12xuSourceNodes[sourceId] = node;
+      return node;
+    }
+
+    function buildMg12xuChannelChain(ch) {
+      const ctx = ensureMg12xuAudioCtx();
+      if (!ctx) return null;
+      if (mg12xuChannelNodes[ch]) return mg12xuChannelNodes[ch];
+      const input = ctx.createGain();       // GAIN 노브
+      const low = ctx.createBiquadFilter();  low.type = 'lowshelf';  low.frequency.value = 100;
+      const mid = ctx.createBiquadFilter();  mid.type = 'peaking';   mid.frequency.value = 1000; mid.Q.value = 1;
+      const high = ctx.createBiquadFilter(); high.type = 'highshelf'; high.frequency.value = 8000;
+      const faderGain = ctx.createGain();   // 페이더
+      const panner = (ctx.createStereoPanner ? ctx.createStereoPanner() : null); // PAN 노브
+      const muteGain = ctx.createGain();    // ON/MUTE
+      const groupSend = ctx.createGain();   // 1-2 라우팅
+      const stereoSend = ctx.createGain();  // ST 라우팅
+
+      input.connect(low);
+      low.connect(mid);
+      mid.connect(high);
+      if (panner) { high.connect(panner); panner.connect(faderGain); }
+      else { high.connect(faderGain); }
+      faderGain.connect(muteGain);
+      muteGain.connect(groupSend);
+      muteGain.connect(stereoSend);
+      if (mg12xuBusGain.group) groupSend.connect(mg12xuBusGain.group);
+      if (mg12xuBusGain.stereo) stereoSend.connect(mg12xuBusGain.stereo);
+
+      const node = { input, low, mid, high, panner, faderGain, muteGain, groupSend, stereoSend };
+      mg12xuChannelNodes[ch] = node;
+
+      (MG12XU_CHANNEL_KNOBS[ch] || MG12XU_KNOB_TYPES).forEach(type => mg12xuApplyKnobAudio(ch, type));
+      mg12xuApplyFaderAudio(ch);
+      mg12xuApplyMuteAudio(ch);
+      mg12xuApplyRouteAudio(ch);
+      return node;
+    }
+
+    function mg12xuRewireAudioAssignments() {
+      if (!mg12xuAudioOn) return;
+      Object.values(mg12xuSourceNodes).forEach(n => { try { n.oscGain.disconnect(); } catch (err) {} });
+      Object.keys(mg12xuAssignments).forEach(sourceId => {
+        const ch = mg12xuAssignments[sourceId];
+        const srcNode = buildMg12xuSourceNode(sourceId);
+        const chNode = buildMg12xuChannelChain(ch);
+        if (srcNode && chNode) srcNode.oscGain.connect(chNode.input);
+      });
+    }
+
+    function mg12xuApplyKnobAudio(ch, type) {
+      if (type === 'gain') mg12xuUpdatePeakLed(ch);
+      if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuChannelNodes[ch]) return;
+      const node = mg12xuChannelNodes[ch];
+      const angle = mg12xuKnobAngles[ch + '_' + type] || 0;
+      const t = mg12xuAudioCtx.currentTime;
+      if (type === 'gain') {
+        const db = mg12xuGainDbFromAngle(angle);
+        // 과도하게 올렸을 때 실제로 소리가 거칠어지는 게 느껴지도록 하드 클램프는 걸지 않고,
+        // 대신 마스터 컴프레서(리미터)와 PEAK 램프로 "너무 세게 올리면 안 좋다"는 걸 체감하게 합니다.
+        node.input.gain.setTargetAtTime(mg12xuDbToGain(db), t, 0.02);
+      } else if (type === 'high') {
+        node.high.gain.setTargetAtTime(angle / 135 * 15, t, 0.02);
+      } else if (type === 'mid') {
+        node.mid.gain.setTargetAtTime(angle / 135 * 15, t, 0.02);
+      } else if (type === 'low') {
+        node.low.gain.setTargetAtTime(angle / 135 * 15, t, 0.02);
+      } else if (type === 'pan' && node.panner) {
+        node.panner.pan.setTargetAtTime(Math.max(-1, Math.min(1, angle / 135)), t, 0.02);
+      }
+      // aux1 / aux2는 현재 시뮬레이션에서 별도 출력 버스가 없어 조작 UI·수치만 제공합니다.
+    }
+
+    // GAIN을 너무 많이 올리면(+40dB 이상, 전체 회전의 약 3/4 지점) PEAK 램프가 켜지도록 합니다.
+    function mg12xuUpdatePeakLed(ch) {
+      if (!(ch in MG12XU_PEAK_LED_X_PCT)) return;
+      const angle = mg12xuKnobAngles[ch + '_gain'] ?? mg12xuDefaultKnobAngle('gain');
+      const db = mg12xuGainDbFromAngle(angle);
+      const lit = db >= 40;
+      mg12xuPeakLit[ch] = lit;
+      const led = document.querySelector(`.mg12xu-peak-led[data-ch="${ch}"]`);
+      if (led) led.classList.toggle('lit', lit);
+    }
+
+    function mg12xuApplyFaderAudio(ch) {
+      if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuChannelNodes[ch]) return;
+      const frac = mg12xuFaderFracs[ch] ?? 0.75;
+      const db = mg12xuFaderDbFromFrac(frac);
+      mg12xuChannelNodes[ch].faderGain.gain.setTargetAtTime(mg12xuDbToGain(db), mg12xuAudioCtx.currentTime, 0.02);
+    }
+
+    function mg12xuApplyMuteAudio(ch) {
+      if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuChannelNodes[ch]) return;
+      mg12xuChannelNodes[ch].muteGain.gain.setTargetAtTime(mg12xuChannelOn[ch] === false ? 0 : 1, mg12xuAudioCtx.currentTime, 0.01);
+    }
+
+    function mg12xuApplyRouteAudio(ch) {
+      if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuChannelNodes[ch]) return;
+      const r = mg12xuChannelRouting[ch] || { group: true, stereo: true };
+      mg12xuChannelNodes[ch].groupSend.gain.setTargetAtTime(r.group ? 1 : 0, mg12xuAudioCtx.currentTime, 0.01);
+      mg12xuChannelNodes[ch].stereoSend.gain.setTargetAtTime(r.stereo ? 1 : 0, mg12xuAudioCtx.currentTime, 0.01);
+    }
+
+    function mg12xuApplyMasterFaderAudio(bus) {
+      if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuBusGain[bus]) return;
+      const frac = mg12xuMasterFaderFracs[bus] ?? 0.2692;
+      const db = mg12xuFaderDbFromFrac(frac);
+      mg12xuBusGain[bus].gain.setTargetAtTime(mg12xuDbToGain(db), mg12xuAudioCtx.currentTime, 0.02);
+    }
+
+    // GROUP OUT / STEREO OUT의 ON/OFF 버튼 상태를 오디오 그래프에 반영합니다.
+    function mg12xuApplyMasterOnAudio(bus) {
+      if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuBusOnGain[bus]) return;
+      mg12xuBusOnGain[bus].gain.setTargetAtTime(mg12xuMasterBusOn[bus] ? 1 : 0, mg12xuAudioCtx.currentTime, 0.01);
+    }
+
+    // 출력 케이블이 실제로 스피커에 연결되어 있는지 여부를 오디오 그래프에 반영합니다(연결 전엔 소리가 나지 않음).
+    function mg12xuApplyOutputConnAudio(bus) {
+      if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuBusConnGain[bus]) return;
+      mg12xuBusConnGain[bus].gain.setTargetAtTime(mg12xuOutputConnected[bus] ? 1 : 0, mg12xuAudioCtx.currentTime, 0.01);
+    }
+
+    function toggleMg12xuAudio() {
+      const btn = document.getElementById('mg12xuAudioToggleBtn');
+      const hint = document.getElementById('mg12xuAudioHint');
+      if (!mg12xuAudioOn) {
+        const ctx = ensureMg12xuAudioCtx();
+        if (!ctx) {
+          if (hint) hint.textContent = '이 브라우저에서는 오디오 재생을 지원하지 않습니다.';
+          return;
+        }
+        if (ctx.state === 'suspended') ctx.resume();
+        mg12xuAudioOn = true;
+        Object.keys(mg12xuAssignments).forEach(sourceId => buildMg12xuChannelChain(mg12xuAssignments[sourceId]));
+        mg12xuRewireAudioAssignments();
+        MG12XU_REAL_CHANNELS.forEach(ch => {
+          if (!mg12xuChannelNodes[ch]) return;
+          (MG12XU_CHANNEL_KNOBS[ch] || MG12XU_KNOB_TYPES).forEach(type => mg12xuApplyKnobAudio(ch, type));
+          mg12xuApplyFaderAudio(ch);
+          mg12xuApplyMuteAudio(ch);
+          mg12xuApplyRouteAudio(ch);
+        });
+        MG12XU_MASTER_BUSES.forEach(bus => {
+          mg12xuApplyMasterFaderAudio(bus);
+          mg12xuApplyMasterOnAudio(bus);
+          mg12xuApplyOutputConnAudio(bus);
+        });
+        if (btn) { btn.classList.add('on'); btn.textContent = '🔇 오디오 테스트 끄기'; }
+        if (hint) hint.textContent = '켜짐 — 채널에 배정된 소스마다 테스트 톤이 흐릅니다. 페이더·GAIN·EQ·ON·1-2/ST 버튼과 마스터 페이더를 조작하면 소리가 바로 바뀝니다.';
+      } else {
+        mg12xuAudioOn = false;
+        if (mg12xuAudioCtx) { try { mg12xuAudioCtx.suspend(); } catch (err) {} }
+        if (btn) { btn.classList.remove('on'); btn.textContent = '🔊 오디오 테스트 켜기 (채널 조작 시 실제 소리 변화)'; }
+        if (hint) hint.textContent = '꺼짐 — 켜면 각 소스마다 테스트 톤이 재생되고, 페이더·GAIN·EQ·ON·라우팅 조작이 실시간으로 소리에 반영됩니다.';
+      }
+    }
+
     function buildMg12xuRealConsole() {
       const knobLayer = document.getElementById('mg12xuKnobLayer');
       const faderLayer = document.getElementById('mg12xuFaderLayer');
       const hotspotLayer = document.getElementById('mg12xuHotspotLayer');
       const onLayer = document.getElementById('mg12xuOnLayer');
       const muteLayer = document.getElementById('mg12xuMuteLayer');
-      if (!knobLayer || !faderLayer || !hotspotLayer || !onLayer || !muteLayer) return;
+      const scaleLayer = document.getElementById('mg12xuFaderScaleLayer');
+      const routeLayer = document.getElementById('mg12xuRouteLayer');
+      const peakLayer = document.getElementById('mg12xuPeakLayer');
+      if (!knobLayer || !faderLayer || !hotspotLayer || !onLayer || !muteLayer || !scaleLayer || !routeLayer || !peakLayer) return;
 
       knobLayer.innerHTML = '';
       faderLayer.innerHTML = '';
       hotspotLayer.innerHTML = '';
       onLayer.innerHTML = '';
       muteLayer.innerHTML = '';
+      scaleLayer.innerHTML = '';
+      routeLayer.innerHTML = '';
+      peakLayer.innerHTML = '';
 
       MG12XU_REAL_CHANNELS.forEach(ch => {
         const kx = MG12XU_KNOB_X_PCT[ch];
@@ -1809,6 +2405,8 @@
           knob.addEventListener('pointerdown', (e) => mg12xuKnobPointerDown(e, ch, type));
           knobLayer.appendChild(knob);
         });
+
+        buildMg12xuFaderScale(scaleLayer, MG12XU_FADER_X_PCT[ch], false);
 
         const fx = MG12XU_FADER_X_PCT[ch];
         const hit = document.createElement('div');
@@ -1851,20 +2449,96 @@
         muteCol.appendChild(muteTag);
         muteLayer.appendChild(muteCol);
 
+        const g12Btn = document.createElement('button');
+        g12Btn.type = 'button';
+        g12Btn.className = 'mg12xu-route-btn';
+        g12Btn.dataset.ch = ch;
+        g12Btn.dataset.bus = 'group';
+        g12Btn.style.left = MG12XU_G12_X_PCT[ch] + '%';
+        g12Btn.style.top = MG12XU_G12_Y_PCT + '%';
+        g12Btn.title = `CH ${MG12XU_CHANNEL_LABELS[ch]} → GROUP 1-2 전송`;
+        g12Btn.addEventListener('click', () => toggleMg12xuRoute(ch, 'group'));
+        routeLayer.appendChild(g12Btn);
+
+        const stBtn = document.createElement('button');
+        stBtn.type = 'button';
+        stBtn.className = 'mg12xu-route-btn';
+        stBtn.dataset.ch = ch;
+        stBtn.dataset.bus = 'stereo';
+        stBtn.style.left = MG12XU_ST_X_PCT[ch] + '%';
+        stBtn.style.top = MG12XU_ST_Y_PCT + '%';
+        stBtn.title = `CH ${MG12XU_CHANNEL_LABELS[ch]} → STEREO 전송`;
+        stBtn.addEventListener('click', () => toggleMg12xuRoute(ch, 'stereo'));
+        routeLayer.appendChild(stBtn);
+
+        if (ch in MG12XU_PEAK_LED_X_PCT) {
+          const led = document.createElement('div');
+          led.className = 'mg12xu-peak-led';
+          led.dataset.ch = ch;
+          led.style.left = MG12XU_PEAK_LED_X_PCT[ch] + '%';
+          led.style.top = MG12XU_PEAK_LED_Y_PCT + '%';
+          led.title = `CH ${MG12XU_CHANNEL_LABELS[ch]} PEAK`;
+          peakLayer.appendChild(led);
+        }
+
         if (!(ch + '_high' in mg12xuKnobAngles)) {
-          knobTypes.forEach(type => { mg12xuKnobAngles[ch + '_' + type] = 0; });
+          knobTypes.forEach(type => { mg12xuKnobAngles[ch + '_' + type] = mg12xuDefaultKnobAngle(type); });
           mg12xuFaderFracs[ch] = 0.75;
         }
         if (!(ch in mg12xuChannelOn)) mg12xuChannelOn[ch] = true;
+        if (!(ch in mg12xuChannelRouting)) mg12xuChannelRouting[ch] = { group: true, stereo: true };
         knobTypes.forEach(type => mg12xuUpdateKnobVisual(ch, type));
         mg12xuUpdateFaderVisual(ch);
         mg12xuUpdateMuteVisual(ch);
+        mg12xuUpdateRouteVisual(ch, 'group');
+        mg12xuUpdateRouteVisual(ch, 'stereo');
       });
+    }
+
+    function buildMg12xuFaderScale(layer, xPct, isMaster) {
+      const track = document.createElement('div');
+      track.className = 'mg12xu-fscale-track';
+      track.style.left = xPct + '%';
+      track.style.top = MG12XU_FADER_TRAVEL_TOP_PCT + '%';
+      track.style.height = (MG12XU_FADER_TRAVEL_BOTTOM_PCT - MG12XU_FADER_TRAVEL_TOP_PCT) + '%';
+      layer.appendChild(track);
+
+      const points = MG12XU_FADER_SCALE.concat([{ frac: 1.0, db: null }]);
+      points.forEach(pt => {
+        const yPct = MG12XU_FADER_TRAVEL_TOP_PCT + pt.frac * (MG12XU_FADER_TRAVEL_BOTTOM_PCT - MG12XU_FADER_TRAVEL_TOP_PCT);
+        const tick = document.createElement('div');
+        tick.className = 'mg12xu-fscale-tick' + (pt.db === 0 ? ' zero' : '') + (isMaster ? ' master' : '');
+        tick.style.left = xPct + '%';
+        tick.style.top = yPct + '%';
+        layer.appendChild(tick);
+
+        const label = document.createElement('div');
+        label.className = 'mg12xu-fscale-label';
+        label.style.left = xPct + '%';
+        label.style.top = yPct + '%';
+        label.textContent = pt.db === null ? '−∞' : (pt.db > 0 ? ('+' + pt.db) : String(pt.db));
+        layer.appendChild(label);
+      });
+    }
+
+    function toggleMg12xuRoute(ch, bus) {
+      if (!mg12xuChannelRouting[ch]) mg12xuChannelRouting[ch] = { group: true, stereo: true };
+      mg12xuChannelRouting[ch][bus] = !mg12xuChannelRouting[ch][bus];
+      mg12xuUpdateRouteVisual(ch, bus);
+      mg12xuApplyRouteAudio(ch);
+    }
+
+    function mg12xuUpdateRouteVisual(ch, bus) {
+      const btn = document.querySelector(`.mg12xu-route-btn[data-ch="${ch}"][data-bus="${bus}"]`);
+      if (!btn) return;
+      const on = mg12xuChannelRouting[ch] ? mg12xuChannelRouting[ch][bus] : true;
+      btn.classList.toggle('off', !on);
     }
 
     function toggleMg12xuOn(ch) {
       mg12xuChannelOn[ch] = !mg12xuChannelOn[ch];
       mg12xuUpdateMuteVisual(ch);
+      mg12xuApplyMuteAudio(ch);
     }
 
     function mg12xuUpdateMuteVisual(ch) {
@@ -1873,19 +2547,26 @@
       col.classList.toggle('active', mg12xuChannelOn[ch] === false);
     }
 
+    // 노브는 "중심 기준 절대 각도"가 아니라, 실제 오디오 소프트웨어 노브처럼 "잡은 지점에서부터 위/아래로
+    // 드래그한 거리"로 회전시킵니다. 이렇게 해야 잡는 순간 값이 엉뚱한 각도로 튀지 않고, 아주 미세하게도
+    // 자연스럽게 조작할 수 있습니다. 위로 드래그하면 시계방향(값 증가), 아래로 드래그하면 반시계방향(값 감소)입니다.
+    const MG12XU_KNOB_DRAG_DEG_PER_PX = 1.35; // 세로 200px 드래그 ≈ 270도(전체 회전) 커버
+
     function mg12xuKnobPointerDown(e, ch, type) {
       e.preventDefault();
       const knobEl = e.currentTarget;
       knobEl.classList.add('active');
       try { knobEl.setPointerCapture(e.pointerId); } catch (err) {}
 
+      const startY = e.clientY;
+      const startX = e.clientX;
+      const startAngle = mg12xuKnobAngles[ch + '_' + type] ?? mg12xuDefaultKnobAngle(type);
+
       const onMove = (ev) => {
-        const rect = knobEl.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        const dx = ev.clientX - cx;
-        const dy = ev.clientY - cy;
-        let angle = Math.atan2(dx, -dy) * 180 / Math.PI;
+        // 위로 움직이면(-dy) 값 증가, 아래로 움직이면 값 감소. 가로 이동도 소량 보조로 반영해 자연스럽게 섞습니다.
+        const dy = startY - ev.clientY;
+        const dx = ev.clientX - startX;
+        let angle = startAngle + (dy + dx * 0.3) * MG12XU_KNOB_DRAG_DEG_PER_PX;
         angle = Math.max(-135, Math.min(135, angle));
         mg12xuKnobAngles[ch + '_' + type] = angle;
         mg12xuUpdateKnobVisual(ch, type);
@@ -1941,23 +2622,35 @@
 
     function mg12xuUpdateKnobVisual(ch, type) {
       const img = document.querySelector(`.mg12xu-knob[data-ch="${ch}"][data-type="${type}"] img`);
-      if (!img) return;
-      img.style.transform = `rotate(${mg12xuKnobAngles[ch + '_' + type] || 0}deg)`;
+      if (img) img.style.transform = `rotate(${mg12xuKnobAngles[ch + '_' + type] || 0}deg)`;
+      mg12xuApplyKnobAudio(ch, type);
     }
 
     function mg12xuUpdateFaderVisual(ch) {
       const cap = document.querySelector(`.mg12xu-fader-cap[data-ch="${ch}"]`);
-      if (!cap) return;
       const frac = mg12xuFaderFracs[ch] ?? 0.75;
-      const topPct = MG12XU_FADER_TRAVEL_TOP_PCT + frac * (MG12XU_FADER_TRAVEL_BOTTOM_PCT - MG12XU_FADER_TRAVEL_TOP_PCT);
-      cap.style.top = topPct + '%';
+      if (cap) {
+        const topPct = MG12XU_FADER_TRAVEL_TOP_PCT + frac * (MG12XU_FADER_TRAVEL_BOTTOM_PCT - MG12XU_FADER_TRAVEL_TOP_PCT);
+        cap.style.top = topPct + '%';
+      }
+      mg12xuApplyFaderAudio(ch);
     }
 
     function mg12xuKnobValueLabel(ch, type) {
       const angle = mg12xuKnobAngles[ch + '_' + type] || 0;
       if (type === 'gain') {
-        const v = -6 + (angle + 135) / 270 * 76;
-        return `CH${MG12XU_CHANNEL_LABELS[ch]} GAIN ${v.toFixed(0)}dB`;
+        const v = mg12xuGainDbFromAngle(angle);
+        return `CH${MG12XU_CHANNEL_LABELS[ch]} GAIN ${v >= 0 ? '+' : ''}${v.toFixed(0)}dB`;
+      }
+      if (type === 'aux1' || type === 'aux2') {
+        const v = (angle + 135) / 270 * 10;
+        const label = type === 'aux1' ? 'AUX1 SEND' : 'AUX2/FX SEND';
+        return `CH${MG12XU_CHANNEL_LABELS[ch]} ${label} ${v.toFixed(1)}`;
+      }
+      if (type === 'pan') {
+        const v = Math.round(angle / 135 * 100);
+        if (Math.abs(v) < 3) return `CH${MG12XU_CHANNEL_LABELS[ch]} PAN CENTER`;
+        return `CH${MG12XU_CHANNEL_LABELS[ch]} PAN ${v > 0 ? 'R' : 'L'}${Math.abs(v)}`;
       }
       const v = angle / 135 * 15;
       return `CH${MG12XU_CHANNEL_LABELS[ch]} ${type.toUpperCase()} ${v >= 0 ? '+' : ''}${v.toFixed(1)}dB`;
@@ -1983,6 +2676,157 @@
       return `CH${MG12XU_CHANNEL_LABELS[ch]} FADER ${db >= 0 ? '+' : ''}${db.toFixed(1)}dB`;
     }
 
+    /* ===== 마스터 섹션: GROUP 1-2 / STEREO(Main L·R) 페이더 ===== */
+    function buildMg12xuMasterConsole() {
+      const faderLayer = document.getElementById('mg12xuMasterFaderLayer');
+      const scaleLayer = document.getElementById('mg12xuMasterScaleLayer');
+      const toggleRow = document.getElementById('mg12xuBusToggleRow');
+      const meterLayer = document.getElementById('mg12xuMasterMeterLayer');
+      if (!faderLayer || !scaleLayer || !toggleRow || !meterLayer) return;
+      faderLayer.innerHTML = '';
+      scaleLayer.innerHTML = '';
+      toggleRow.innerHTML = '';
+      meterLayer.innerHTML = '';
+
+      MG12XU_MASTER_BUSES.forEach(bus => {
+        const bx = MG12XU_MASTER_FADER_X_PCT[bus];
+        buildMg12xuFaderScale(scaleLayer, bx, true);
+
+        const onBtn = document.createElement('button');
+        onBtn.type = 'button';
+        onBtn.className = 'mg12xu-master-on-btn';
+        onBtn.dataset.bus = bus;
+        onBtn.textContent = (bus === 'stereo' ? 'STEREO OUT' : 'GROUP OUT');
+        onBtn.title = `${MG12XU_MASTER_LABELS[bus]} 출력 ON/OFF`;
+        onBtn.addEventListener('click', () => toggleMg12xuMasterOn(bus));
+        toggleRow.appendChild(onBtn);
+
+        const hit = document.createElement('div');
+        hit.className = 'mg12xu-master-fader-hit';
+        hit.dataset.bus = bus;
+        hit.style.left = bx + '%';
+        hit.style.top = ((MG12XU_FADER_TRAVEL_TOP_PCT + MG12XU_FADER_TRAVEL_BOTTOM_PCT) / 2) + '%';
+        hit.addEventListener('pointerdown', (e) => mg12xuMasterFaderPointerDown(e, bus));
+        faderLayer.appendChild(hit);
+
+        const cap = document.createElement('div');
+        cap.className = 'mg12xu-master-fader-cap';
+        cap.dataset.bus = bus;
+        cap.style.left = bx + '%';
+        const capImg = document.createElement('img');
+        capImg.src = bus === 'stereo' ? 'stereo_fader_cap.png' : 'group_fader_cap.png';
+        capImg.draggable = false;
+        capImg.alt = `${MG12XU_MASTER_LABELS[bus]} 마스터 페이더`;
+        cap.appendChild(capImg);
+        faderLayer.appendChild(cap);
+
+        const label = document.createElement('div');
+        label.className = 'mg12xu-master-label';
+        label.style.left = bx + '%';
+        label.style.top = '97.2%';
+        label.textContent = MG12XU_MASTER_LABELS[bus];
+        faderLayer.appendChild(label);
+
+        if (!(bus in mg12xuMasterFaderFracs)) mg12xuMasterFaderFracs[bus] = 0.2692;
+        mg12xuUpdateMasterFaderVisual(bus);
+        mg12xuUpdateMasterOnVisual(bus);
+      });
+
+      // STEREO 버스(최종 출력)의 레벨을 보여주는 L/R 미터 LED 바
+      MG12XU_METER_SEGMENTS.forEach(seg => {
+        [['L', MG12XU_METER_L_X_PCT], ['R', MG12XU_METER_R_X_PCT]].forEach(([col, x]) => {
+          const el = document.createElement('div');
+          el.className = 'mg12xu-meter-seg';
+          el.dataset.col = col;
+          el.dataset.db = seg.db;
+          el.style.left = x + '%';
+          el.style.top = seg.y + '%';
+          el.style.background = seg.color;
+          meterLayer.appendChild(el);
+        });
+      });
+    }
+
+    function toggleMg12xuMasterOn(bus) {
+      mg12xuMasterBusOn[bus] = !mg12xuMasterBusOn[bus];
+      mg12xuUpdateMasterOnVisual(bus);
+      mg12xuApplyMasterOnAudio(bus);
+    }
+
+    function mg12xuUpdateMasterOnVisual(bus) {
+      const btn = document.querySelector(`.mg12xu-master-on-btn[data-bus="${bus}"]`);
+      if (btn) btn.classList.toggle('on', !!mg12xuMasterBusOn[bus]);
+    }
+
+    function mg12xuMasterFaderPointerDown(e, bus) {
+      e.preventDefault();
+      const hitEl = e.currentTarget;
+      const wrap = document.getElementById('mg12xuMasterWrap');
+      if (!wrap) return;
+      hitEl.classList.add('active');
+      try { hitEl.setPointerCapture(e.pointerId); } catch (err) {}
+
+      const onMove = (ev) => {
+        const wrapRect = wrap.getBoundingClientRect();
+        const travelTopPx = wrapRect.top + wrapRect.height * (MG12XU_FADER_TRAVEL_TOP_PCT / 100);
+        const travelBottomPx = wrapRect.top + wrapRect.height * (MG12XU_FADER_TRAVEL_BOTTOM_PCT / 100);
+        let frac = (ev.clientY - travelTopPx) / (travelBottomPx - travelTopPx);
+        frac = Math.max(0, Math.min(1, frac));
+        mg12xuMasterFaderFracs[bus] = frac;
+        mg12xuUpdateMasterFaderVisual(bus);
+        const capEl = document.querySelector(`.mg12xu-master-fader-cap[data-bus="${bus}"]`);
+        mg12xuShowMasterReadout(capEl || hitEl, mg12xuMasterFaderValueLabel(bus));
+      };
+      const onUp = () => {
+        hitEl.classList.remove('active');
+        try { hitEl.releasePointerCapture(e.pointerId); } catch (err) {}
+        hitEl.removeEventListener('pointermove', onMove);
+        hitEl.removeEventListener('pointerup', onUp);
+        hitEl.removeEventListener('pointercancel', onUp);
+        mg12xuHideMasterReadout();
+      };
+      hitEl.addEventListener('pointermove', onMove);
+      hitEl.addEventListener('pointerup', onUp);
+      hitEl.addEventListener('pointercancel', onUp);
+      const capEl = document.querySelector(`.mg12xu-master-fader-cap[data-bus="${bus}"]`);
+      mg12xuShowMasterReadout(capEl || hitEl, mg12xuMasterFaderValueLabel(bus));
+    }
+
+    function mg12xuUpdateMasterFaderVisual(bus) {
+      const cap = document.querySelector(`.mg12xu-master-fader-cap[data-bus="${bus}"]`);
+      const frac = mg12xuMasterFaderFracs[bus] ?? 0.2692;
+      if (cap) {
+        const topPct = MG12XU_FADER_TRAVEL_TOP_PCT + frac * (MG12XU_FADER_TRAVEL_BOTTOM_PCT - MG12XU_FADER_TRAVEL_TOP_PCT);
+        cap.style.top = topPct + '%';
+      }
+      mg12xuApplyMasterFaderAudio(bus);
+    }
+
+    function mg12xuMasterFaderValueLabel(bus) {
+      const frac = mg12xuMasterFaderFracs[bus] ?? 0.2692;
+      const db = mg12xuFaderDbFromFrac(frac);
+      const name = MG12XU_MASTER_LABELS[bus];
+      if (db === null) return `${name} −∞`;
+      return `${name} ${db >= 0 ? '+' : ''}${db.toFixed(1)}dB`;
+    }
+
+    function mg12xuShowMasterReadout(targetEl, text) {
+      const layer = document.getElementById('mg12xuMasterReadoutLayer');
+      const wrap = document.getElementById('mg12xuMasterWrap');
+      if (!layer || !wrap || !targetEl) return;
+      const wrapRect = wrap.getBoundingClientRect();
+      const tRect = targetEl.getBoundingClientRect();
+      if (wrapRect.width === 0) return;
+      const x = tRect.left + tRect.width / 2 - wrapRect.left;
+      const y = tRect.top - wrapRect.top;
+      layer.innerHTML = `<div class="mg12xu-readout" style="left:${x}px; top:${y}px;">${text}</div>`;
+    }
+
+    function mg12xuHideMasterReadout() {
+      const layer = document.getElementById('mg12xuMasterReadoutLayer');
+      if (layer) layer.innerHTML = '';
+    }
+
     function mg12xuShowReadout(targetEl, text) {
       const layer = document.getElementById('mg12xuReadoutLayer');
       const wrap = document.getElementById('mg12xuRealConsoleWrap');
@@ -2004,21 +2848,264 @@
       const stageEl = document.getElementById('mg12xuStage');
       if (!stageEl) return;
 
-      stageEl.innerHTML = mg12xuSources.map(s => {
+      const sourcesHtml = mg12xuSources.map(s => {
         const ch = mg12xuAssignments[s.id];
         const cls = ['mg12xu-source-item'];
         if (mg12xuSelected === s.id) cls.push('selected');
         else if (ch) cls.push('assigned');
         const tag = ch ? `<span class="mg12xu-source-ch-tag">CH ${MG12XU_CHANNEL_LABELS[ch]}</span>` : '';
         return `
-          <button class="${cls.join(' ')}" style="left:${s.x}px; top:${s.y}px;" onclick="clickMg12xuSource('${s.id}')" data-source="${s.id}">
+          <button type="button" class="${cls.join(' ')}" style="left:${s.x}%; top:${s.y}%;" onclick="clickMg12xuSource('${s.id}')" data-source="${s.id}">
             <div class="mg12xu-source-icon">${s.icon}</div>
             <div class="mg12xu-source-label">${s.name}</div>
             ${tag}
+            <div class="mg12xu-cable-nub" data-source="${s.id}" title="케이블을 드래그해서 아래 입력 단자에 연결하세요"></div>
           </button>`;
       }).join('');
 
+      const outputsHtml = mg12xuOutputs.map(o => {
+        const connected = mg12xuOutputConnected[o.bus];
+        const cls = ['mg12xu-speaker-item'];
+        if (mg12xuSelectedOutput === o.id) cls.push('selected');
+        if (connected) cls.push('connected');
+        return `
+          <button type="button" class="${cls.join(' ')}" style="left:${o.x}%; top:${o.y}%;" onclick="clickMg12xuOutput('${o.id}')" data-output="${o.id}">
+            <div class="mg12xu-speaker-icon">${o.icon}</div>
+            <div class="mg12xu-speaker-label">${o.name}</div>
+            <div class="mg12xu-cable-nub" data-output="${o.id}" title="케이블을 드래그해서 아래 OUT 단자에 연결하세요"></div>
+          </button>`;
+      }).join('');
+
+      stageEl.innerHTML = sourcesHtml + outputsHtml;
+
+      stageEl.querySelectorAll('.mg12xu-cable-nub').forEach(nub => {
+        nub.addEventListener('click', (e) => e.stopPropagation());
+        if (nub.dataset.source) {
+          nub.addEventListener('pointerdown', (e) => mg12xuNubPointerDown(e, 'source', nub.dataset.source));
+        } else if (nub.dataset.output) {
+          nub.addEventListener('pointerdown', (e) => mg12xuNubPointerDown(e, 'output', nub.dataset.output));
+        }
+      });
+
       renderMg12xuHotspotsAndTags();
+      mg12xuRedrawCables();
+    }
+
+    /* ----- 실제 케이블 드래그 연결 시스템 ----- */
+    function mg12xuCablePathD(x1, y1, x2, y2) {
+      const bend = Math.max(36, Math.abs(y2 - y1) * 0.45);
+      return `M ${x1} ${y1} C ${x1} ${y1 + bend}, ${x2} ${y2 - bend}, ${x2} ${y2}`;
+    }
+
+    function mg12xuWrapPoint(el, wrapRect) {
+      const r = el.getBoundingClientRect();
+      return { x: r.left + r.width / 2 - wrapRect.left, y: r.top + r.height / 2 - wrapRect.top };
+    }
+
+    // XLR 커넥터 모양(바디 + 3핀)을 케이블 양 끝에 그립니다.
+    function mg12xuPlugSvg(p, color) {
+      return `<g transform="translate(${p.x},${p.y})" pointer-events="none">
+        <circle r="8.5" class="mg12xu-cable-plug-body"></circle>
+        <circle r="8.5" fill="none" stroke="${color}" stroke-width="2.2"></circle>
+        <circle cx="0" cy="-3.3" r="1.15" class="mg12xu-cable-plug-pin"></circle>
+        <circle cx="-2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
+        <circle cx="2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
+      </g>`;
+    }
+
+    function mg12xuCableSvg(p1, p2, color, onclickAttr) {
+      const d = mg12xuCablePathD(p1.x, p1.y, p2.x, p2.y);
+      return `<g class="mg12xu-cable-g">
+        <path class="mg12xu-cable-hit" d="${d}" ${onclickAttr}></path>
+        <path class="mg12xu-cable-shadow" d="${d}"></path>
+        <path class="mg12xu-cable-core" style="stroke:${color}" d="${d}"></path>
+        ${mg12xuPlugSvg(p1, color)}
+        ${mg12xuPlugSvg(p2, color)}
+      </g>`;
+    }
+
+    function mg12xuRedrawCables() {
+      const svg = document.getElementById('mg12xuConnectSvg');
+      const wrap = document.getElementById('mg12xuPatchbayWrap');
+      if (!svg || !wrap) return;
+      const wrapRect = wrap.getBoundingClientRect();
+      if (wrapRect.width === 0) return;
+      const colors = ['#16a34a', '#2563eb', '#db2777', '#d97706', '#7c3aed', '#059669'];
+      let html = '';
+      let colorIdx = 0;
+
+      Object.keys(mg12xuAssignments).forEach(sourceId => {
+        const ch = mg12xuAssignments[sourceId];
+        const nub = document.querySelector(`.mg12xu-cable-nub[data-source="${sourceId}"]`);
+        const jack = document.querySelector(`.mg12xu-jack-point[data-ch="${ch}"]`);
+        if (!nub || !jack) return;
+        const p1 = mg12xuWrapPoint(nub, wrapRect);
+        const p2 = mg12xuWrapPoint(jack, wrapRect);
+        const col = colors[colorIdx++ % colors.length];
+        html += mg12xuCableSvg(p1, p2, col, `onclick="mg12xuUnplugSource('${sourceId}')"`);
+      });
+
+      mg12xuOutputs.forEach(out => {
+        if (!mg12xuOutputConnected[out.bus]) return;
+        const nub = document.querySelector(`.mg12xu-cable-nub[data-output="${out.id}"]`);
+        const jack = document.querySelector(`.mg12xu-jack-point[data-bus="${out.bus}"]`);
+        if (!nub || !jack) return;
+        const p1 = mg12xuWrapPoint(nub, wrapRect);
+        const p2 = mg12xuWrapPoint(jack, wrapRect);
+        html += mg12xuCableSvg(p1, p2, '#ef4444', `onclick="mg12xuUnplugOutput('${out.bus}')"`);
+      });
+
+      svg.innerHTML = html;
+
+      document.querySelectorAll('.mg12xu-jack-point.input').forEach(j => {
+        j.classList.toggle('plugged', Object.values(mg12xuAssignments).includes(j.dataset.ch));
+      });
+      document.querySelectorAll('.mg12xu-jack-point.output').forEach(j => {
+        j.classList.toggle('plugged', !!mg12xuOutputConnected[j.dataset.bus]);
+      });
+      document.querySelectorAll('.mg12xu-cable-nub[data-source]').forEach(n => {
+        n.classList.toggle('plugged', !!mg12xuAssignments[n.dataset.source]);
+      });
+      document.querySelectorAll('.mg12xu-cable-nub[data-output]').forEach(n => {
+        const out = mg12xuOutputs.find(o => o.id === n.dataset.output);
+        n.classList.toggle('plugged', !!(out && mg12xuOutputConnected[out.bus]));
+      });
+    }
+
+    function mg12xuDrawPreviewCable(p1, p2) {
+      const svg = document.getElementById('mg12xuConnectSvg');
+      if (!svg) return;
+      let path = svg.querySelector('.drag-preview');
+      if (!path) {
+        path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('class', 'mg12xu-cable-path drag-preview');
+        svg.appendChild(path);
+      }
+      path.setAttribute('d', mg12xuCablePathD(p1.x, p1.y, p2.x, p2.y));
+    }
+
+    function mg12xuClearPreviewCable() {
+      const svg = document.getElementById('mg12xuConnectSvg');
+      const path = svg && svg.querySelector('.drag-preview');
+      if (path) path.remove();
+    }
+
+    function mg12xuNubPointerDown(e, kind, id) {
+      e.preventDefault();
+      e.stopPropagation();
+      const nubEl = e.currentTarget;
+      const wrap = document.getElementById('mg12xuPatchbayWrap');
+      if (!wrap) return;
+      try { nubEl.setPointerCapture(e.pointerId); } catch (err) {}
+      let dropTarget = null;
+      const outInfo = kind === 'output' ? mg12xuOutputs.find(o => o.id === id) : null;
+
+      const onMove = (ev) => {
+        const wrapRect = wrap.getBoundingClientRect();
+        const start = mg12xuWrapPoint(nubEl, wrapRect);
+        const pt = { x: ev.clientX - wrapRect.left, y: ev.clientY - wrapRect.top };
+        mg12xuDrawPreviewCable(start, pt);
+
+        document.querySelectorAll('.mg12xu-jack-point.drop-ready').forEach(j => j.classList.remove('drop-ready'));
+        dropTarget = null;
+        const el = document.elementFromPoint(ev.clientX, ev.clientY);
+        if (el && el.classList.contains('mg12xu-jack-point')) {
+          if (kind === 'source' && el.classList.contains('input')) { dropTarget = el; el.classList.add('drop-ready'); }
+          if (kind === 'output' && el.classList.contains('output') && outInfo && el.dataset.bus === outInfo.bus) { dropTarget = el; el.classList.add('drop-ready'); }
+        }
+      };
+      const onUp = () => {
+        try { nubEl.releasePointerCapture(e.pointerId); } catch (err) {}
+        nubEl.removeEventListener('pointermove', onMove);
+        nubEl.removeEventListener('pointerup', onUp);
+        nubEl.removeEventListener('pointercancel', onUp);
+        document.querySelectorAll('.mg12xu-jack-point.drop-ready').forEach(j => j.classList.remove('drop-ready'));
+        mg12xuClearPreviewCable();
+        if (dropTarget) {
+          if (kind === 'source') {
+            mg12xuSelected = id;
+            assignMg12xuRealChannel(dropTarget.dataset.ch);
+          } else {
+            mg12xuSelectedOutput = id;
+            connectMg12xuOutput(dropTarget.dataset.bus);
+          }
+        } else {
+          mg12xuRedrawCables();
+        }
+      };
+      nubEl.addEventListener('pointermove', onMove);
+      nubEl.addEventListener('pointerup', onUp);
+      nubEl.addEventListener('pointercancel', onUp);
+    }
+
+    function clickMg12xuOutput(id) {
+      mg12xuSelectedOutput = (mg12xuSelectedOutput === id) ? null : id;
+      renderMg12xuStep1();
+    }
+
+    function connectMg12xuOutput(bus) {
+      const out = mg12xuOutputs.find(o => o.id === mg12xuSelectedOutput && o.bus === bus);
+      if (!out) { mg12xuRedrawCables(); return; }
+      mg12xuOutputConnected[bus] = true;
+      mg12xuSelectedOutput = null;
+      renderMg12xuStep1();
+      mg12xuApplyOutputConnAudio(bus);
+    }
+
+    function mg12xuUnplugSource(sourceId) {
+      delete mg12xuAssignments[sourceId];
+      renderMg12xuStep1();
+      if (mg12xuAudioOn) mg12xuRewireAudioAssignments();
+    }
+
+    function mg12xuUnplugOutput(bus) {
+      mg12xuOutputConnected[bus] = false;
+      renderMg12xuStep1();
+      mg12xuApplyOutputConnAudio(bus);
+    }
+
+    /* ----- 입출력 단자 패널(jack_strip.jpg) 위의 클릭 가능한 잭 ----- */
+    function buildMg12xuJackstrip() {
+      const layer = document.getElementById('mg12xuJackLayer');
+      if (!layer) return;
+      layer.innerHTML = '';
+
+      MG12XU_REAL_CHANNELS.forEach(ch => {
+        const pos = MG12XU_INPUT_JACK_PCT[ch];
+        if (!pos) return;
+        const jack = document.createElement('div');
+        jack.className = 'mg12xu-jack-point input';
+        jack.dataset.ch = ch;
+        jack.style.left = pos.x + '%';
+        jack.style.top = pos.y + '%';
+        jack.title = `CH ${MG12XU_CHANNEL_LABELS[ch]} 입력(INPUT) 단자`;
+        jack.addEventListener('click', () => mg12xuJackInputClick(ch));
+        layer.appendChild(jack);
+      });
+
+      MG12XU_MASTER_BUSES.forEach(bus => {
+        const pos = MG12XU_OUTPUT_JACK_PCT[bus];
+        if (!pos) return;
+        const jack = document.createElement('div');
+        jack.className = 'mg12xu-jack-point output';
+        jack.dataset.bus = bus;
+        jack.style.left = pos.x + '%';
+        jack.style.top = pos.y + '%';
+        jack.title = `${MG12XU_MASTER_LABELS[bus]} 출력(OUT) 단자`;
+        jack.addEventListener('click', () => mg12xuJackOutputClick(bus));
+        layer.appendChild(jack);
+      });
+    }
+
+    function mg12xuJackInputClick(ch) {
+      if (mg12xuSelected) { assignMg12xuRealChannel(ch); return; }
+      const sid = Object.keys(mg12xuAssignments).find(id => mg12xuAssignments[id] === ch);
+      if (sid) mg12xuUnplugSource(sid);
+    }
+
+    function mg12xuJackOutputClick(bus) {
+      if (mg12xuSelectedOutput) { connectMg12xuOutput(bus); return; }
+      if (mg12xuOutputConnected[bus]) mg12xuUnplugOutput(bus);
     }
 
     function renderMg12xuHotspotsAndTags() {
@@ -2059,6 +3146,10 @@
       mg12xuAssignments[mg12xuSelected] = ch;
       mg12xuSelected = null;
       renderMg12xuStep1();
+      if (mg12xuAudioOn) {
+        buildMg12xuChannelChain(ch);
+        mg12xuRewireAudioAssignments();
+      }
     }
 
     function checkMg12xuStep1() {
@@ -2155,14 +3246,20 @@
 
     function resetMg12xuGame() {
       mg12xuSelected = null;
+      mg12xuSelectedOutput = null;
       mg12xuAssignments = {};
+      mg12xuOutputConnected = { stereo: false, group: false };
+      mg12xuMasterBusOn = { group: true, stereo: true };
+      mg12xuPeakLit = {};
       mg12xuChainShuffled = null;
       mg12xuChainPicks = [];
       MG12XU_REAL_CHANNELS.forEach(ch => {
-        (MG12XU_CHANNEL_KNOBS[ch] || MG12XU_KNOB_TYPES).forEach(type => { mg12xuKnobAngles[ch + '_' + type] = 0; });
+        (MG12XU_CHANNEL_KNOBS[ch] || MG12XU_KNOB_TYPES).forEach(type => { mg12xuKnobAngles[ch + '_' + type] = mg12xuDefaultKnobAngle(type); });
         mg12xuFaderFracs[ch] = 0.75;
         mg12xuChannelOn[ch] = true;
+        mg12xuChannelRouting[ch] = { group: true, stereo: true };
       });
+      mg12xuMasterFaderFracs = { group: 0.2692, stereo: 0.2692 };
       const p1 = document.getElementById('mg12xuStep1Result');
       const p2 = document.getElementById('mg12xuStep2Result');
       if (p1) { p1.className = 'result-panel'; p1.innerHTML = ''; }
@@ -2173,15 +3270,32 @@
         (MG12XU_CHANNEL_KNOBS[ch] || MG12XU_KNOB_TYPES).forEach(type => mg12xuUpdateKnobVisual(ch, type));
         mg12xuUpdateFaderVisual(ch);
         mg12xuUpdateMuteVisual(ch);
+        mg12xuUpdateRouteVisual(ch, 'group');
+        mg12xuUpdateRouteVisual(ch, 'stereo');
       });
+      MG12XU_MASTER_BUSES.forEach(bus => {
+        mg12xuUpdateMasterFaderVisual(bus);
+        mg12xuUpdateMasterOnVisual(bus);
+        mg12xuApplyMasterOnAudio(bus);
+        mg12xuApplyOutputConnAudio(bus);
+      });
+      if (mg12xuAudioOn) {
+        mg12xuChannelNodes = {};
+        mg12xuRewireAudioAssignments();
+      }
       mg12xuHideReadout();
+      mg12xuHideMasterReadout();
+      mg12xuRedrawCables();
     }
 
     function initMg12xuGame() {
       buildMg12xuRealConsole();
+      buildMg12xuMasterConsole();
+      buildMg12xuJackstrip();
       renderMg12xuStep1();
       renderMg12xuStep2();
       renderMg12xuBestTag();
+      window.addEventListener('resize', mg12xuRedrawCables);
     }
 
     function switchTab(tabId) {
