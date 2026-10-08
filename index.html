@@ -181,7 +181,7 @@
       position: relative;
       width: 100%;
       height: 620px;
-      background: #0b1220;
+      background: #f3f4f6;
       border: 2px dashed var(--border-color);
       border-radius: 16px;
       overflow: hidden;
@@ -216,11 +216,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #e2e8f0;
+      color: #334155;
       font-size: 0.95rem;
       font-weight: 700;
       z-index: 3;
-      background: #0b1220;
+      background: #f3f4f6;
     }
     .gear3d-card {
       position: absolute;
@@ -230,6 +230,16 @@
       pointer-events: auto;
     }
     .gear3d-card .gear-label { font-size: 0.58rem; }
+    .gear3d-model-chip {
+      width: 100%;
+      flex: 1;
+      background: #f8fafc;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
     .gear3d-tray-wrap {
       background: var(--inner-bg);
       border: 1px dashed var(--border-color);
@@ -2190,6 +2200,7 @@
   <script src="vendor/GLTFLoader.js"></script>
   <script src="vendor/CSS2DRenderer.js"></script>
   <script src="assets3d/sanctuary_data.js"></script>
+  <script src="assets3d/gear_models_data.js"></script>
 
   <script>
     /* ===== 공통 모달 (alert 대체) ===== */
@@ -5053,6 +5064,18 @@
       placedPos: {},     // id -> THREE.Vector3 (world position)
       cssObjects: {},    // id -> THREE.CSS2DObject
       cardEls: {},        // id -> DOM element (card)
+      models: {},         // modelKey -> { scene: THREE.Object3D (템플릿), offset: THREE.Vector3, height: number }
+      meshGroups: {},      // id -> THREE.Group (배치된 실제 3D 모델)
+    };
+
+    // 장비 id -> 실제 3D 모델(글b) 키. 여기 없는 장비(앰프/스테이지박스/콘솔 등)는
+    // 기존처럼 평면 카드(이미지+이름표)로만 표시됩니다.
+    const GEAR_MODEL_MAP = {
+      vi10p_L: 'vi10p', vi10p_R: 'vi10p',
+      woofer_L: 'vsub', woofer_R: 'vsub',
+      y7p_L: 'yi7p', y7p_R: 'yi7p',
+      y10p_C: 'yi10p',
+      e8_L: 'e8', e8_R: 'e8',
     };
 
     function gear3dBuildCardInner(item) {
@@ -5063,6 +5086,20 @@
         </div>
         <div class="gear-label">${item.name}</div>
       `;
+    }
+
+    // 실제 3D 모델이 있는 장비는 카드에 깨진 이미지를 보여줄 필요가 없으니, 아이콘 칩 +
+    // 이름표만 있는 간단한 카드를 씁니다. 실물 모양은 3D 공간에 직접 배치되는 모델로 보여줍니다.
+    function gear3dBuildChipInner(item) {
+      return `
+        <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('${item.id}')">i</button>
+        <div class="gear3d-model-chip">🔊</div>
+        <div class="gear-label">${item.name}</div>
+      `;
+    }
+
+    function gear3dCardInnerFor(item) {
+      return GEAR_MODEL_MAP[item.id] ? gear3dBuildChipInner(item) : gear3dBuildCardInner(item);
     }
 
     function init3DWorkspace() {
@@ -5078,7 +5115,7 @@
       const h = wrap.clientHeight || 620;
 
       const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x0b1220);
+      scene.background = new THREE.Color(0xf3f4f6);
       const camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 1000);
 
       const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -5117,6 +5154,19 @@
       gear3d.raycaster = new THREE.Raycaster();
 
       const loader = new THREE.GLTFLoader();
+
+      // 건물(성소) 모델 + 배치용 장비 모델(Vi10p, V-SUB, Yi7P, Yi10P, E8)을 함께 불러옵니다.
+      // 로딩 화면은 전부 다 준비된 뒤에 사라집니다.
+      const gearModelKeys = Object.keys(window.GEAR_GLB_BASE64 || {});
+      let pendingLoads = 1 + gearModelKeys.length;
+      function gear3dCheckAllLoaded() {
+        pendingLoads--;
+        if (pendingLoads <= 0) {
+          const loading = document.getElementById('gear3dLoading');
+          if (loading) loading.remove();
+        }
+      }
+
       const dataUri = 'data:model/gltf-binary;base64,' + (window.SANCTUARY_GLB_BASE64 || '');
       loader.load(dataUri, function (gltf) {
         scene.add(gltf.scene);
@@ -5130,12 +5180,30 @@
         controls.target.copy(center);
         controls.update();
 
-        const loading = document.getElementById('gear3dLoading');
-        if (loading) loading.remove();
+        gear3dCheckAllLoaded();
       }, undefined, function (err) {
         const loading = document.getElementById('gear3dLoading');
         if (loading) loading.innerHTML = '⚠️ 3D 공간을 불러오지 못했습니다.';
         console.error('GLB load error', err);
+      });
+
+      gearModelKeys.forEach(function (key) {
+        const gUri = 'data:model/gltf-binary;base64,' + window.GEAR_GLB_BASE64[key];
+        loader.load(gUri, function (gltf) {
+          const box = new THREE.Box3().setFromObject(gltf.scene);
+          // 모델 원점이 바닥 모서리에 있는 경우가 많아, 배치 지점을 기준으로
+          // 가로(X/Z)는 가운데, 세로(Y)는 바닥이 오도록 보정값을 미리 계산해둡니다.
+          const offset = new THREE.Vector3(
+            -(box.min.x + box.max.x) / 2,
+            -box.min.y,
+            -(box.min.z + box.max.z) / 2
+          );
+          gear3d.models[key] = { scene: gltf.scene, offset: offset, height: box.max.y - box.min.y };
+          gear3dCheckAllLoaded();
+        }, undefined, function (err) {
+          console.error('Gear model load error:', key, err);
+          gear3dCheckAllLoaded();
+        });
       });
 
       wrap.addEventListener('click', gear3dOnCanvasClick);
@@ -5184,10 +5252,29 @@
       if (!item) return;
       gear3d.placedPos[id] = point.clone();
 
+      // 실제 3D 모델이 있는 장비는 클릭한 지점에 실물 스피커 모델을 세우고,
+      // 이름표 카드는 그 위에 떠 있도록 합니다.
+      const modelKey = GEAR_MODEL_MAP[id];
+      const template = modelKey && gear3d.models[modelKey];
+      let labelPoint = point;
+      if (template) {
+        if (gear3d.meshGroups[id]) {
+          gear3d.scene.remove(gear3d.meshGroups[id]);
+        }
+        const group = new THREE.Group();
+        group.position.copy(point);
+        const mesh = template.scene.clone(true);
+        mesh.position.copy(template.offset);
+        group.add(mesh);
+        gear3d.scene.add(group);
+        gear3d.meshGroups[id] = group;
+        labelPoint = point.clone().add(new THREE.Vector3(0, template.height + 0.18, 0));
+      }
+
       if (!gear3d.cssObjects[id]) {
         const div = document.createElement('div');
         div.className = 'draggable-gear gear3d-card';
-        div.innerHTML = gear3dBuildCardInner(item);
+        div.innerHTML = gear3dCardInnerFor(item);
         div.addEventListener('click', function (e) {
           e.stopPropagation();
           handleGearCableClick3d(item, div);
@@ -5197,7 +5284,7 @@
         gear3d.cssObjects[id] = obj;
         gear3d.cardEls[id] = div;
       }
-      gear3d.cssObjects[id].position.copy(point);
+      gear3d.cssObjects[id].position.copy(labelPoint);
 
       gear3d.armedId = null;
       gear3dRenderTray();
@@ -5220,7 +5307,7 @@
         const div = document.createElement('div');
         div.className = 'draggable-gear';
         if (gear3d.armedId === item.id) div.classList.add('armed');
-        div.innerHTML = gear3dBuildCardInner(item);
+        div.innerHTML = gear3dCardInnerFor(item);
         div.addEventListener('click', function (e) {
           if (e.target.closest('.gear-info-btn')) return;
           gear3d.armedId = (gear3d.armedId === item.id) ? null : item.id;
@@ -5287,6 +5374,10 @@
       Object.keys(gear3d.cssObjects).forEach(id => {
         gear3d.scene.remove(gear3d.cssObjects[id]);
       });
+      Object.keys(gear3d.meshGroups).forEach(id => {
+        gear3d.scene.remove(gear3d.meshGroups[id]);
+      });
+      gear3d.meshGroups = {};
       gear3d.placedPos = {};
       gear3d.cssObjects = {};
       gear3d.cardEls = {};
