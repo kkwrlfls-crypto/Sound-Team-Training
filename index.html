@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko" class=""><head>
+<html lang="ko">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>교회 방송실 트레이닝 &amp; 3층 음향 시스템</title>
+  <title>교회 방송실 트레이닝 & 3층 음향 시스템</title>
   <style>
     :root {
       --bg-dark: #f8fafc;
@@ -36,6 +37,17 @@
       overscroll-behavior-y: none;
     }
 
+    /* 2026-10-08 추가: 페이더/노브를 조작할 때마다(드래그 시작·종료) 화면 전체가 좌우로 살짝
+       "움찔"거리는 문제 수정. 원인은 바로 아래 .mg12xu-drag-lock 규칙 — 드래그 중엔 세로 스크롤을
+       막기 위해 overflow를 hidden으로 바꾸는데, 이때 세로 스크롤바가 사라지면서(특히 Windows/Linux
+       크롬처럼 스크롤바가 실제 공간을 차지하는 환경에서) 문서 폭이 스크롤바 너비만큼 순간적으로
+       넓어지고, body(가운데 정렬 flex)의 내용 전체가 그만큼 오른쪽으로 쏠렸다가, 드래그가 끝나고
+       스크롤바가 되돌아오면 다시 제자리로 쏠리면서 좌우로 "움찔"거리는 것으로 보였습니다.
+       scrollbar-gutter: stable을 지정하면, overflow가 hidden으로 바뀌어 스크롤바가 안 보이는
+       동안에도 그 자리를 계속 비워둬서(공간은 고정, 스크롤바만 사라짐) 문서 폭이 변하지 않습니다. */
+    html {
+      scrollbar-gutter: stable;
+    }
     /* 페이더/노브/케이블을 드래그하는 동안에는 html·body 스크롤 자체를 잠궈서,
        모바일에서 손가락이 살짝 빗나가도 화면이 밀리지 않고 오직 조작 중인 컨트롤만 움직이게 합니다. */
     html.mg12xu-drag-lock, html.mg12xu-drag-lock body {
@@ -1605,8 +1617,8 @@
     <!-- TAB 1: 확성 시스템의 기본 -->
     <div id="tab1" class="tab-content">
       <div class="level-header">
-        <div class="level-title editable-text" data-field="tab1.title" contenteditable="false">확성 시스템의 기본 구조 학습</div>
-        <div class="level-desc editable-text" data-field="tab1.desc" contenteditable="false">음향 신호가 전달되는 대표적인 3가지 기본 경로를 이해하고 습득할 수 있습니다.</div>
+        <div class="level-title editable-text" data-field="tab1.title">확성 시스템의 기본 구조 학습</div>
+        <div class="level-desc editable-text" data-field="tab1.desc">음향 신호가 전달되는 대표적인 3가지 기본 경로를 이해하고 습득할 수 있습니다.</div>
       </div>
 
       <div class="content-edit-bar" id="tab1EditBar">
@@ -1617,18 +1629,18 @@
       </div>
 
       <div class="theory-card">
-        <h3 class="editable-text" data-field="tab1.card1.title" contenteditable="false">1) 마이크 ➔ 스피커</h3>
-        <p class="editable-text" data-field="tab1.card1.desc" contenteditable="false">믹서나 앰프를 거치지 않고 마이크 신호가 직접 스피커(또는 액티브 스피커)로 입력되는 소규모 시스템 구조입니다.</p>
+        <h3 class="editable-text" data-field="tab1.card1.title">1) 마이크 ➔ 스피커</h3>
+        <p class="editable-text" data-field="tab1.card1.desc">믹서나 앰프를 거치지 않고 마이크 신호가 직접 스피커(또는 액티브 스피커)로 입력되는 소규모 시스템 구조입니다.</p>
       </div>
 
       <div class="theory-card">
-        <h3 class="editable-text" data-field="tab1.card2.title" contenteditable="false">2) 마이크 ➔ 콘솔 ➔ 앰프 ➔ 스피커</h3>
-        <p class="editable-text" data-field="tab1.card2.desc" contenteditable="false">마이크 입력이 콘솔(믹서)에서 믹싱 및 프로세싱을 거친 후, 파워 앰프를 통해 증폭되어 패시브 스피커로 출력되는 가장 일반적인 교회 본당 음향 구조입니다.</p>
+        <h3 class="editable-text" data-field="tab1.card2.title">2) 마이크 ➔ 콘솔 ➔ 앰프 ➔ 스피커</h3>
+        <p class="editable-text" data-field="tab1.card2.desc">마이크 입력이 콘솔(믹서)에서 믹싱 및 프로세싱을 거친 후, 파워 앰프를 통해 증폭되어 패시브 스피커로 출력되는 가장 일반적인 교회 본당 음향 구조입니다.</p>
       </div>
 
       <div class="theory-card">
-        <h3 class="editable-text" data-field="tab1.card3.title" contenteditable="false">3) 마이크 ➔ 콘솔 ➔ 스피커</h3>
-        <p class="editable-text" data-field="tab1.card3.desc" contenteditable="false">콘솔에서 출력된 신호가 내장 앰프가 포함된 액티브(Powered) 스피커로 바로 전달되는 구조입니다.</p>
+        <h3 class="editable-text" data-field="tab1.card3.title">3) 마이크 ➔ 콘솔 ➔ 스피커</h3>
+        <p class="editable-text" data-field="tab1.card3.desc">콘솔에서 출력된 신호가 내장 앰프가 포함된 액티브(Powered) 스피커로 바로 전달되는 구조입니다.</p>
       </div>
 
       <div class="theory-card mg12xu-game-card">
@@ -1643,230 +1655,38 @@
             <span class="mg12xu-audio-hint" id="mg12xuAudioHint">꺼짐 — 켜면 각 소스마다 테스트 톤이 재생되고, 페이더·GAIN·EQ·ON·라우팅 조작이 실시간으로 소리에 반영됩니다.</span>
           </div>
           <div class="mg12xu-patchbay-wrap" id="mg12xuPatchbayWrap">
-            <svg class="mg12xu-patchbay-svg" id="mg12xuConnectSvg"><defs>
-      <radialGradient id="mg12xuXlrBodyGrad" cx="35%" cy="30%" r="75%">
-        <stop offset="0%" stop-color="#64748b"></stop>
-        <stop offset="55%" stop-color="#334155"></stop>
-        <stop offset="100%" stop-color="#0f172a"></stop>
-      </radialGradient>
-      <linearGradient id="mg12xuTrsBodyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#1e293b"></stop>
-        <stop offset="35%" stop-color="#64748b"></stop>
-        <stop offset="55%" stop-color="#334155"></stop>
-        <stop offset="100%" stop-color="#0f172a"></stop>
-      </linearGradient>
-    </defs><g class="mg12xu-cable-g">
-        <path class="mg12xu-cable-hit" d="M 72.390625 104.03125 C 72.390625 221.69921875, 87.734375 247.84765625, 87.734375 365.515625" onclick="mg12xuUnplugSource('leadVox')"></path>
-        <path class="mg12xu-cable-shadow" d="M 72.390625 104.03125 C 72.390625 221.69921875, 87.734375 247.84765625, 87.734375 365.515625"></path>
-        <path class="mg12xu-cable-core" style="stroke:#16a34a" d="M 72.390625 104.03125 C 72.390625 221.69921875, 87.734375 247.84765625, 87.734375 365.515625"></path>
-        <path class="mg12xu-cable-sheen" d="M 72.390625 104.03125 C 72.390625 221.69921875, 87.734375 247.84765625, 87.734375 365.515625" transform="translate(-0.8,-1.1)"></path>
-        <g transform="translate(72.390625,104.03125)" pointer-events="none">
-        <circle r="9.2" fill="#0f172a" opacity="0.35"></circle>
-        <circle r="8.5" class="mg12xu-cable-plug-body"></circle>
-        <circle r="8.5" fill="none" stroke="#16a34a" stroke-width="2.2"></circle>
-        <circle cx="-2.3" cy="-2.8" r="2.6" fill="rgba(255,255,255,0.35)"></circle>
-        <circle cx="0" cy="-3.3" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-        <circle cx="-2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-        <circle cx="2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-      </g>
-        <g transform="translate(87.734375,365.515625)" pointer-events="none">
-        <circle r="9.2" fill="#0f172a" opacity="0.35"></circle>
-        <circle r="8.5" class="mg12xu-cable-plug-body"></circle>
-        <circle r="8.5" fill="none" stroke="#16a34a" stroke-width="2.2"></circle>
-        <circle cx="-2.3" cy="-2.8" r="2.6" fill="rgba(255,255,255,0.35)"></circle>
-        <circle cx="0" cy="-3.3" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-        <circle cx="-2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-        <circle cx="2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-      </g>
-      </g><g class="mg12xu-cable-g">
-        <path class="mg12xu-cable-hit" d="M 284.59375 109.03125 C 284.59375 224.44921875, 157.703125 250.09765625, 157.703125 365.515625" onclick="mg12xuUnplugSource('keysLR')"></path>
-        <path class="mg12xu-cable-shadow" d="M 284.59375 109.03125 C 284.59375 224.44921875, 157.703125 250.09765625, 157.703125 365.515625"></path>
-        <path class="mg12xu-cable-core" style="stroke:#2563eb" d="M 284.59375 109.03125 C 284.59375 224.44921875, 157.703125 250.09765625, 157.703125 365.515625"></path>
-        <path class="mg12xu-cable-sheen" d="M 284.59375 109.03125 C 284.59375 224.44921875, 157.703125 250.09765625, 157.703125 365.515625" transform="translate(-0.8,-1.1)"></path>
-        <g transform="translate(284.59375,109.03125)" pointer-events="none">
-        <rect x="-3.4" y="-10.5" width="6.8" height="21" rx="3.4" class="mg12xu-cable-plug-body-trs"></rect>
-        <rect x="-3.4" y="-10.5" width="6.8" height="21" rx="3.4" fill="none" stroke="#2563eb" stroke-width="2"></rect>
-        <rect x="-3.4" y="-2.6" width="6.8" height="1.7" class="mg12xu-cable-plug-ring"></rect>
-        <rect x="-3.4" y="1.6" width="6.8" height="1.7" class="mg12xu-cable-plug-ring"></rect>
-        <rect x="-1.6" y="-9.5" width="1.2" height="19" rx="0.6" fill="rgba(255,255,255,0.4)"></rect>
-      </g>
-        <g transform="translate(157.703125,365.515625)" pointer-events="none">
-        <rect x="-3.4" y="-10.5" width="6.8" height="21" rx="3.4" class="mg12xu-cable-plug-body-trs"></rect>
-        <rect x="-3.4" y="-10.5" width="6.8" height="21" rx="3.4" fill="none" stroke="#2563eb" stroke-width="2"></rect>
-        <rect x="-3.4" y="-2.6" width="6.8" height="1.7" class="mg12xu-cable-plug-ring"></rect>
-        <rect x="-3.4" y="1.6" width="6.8" height="1.7" class="mg12xu-cable-plug-ring"></rect>
-        <rect x="-1.6" y="-9.5" width="1.2" height="19" rx="0.6" fill="rgba(255,255,255,0.4)"></rect>
-      </g>
-      </g><g class="mg12xu-cable-g">
-        <path class="mg12xu-cable-hit" d="M 163.984375 98.015625 C 163.984375 218.390625, 227.671875 245.140625, 227.671875 365.515625" onclick="mg12xuUnplugSource('drumLR')"></path>
-        <path class="mg12xu-cable-shadow" d="M 163.984375 98.015625 C 163.984375 218.390625, 227.671875 245.140625, 227.671875 365.515625"></path>
-        <path class="mg12xu-cable-core" style="stroke:#db2777" d="M 163.984375 98.015625 C 163.984375 218.390625, 227.671875 245.140625, 227.671875 365.515625"></path>
-        <path class="mg12xu-cable-sheen" d="M 163.984375 98.015625 C 163.984375 218.390625, 227.671875 245.140625, 227.671875 365.515625" transform="translate(-0.8,-1.1)"></path>
-        <g transform="translate(163.984375,98.015625)" pointer-events="none">
-        <rect x="-3.4" y="-10.5" width="6.8" height="21" rx="3.4" class="mg12xu-cable-plug-body-trs"></rect>
-        <rect x="-3.4" y="-10.5" width="6.8" height="21" rx="3.4" fill="none" stroke="#db2777" stroke-width="2"></rect>
-        <rect x="-3.4" y="-2.6" width="6.8" height="1.7" class="mg12xu-cable-plug-ring"></rect>
-        <rect x="-3.4" y="1.6" width="6.8" height="1.7" class="mg12xu-cable-plug-ring"></rect>
-        <rect x="-1.6" y="-9.5" width="1.2" height="19" rx="0.6" fill="rgba(255,255,255,0.4)"></rect>
-      </g>
-        <g transform="translate(227.671875,365.515625)" pointer-events="none">
-        <rect x="-3.4" y="-10.5" width="6.8" height="21" rx="3.4" class="mg12xu-cable-plug-body-trs"></rect>
-        <rect x="-3.4" y="-10.5" width="6.8" height="21" rx="3.4" fill="none" stroke="#db2777" stroke-width="2"></rect>
-        <rect x="-3.4" y="-2.6" width="6.8" height="1.7" class="mg12xu-cable-plug-ring"></rect>
-        <rect x="-3.4" y="1.6" width="6.8" height="1.7" class="mg12xu-cable-plug-ring"></rect>
-        <rect x="-1.6" y="-9.5" width="1.2" height="19" rx="0.6" fill="rgba(255,255,255,0.4)"></rect>
-      </g>
-      </g><g class="mg12xu-cable-g">
-        <path class="mg12xu-cable-hit" d="M 389.1875 181.796875 C 389.1875 263.94296875, 297.625 282.19765625, 297.625 364.34375" onclick="mg12xuUnplugSource('bav3')"></path>
-        <path class="mg12xu-cable-shadow" d="M 389.1875 181.796875 C 389.1875 263.94296875, 297.625 282.19765625, 297.625 364.34375"></path>
-        <path class="mg12xu-cable-core" style="stroke:#d97706" d="M 389.1875 181.796875 C 389.1875 263.94296875, 297.625 282.19765625, 297.625 364.34375"></path>
-        <path class="mg12xu-cable-sheen" d="M 389.1875 181.796875 C 389.1875 263.94296875, 297.625 282.19765625, 297.625 364.34375" transform="translate(-0.8,-1.1)"></path>
-        <g transform="translate(389.1875,181.796875)" pointer-events="none">
-        <circle r="9.2" fill="#0f172a" opacity="0.35"></circle>
-        <circle r="8.5" class="mg12xu-cable-plug-body"></circle>
-        <circle r="8.5" fill="none" stroke="#d97706" stroke-width="2.2"></circle>
-        <circle cx="-2.3" cy="-2.8" r="2.6" fill="rgba(255,255,255,0.35)"></circle>
-        <circle cx="0" cy="-3.3" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-        <circle cx="-2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-        <circle cx="2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-      </g>
-        <g transform="translate(297.625,364.34375)" pointer-events="none">
-        <circle r="9.2" fill="#0f172a" opacity="0.35"></circle>
-        <circle r="8.5" class="mg12xu-cable-plug-body"></circle>
-        <circle r="8.5" fill="none" stroke="#d97706" stroke-width="2.2"></circle>
-        <circle cx="-2.3" cy="-2.8" r="2.6" fill="rgba(255,255,255,0.35)"></circle>
-        <circle cx="0" cy="-3.3" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-        <circle cx="-2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-        <circle cx="2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-      </g>
-      </g><g class="mg12xu-cable-g">
-        <path class="mg12xu-cable-hit" d="M 698.421875 120.1875 C 698.421875 230.31796875, 764.53125 254.79140625, 764.53125 364.921875" onclick="mg12xuUnplugOutput('stereo')"></path>
-        <path class="mg12xu-cable-shadow" d="M 698.421875 120.1875 C 698.421875 230.31796875, 764.53125 254.79140625, 764.53125 364.921875"></path>
-        <path class="mg12xu-cable-core" style="stroke:#ef4444" d="M 698.421875 120.1875 C 698.421875 230.31796875, 764.53125 254.79140625, 764.53125 364.921875"></path>
-        <path class="mg12xu-cable-sheen" d="M 698.421875 120.1875 C 698.421875 230.31796875, 764.53125 254.79140625, 764.53125 364.921875" transform="translate(-0.8,-1.1)"></path>
-        <g transform="translate(698.421875,120.1875)" pointer-events="none">
-        <circle r="9.2" fill="#0f172a" opacity="0.35"></circle>
-        <circle r="8.5" class="mg12xu-cable-plug-body"></circle>
-        <circle r="8.5" fill="none" stroke="#ef4444" stroke-width="2.2"></circle>
-        <circle cx="-2.3" cy="-2.8" r="2.6" fill="rgba(255,255,255,0.35)"></circle>
-        <circle cx="0" cy="-3.3" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-        <circle cx="-2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-        <circle cx="2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-      </g>
-        <g transform="translate(764.53125,364.921875)" pointer-events="none">
-        <circle r="9.2" fill="#0f172a" opacity="0.35"></circle>
-        <circle r="8.5" class="mg12xu-cable-plug-body"></circle>
-        <circle r="8.5" fill="none" stroke="#ef4444" stroke-width="2.2"></circle>
-        <circle cx="-2.3" cy="-2.8" r="2.6" fill="rgba(255,255,255,0.35)"></circle>
-        <circle cx="0" cy="-3.3" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-        <circle cx="-2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-        <circle cx="2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
-      </g>
-      </g></svg>
+            <svg class="mg12xu-patchbay-svg" id="mg12xuConnectSvg"></svg>
             <div class="mg12xu-stage-wrap" id="mg12xuStageWrap">
-              <div class="mg12xu-stage" id="mg12xuStage">
-          <button type="button" class="mg12xu-source-item assigned" style="left:8%; top:4.35%;" onclick="clickMg12xuSource('leadVox')" onpointerdown="mg12xuIconPointerDown(event, 'source', 'leadVox')" data-source="leadVox" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
-            <div class="mg12xu-source-icon"><span class="mg12xu-source-icon-emoji" style="visibility: hidden;">🎤</span><img class="mg12xu-source-icon-img" src="icons/leadVox.png" alt="" onerror="this.style.display='none'" onload="this.previousElementSibling.style.visibility='hidden'"></div>
-            <div class="mg12xu-source-label">Lead Vox</div>
-            <span class="mg12xu-source-ch-tag">CH 1</span>
-            <div class="mg12xu-cable-nub plugged" data-source="leadVox" title="케이블을 드래그해서 아래 입력 단자에 연결하세요"></div>
-          </button>
-          <button type="button" class="mg12xu-source-item assigned" style="left:18.40909090909091%; top:2%;" onclick="clickMg12xuSource('drumLR')" onpointerdown="mg12xuIconPointerDown(event, 'source', 'drumLR')" data-source="drumLR" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
-            <div class="mg12xu-source-icon"><span class="mg12xu-source-icon-emoji" style="visibility: hidden;">🥁</span><img class="mg12xu-source-icon-img" src="icons/drumLR.png" alt="" onerror="this.style.display='none'" onload="this.previousElementSibling.style.visibility='hidden'"></div>
-            <div class="mg12xu-source-label">Drum LR</div>
-            <span class="mg12xu-source-ch-tag">CH 3</span>
-            <div class="mg12xu-cable-nub plugged" data-source="drumLR" title="케이블을 드래그해서 아래 입력 단자에 연결하세요"></div>
-          </button>
-          <button type="button" class="mg12xu-source-item assigned" style="left:32.11363636363637%; top:6.303125%;" onclick="clickMg12xuSource('keysLR')" onpointerdown="mg12xuIconPointerDown(event, 'source', 'keysLR')" data-source="keysLR" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
-            <div class="mg12xu-source-icon"><span class="mg12xu-source-icon-emoji" style="visibility: hidden;">🎹</span><img class="mg12xu-source-icon-img" src="icons/keysLR.png" alt="" onerror="this.style.display='none'" onload="this.previousElementSibling.style.visibility='hidden'"></div>
-            <div class="mg12xu-source-label">KEYS LR</div>
-            <span class="mg12xu-source-ch-tag">CH 2</span>
-            <div class="mg12xu-cable-nub plugged" data-source="keysLR" title="케이블을 드래그해서 아래 입력 단자에 연결하세요"></div>
-          </button>
-          <button type="button" class="mg12xu-source-item" style="left:44%; top:4.35%;" onclick="clickMg12xuSource('bass')" onpointerdown="mg12xuIconPointerDown(event, 'source', 'bass')" data-source="bass" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
-            <div class="mg12xu-source-icon"><span class="mg12xu-source-icon-emoji" style="visibility: hidden;">🎸</span><img class="mg12xu-source-icon-img" src="icons/bass.png" alt="" onerror="this.style.display='none'" onload="this.previousElementSibling.style.visibility='hidden'"></div>
-            <div class="mg12xu-source-label">Bass</div>
-            
-            <div class="mg12xu-cable-nub" data-source="bass" title="케이블을 드래그해서 아래 입력 단자에 연결하세요"></div>
-          </button>
-          <button type="button" class="mg12xu-source-item" style="left:8%; top:30.43%;" onclick="clickMg12xuSource('gt')" onpointerdown="mg12xuIconPointerDown(event, 'source', 'gt')" data-source="gt" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
-            <div class="mg12xu-source-icon"><span class="mg12xu-source-icon-emoji" style="visibility: hidden;">🎸</span><img class="mg12xu-source-icon-img" src="icons/gt.png" alt="" onerror="this.style.display='none'" onload="this.previousElementSibling.style.visibility='hidden'"></div>
-            <div class="mg12xu-source-label">GT</div>
-            
-            <div class="mg12xu-cable-nub" data-source="gt" title="케이블을 드래그해서 아래 입력 단자에 연결하세요"></div>
-          </button>
-          <button type="button" class="mg12xu-source-item" style="left:18.977272727272727%; top:46.445625%;" onclick="clickMg12xuSource('bav1')" onpointerdown="mg12xuIconPointerDown(event, 'source', 'bav1')" data-source="bav1" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
-            <div class="mg12xu-source-icon"><span class="mg12xu-source-icon-emoji" style="visibility: hidden;">🎤</span><img class="mg12xu-source-icon-img" src="icons/bav1.png" alt="" onerror="this.style.display='none'" onload="this.previousElementSibling.style.visibility='hidden'"></div>
-            <div class="mg12xu-source-label">Bav 1</div>
-            
-            <div class="mg12xu-cable-nub" data-source="bav1" title="케이블을 드래그해서 아래 입력 단자에 연결하세요"></div>
-          </button>
-          <button type="button" class="mg12xu-source-item" style="left:32%; top:30.43%;" onclick="clickMg12xuSource('bav2')" onpointerdown="mg12xuIconPointerDown(event, 'source', 'bav2')" data-source="bav2" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
-            <div class="mg12xu-source-icon"><span class="mg12xu-source-icon-emoji" style="visibility: hidden;">🎤</span><img class="mg12xu-source-icon-img" src="icons/bav2.png" alt="" onerror="this.style.display='none'" onload="this.previousElementSibling.style.visibility='hidden'"></div>
-            <div class="mg12xu-source-label">Bav 2</div>
-            
-            <div class="mg12xu-cable-nub" data-source="bav2" title="케이블을 드래그해서 아래 입력 단자에 연결하세요"></div>
-          </button>
-          <button type="button" class="mg12xu-source-item assigned" style="left:44%; top:34.726875%;" onclick="clickMg12xuSource('bav3')" onpointerdown="mg12xuIconPointerDown(event, 'source', 'bav3')" data-source="bav3" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
-            <div class="mg12xu-source-icon"><span class="mg12xu-source-icon-emoji" style="visibility: hidden;">🎤</span><img class="mg12xu-source-icon-img" src="icons/bav3.png" alt="" onerror="this.style.display='none'" onload="this.previousElementSibling.style.visibility='hidden'"></div>
-            <div class="mg12xu-source-label">Bav 3</div>
-            <span class="mg12xu-source-ch-tag">CH 4</span>
-            <div class="mg12xu-cable-nub plugged" data-source="bav3" title="케이블을 드래그해서 아래 입력 단자에 연결하세요"></div>
-          </button>
-          <button type="button" class="mg12xu-speaker-item connected" style="left:79.14%; top:13.04%;" onclick="clickMg12xuOutput('mainSpeaker')" onpointerdown="mg12xuIconPointerDown(event, 'output', 'mainSpeaker')" data-output="mainSpeaker" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
-            <div class="mg12xu-speaker-icon">🔊</div>
-            <div class="mg12xu-speaker-label">메인 스피커 (STEREO)</div>
-            <div class="mg12xu-cable-nub plugged" data-output="mainSpeaker" title="케이블을 드래그해서 아래 OUT 단자에 연결하세요"></div>
-          </button>
-          <button type="button" class="mg12xu-speaker-item" style="left:91.21%; top:60.87%;" onclick="clickMg12xuOutput('groupSpeaker')" onpointerdown="mg12xuIconPointerDown(event, 'output', 'groupSpeaker')" data-output="groupSpeaker" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
-            <div class="mg12xu-speaker-icon">📢</div>
-            <div class="mg12xu-speaker-label">모니터/그룹 스피커</div>
-            <div class="mg12xu-cable-nub" data-output="groupSpeaker" title="케이블을 드래그해서 아래 OUT 단자에 연결하세요"></div>
-          </button>
-          <button type="button" class="mg12xu-speaker-item" style="left:70%; top:30.43%;" onclick="clickMg12xuOutput('stageMonitor')" onpointerdown="mg12xuIconPointerDown(event, 'output', 'stageMonitor')" data-output="stageMonitor" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
-            <div class="mg12xu-speaker-icon">🔈</div>
-            <div class="mg12xu-speaker-label">스테이지 모니터 (AUX1)</div>
-            <div class="mg12xu-cable-nub" data-output="stageMonitor" title="케이블을 드래그해서 아래 OUT 단자에 연결하세요"></div>
-          </button>
-          <button type="button" class="mg12xu-speaker-item" style="left:91.21%; top:30.43%;" onclick="clickMg12xuOutput('phonesOut')" onpointerdown="mg12xuIconPointerDown(event, 'output', 'phonesOut')" data-output="phonesOut" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
-            <div class="mg12xu-speaker-icon">🎧</div>
-            <div class="mg12xu-speaker-label">헤드폰 (PHONES)</div>
-            <div class="mg12xu-cable-nub" data-output="phonesOut" title="케이블을 드래그해서 아래 OUT 단자에 연결하세요"></div>
-          </button>
-          <button type="button" class="mg12xu-speaker-item" style="left:54.76181818181818%; top:36.260625%;" onclick="clickMg12xuOutput('controlRoomMonitor')" onpointerdown="mg12xuIconPointerDown(event, 'output', 'controlRoomMonitor')" data-output="controlRoomMonitor" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
-            <div class="mg12xu-speaker-icon">🖥️</div>
-            <div class="mg12xu-speaker-label">컨트롤룸 모니터 (MONITOR OUT)</div>
-            <div class="mg12xu-cable-nub" data-output="controlRoomMonitor" title="케이블을 드래그해서 아래 OUT 단자에 연결하세요"></div>
-          </button></div>
+              <div class="mg12xu-stage" id="mg12xuStage"></div>
             </div>
             <div class="mg12xu-jackstrip-wrap" id="mg12xuJackstripWrap">
               <img src="jack_strip.jpg" class="mg12xu-jackstrip-img" draggable="false" alt="Yamaha MG12XU 입출력 단자 패널">
-              <div id="mg12xuJackLayer"><div class="mg12xu-jack-point input plugged" data-ch="ch1" title="CH 1 입력(INPUT) 단자" style="left: 9.926%; top: 40.455%;"></div><div class="mg12xu-jack-point input plugged" data-ch="ch2" title="CH 2 입력(INPUT) 단자" style="left: 17.841%; top: 40.455%;"></div><div class="mg12xu-jack-point input plugged" data-ch="ch3" title="CH 3 입력(INPUT) 단자" style="left: 25.755%; top: 40.455%;"></div><div class="mg12xu-jack-point input plugged" data-ch="ch4" title="CH 4 입력(INPUT) 단자" style="left: 33.669%; top: 40%;"></div><div class="mg12xu-jack-point input" data-ch="ch5_6" title="CH 5/6 입력(INPUT) 단자" style="left: 41.583%; top: 40.455%;"></div><div class="mg12xu-jack-point input" data-ch="ch7_8" title="CH 7/8 입력(INPUT) 단자" style="left: 49.362%; top: 40.455%;"></div><div class="mg12xu-jack-point input" data-ch="ch9_10" title="CH 9/10 입력(INPUT) 단자" style="left: 58.887%; top: 67.727%;"></div><div class="mg12xu-jack-point input" data-ch="ch11_12" title="CH 11/12 입력(INPUT) 단자" style="left: 66.667%; top: 68.182%;"></div><div class="mg12xu-jack-point output" data-bus="group" title="GROUP 1-2 출력(OUT) 단자" style="left: 72.098%; top: 39.318%;"></div><div class="mg12xu-jack-point output plugged" data-bus="stereo" title="STEREO (Main L/R) 출력(OUT) 단자" style="left: 86.486%; top: 40.227%;"></div><div class="mg12xu-jack-point output" data-bus="aux1" title="AUX1 SEND 출력(OUT) 단자" style="left: 58.048%; top: 37.841%;"></div><div class="mg12xu-jack-point output" data-bus="phones" title="PHONES 출력(OUT) 단자" style="left: 89.64%; top: 87.16%;"></div><div class="mg12xu-jack-point output" data-bus="monitorOut" title="MONITOR OUT 출력(OUT) 단자" style="left: 80.65%; top: 76.59%;"></div><button type="button" class="mg12xu-pad-btn mg12xu-jack-padhpf-btn" data-ch="ch1" title="CH 1 PAD -26dB" style="left: 8.15%; top: 73.98%; width: 3.6%; height: 11.5%;">PAD</button><button type="button" class="mg12xu-hpf-btn mg12xu-jack-padhpf-btn" data-ch="ch1" title="CH 1 HPF 80Hz" style="left: 11.67%; top: 73.98%; width: 3.6%; height: 11.5%;">HPF</button><button type="button" class="mg12xu-pad-btn mg12xu-jack-padhpf-btn" data-ch="ch2" title="CH 2 PAD -26dB" style="left: 16.06%; top: 73.98%; width: 3.6%; height: 11.5%;">PAD</button><button type="button" class="mg12xu-hpf-btn mg12xu-jack-padhpf-btn" data-ch="ch2" title="CH 2 HPF 80Hz" style="left: 19.45%; top: 73.98%; width: 3.6%; height: 11.5%;">HPF</button><button type="button" class="mg12xu-pad-btn mg12xu-jack-padhpf-btn" data-ch="ch3" title="CH 3 PAD -26dB" style="left: 23.98%; top: 73.98%; width: 3.6%; height: 11.5%;">PAD</button><button type="button" class="mg12xu-hpf-btn mg12xu-jack-padhpf-btn" data-ch="ch3" title="CH 3 HPF 80Hz" style="left: 27.43%; top: 73.98%; width: 3.6%; height: 11.5%;">HPF</button><button type="button" class="mg12xu-pad-btn mg12xu-jack-padhpf-btn" data-ch="ch4" title="CH 4 PAD -26dB" style="left: 31.86%; top: 73.98%; width: 3.6%; height: 11.5%;">PAD</button><button type="button" class="mg12xu-hpf-btn mg12xu-jack-padhpf-btn" data-ch="ch4" title="CH 4 HPF 80Hz" style="left: 35.48%; top: 73.98%; width: 3.6%; height: 11.5%;">HPF</button></div>
+              <div id="mg12xuJackLayer"></div>
             </div>
             <div class="mg12xu-full-console-row">
               <div class="mg12xu-realconsole-wrap" id="mg12xuRealConsoleWrap">
                 <img src="console_strip.jpg" class="mg12xu-realconsole-img" draggable="false" alt="Yamaha MG12XU 콘솔 (1~12채널)">
-                <div id="mg12xuMuteLayer"><div class="mg12xu-mute-col" data-ch="ch1" style="left: 13.839%;"><div class="mg12xu-mute-tag">MUTE</div></div><div class="mg12xu-mute-col" data-ch="ch2" style="left: 24.834%;"><div class="mg12xu-mute-tag">MUTE</div></div><div class="mg12xu-mute-col" data-ch="ch3" style="left: 36.114%;"><div class="mg12xu-mute-tag">MUTE</div></div><div class="mg12xu-mute-col" data-ch="ch4" style="left: 47.299%;"><div class="mg12xu-mute-tag">MUTE</div></div><div class="mg12xu-mute-col" data-ch="ch5_6" style="left: 58.673%;"><div class="mg12xu-mute-tag">MUTE</div></div><div class="mg12xu-mute-col" data-ch="ch7_8" style="left: 69.953%;"><div class="mg12xu-mute-tag">MUTE</div></div><div class="mg12xu-mute-col" data-ch="ch9_10" style="left: 83.223%;"><div class="mg12xu-mute-tag">MUTE</div></div><div class="mg12xu-mute-col" data-ch="ch11_12" style="left: 94.502%;"><div class="mg12xu-mute-tag">MUTE</div></div></div>
-                <div id="mg12xuChannelTags"><div class="mg12xu-channel-tag" style="left:13.839%; top:2.597%;">🎤 Lead Vox</div><div class="mg12xu-channel-tag" style="left:24.834%; top:2.597%;">🎹 KEYS LR</div><div class="mg12xu-channel-tag" style="left:36.114%; top:2.597%;">🥁 Drum LR</div><div class="mg12xu-channel-tag" style="left:47.299%; top:2.597%;">🎤 Bav 3</div></div>
-                <div id="mg12xuHotspotLayer"><button type="button" class="mg12xu-hotspot filled" data-ch="ch1" title="CH 1" style="left: 13.839%; top: 2.597%;"></button><button type="button" class="mg12xu-hotspot filled" data-ch="ch2" title="CH 2" style="left: 24.834%; top: 2.597%;"></button><button type="button" class="mg12xu-hotspot filled" data-ch="ch3" title="CH 3" style="left: 36.114%; top: 2.597%;"></button><button type="button" class="mg12xu-hotspot filled" data-ch="ch4" title="CH 4" style="left: 47.299%; top: 2.597%;"></button><button type="button" class="mg12xu-hotspot" data-ch="ch5_6" title="CH 5/6" style="left: 58.673%; top: 2.597%;"></button><button type="button" class="mg12xu-hotspot" data-ch="ch7_8" title="CH 7/8" style="left: 69.953%; top: 2.597%;"></button><button type="button" class="mg12xu-hotspot" data-ch="ch9_10" title="CH 9/10" style="left: 83.223%; top: 2.597%;"></button><button type="button" class="mg12xu-hotspot" data-ch="ch11_12" title="CH 11/12" style="left: 94.502%; top: 2.597%;"></button></div>
-                <div id="mg12xuFaderScaleLayer"><div class="mg12xu-fscale-track" style="left: 11.848%; top: 69.156%; height: 25.325%;"></div><div class="mg12xu-fscale-tick" style="left: 11.848%; top: 70.2602%;"></div><div class="mg12xu-fscale-label" style="left: 11.848%; top: 70.2602%;">+10</div><div class="mg12xu-fscale-tick" style="left: 11.848%; top: 73.051%;"></div><div class="mg12xu-fscale-label" style="left: 11.848%; top: 73.051%;">+5</div><div class="mg12xu-fscale-tick zero" style="left: 11.848%; top: 75.9735%;"></div><div class="mg12xu-fscale-label" style="left: 11.848%; top: 75.9735%;">0</div><div class="mg12xu-fscale-tick" style="left: 11.848%; top: 78.896%;"></div><div class="mg12xu-fscale-label" style="left: 11.848%; top: 78.896%;">-5</div><div class="mg12xu-fscale-tick" style="left: 11.848%; top: 81.8185%;"></div><div class="mg12xu-fscale-label" style="left: 11.848%; top: 81.8185%;">-10</div><div class="mg12xu-fscale-tick" style="left: 11.848%; top: 84.0902%;"></div><div class="mg12xu-fscale-label" style="left: 11.848%; top: 84.0902%;">-15</div><div class="mg12xu-fscale-tick" style="left: 11.848%; top: 85.7135%;"></div><div class="mg12xu-fscale-label" style="left: 11.848%; top: 85.7135%;">-20</div><div class="mg12xu-fscale-tick" style="left: 11.848%; top: 86.6885%;"></div><div class="mg12xu-fscale-label" style="left: 11.848%; top: 86.6885%;">-25</div><div class="mg12xu-fscale-tick" style="left: 11.848%; top: 88.3118%;"></div><div class="mg12xu-fscale-label" style="left: 11.848%; top: 88.3118%;">-30</div><div class="mg12xu-fscale-tick" style="left: 11.848%; top: 89.9352%;"></div><div class="mg12xu-fscale-label" style="left: 11.848%; top: 89.9352%;">-40</div><div class="mg12xu-fscale-tick" style="left: 11.848%; top: 91.8827%;"></div><div class="mg12xu-fscale-label" style="left: 11.848%; top: 91.8827%;">-60</div><div class="mg12xu-fscale-tick" style="left: 11.848%; top: 94.481%;"></div><div class="mg12xu-fscale-label" style="left: 11.848%; top: 94.481%;">−∞</div><div class="mg12xu-fscale-chnum" style="left: 11.848%;">1</div><div class="mg12xu-fscale-track" style="left: 23.033%; top: 69.156%; height: 25.325%;"></div><div class="mg12xu-fscale-tick" style="left: 23.033%; top: 70.2602%;"></div><div class="mg12xu-fscale-label" style="left: 23.033%; top: 70.2602%;">+10</div><div class="mg12xu-fscale-tick" style="left: 23.033%; top: 73.051%;"></div><div class="mg12xu-fscale-label" style="left: 23.033%; top: 73.051%;">+5</div><div class="mg12xu-fscale-tick zero" style="left: 23.033%; top: 75.9735%;"></div><div class="mg12xu-fscale-label" style="left: 23.033%; top: 75.9735%;">0</div><div class="mg12xu-fscale-tick" style="left: 23.033%; top: 78.896%;"></div><div class="mg12xu-fscale-label" style="left: 23.033%; top: 78.896%;">-5</div><div class="mg12xu-fscale-tick" style="left: 23.033%; top: 81.8185%;"></div><div class="mg12xu-fscale-label" style="left: 23.033%; top: 81.8185%;">-10</div><div class="mg12xu-fscale-tick" style="left: 23.033%; top: 84.0902%;"></div><div class="mg12xu-fscale-label" style="left: 23.033%; top: 84.0902%;">-15</div><div class="mg12xu-fscale-tick" style="left: 23.033%; top: 85.7135%;"></div><div class="mg12xu-fscale-label" style="left: 23.033%; top: 85.7135%;">-20</div><div class="mg12xu-fscale-tick" style="left: 23.033%; top: 86.6885%;"></div><div class="mg12xu-fscale-label" style="left: 23.033%; top: 86.6885%;">-25</div><div class="mg12xu-fscale-tick" style="left: 23.033%; top: 88.3118%;"></div><div class="mg12xu-fscale-label" style="left: 23.033%; top: 88.3118%;">-30</div><div class="mg12xu-fscale-tick" style="left: 23.033%; top: 89.9352%;"></div><div class="mg12xu-fscale-label" style="left: 23.033%; top: 89.9352%;">-40</div><div class="mg12xu-fscale-tick" style="left: 23.033%; top: 91.8827%;"></div><div class="mg12xu-fscale-label" style="left: 23.033%; top: 91.8827%;">-60</div><div class="mg12xu-fscale-tick" style="left: 23.033%; top: 94.481%;"></div><div class="mg12xu-fscale-label" style="left: 23.033%; top: 94.481%;">−∞</div><div class="mg12xu-fscale-chnum" style="left: 23.033%;">2</div><div class="mg12xu-fscale-track" style="left: 34.028%; top: 69.156%; height: 25.325%;"></div><div class="mg12xu-fscale-tick" style="left: 34.028%; top: 70.2602%;"></div><div class="mg12xu-fscale-label" style="left: 34.028%; top: 70.2602%;">+10</div><div class="mg12xu-fscale-tick" style="left: 34.028%; top: 73.051%;"></div><div class="mg12xu-fscale-label" style="left: 34.028%; top: 73.051%;">+5</div><div class="mg12xu-fscale-tick zero" style="left: 34.028%; top: 75.9735%;"></div><div class="mg12xu-fscale-label" style="left: 34.028%; top: 75.9735%;">0</div><div class="mg12xu-fscale-tick" style="left: 34.028%; top: 78.896%;"></div><div class="mg12xu-fscale-label" style="left: 34.028%; top: 78.896%;">-5</div><div class="mg12xu-fscale-tick" style="left: 34.028%; top: 81.8185%;"></div><div class="mg12xu-fscale-label" style="left: 34.028%; top: 81.8185%;">-10</div><div class="mg12xu-fscale-tick" style="left: 34.028%; top: 84.0902%;"></div><div class="mg12xu-fscale-label" style="left: 34.028%; top: 84.0902%;">-15</div><div class="mg12xu-fscale-tick" style="left: 34.028%; top: 85.7135%;"></div><div class="mg12xu-fscale-label" style="left: 34.028%; top: 85.7135%;">-20</div><div class="mg12xu-fscale-tick" style="left: 34.028%; top: 86.6885%;"></div><div class="mg12xu-fscale-label" style="left: 34.028%; top: 86.6885%;">-25</div><div class="mg12xu-fscale-tick" style="left: 34.028%; top: 88.3118%;"></div><div class="mg12xu-fscale-label" style="left: 34.028%; top: 88.3118%;">-30</div><div class="mg12xu-fscale-tick" style="left: 34.028%; top: 89.9352%;"></div><div class="mg12xu-fscale-label" style="left: 34.028%; top: 89.9352%;">-40</div><div class="mg12xu-fscale-tick" style="left: 34.028%; top: 91.8827%;"></div><div class="mg12xu-fscale-label" style="left: 34.028%; top: 91.8827%;">-60</div><div class="mg12xu-fscale-tick" style="left: 34.028%; top: 94.481%;"></div><div class="mg12xu-fscale-label" style="left: 34.028%; top: 94.481%;">−∞</div><div class="mg12xu-fscale-chnum" style="left: 34.028%;">3</div><div class="mg12xu-fscale-track" style="left: 45.213%; top: 69.156%; height: 25.325%;"></div><div class="mg12xu-fscale-tick" style="left: 45.213%; top: 70.2602%;"></div><div class="mg12xu-fscale-label" style="left: 45.213%; top: 70.2602%;">+10</div><div class="mg12xu-fscale-tick" style="left: 45.213%; top: 73.051%;"></div><div class="mg12xu-fscale-label" style="left: 45.213%; top: 73.051%;">+5</div><div class="mg12xu-fscale-tick zero" style="left: 45.213%; top: 75.9735%;"></div><div class="mg12xu-fscale-label" style="left: 45.213%; top: 75.9735%;">0</div><div class="mg12xu-fscale-tick" style="left: 45.213%; top: 78.896%;"></div><div class="mg12xu-fscale-label" style="left: 45.213%; top: 78.896%;">-5</div><div class="mg12xu-fscale-tick" style="left: 45.213%; top: 81.8185%;"></div><div class="mg12xu-fscale-label" style="left: 45.213%; top: 81.8185%;">-10</div><div class="mg12xu-fscale-tick" style="left: 45.213%; top: 84.0902%;"></div><div class="mg12xu-fscale-label" style="left: 45.213%; top: 84.0902%;">-15</div><div class="mg12xu-fscale-tick" style="left: 45.213%; top: 85.7135%;"></div><div class="mg12xu-fscale-label" style="left: 45.213%; top: 85.7135%;">-20</div><div class="mg12xu-fscale-tick" style="left: 45.213%; top: 86.6885%;"></div><div class="mg12xu-fscale-label" style="left: 45.213%; top: 86.6885%;">-25</div><div class="mg12xu-fscale-tick" style="left: 45.213%; top: 88.3118%;"></div><div class="mg12xu-fscale-label" style="left: 45.213%; top: 88.3118%;">-30</div><div class="mg12xu-fscale-tick" style="left: 45.213%; top: 89.9352%;"></div><div class="mg12xu-fscale-label" style="left: 45.213%; top: 89.9352%;">-40</div><div class="mg12xu-fscale-tick" style="left: 45.213%; top: 91.8827%;"></div><div class="mg12xu-fscale-label" style="left: 45.213%; top: 91.8827%;">-60</div><div class="mg12xu-fscale-tick" style="left: 45.213%; top: 94.481%;"></div><div class="mg12xu-fscale-label" style="left: 45.213%; top: 94.481%;">−∞</div><div class="mg12xu-fscale-chnum" style="left: 45.213%;">4</div><div class="mg12xu-fscale-track" style="left: 56.398%; top: 69.156%; height: 25.325%;"></div><div class="mg12xu-fscale-tick" style="left: 56.398%; top: 70.2602%;"></div><div class="mg12xu-fscale-label" style="left: 56.398%; top: 70.2602%;">+10</div><div class="mg12xu-fscale-tick" style="left: 56.398%; top: 73.051%;"></div><div class="mg12xu-fscale-label" style="left: 56.398%; top: 73.051%;">+5</div><div class="mg12xu-fscale-tick zero" style="left: 56.398%; top: 75.9735%;"></div><div class="mg12xu-fscale-label" style="left: 56.398%; top: 75.9735%;">0</div><div class="mg12xu-fscale-tick" style="left: 56.398%; top: 78.896%;"></div><div class="mg12xu-fscale-label" style="left: 56.398%; top: 78.896%;">-5</div><div class="mg12xu-fscale-tick" style="left: 56.398%; top: 81.8185%;"></div><div class="mg12xu-fscale-label" style="left: 56.398%; top: 81.8185%;">-10</div><div class="mg12xu-fscale-tick" style="left: 56.398%; top: 84.0902%;"></div><div class="mg12xu-fscale-label" style="left: 56.398%; top: 84.0902%;">-15</div><div class="mg12xu-fscale-tick" style="left: 56.398%; top: 85.7135%;"></div><div class="mg12xu-fscale-label" style="left: 56.398%; top: 85.7135%;">-20</div><div class="mg12xu-fscale-tick" style="left: 56.398%; top: 86.6885%;"></div><div class="mg12xu-fscale-label" style="left: 56.398%; top: 86.6885%;">-25</div><div class="mg12xu-fscale-tick" style="left: 56.398%; top: 88.3118%;"></div><div class="mg12xu-fscale-label" style="left: 56.398%; top: 88.3118%;">-30</div><div class="mg12xu-fscale-tick" style="left: 56.398%; top: 89.9352%;"></div><div class="mg12xu-fscale-label" style="left: 56.398%; top: 89.9352%;">-40</div><div class="mg12xu-fscale-tick" style="left: 56.398%; top: 91.8827%;"></div><div class="mg12xu-fscale-label" style="left: 56.398%; top: 91.8827%;">-60</div><div class="mg12xu-fscale-tick" style="left: 56.398%; top: 94.481%;"></div><div class="mg12xu-fscale-label" style="left: 56.398%; top: 94.481%;">−∞</div><div class="mg12xu-fscale-chnum" style="left: 56.398%;">5/6</div><div class="mg12xu-fscale-track" style="left: 67.583%; top: 69.156%; height: 25.325%;"></div><div class="mg12xu-fscale-tick" style="left: 67.583%; top: 70.2602%;"></div><div class="mg12xu-fscale-label" style="left: 67.583%; top: 70.2602%;">+10</div><div class="mg12xu-fscale-tick" style="left: 67.583%; top: 73.051%;"></div><div class="mg12xu-fscale-label" style="left: 67.583%; top: 73.051%;">+5</div><div class="mg12xu-fscale-tick zero" style="left: 67.583%; top: 75.9735%;"></div><div class="mg12xu-fscale-label" style="left: 67.583%; top: 75.9735%;">0</div><div class="mg12xu-fscale-tick" style="left: 67.583%; top: 78.896%;"></div><div class="mg12xu-fscale-label" style="left: 67.583%; top: 78.896%;">-5</div><div class="mg12xu-fscale-tick" style="left: 67.583%; top: 81.8185%;"></div><div class="mg12xu-fscale-label" style="left: 67.583%; top: 81.8185%;">-10</div><div class="mg12xu-fscale-tick" style="left: 67.583%; top: 84.0902%;"></div><div class="mg12xu-fscale-label" style="left: 67.583%; top: 84.0902%;">-15</div><div class="mg12xu-fscale-tick" style="left: 67.583%; top: 85.7135%;"></div><div class="mg12xu-fscale-label" style="left: 67.583%; top: 85.7135%;">-20</div><div class="mg12xu-fscale-tick" style="left: 67.583%; top: 86.6885%;"></div><div class="mg12xu-fscale-label" style="left: 67.583%; top: 86.6885%;">-25</div><div class="mg12xu-fscale-tick" style="left: 67.583%; top: 88.3118%;"></div><div class="mg12xu-fscale-label" style="left: 67.583%; top: 88.3118%;">-30</div><div class="mg12xu-fscale-tick" style="left: 67.583%; top: 89.9352%;"></div><div class="mg12xu-fscale-label" style="left: 67.583%; top: 89.9352%;">-40</div><div class="mg12xu-fscale-tick" style="left: 67.583%; top: 91.8827%;"></div><div class="mg12xu-fscale-label" style="left: 67.583%; top: 91.8827%;">-60</div><div class="mg12xu-fscale-tick" style="left: 67.583%; top: 94.481%;"></div><div class="mg12xu-fscale-label" style="left: 67.583%; top: 94.481%;">−∞</div><div class="mg12xu-fscale-chnum" style="left: 67.583%;">7/8</div><div class="mg12xu-fscale-track" style="left: 80.664%; top: 69.156%; height: 25.325%;"></div><div class="mg12xu-fscale-tick" style="left: 80.664%; top: 70.2602%;"></div><div class="mg12xu-fscale-label" style="left: 80.664%; top: 70.2602%;">+10</div><div class="mg12xu-fscale-tick" style="left: 80.664%; top: 73.051%;"></div><div class="mg12xu-fscale-label" style="left: 80.664%; top: 73.051%;">+5</div><div class="mg12xu-fscale-tick zero" style="left: 80.664%; top: 75.9735%;"></div><div class="mg12xu-fscale-label" style="left: 80.664%; top: 75.9735%;">0</div><div class="mg12xu-fscale-tick" style="left: 80.664%; top: 78.896%;"></div><div class="mg12xu-fscale-label" style="left: 80.664%; top: 78.896%;">-5</div><div class="mg12xu-fscale-tick" style="left: 80.664%; top: 81.8185%;"></div><div class="mg12xu-fscale-label" style="left: 80.664%; top: 81.8185%;">-10</div><div class="mg12xu-fscale-tick" style="left: 80.664%; top: 84.0902%;"></div><div class="mg12xu-fscale-label" style="left: 80.664%; top: 84.0902%;">-15</div><div class="mg12xu-fscale-tick" style="left: 80.664%; top: 85.7135%;"></div><div class="mg12xu-fscale-label" style="left: 80.664%; top: 85.7135%;">-20</div><div class="mg12xu-fscale-tick" style="left: 80.664%; top: 86.6885%;"></div><div class="mg12xu-fscale-label" style="left: 80.664%; top: 86.6885%;">-25</div><div class="mg12xu-fscale-tick" style="left: 80.664%; top: 88.3118%;"></div><div class="mg12xu-fscale-label" style="left: 80.664%; top: 88.3118%;">-30</div><div class="mg12xu-fscale-tick" style="left: 80.664%; top: 89.9352%;"></div><div class="mg12xu-fscale-label" style="left: 80.664%; top: 89.9352%;">-40</div><div class="mg12xu-fscale-tick" style="left: 80.664%; top: 91.8827%;"></div><div class="mg12xu-fscale-label" style="left: 80.664%; top: 91.8827%;">-60</div><div class="mg12xu-fscale-tick" style="left: 80.664%; top: 94.481%;"></div><div class="mg12xu-fscale-label" style="left: 80.664%; top: 94.481%;">−∞</div><div class="mg12xu-fscale-chnum" style="left: 80.664%;">9/10</div><div class="mg12xu-fscale-track" style="left: 91.848%; top: 69.156%; height: 25.325%;"></div><div class="mg12xu-fscale-tick" style="left: 91.848%; top: 70.2602%;"></div><div class="mg12xu-fscale-label" style="left: 91.848%; top: 70.2602%;">+10</div><div class="mg12xu-fscale-tick" style="left: 91.848%; top: 73.051%;"></div><div class="mg12xu-fscale-label" style="left: 91.848%; top: 73.051%;">+5</div><div class="mg12xu-fscale-tick zero" style="left: 91.848%; top: 75.9735%;"></div><div class="mg12xu-fscale-label" style="left: 91.848%; top: 75.9735%;">0</div><div class="mg12xu-fscale-tick" style="left: 91.848%; top: 78.896%;"></div><div class="mg12xu-fscale-label" style="left: 91.848%; top: 78.896%;">-5</div><div class="mg12xu-fscale-tick" style="left: 91.848%; top: 81.8185%;"></div><div class="mg12xu-fscale-label" style="left: 91.848%; top: 81.8185%;">-10</div><div class="mg12xu-fscale-tick" style="left: 91.848%; top: 84.0902%;"></div><div class="mg12xu-fscale-label" style="left: 91.848%; top: 84.0902%;">-15</div><div class="mg12xu-fscale-tick" style="left: 91.848%; top: 85.7135%;"></div><div class="mg12xu-fscale-label" style="left: 91.848%; top: 85.7135%;">-20</div><div class="mg12xu-fscale-tick" style="left: 91.848%; top: 86.6885%;"></div><div class="mg12xu-fscale-label" style="left: 91.848%; top: 86.6885%;">-25</div><div class="mg12xu-fscale-tick" style="left: 91.848%; top: 88.3118%;"></div><div class="mg12xu-fscale-label" style="left: 91.848%; top: 88.3118%;">-30</div><div class="mg12xu-fscale-tick" style="left: 91.848%; top: 89.9352%;"></div><div class="mg12xu-fscale-label" style="left: 91.848%; top: 89.9352%;">-40</div><div class="mg12xu-fscale-tick" style="left: 91.848%; top: 91.8827%;"></div><div class="mg12xu-fscale-label" style="left: 91.848%; top: 91.8827%;">-60</div><div class="mg12xu-fscale-tick" style="left: 91.848%; top: 94.481%;"></div><div class="mg12xu-fscale-label" style="left: 91.848%; top: 94.481%;">−∞</div><div class="mg12xu-fscale-chnum" style="left: 91.848%;">11/12</div></div>
-                <div id="mg12xuKnobLayer"><div class="mg12xu-knob" data-ch="ch1" data-type="gain" style="left: 13.839%; top: 8.442%;"><img src="ch1_gain.png" draggable="false" alt="1번 채널 GAIN 노브" style="transform-origin: 51.09% 48.59%; transform: rotate(87.46deg);"></div><div class="mg12xu-knob" data-ch="ch1" data-type="comp" style="left: 13.839%; top: 16.34%;"><img src="ch1_comp.png" draggable="false" alt="1번 채널 COMP 노브" style="transform-origin: 49.06% 49.06%; transform: rotate(-5.3deg);"></div><div class="mg12xu-knob" data-ch="ch1" data-type="high" style="left: 13.839%; top: 25.13%;"><img src="ch1_high.png" draggable="false" alt="1번 채널 HIGH 노브" style="transform-origin: 47.48% 49.32%; transform: rotate(2deg);"></div><div class="mg12xu-knob" data-ch="ch1" data-type="mid" style="left: 13.839%; top: 30.844%;"><img src="ch1_mid.png" draggable="false" alt="1번 채널 MID 노브" style="transform-origin: 47.78% 49.01%; transform: rotate(3deg);"></div><div class="mg12xu-knob" data-ch="ch1" data-type="low" style="left: 13.839%; top: 36.494%;"><img src="ch1_low.png" draggable="false" alt="1번 채널 LOW 노브" style="transform-origin: 46.97% 49%; transform: rotate(0deg);"></div><div class="mg12xu-knob" data-ch="ch1" data-type="aux1" style="left: 13.839%; top: 42.208%;"><img src="ch1_aux1.png" draggable="false" alt="1번 채널 AUX1 노브" style="transform-origin: 49.34% 49%; transform: rotate(148deg);"></div><div class="mg12xu-knob" data-ch="ch1" data-type="aux2" style="left: 13.839%; top: 49.87%;"><img src="ch1_aux2.png" draggable="false" alt="1번 채널 AUX2 노브" style="transform-origin: 49.65% 48.41%; transform: rotate(145deg);"></div><div class="mg12xu-knob" data-ch="ch1" data-type="pan" style="left: 13.839%; top: 55.455%;"><img src="ch1_pan.png" draggable="false" alt="1번 채널 PAN 노브" style="transform-origin: 47.94% 48.25%; transform: rotate(-4deg);"></div><div class="mg12xu-knob" data-ch="ch2" data-type="gain" style="left: 24.834%; top: 8.442%;"><img src="ch2_gain.png" draggable="false" alt="2번 채널 GAIN 노브" style="transform-origin: 53.31% 47.37%; transform: rotate(63.78deg);"></div><div class="mg12xu-knob" data-ch="ch2" data-type="comp" style="left: 24.834%; top: 16.34%;"><img src="ch2_comp.png" draggable="false" alt="2번 채널 COMP 노브" style="transform-origin: 49.06% 49.06%; transform: rotate(8.1deg);"></div><div class="mg12xu-knob" data-ch="ch2" data-type="high" style="left: 24.834%; top: 25.13%;"><img src="ch2_high.png" draggable="false" alt="2번 채널 HIGH 노브" style="transform-origin: 48.84% 49.84%; transform: rotate(-6deg);"></div><div class="mg12xu-knob" data-ch="ch2" data-type="mid" style="left: 24.834%; top: 30.844%;"><img src="ch2_mid.png" draggable="false" alt="2번 채널 MID 노브" style="transform-origin: 48.01% 50.79%; transform: rotate(3deg);"></div><div class="mg12xu-knob" data-ch="ch2" data-type="low" style="left: 24.834%; top: 36.494%;"><img src="ch2_low.png" draggable="false" alt="2번 채널 LOW 노브" style="transform-origin: 49.02% 47.54%; transform: rotate(-4deg);"></div><div class="mg12xu-knob" data-ch="ch2" data-type="aux1" style="left: 24.834%; top: 42.208%;"><img src="ch2_aux1.png" draggable="false" alt="2번 채널 AUX1 노브" style="transform-origin: 52.47% 51.57%; transform: rotate(144deg);"></div><div class="mg12xu-knob" data-ch="ch2" data-type="aux2" style="left: 24.834%; top: 49.87%;"><img src="ch2_aux2.png" draggable="false" alt="2번 채널 AUX2 노브" style="transform-origin: 52.92% 48.48%; transform: rotate(145deg);"></div><div class="mg12xu-knob" data-ch="ch2" data-type="pan" style="left: 24.834%; top: 55.455%;"><img src="ch2_pan.png" draggable="false" alt="2번 채널 PAN 노브" style="transform-origin: 50.19% 47.28%; transform: rotate(2deg);"></div><div class="mg12xu-knob" data-ch="ch3" data-type="gain" style="left: 36.114%; top: 8.442%;"><img src="ch3_gain.png" draggable="false" alt="3번 채널 GAIN 노브" style="transform-origin: 52.76% 47.43%; transform: rotate(66.265deg);"></div><div class="mg12xu-knob" data-ch="ch3" data-type="comp" style="left: 36.114%; top: 16.34%;"><img src="ch3_comp.png" draggable="false" alt="3번 채널 COMP 노브" style="transform-origin: 49.06% 49.06%; transform: rotate(7deg);"></div><div class="mg12xu-knob" data-ch="ch3" data-type="high" style="left: 36.114%; top: 25.13%;"><img src="ch3_high.png" draggable="false" alt="3번 채널 HIGH 노브" style="transform-origin: 47.92% 51.07%; transform: rotate(0deg);"></div><div class="mg12xu-knob" data-ch="ch3" data-type="mid" style="left: 36.114%; top: 30.844%;"><img src="ch3_mid.png" draggable="false" alt="3번 채널 MID 노브" style="transform-origin: 50.41% 50.5%; transform: rotate(1deg);"></div><div class="mg12xu-knob" data-ch="ch3" data-type="low" style="left: 36.114%; top: 36.494%;"><img src="ch3_low.png" draggable="false" alt="3번 채널 LOW 노브" style="transform-origin: 48.07% 51.57%; transform: rotate(-5deg);"></div><div class="mg12xu-knob" data-ch="ch3" data-type="aux1" style="left: 36.114%; top: 42.208%;"><img src="ch3_aux1.png" draggable="false" alt="3번 채널 AUX1 노브" style="transform-origin: 50.79% 49.95%; transform: rotate(152deg);"></div><div class="mg12xu-knob" data-ch="ch3" data-type="aux2" style="left: 36.114%; top: 49.87%;"><img src="ch3_aux2.png" draggable="false" alt="3번 채널 AUX2 노브" style="transform-origin: 51.8% 48.37%; transform: rotate(152deg);"></div><div class="mg12xu-knob" data-ch="ch3" data-type="pan" style="left: 36.114%; top: 55.455%;"><img src="ch3_pan.png" draggable="false" alt="3번 채널 PAN 노브" style="transform-origin: 50.29% 52.06%; transform: rotate(-3deg);"></div><div class="mg12xu-knob" data-ch="ch4" data-type="gain" style="left: 47.299%; top: 8.442%;"><img src="ch4_gain.png" draggable="false" alt="4번 채널 GAIN 노브" style="transform-origin: 53.05% 46.83%; transform: rotate(48.52deg);"></div><div class="mg12xu-knob" data-ch="ch4" data-type="comp" style="left: 47.299%; top: 16.34%;"><img src="ch4_comp.png" draggable="false" alt="4번 채널 COMP 노브" style="transform-origin: 49.06% 49.06%; transform: rotate(8.1deg);"></div><div class="mg12xu-knob" data-ch="ch4" data-type="high" style="left: 47.299%; top: 25.13%;"><img src="ch4_high.png" draggable="false" alt="4번 채널 HIGH 노브" style="transform-origin: 48.43% 48.87%; transform: rotate(1deg);"></div><div class="mg12xu-knob" data-ch="ch4" data-type="mid" style="left: 47.299%; top: 30.844%;"><img src="ch4_mid.png" draggable="false" alt="4번 채널 MID 노브" style="transform-origin: 49% 50.55%; transform: rotate(5deg);"></div><div class="mg12xu-knob" data-ch="ch4" data-type="low" style="left: 47.299%; top: 36.494%;"><img src="ch4_low.png" draggable="false" alt="4번 채널 LOW 노브" style="transform-origin: 48.05% 50.4%; transform: rotate(-4deg);"></div><div class="mg12xu-knob" data-ch="ch4" data-type="aux1" style="left: 47.299%; top: 42.208%;"><img src="ch4_aux1.png" draggable="false" alt="4번 채널 AUX1 노브" style="transform-origin: 51.47% 49.4%; transform: rotate(151deg);"></div><div class="mg12xu-knob" data-ch="ch4" data-type="aux2" style="left: 47.299%; top: 49.87%;"><img src="ch4_aux2.png" draggable="false" alt="4번 채널 AUX2 노브" style="transform-origin: 51.88% 48.48%; transform: rotate(145deg);"></div><div class="mg12xu-knob" data-ch="ch4" data-type="pan" style="left: 47.299%; top: 55.455%;"><img src="ch4_pan.png" draggable="false" alt="4번 채널 PAN 노브" style="transform-origin: 49.63% 50.04%; transform: rotate(-2deg);"></div><div class="mg12xu-knob" data-ch="ch5_6" data-type="gain" style="left: 58.673%; top: 8.442%;"><img src="ch5_6_gain.png" draggable="false" alt="5/6번 채널 GAIN 노브" style="transform-origin: 50.75% 48.12%; transform: rotate(13.2deg);"></div><div class="mg12xu-knob" data-ch="ch5_6" data-type="high" style="left: 58.673%; top: 25.13%;"><img src="ch5_6_high.png" draggable="false" alt="5/6번 채널 HIGH 노브" style="transform-origin: 49.43% 52.53%; transform: rotate(-5deg);"></div><div class="mg12xu-knob" data-ch="ch5_6" data-type="mid" style="left: 58.673%; top: 30.844%;"><img src="ch5_6_mid.png" draggable="false" alt="5/6번 채널 MID 노브" style="transform-origin: 49.34% 52.1%; transform: rotate(-4deg);"></div><div class="mg12xu-knob" data-ch="ch5_6" data-type="low" style="left: 58.673%; top: 36.494%;"><img src="ch5_6_low.png" draggable="false" alt="5/6번 채널 LOW 노브" style="transform-origin: 50.16% 50.43%; transform: rotate(5deg);"></div><div class="mg12xu-knob" data-ch="ch5_6" data-type="aux1" style="left: 58.673%; top: 42.208%;"><img src="ch5_6_aux1.png" draggable="false" alt="5/6번 채널 AUX1 노브" style="transform-origin: 49.96% 49.92%; transform: rotate(151deg);"></div><div class="mg12xu-knob" data-ch="ch5_6" data-type="aux2" style="left: 58.673%; top: 49.87%;"><img src="ch5_6_aux2.png" draggable="false" alt="5/6번 채널 AUX2 노브" style="transform-origin: 49.57% 46.22%; transform: rotate(152deg);"></div><div class="mg12xu-knob" data-ch="ch5_6" data-type="pan" style="left: 58.673%; top: 55.455%;"><img src="ch5_6_pan.png" draggable="false" alt="5/6번 채널 PAN 노브" style="transform-origin: 47.33% 48.32%; transform: rotate(-3deg);"></div><div class="mg12xu-knob" data-ch="ch7_8" data-type="gain" style="left: 69.953%; top: 8.442%;"><img src="ch7_8_gain.png" draggable="false" alt="7/8번 채널 GAIN 노브" style="transform-origin: 50.01% 47.22%; transform: rotate(13.6deg);"></div><div class="mg12xu-knob" data-ch="ch7_8" data-type="high" style="left: 69.953%; top: 25.13%;"><img src="ch7_8_high.png" draggable="false" alt="7/8번 채널 HIGH 노브" style="transform-origin: 48.96% 52.37%; transform: rotate(3deg);"></div><div class="mg12xu-knob" data-ch="ch7_8" data-type="mid" style="left: 69.953%; top: 30.844%;"><img src="ch7_8_mid.png" draggable="false" alt="7/8번 채널 MID 노브" style="transform-origin: 48.28% 51.01%; transform: rotate(0deg);"></div><div class="mg12xu-knob" data-ch="ch7_8" data-type="low" style="left: 69.953%; top: 36.494%;"><img src="ch7_8_low.png" draggable="false" alt="7/8번 채널 LOW 노브" style="transform-origin: 49.1% 51.72%; transform: rotate(-2deg);"></div><div class="mg12xu-knob" data-ch="ch7_8" data-type="aux1" style="left: 69.953%; top: 42.208%;"><img src="ch7_8_aux1.png" draggable="false" alt="7/8번 채널 AUX1 노브" style="transform-origin: 49.43% 48.78%; transform: rotate(149deg);"></div><div class="mg12xu-knob" data-ch="ch7_8" data-type="aux2" style="left: 69.953%; top: 49.87%;"><img src="ch7_8_aux2.png" draggable="false" alt="7/8번 채널 AUX2 노브" style="transform-origin: 48.71% 47.4%; transform: rotate(146deg);"></div><div class="mg12xu-knob" data-ch="ch7_8" data-type="pan" style="left: 69.953%; top: 55.455%;"><img src="ch7_8_pan.png" draggable="false" alt="7/8번 채널 PAN 노브" style="transform-origin: 47.11% 48.43%; transform: rotate(0deg);"></div><div class="mg12xu-knob" data-ch="ch9_10" data-type="high" style="left: 83.223%; top: 25.13%;"><img src="ch9_10_high.png" draggable="false" alt="9/10번 채널 HIGH 노브" style="transform-origin: 49.02% 51.92%; transform: rotate(-3deg);"></div><div class="mg12xu-knob" data-ch="ch9_10" data-type="low" style="left: 83.223%; top: 36.494%;"><img src="ch9_10_low.png" draggable="false" alt="9/10번 채널 LOW 노브" style="transform-origin: 48.52% 52.45%; transform: rotate(-1deg);"></div><div class="mg12xu-knob" data-ch="ch9_10" data-type="aux1" style="left: 83.223%; top: 42.208%;"><img src="ch9_10_aux1.png" draggable="false" alt="9/10번 채널 AUX1 노브" style="transform-origin: 47.76% 49.9%; transform: rotate(152deg);"></div><div class="mg12xu-knob" data-ch="ch9_10" data-type="aux2" style="left: 83.223%; top: 49.87%;"><img src="ch9_10_aux2.png" draggable="false" alt="9/10번 채널 AUX2 노브" style="transform-origin: 48.89% 49%; transform: rotate(145deg);"></div><div class="mg12xu-knob" data-ch="ch9_10" data-type="pan" style="left: 83.223%; top: 55.455%;"><img src="ch9_10_pan.png" draggable="false" alt="9/10번 채널 PAN 노브" style="transform-origin: 46.88% 51.48%; transform: rotate(0deg);"></div><div class="mg12xu-knob" data-ch="ch11_12" data-type="high" style="left: 94.502%; top: 25.13%;"><img src="ch11_12_high.png" draggable="false" alt="11/12번 채널 HIGH 노브" style="transform-origin: 48.89% 45.19%; transform: rotate(0deg);"></div><div class="mg12xu-knob" data-ch="ch11_12" data-type="low" style="left: 94.502%; top: 36.494%;"><img src="ch11_12_low.png" draggable="false" alt="11/12번 채널 LOW 노브" style="transform-origin: 48.97% 46.92%; transform: rotate(-10deg);"></div><div class="mg12xu-knob" data-ch="ch11_12" data-type="aux1" style="left: 94.502%; top: 42.208%;"><img src="ch11_12_aux1.png" draggable="false" alt="11/12번 채널 AUX1 노브" style="transform-origin: 48.29% 47.31%; transform: rotate(148deg);"></div><div class="mg12xu-knob" data-ch="ch11_12" data-type="aux2" style="left: 94.502%; top: 49.87%;"><img src="ch11_12_aux2.png" draggable="false" alt="11/12번 채널 AUX2 노브" style="transform-origin: 48.46% 47.69%; transform: rotate(146deg);"></div><div class="mg12xu-knob" data-ch="ch11_12" data-type="pan" style="left: 94.502%; top: 55.455%;"><img src="ch11_12_pan.png" draggable="false" alt="11/12번 채널 PAN 노브" style="transform-origin: 46.51% 48.68%; transform: rotate(-4deg);"></div></div>
-                <div id="mg12xuFaderLayer"><div class="mg12xu-fader-hit" data-ch="ch1" style="left: 11.848%; top: 81.8185%;"></div><div class="mg12xu-fader-cap" data-ch="ch1" style="left: 11.848%; top: 82.9389%;"><img src="fader_cap.png" draggable="false" alt="1번 채널 페이더"></div><div class="mg12xu-fader-hit" data-ch="ch2" style="left: 23.033%; top: 81.8185%;"></div><div class="mg12xu-fader-cap" data-ch="ch2" style="left: 23.033%; top: 78.1521%;"><img src="fader_cap.png" draggable="false" alt="2번 채널 페이더"></div><div class="mg12xu-fader-hit" data-ch="ch3" style="left: 34.028%; top: 81.8185%;"></div><div class="mg12xu-fader-cap" data-ch="ch3" style="left: 34.028%; top: 75.8119%;"><img src="fader_cap.png" draggable="false" alt="3번 채널 페이더"></div><div class="mg12xu-fader-hit" data-ch="ch4" style="left: 45.213%; top: 81.8185%;"></div><div class="mg12xu-fader-cap" data-ch="ch4" style="left: 45.213%; top: 76.4502%;"><img src="fader_cap.png" draggable="false" alt="4번 채널 페이더"></div><div class="mg12xu-fader-hit" data-ch="ch5_6" style="left: 56.398%; top: 81.8185%;"></div><div class="mg12xu-fader-cap" data-ch="ch5_6" style="left: 56.398%; top: 88.1497%;"><img src="fader_cap.png" draggable="false" alt="5/6번 채널 페이더"></div><div class="mg12xu-fader-hit" data-ch="ch7_8" style="left: 67.583%; top: 81.8185%;"></div><div class="mg12xu-fader-cap" data-ch="ch7_8" style="left: 67.583%; top: 88.1497%;"><img src="fader_cap.png" draggable="false" alt="7/8번 채널 페이더"></div><div class="mg12xu-fader-hit" data-ch="ch9_10" style="left: 80.664%; top: 81.8185%;"></div><div class="mg12xu-fader-cap" data-ch="ch9_10" style="left: 80.664%; top: 88.1497%;"><img src="fader_cap.png" draggable="false" alt="9/10번 채널 페이더"></div><div class="mg12xu-fader-hit" data-ch="ch11_12" style="left: 91.848%; top: 81.8185%;"></div><div class="mg12xu-fader-cap" data-ch="ch11_12" style="left: 91.848%; top: 88.1497%;"><img src="fader_cap.png" draggable="false" alt="11/12번 채널 페이더"></div></div>
-                <div id="mg12xuRouteLayer"><button type="button" class="mg12xu-route-btn" data-ch="ch1" data-bus="group" title="CH 1 → GROUP 1-2 전송" style="left: 16.872%; top: 73.03%;"></button><button type="button" class="mg12xu-route-btn" data-ch="ch1" data-bus="stereo" title="CH 1 → STEREO 전송" style="left: 16.635%; top: 76.52%;"></button><button type="button" class="mg12xu-route-btn" data-ch="ch2" data-bus="group" title="CH 2 → GROUP 1-2 전송" style="left: 28.009%; top: 73.03%;"></button><button type="button" class="mg12xu-route-btn" data-ch="ch2" data-bus="stereo" title="CH 2 → STEREO 전송" style="left: 27.867%; top: 76.52%;"></button><button type="button" class="mg12xu-route-btn" data-ch="ch3" data-bus="group" title="CH 3 → GROUP 1-2 전송" style="left: 39.147%; top: 73.03%;"></button><button type="button" class="mg12xu-route-btn" data-ch="ch3" data-bus="stereo" title="CH 3 → STEREO 전송" style="left: 39.052%; top: 76.52%;"></button><button type="button" class="mg12xu-route-btn" data-ch="ch4" data-bus="group" title="CH 4 → GROUP 1-2 전송" style="left: 50.19%; top: 73.03%;"></button><button type="button" class="mg12xu-route-btn" data-ch="ch4" data-bus="stereo" title="CH 4 → STEREO 전송" style="left: 50.19%; top: 76.52%;"></button><button type="button" class="mg12xu-hpf-btn" data-ch="ch5_6" title="CH 5/6 HPF 80Hz" style="left: 60.33%; top: 19.97%;">HPF</button><button type="button" class="mg12xu-route-btn" data-ch="ch5_6" data-bus="group" title="CH 5/6 → GROUP 1-2 전송" style="left: 61.28%; top: 73.03%;"></button><button type="button" class="mg12xu-route-btn" data-ch="ch5_6" data-bus="stereo" title="CH 5/6 → STEREO 전송" style="left: 61.374%; top: 76.52%;"></button><button type="button" class="mg12xu-hpf-btn" data-ch="ch7_8" title="CH 7/8 HPF 80Hz" style="left: 69.81%; top: 19.97%;">HPF</button><button type="button" class="mg12xu-route-btn" data-ch="ch7_8" data-bus="group" title="CH 7/8 → GROUP 1-2 전송" style="left: 72.559%; top: 73.03%;"></button><button type="button" class="mg12xu-route-btn" data-ch="ch7_8" data-bus="stereo" title="CH 7/8 → STEREO 전송" style="left: 72.559%; top: 76.52%;"></button><button type="button" class="mg12xu-route-btn" data-ch="ch9_10" data-bus="group" title="CH 9/10 → GROUP 1-2 전송" style="left: 85.64%; top: 73.03%;"></button><button type="button" class="mg12xu-route-btn" data-ch="ch9_10" data-bus="stereo" title="CH 9/10 → STEREO 전송" style="left: 85.735%; top: 76.52%;"></button><button type="button" class="mg12xu-route-btn" data-ch="ch11_12" data-bus="group" title="CH 11/12 → GROUP 1-2 전송" style="left: 96.825%; top: 73.03%;"></button><button type="button" class="mg12xu-route-btn" data-ch="ch11_12" data-bus="stereo" title="CH 11/12 → STEREO 전송" style="left: 96.73%; top: 76.52%;"></button></div>
-                <div id="mg12xuOnLayer"><button type="button" class="mg12xu-on-hotspot" data-ch="ch1" title="CH 1 ON/MUTE" style="left: 14.123%; top: 60.909%;"></button><button type="button" class="mg12xu-on-hotspot" data-ch="ch2" title="CH 2 ON/MUTE" style="left: 25.308%; top: 60.909%;"></button><button type="button" class="mg12xu-on-hotspot" data-ch="ch3" title="CH 3 ON/MUTE" style="left: 36.493%; top: 60.909%;"></button><button type="button" class="mg12xu-on-hotspot" data-ch="ch4" title="CH 4 ON/MUTE" style="left: 47.678%; top: 60.909%;"></button><button type="button" class="mg12xu-on-hotspot" data-ch="ch5_6" title="CH 5/6 ON/MUTE" style="left: 58.863%; top: 60.909%;"></button><button type="button" class="mg12xu-on-hotspot" data-ch="ch7_8" title="CH 7/8 ON/MUTE" style="left: 69.858%; top: 60.909%;"></button><button type="button" class="mg12xu-on-hotspot" data-ch="ch9_10" title="CH 9/10 ON/MUTE" style="left: 82.939%; top: 60.909%;"></button><button type="button" class="mg12xu-on-hotspot" data-ch="ch11_12" title="CH 11/12 ON/MUTE" style="left: 94.123%; top: 60.909%;"></button></div>
-                <div id="mg12xuPflLayer"><button type="button" class="mg12xu-pfl-hotspot" data-ch="ch1" title="CH 1 PFL (PHONES로 솔로 모니터)" style="left: 16.64%; top: 89.12%;"></button><button type="button" class="mg12xu-pfl-hotspot" data-ch="ch2" title="CH 2 PFL (PHONES로 솔로 모니터)" style="left: 27.77%; top: 89.12%;"></button><button type="button" class="mg12xu-pfl-hotspot" data-ch="ch3" title="CH 3 PFL (PHONES로 솔로 모니터)" style="left: 38.63%; top: 89.12%;"></button><button type="button" class="mg12xu-pfl-hotspot" data-ch="ch4" title="CH 4 PFL (PHONES로 솔로 모니터)" style="left: 49.81%; top: 89.12%;"></button><button type="button" class="mg12xu-pfl-hotspot" data-ch="ch5_6" title="CH 5/6 PFL (PHONES로 솔로 모니터)" style="left: 60.9%; top: 89.12%;"></button><button type="button" class="mg12xu-pfl-hotspot" data-ch="ch7_8" title="CH 7/8 PFL (PHONES로 솔로 모니터)" style="left: 72.13%; top: 89.12%;"></button><button type="button" class="mg12xu-pfl-hotspot" data-ch="ch9_10" title="CH 9/10 PFL (PHONES로 솔로 모니터)" style="left: 85.59%; top: 89.12%;"></button><button type="button" class="mg12xu-pfl-hotspot" data-ch="ch11_12" title="CH 11/12 PFL (PHONES로 솔로 모니터)" style="left: 96.78%; top: 89.12%;"></button></div>
-                <div id="mg12xuPeakLayer"><div class="mg12xu-peak-led" data-ch="ch1" title="CH 1 PEAK" style="left: 16.825%; top: 69.286%;"></div><div class="mg12xu-peak-led" data-ch="ch2" title="CH 2 PEAK" style="left: 28.009%; top: 69.286%;"></div><div class="mg12xu-peak-led" data-ch="ch3" title="CH 3 PEAK" style="left: 39.052%; top: 69.286%;"></div><div class="mg12xu-peak-led" data-ch="ch4" title="CH 4 PEAK" style="left: 50.284%; top: 69.286%;"></div><div class="mg12xu-peak-led" data-ch="ch5_6" title="CH 5/6 PEAK" style="left: 61.185%; top: 69.286%;"></div><div class="mg12xu-peak-led" data-ch="ch7_8" title="CH 7/8 PEAK" style="left: 72.417%; top: 69.286%;"></div></div>
+                <div id="mg12xuMuteLayer"></div>
+                <div id="mg12xuChannelTags"></div>
+                <div id="mg12xuHotspotLayer"></div>
+                <div id="mg12xuFaderScaleLayer"></div>
+                <div id="mg12xuKnobLayer"></div>
+                <div id="mg12xuFaderLayer"></div>
+                <div id="mg12xuRouteLayer"></div>
+                <div id="mg12xuOnLayer"></div>
+                <div id="mg12xuPflLayer"></div>
+                <div id="mg12xuPeakLayer"></div>
                 <div id="mg12xuReadoutLayer"></div>
               </div>
               <div class="mg12xu-master-wrap" id="mg12xuMasterWrap">
                 <img src="master_section.jpg" class="mg12xu-master-img" draggable="false" alt="Yamaha MG12XU 마스터 섹션 (FX RTN / GROUP 1-2 / STEREO)">
-                <div id="mg12xuMasterScaleLayer"><div class="mg12xu-fscale-track" style="left: 14.71%; top: 65%; height: 24%;"></div><div class="mg12xu-fscale-tick master" style="left: 14.71%; top: 66.0464%;"></div><div class="mg12xu-fscale-label" style="left: 14.71%; top: 66.0464%;">+10</div><div class="mg12xu-fscale-tick master" style="left: 14.71%; top: 68.6912%;"></div><div class="mg12xu-fscale-label" style="left: 14.71%; top: 68.6912%;">+5</div><div class="mg12xu-fscale-tick zero master" style="left: 14.71%; top: 71.4608%;"></div><div class="mg12xu-fscale-label" style="left: 14.71%; top: 71.4608%;">0</div><div class="mg12xu-fscale-tick master" style="left: 14.71%; top: 74.2304%;"></div><div class="mg12xu-fscale-label" style="left: 14.71%; top: 74.2304%;">-5</div><div class="mg12xu-fscale-tick master" style="left: 14.71%; top: 77%;"></div><div class="mg12xu-fscale-label" style="left: 14.71%; top: 77%;">-10</div><div class="mg12xu-fscale-tick master" style="left: 14.71%; top: 79.1528%;"></div><div class="mg12xu-fscale-label" style="left: 14.71%; top: 79.1528%;">-15</div><div class="mg12xu-fscale-tick master" style="left: 14.71%; top: 80.6912%;"></div><div class="mg12xu-fscale-label" style="left: 14.71%; top: 80.6912%;">-20</div><div class="mg12xu-fscale-tick master" style="left: 14.71%; top: 81.6152%;"></div><div class="mg12xu-fscale-label" style="left: 14.71%; top: 81.6152%;">-25</div><div class="mg12xu-fscale-tick master" style="left: 14.71%; top: 83.1536%;"></div><div class="mg12xu-fscale-label" style="left: 14.71%; top: 83.1536%;">-30</div><div class="mg12xu-fscale-tick master" style="left: 14.71%; top: 84.692%;"></div><div class="mg12xu-fscale-label" style="left: 14.71%; top: 84.692%;">-40</div><div class="mg12xu-fscale-tick master" style="left: 14.71%; top: 86.5376%;"></div><div class="mg12xu-fscale-label" style="left: 14.71%; top: 86.5376%;">-60</div><div class="mg12xu-fscale-tick master" style="left: 14.71%; top: 89%;"></div><div class="mg12xu-fscale-label" style="left: 14.71%; top: 89%;">−∞</div><div class="mg12xu-fscale-track" style="left: 43.97%; top: 65%; height: 24%;"></div><div class="mg12xu-fscale-tick master" style="left: 43.97%; top: 66.0464%;"></div><div class="mg12xu-fscale-label" style="left: 43.97%; top: 66.0464%;">+10</div><div class="mg12xu-fscale-tick master" style="left: 43.97%; top: 68.6912%;"></div><div class="mg12xu-fscale-label" style="left: 43.97%; top: 68.6912%;">+5</div><div class="mg12xu-fscale-tick zero master" style="left: 43.97%; top: 71.4608%;"></div><div class="mg12xu-fscale-label" style="left: 43.97%; top: 71.4608%;">0</div><div class="mg12xu-fscale-tick master" style="left: 43.97%; top: 74.2304%;"></div><div class="mg12xu-fscale-label" style="left: 43.97%; top: 74.2304%;">-5</div><div class="mg12xu-fscale-tick master" style="left: 43.97%; top: 77%;"></div><div class="mg12xu-fscale-label" style="left: 43.97%; top: 77%;">-10</div><div class="mg12xu-fscale-tick master" style="left: 43.97%; top: 79.1528%;"></div><div class="mg12xu-fscale-label" style="left: 43.97%; top: 79.1528%;">-15</div><div class="mg12xu-fscale-tick master" style="left: 43.97%; top: 80.6912%;"></div><div class="mg12xu-fscale-label" style="left: 43.97%; top: 80.6912%;">-20</div><div class="mg12xu-fscale-tick master" style="left: 43.97%; top: 81.6152%;"></div><div class="mg12xu-fscale-label" style="left: 43.97%; top: 81.6152%;">-25</div><div class="mg12xu-fscale-tick master" style="left: 43.97%; top: 83.1536%;"></div><div class="mg12xu-fscale-label" style="left: 43.97%; top: 83.1536%;">-30</div><div class="mg12xu-fscale-tick master" style="left: 43.97%; top: 84.692%;"></div><div class="mg12xu-fscale-label" style="left: 43.97%; top: 84.692%;">-40</div><div class="mg12xu-fscale-tick master" style="left: 43.97%; top: 86.5376%;"></div><div class="mg12xu-fscale-label" style="left: 43.97%; top: 86.5376%;">-60</div><div class="mg12xu-fscale-tick master" style="left: 43.97%; top: 89%;"></div><div class="mg12xu-fscale-label" style="left: 43.97%; top: 89%;">−∞</div><div class="mg12xu-fscale-track" style="left: 73.97%; top: 65%; height: 24%;"></div><div class="mg12xu-fscale-tick master" style="left: 73.97%; top: 66.0464%;"></div><div class="mg12xu-fscale-label" style="left: 73.97%; top: 66.0464%;">+10</div><div class="mg12xu-fscale-tick master" style="left: 73.97%; top: 68.6912%;"></div><div class="mg12xu-fscale-label" style="left: 73.97%; top: 68.6912%;">+5</div><div class="mg12xu-fscale-tick zero master" style="left: 73.97%; top: 71.4608%;"></div><div class="mg12xu-fscale-label" style="left: 73.97%; top: 71.4608%;">0</div><div class="mg12xu-fscale-tick master" style="left: 73.97%; top: 74.2304%;"></div><div class="mg12xu-fscale-label" style="left: 73.97%; top: 74.2304%;">-5</div><div class="mg12xu-fscale-tick master" style="left: 73.97%; top: 77%;"></div><div class="mg12xu-fscale-label" style="left: 73.97%; top: 77%;">-10</div><div class="mg12xu-fscale-tick master" style="left: 73.97%; top: 79.1528%;"></div><div class="mg12xu-fscale-label" style="left: 73.97%; top: 79.1528%;">-15</div><div class="mg12xu-fscale-tick master" style="left: 73.97%; top: 80.6912%;"></div><div class="mg12xu-fscale-label" style="left: 73.97%; top: 80.6912%;">-20</div><div class="mg12xu-fscale-tick master" style="left: 73.97%; top: 81.6152%;"></div><div class="mg12xu-fscale-label" style="left: 73.97%; top: 81.6152%;">-25</div><div class="mg12xu-fscale-tick master" style="left: 73.97%; top: 83.1536%;"></div><div class="mg12xu-fscale-label" style="left: 73.97%; top: 83.1536%;">-30</div><div class="mg12xu-fscale-tick master" style="left: 73.97%; top: 84.692%;"></div><div class="mg12xu-fscale-label" style="left: 73.97%; top: 84.692%;">-40</div><div class="mg12xu-fscale-tick master" style="left: 73.97%; top: 86.5376%;"></div><div class="mg12xu-fscale-label" style="left: 73.97%; top: 86.5376%;">-60</div><div class="mg12xu-fscale-tick master" style="left: 73.97%; top: 89%;"></div><div class="mg12xu-fscale-label" style="left: 73.97%; top: 89%;">−∞</div></div>
-                <div id="mg12xuMasterFaderLayer"><div class="mg12xu-master-fader-hit" data-bus="fxrtn" style="left: 14.71%; top: 77%;"></div><div class="mg12xu-master-fader-cap" data-bus="fxrtn" style="left: 14.71%; top: 71.4608%;"><img src="fader_cap.png" draggable="false" alt="FX RTN 페이더"></div><div class="mg12xu-master-label" style="left: 14.71%; top: 90.2%;">FX RTN</div><div class="mg12xu-master-fader-hit" data-bus="group" style="left: 43.97%; top: 77%;"></div><div class="mg12xu-master-fader-cap" data-bus="group" style="left: 43.97%; top: 71.4608%;"><img src="fader_cap.png" draggable="false" alt="GROUP 1-2 페이더"></div><div class="mg12xu-master-label" style="left: 43.97%; top: 90.2%;">GROUP 1-2</div><div class="mg12xu-master-fader-hit" data-bus="stereo" style="left: 73.97%; top: 77%;"></div><div class="mg12xu-master-fader-cap" data-bus="stereo" style="left: 73.97%; top: 71.4608%;"><img src="stereo_fader_cap.png" draggable="false" alt="STEREO (Main L/R) 페이더"></div><div class="mg12xu-master-label" style="left: 73.97%; top: 90.2%;">STEREO (Main L/R)</div></div>
-                <div id="mg12xuMasterKnobLayer"><div class="mg12xu-knob" data-ch="master" data-type="aux1" style="left: 42.94%; top: 39.15%; width: 15.5%;"><img src="aux1master.png" draggable="false" alt="AUX1 SEND MASTER 노브" style="transform-origin: 50% 50%; transform: rotate(153deg);"></div><div class="mg12xu-knob" data-ch="master" data-type="aux2" style="left: 42.94%; top: 46.26%; width: 15.5%;"><img src="aux2master.png" draggable="false" alt="AUX2/FX SEND MASTER 노브" style="transform-origin: 50% 50%; transform: rotate(163deg);"></div><div class="mg12xu-knob" data-ch="master" data-type="monitorLevel" style="left: 74.71%; top: 39.15%; width: 15%;"><img src="monitor_level.png" draggable="false" alt="MONITOR LEVEL 노브" style="transform: rotate(164deg);"></div><div class="mg12xu-knob" data-ch="master" data-type="phones" style="left: 75.69%; top: 46.62%; width: 15%;"><img src="phones.png" draggable="false" alt="PHONES 레벨 노브" style="transform: rotate(151.9deg);"></div><div class="mg12xu-knob mg12xu-spx-program-knob" data-ch="master" data-type="spxProgram" title="SPX PROGRAM — 클릭해서 리버브/딜레이 종류 선택" style="left: 13.38%; top: 27.72%; width: 13.5%;"><img src="spx_program.png" draggable="false" alt="SPX PROGRAM 노브" style="transform: rotate(-135deg);"></div><div class="mg12xu-knob" data-ch="master" data-type="spxParam" style="left: 45.67%; top: 27.89%; width: 15.5%;"><img src="spx_param.png" draggable="false" alt="SPX MIN/MAX PARAMETER 노브" style="transform: rotate(151.6deg);"></div></div>
-                <div id="mg12xuMasterOnLayer"><button type="button" class="mg12xu-master-on-hotspot" data-bus="fxrtn" title="FX RTN ON/OFF" style="left: 14.71%; top: 57.08%;"></button><button type="button" class="mg12xu-master-on-hotspot" data-bus="group" title="GROUP 1-2 ON/OFF" style="left: 43.97%; top: 57.08%;"></button><button type="button" class="mg12xu-master-on-hotspot" data-bus="stereo" title="STEREO (Main L/R) ON/OFF" style="left: 73.97%; top: 57.08%;"></button></div>
-                <div id="mg12xuMasterRouteLayer"><button type="button" class="mg12xu-route-btn mg12xu-master-route-btn off" id="mg12xuGroupStBtn" title="GROUP 1-2 → STEREO 전송(ST)" style="left: 51.47%; top: 71.17%;"></button><button type="button" id="mg12xuSourceSwBtn" class="mg12xu-source-sw-btn" title="STEREO/GROUP SOURCE — PHONES 모니터 소스 전환" style="left: 83.53%; top: 51.14%;"></button></div>
-                <div id="mg12xuMasterPflLayer"><button type="button" class="mg12xu-pfl-hotspot" data-ch="fxrtn" title="FX RTN PFL (PHONES로 솔로 모니터)" style="left: 23.53%; top: 85.41%;"></button></div>
-                <div id="mg12xuMasterMeterLayer"><div class="mg12xu-meter-seg" data-col="L" data-db="10" style="left: 64.2%; top: 15.1%; --mg12xu-seg-color: #ef4444; color: rgb(239, 68, 68);"></div><div class="mg12xu-meter-seg" data-col="R" data-db="10" style="left: 80.45%; top: 15.1%; --mg12xu-seg-color: #ef4444; color: rgb(239, 68, 68);"></div><div class="mg12xu-meter-seg" data-col="L" data-db="6" style="left: 64.2%; top: 16.52%; --mg12xu-seg-color: #f59e0b; color: rgb(245, 158, 11);"></div><div class="mg12xu-meter-seg" data-col="R" data-db="6" style="left: 80.45%; top: 16.52%; --mg12xu-seg-color: #f59e0b; color: rgb(245, 158, 11);"></div><div class="mg12xu-meter-seg" data-col="L" data-db="3" style="left: 64.2%; top: 17.97%; --mg12xu-seg-color: #f59e0b; color: rgb(245, 158, 11);"></div><div class="mg12xu-meter-seg" data-col="R" data-db="3" style="left: 80.45%; top: 17.97%; --mg12xu-seg-color: #f59e0b; color: rgb(245, 158, 11);"></div><div class="mg12xu-meter-seg" data-col="L" data-db="0" style="left: 64.2%; top: 19.39%; --mg12xu-seg-color: #eab308; color: rgb(234, 179, 8);"></div><div class="mg12xu-meter-seg" data-col="R" data-db="0" style="left: 80.45%; top: 19.39%; --mg12xu-seg-color: #eab308; color: rgb(234, 179, 8);"></div><div class="mg12xu-meter-seg" data-col="L" data-db="-3" style="left: 64.2%; top: 20.8%; --mg12xu-seg-color: #22c55e; color: rgb(34, 197, 94);"></div><div class="mg12xu-meter-seg" data-col="R" data-db="-3" style="left: 80.45%; top: 20.8%; --mg12xu-seg-color: #22c55e; color: rgb(34, 197, 94);"></div><div class="mg12xu-meter-seg" data-col="L" data-db="-6" style="left: 64.2%; top: 22.24%; --mg12xu-seg-color: #22c55e; color: rgb(34, 197, 94);"></div><div class="mg12xu-meter-seg" data-col="R" data-db="-6" style="left: 80.45%; top: 22.24%; --mg12xu-seg-color: #22c55e; color: rgb(34, 197, 94);"></div><div class="mg12xu-meter-seg" data-col="L" data-db="-10" style="left: 64.2%; top: 23.66%; --mg12xu-seg-color: #22c55e; color: rgb(34, 197, 94);"></div><div class="mg12xu-meter-seg" data-col="R" data-db="-10" style="left: 80.45%; top: 23.66%; --mg12xu-seg-color: #22c55e; color: rgb(34, 197, 94);"></div><div class="mg12xu-meter-seg" data-col="L" data-db="-15" style="left: 64.2%; top: 25.09%; --mg12xu-seg-color: #22c55e; color: rgb(34, 197, 94);"></div><div class="mg12xu-meter-seg" data-col="R" data-db="-15" style="left: 80.45%; top: 25.09%; --mg12xu-seg-color: #22c55e; color: rgb(34, 197, 94);"></div><div class="mg12xu-meter-seg" data-col="L" data-db="-20" style="left: 64.2%; top: 26.51%; --mg12xu-seg-color: #22c55e; color: rgb(34, 197, 94);"></div><div class="mg12xu-meter-seg" data-col="R" data-db="-20" style="left: 80.45%; top: 26.51%; --mg12xu-seg-color: #22c55e; color: rgb(34, 197, 94);"></div><div class="mg12xu-meter-seg" data-col="L" data-db="-25" style="left: 64.2%; top: 27.94%; --mg12xu-seg-color: #22c55e; color: rgb(34, 197, 94);"></div><div class="mg12xu-meter-seg" data-col="R" data-db="-25" style="left: 80.45%; top: 27.94%; --mg12xu-seg-color: #22c55e; color: rgb(34, 197, 94);"></div><div class="mg12xu-meter-seg" data-col="L" data-db="-30" style="left: 64.2%; top: 29.37%; --mg12xu-seg-color: #22c55e; color: rgb(34, 197, 94);"></div><div class="mg12xu-meter-seg" data-col="R" data-db="-30" style="left: 80.45%; top: 29.37%; --mg12xu-seg-color: #22c55e; color: rgb(34, 197, 94);"></div></div>
+                <div id="mg12xuMasterScaleLayer"></div>
+                <div id="mg12xuMasterFaderLayer"></div>
+                <div id="mg12xuMasterKnobLayer"></div>
+                <div id="mg12xuMasterOnLayer"></div>
+                <div id="mg12xuMasterRouteLayer"></div>
+                <div id="mg12xuMasterPflLayer"></div>
+                <div id="mg12xuMasterMeterLayer"></div>
                 <div id="mg12xuMasterReadoutLayer"></div>
               </div>
             </div>
@@ -1879,7 +1699,7 @@
           <div class="mg12xu-step-title">2단계 · 콘솔에서 스피커까지 출력 경로 연결하기</div>
           <div class="mg12xu-step-desc">신호가 나가는 순서대로 블록을 눌러보세요.</div>
           <div class="mg12xu-chain-order-row" id="mg12xuChainOrderRow"></div>
-          <div class="mg12xu-chain-area" id="mg12xuChainArea"><button class="mg12xu-item" onclick="pickMg12xuChain('amp')">파워앰프</button><button class="mg12xu-item" onclick="pickMg12xuChain('mainout')">메인 아웃 (Main L/R)</button><button class="mg12xu-item" onclick="pickMg12xuChain('speaker')">스피커</button><button class="mg12xu-item" onclick="pickMg12xuChain('console')">MG12XU 콘솔</button></div>
+          <div class="mg12xu-chain-area" id="mg12xuChainArea"></div>
           <div class="result-panel" id="mg12xuStep2Result"></div>
         </div>
 
@@ -1915,98 +1735,7 @@
           <div class="zone-guide" style="top:15px; left:20px; width:200px; height:90px;">앰프룸</div>
           <div class="zone-guide" style="top:15px; left:260px; width:360px; height:90px;">단상</div>
           <div class="zone-guide" style="bottom:15px; left:360px; width:180px; height:80px;">방송실</div>
-        <div class="draggable-gear" style="left: 40px; top: 180px; width: 90px; height: 116px;">
-          <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('vi10p_L')">i</button>
-          <div class="gear-img-wrap">
-            <img src="vi10p.jpg" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;&gt;&lt;rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/&gt;&lt;text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;&gt;이미지없음&lt;/text&gt;&lt;text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;&gt;vi10p.jpg&lt;/text&gt;&lt;/svg&gt;'">
-          </div>
-          <div class="gear-label">메인 L</div>
-          <div class="resize-handle"></div>
-        </div><div class="draggable-gear" style="left: 800px; top: 180px; width: 90px; height: 116px;">
-          <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('vi10p_R')">i</button>
-          <div class="gear-img-wrap">
-            <img src="vi10p.jpg" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;&gt;&lt;rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/&gt;&lt;text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;&gt;이미지없음&lt;/text&gt;&lt;text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;&gt;vi10p.jpg&lt;/text&gt;&lt;/svg&gt;'">
-          </div>
-          <div class="gear-label">메인 R</div>
-          <div class="resize-handle"></div>
-        </div><div class="draggable-gear" style="left: 280px; top: 25px; width: 90px; height: 116px;">
-          <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('woofer_L')">i</button>
-          <div class="gear-img-wrap">
-            <img src="woofer.jpg" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;&gt;&lt;rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/&gt;&lt;text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;&gt;이미지없음&lt;/text&gt;&lt;text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;&gt;woofer.jpg&lt;/text&gt;&lt;/svg&gt;'">
-          </div>
-          <div class="gear-label">우퍼 L</div>
-          <div class="resize-handle"></div>
-        </div><div class="draggable-gear" style="left: 550px; top: 25px; width: 90px; height: 116px;">
-          <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('woofer_R')">i</button>
-          <div class="gear-img-wrap">
-            <img src="woofer.jpg" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;&gt;&lt;rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/&gt;&lt;text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;&gt;이미지없음&lt;/text&gt;&lt;text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;&gt;woofer.jpg&lt;/text&gt;&lt;/svg&gt;'">
-          </div>
-          <div class="gear-label">우퍼 R</div>
-          <div class="resize-handle"></div>
-        </div><div class="draggable-gear" style="left: 200px; top: 350px; width: 90px; height: 116px;">
-          <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('y7p_L')">i</button>
-          <div class="gear-img-wrap">
-            <img src="y7p.jpg" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;&gt;&lt;rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/&gt;&lt;text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;&gt;이미지없음&lt;/text&gt;&lt;text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;&gt;y7p.jpg&lt;/text&gt;&lt;/svg&gt;'">
-          </div>
-          <div class="gear-label">1열 딜레이 L</div>
-          <div class="resize-handle"></div>
-        </div><div class="draggable-gear" style="left: 420px; top: 350px; width: 90px; height: 116px;">
-          <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('y10p_C')">i</button>
-          <div class="gear-img-wrap">
-            <img src="y7p.jpg" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;&gt;&lt;rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/&gt;&lt;text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;&gt;이미지없음&lt;/text&gt;&lt;text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;&gt;y7p.jpg&lt;/text&gt;&lt;/svg&gt;'">
-          </div>
-          <div class="gear-label">1열 센터</div>
-          <div class="resize-handle"></div>
-        </div><div class="draggable-gear" style="left: 640px; top: 350px; width: 90px; height: 116px;">
-          <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('y7p_R')">i</button>
-          <div class="gear-img-wrap">
-            <img src="y7p.jpg" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;&gt;&lt;rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/&gt;&lt;text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;&gt;이미지없음&lt;/text&gt;&lt;text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;&gt;y7p.jpg&lt;/text&gt;&lt;/svg&gt;'">
-          </div>
-          <div class="gear-label">1열 딜레이 R</div>
-          <div class="resize-handle"></div>
-        </div><div class="draggable-gear" style="left: 200px; top: 530px; width: 90px; height: 116px;">
-          <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('e8_L')">i</button>
-          <div class="gear-img-wrap">
-            <img src="e8.jpg" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;&gt;&lt;rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/&gt;&lt;text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;&gt;이미지없음&lt;/text&gt;&lt;text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;&gt;e8.jpg&lt;/text&gt;&lt;/svg&gt;'">
-          </div>
-          <div class="gear-label">2열 딜레이 L</div>
-          <div class="resize-handle"></div>
-        </div><div class="draggable-gear" style="left: 640px; top: 530px; width: 90px; height: 116px;">
-          <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('e8_R')">i</button>
-          <div class="gear-img-wrap">
-            <img src="e8.jpg" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;&gt;&lt;rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/&gt;&lt;text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;&gt;이미지없음&lt;/text&gt;&lt;text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;&gt;e8.jpg&lt;/text&gt;&lt;/svg&gt;'">
-          </div>
-          <div class="gear-label">2열 딜레이 R</div>
-          <div class="resize-handle"></div>
-        </div><div class="draggable-gear" style="left: 30px; top: 25px; width: 90px; height: 116px;">
-          <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('amp_40d')">i</button>
-          <div class="gear-img-wrap">
-            <img src="40D.jpg" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;&gt;&lt;rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/&gt;&lt;text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;&gt;이미지없음&lt;/text&gt;&lt;text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;&gt;40D.jpg&lt;/text&gt;&lt;/svg&gt;'">
-          </div>
-          <div class="gear-label">40D 앰프</div>
-          <div class="resize-handle"></div>
-        </div><div class="draggable-gear" style="left: 120px; top: 25px; width: 90px; height: 116px;">
-          <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('amp_10d')">i</button>
-          <div class="gear-img-wrap">
-            <img src="10D.jpg" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;&gt;&lt;rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/&gt;&lt;text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;&gt;이미지없음&lt;/text&gt;&lt;text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;&gt;10D.jpg&lt;/text&gt;&lt;/svg&gt;'">
-          </div>
-          <div class="gear-label">10D 앰프</div>
-          <div class="resize-handle"></div>
-        </div><div class="draggable-gear" style="left: 340px; top: 130px; width: 90px; height: 116px;">
-          <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('stagebox')">i</button>
-          <div class="gear-img-wrap">
-            <img src="rio3224D2.jpg" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;&gt;&lt;rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/&gt;&lt;text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;&gt;이미지없음&lt;/text&gt;&lt;text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;&gt;rio3224D2.jpg&lt;/text&gt;&lt;/svg&gt;'">
-          </div>
-          <div class="gear-label">스테이지 박스</div>
-          <div class="resize-handle"></div>
-        </div><div class="draggable-gear" style="left: 400px; top: 720px; width: 90px; height: 116px;">
-          <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('console')">i</button>
-          <div class="gear-img-wrap">
-            <img src="console.jpg" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;&gt;&lt;rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/&gt;&lt;text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;&gt;이미지없음&lt;/text&gt;&lt;text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;&gt;console.jpg&lt;/text&gt;&lt;/svg&gt;'">
-          </div>
-          <div class="gear-label">콘솔 (믹서)</div>
-          <div class="resize-handle"></div>
-        </div></div>
+        </div>
       </div>
 
       <button class="btn" onclick="checkLayoutComplete()">🔍 시스템 배치 및 케이블링 검증하기</button>
@@ -2055,14 +1784,14 @@
 
           <div style="font-size: 0.78rem; color: var(--text-sub); text-align:center;">기준 대비 몇 dB 변했는지 골라보세요</div>
           <div class="guess-btn-group" id="guessBtnGroup">
-            <button class="guess-btn" disabled="" onclick="guessVolQuiz(-10)">-10</button>
-            <button class="guess-btn" disabled="" onclick="guessVolQuiz(-6)">-6</button>
-            <button class="guess-btn" disabled="" onclick="guessVolQuiz(-3)">-3</button>
-            <button class="guess-btn" disabled="" onclick="guessVolQuiz(-1)">-1</button>
-            <button class="guess-btn" disabled="" onclick="guessVolQuiz(1)">+1</button>
-            <button class="guess-btn" disabled="" onclick="guessVolQuiz(3)">+3</button>
-            <button class="guess-btn" disabled="" onclick="guessVolQuiz(6)">+6</button>
-            <button class="guess-btn" disabled="" onclick="guessVolQuiz(10)">+10</button>
+            <button class="guess-btn" disabled onclick="guessVolQuiz(-10)">-10</button>
+            <button class="guess-btn" disabled onclick="guessVolQuiz(-6)">-6</button>
+            <button class="guess-btn" disabled onclick="guessVolQuiz(-3)">-3</button>
+            <button class="guess-btn" disabled onclick="guessVolQuiz(-1)">-1</button>
+            <button class="guess-btn" disabled onclick="guessVolQuiz(1)">+1</button>
+            <button class="guess-btn" disabled onclick="guessVolQuiz(3)">+3</button>
+            <button class="guess-btn" disabled onclick="guessVolQuiz(6)">+6</button>
+            <button class="guess-btn" disabled onclick="guessVolQuiz(10)">+10</button>
           </div>
           <div class="result-panel" id="volQuizResultPanel" style="width:100%;"></div>
           <div id="volQuizBestTag"></div>
@@ -2109,7 +1838,7 @@
             <div class="exact-strip" style="background:#0f172a; border-color:#3b82f6;">
               <div class="exact-ch-top">
                 <span class="exact-ch-num" style="color:#38bdf8;">01</span>
-                <span class="exact-meter-display" id="meterSample">+0.0</span>
+                <span class="exact-meter-display" id="meterSample">0.0</span>
               </div>
               <div class="exact-btn-row">
                 <div class="sub-ctrl-btn active-solo" onclick="toggleSolo('sample')">SOLO</div>
@@ -2122,10 +1851,10 @@
 
               <div class="fader-area-wrapper" id="faderAreaSample">
                 <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
                 </div>
                 <div class="fader-slot-line"></div>
-                <div class="fader-thumb-visual" id="thumbSample" style="bottom: 147.143px;">
+                <div class="fader-thumb-visual" id="thumbSample" style="bottom: 147px;">
                   <div class="fader-thumb-line"></div>
                 </div>
               </div>
@@ -2136,7 +1865,7 @@
             <div class="exact-strip" id="strip_gg">
               <div class="exact-ch-top">
                 <span class="exact-ch-num">02</span>
-                <span class="exact-meter-display" id="meter_gg">-&amp;infin;</span>
+                <span class="exact-meter-display" id="meter_gg">-&infin;</span>
               </div>
               <div class="exact-btn-row">
                 <div class="sub-ctrl-btn" id="soloBtn_gg" onclick="toggleSolo('gg')">SOLO</div>
@@ -2149,7 +1878,7 @@
 
               <div class="fader-area-wrapper" id="faderArea_gg" onpointerdown="startFaderDrag(event, 'gg')">
                 <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
                 </div>
                 <div class="fader-slot-line"></div>
                 <div class="fader-thumb-visual" id="thumb_gg" style="bottom: 10px;">
@@ -2162,7 +1891,7 @@
             <div class="exact-strip" id="strip_ag">
               <div class="exact-ch-top">
                 <span class="exact-ch-num">03</span>
-                <span class="exact-meter-display" id="meter_ag">-&amp;infin;</span>
+                <span class="exact-meter-display" id="meter_ag">-&infin;</span>
               </div>
               <div class="exact-btn-row">
                 <div class="sub-ctrl-btn" id="soloBtn_ag" onclick="toggleSolo('ag')">SOLO</div>
@@ -2175,7 +1904,7 @@
 
               <div class="fader-area-wrapper" id="faderArea_ag" onpointerdown="startFaderDrag(event, 'ag')">
                 <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
                 </div>
                 <div class="fader-slot-line"></div>
                 <div class="fader-thumb-visual" id="thumb_ag" style="bottom: 10px;">
@@ -2188,7 +1917,7 @@
             <div class="exact-strip" id="strip_bass">
               <div class="exact-ch-top">
                 <span class="exact-ch-num">04</span>
-                <span class="exact-meter-display" id="meter_bass">-&amp;infin;</span>
+                <span class="exact-meter-display" id="meter_bass">-&infin;</span>
               </div>
               <div class="exact-btn-row">
                 <div class="sub-ctrl-btn" id="soloBtn_bass" onclick="toggleSolo('bass')">SOLO</div>
@@ -2201,7 +1930,7 @@
 
               <div class="fader-area-wrapper" id="faderArea_bass" onpointerdown="startFaderDrag(event, 'bass')">
                 <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
                 </div>
                 <div class="fader-slot-line"></div>
                 <div class="fader-thumb-visual" id="thumb_bass" style="bottom: 10px;">
@@ -2214,7 +1943,7 @@
             <div class="exact-strip" id="strip_drum">
               <div class="exact-ch-top">
                 <span class="exact-ch-num">05</span>
-                <span class="exact-meter-display" id="meter_drum">-&amp;infin;</span>
+                <span class="exact-meter-display" id="meter_drum">-&infin;</span>
               </div>
               <div class="exact-btn-row">
                 <div class="sub-ctrl-btn" id="soloBtn_drum" onclick="toggleSolo('drum')">SOLO</div>
@@ -2227,7 +1956,7 @@
 
               <div class="fader-area-wrapper" id="faderArea_drum" onpointerdown="startFaderDrag(event, 'drum')">
                 <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
                 </div>
                 <div class="fader-slot-line"></div>
                 <div class="fader-thumb-visual" id="thumb_drum" style="bottom: 10px;">
@@ -2240,7 +1969,7 @@
             <div class="exact-strip" id="strip_elec_rhythm">
               <div class="exact-ch-top">
                 <span class="exact-ch-num">06</span>
-                <span class="exact-meter-display" id="meter_elec_rhythm">-&amp;infin;</span>
+                <span class="exact-meter-display" id="meter_elec_rhythm">-&infin;</span>
               </div>
               <div class="exact-btn-row">
                 <div class="sub-ctrl-btn" id="soloBtn_elec_rhythm" onclick="toggleSolo('elec_rhythm')">SOLO</div>
@@ -2253,7 +1982,7 @@
 
               <div class="fader-area-wrapper" id="faderArea_elec_rhythm" onpointerdown="startFaderDrag(event, 'elec_rhythm')">
                 <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
                 </div>
                 <div class="fader-slot-line"></div>
                 <div class="fader-thumb-visual" id="thumb_elec_rhythm" style="bottom: 10px;">
@@ -2266,7 +1995,7 @@
             <div class="exact-strip" id="strip_elec_solo">
               <div class="exact-ch-top">
                 <span class="exact-ch-num">07</span>
-                <span class="exact-meter-display" id="meter_elec_solo">-&amp;infin;</span>
+                <span class="exact-meter-display" id="meter_elec_solo">-&infin;</span>
               </div>
               <div class="exact-btn-row">
                 <div class="sub-ctrl-btn" id="soloBtn_elec_solo" onclick="toggleSolo('elec_solo')">SOLO</div>
@@ -2279,7 +2008,7 @@
 
               <div class="fader-area-wrapper" id="faderArea_elec_solo" onpointerdown="startFaderDrag(event, 'elec_solo')">
                 <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
                 </div>
                 <div class="fader-slot-line"></div>
                 <div class="fader-thumb-visual" id="thumb_elec_solo" style="bottom: 10px;">
@@ -2292,7 +2021,7 @@
             <div class="exact-strip" id="strip_piano">
               <div class="exact-ch-top">
                 <span class="exact-ch-num">08</span>
-                <span class="exact-meter-display" id="meter_piano">-&amp;infin;</span>
+                <span class="exact-meter-display" id="meter_piano">-&infin;</span>
               </div>
               <div class="exact-btn-row">
                 <div class="sub-ctrl-btn" id="soloBtn_piano" onclick="toggleSolo('piano')">SOLO</div>
@@ -2305,7 +2034,7 @@
 
               <div class="fader-area-wrapper" id="faderArea_piano" onpointerdown="startFaderDrag(event, 'piano')">
                 <div class="fader-scale-labels">
-                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>∞</span>
+                  <span>+10</span><span>+5</span><span>0</span><span>5</span><span>10</span><span>20</span><span>30</span><span>40</span><span>&infin;</span>
                 </div>
                 <div class="fader-slot-line"></div>
                 <div class="fader-thumb-visual" id="thumb_piano" style="bottom: 10px;">
@@ -2336,12 +2065,12 @@
     <!-- TAB 4: 사운드팀 신입 스텝 10주 커리큘럼 -->
     <div id="tab4" class="tab-content active">
       <div class="level-header">
-        <div class="level-title editable-text" data-field="tab4.title" contenteditable="false">📅 사운드팀 신입 스텝 10주 커리큘럼</div>
-        <div class="level-desc editable-text" data-field="tab4.desc" contenteditable="false"></div>
+        <div class="level-title editable-text" data-field="tab4.title">📅 사운드팀 신입 스텝 10주 커리큘럼</div>
+        <div class="level-desc editable-text" data-field="tab4.desc">오리엔테이션 1주 + 모니터 스텝 4주 + 단상 스텝 2주 + 오퍼레이팅 교육 3주, 총 10주 과정입니다. 각 주차를 마치면 체크해서 진행 상황을 기록하세요. "이동" 버튼을 누르면 그 주차와 연계된 학습툴 탭으로 바로 이동합니다.</div>
       </div>
 
       <div class="content-edit-bar" id="tab4EditBar">
-        <button type="button" class="content-edit-btn" id="tab4EditBtn" onclick="toggleContentEdit('tab4')" style="">✏️ 커리큘럼 내용 편집</button>
+        <button type="button" class="content-edit-btn" id="tab4EditBtn" onclick="toggleContentEdit('tab4')">✏️ 커리큘럼 내용 편집</button>
         <button type="button" class="content-edit-btn save" onclick="saveEditedContent('tab4')">💾 저장 (새 index.html 다운로드)</button>
         <button type="button" class="content-edit-btn cancel" onclick="cancelContentEdit('tab4')">편집 취소</button>
         <span class="content-edit-hint">각 주차의 제목·목표·실습 내용·도구 안내를 직접 클릭해서 수정한 뒤 저장하면, 수정 내용이 담긴 새 index.html 파일이 다운로드됩니다. 그 파일로 기존 파일을 교체하면 수정이 반영됩니다.</span>
@@ -2354,147 +2083,7 @@
         <div class="curriculum-progress-text" id="curriculumProgressText">0 / 10주 완료</div>
       </div>
 
-      <div id="curriculumList"><div class="phase-divider first">오리엔테이션</div>
-          <div class="week-card accent-cyan">
-            <input type="checkbox" class="week-check" onchange="toggleWeekDone(1)" aria-label="1주차 완료">
-            <div class="week-body">
-              <div class="week-head">
-                <span class="week-title editable-text" data-week="1" data-field="title" contenteditable="false">1주차</span>
-              </div>
-              <div class="week-goal"><b>목표</b> · <span class="editable-text" data-week="1" data-field="goal" contenteditable="false">교회 음향 시스템과 스텝 기본 예절 이해</span></div>
-              <div class="week-practice"><b>실습 내용</b> · <span class="editable-text" data-week="1" data-field="practice" contenteditable="false">스텝 예절(복장·태도·무전기 사용법), 3층 음향 시스템 설명, MG12XU 콘솔로 음향 시스템 구축해보기</span></div>
-              <div class="week-tool-row">
-                <span class="week-tool-text">🔗 <span class="editable-text" data-week="1" data-field="tool" contenteditable="false">탭1 "MG12XU 콘솔로 음향 시스템 구축해보기" 게임으로 먼저 연습한 뒤, 탭2 "3층 음향 시스템"으로 실제 장비 배치와 신호 경로(스테이지박스→콘솔→앰프→스피커)를 예습해보세요.</span></span>
-                <button class="week-go-btn" onclick="goToCurriculumTab('tab2')">➜ 이동</button>
-              </div>
-            </div>
-          </div><div class="phase-divider">모니터 스텝</div>
-          <div class="week-card accent-blue">
-            <input type="checkbox" class="week-check" onchange="toggleWeekDone(2)" aria-label="2주차 완료">
-            <div class="week-body">
-              <div class="week-head">
-                <span class="week-title editable-text" data-week="2" data-field="title" contenteditable="false">2주차</span>
-              </div>
-              <div class="week-goal"><b>목표</b> · <span class="editable-text" data-week="2" data-field="goal" contenteditable="false">소리의 다름을 인지하고 좋은/나쁜 소리를 구분</span></div>
-              <div class="week-practice"><b>실습 내용</b> · <span class="editable-text" data-week="2" data-field="practice" contenteditable="false">스피커 비교 청음, 예배 녹음 파일로 소리 비교, 모니터링 교육</span></div>
-              <div class="week-tool-row">
-                <span class="week-tool-text">🔗 <span class="editable-text" data-week="2" data-field="tool" contenteditable="false">탭3 "대역별 오디오 샘플 비교 청취"로 저음·중음·고음 강약을 먼저 구분해보세요.</span></span>
-                <button class="week-go-btn" onclick="goToCurriculumTab('tab3')">➜ 이동</button>
-              </div>
-            </div>
-          </div><div class="phase-divider">모니터 스텝</div>
-          <div class="week-card accent-blue">
-            <input type="checkbox" class="week-check" onchange="toggleWeekDone(3)" aria-label="3주차 완료">
-            <div class="week-body">
-              <div class="week-head">
-                <span class="week-title editable-text" data-week="3" data-field="title" contenteditable="false">3주차</span>
-              </div>
-              <div class="week-goal"><b>목표</b> · <span class="editable-text" data-week="3" data-field="goal" contenteditable="false">관현악 마이크 세팅 및 모니터링 피드백 습득</span></div>
-              <div class="week-practice"><b>실습 내용</b> · <span class="editable-text" data-week="3" data-field="practice" contenteditable="false">관현악 마이크 세팅 교육, 모니터링/볼륨 조절 교육</span></div>
-              <div class="week-tool-row">
-                <span class="week-tool-text">🔗 <span class="editable-text" data-week="3" data-field="tool" contenteditable="false">탭3 "볼륨 변화 트레이닝" 퀴즈 모드로 dB 변화를 귀로 감지하는 연습을 해보세요.</span></span>
-                <button class="week-go-btn" onclick="goToCurriculumTab('tab3')">➜ 이동</button>
-              </div>
-            </div>
-          </div><div class="phase-divider">모니터 스텝</div>
-          <div class="week-card accent-blue">
-            <input type="checkbox" class="week-check" onchange="toggleWeekDone(4)" aria-label="4주차 완료">
-            <div class="week-body">
-              <div class="week-head">
-                <span class="week-title editable-text" data-week="4" data-field="title" contenteditable="false">4주차</span>
-              </div>
-              <div class="week-goal"><b>목표</b> · <span class="editable-text" data-week="4" data-field="goal" contenteditable="false">대성전·소성전 소리 크기와 밸런스 피드백</span></div>
-              <div class="week-practice"><b>실습 내용</b> · <span class="editable-text" data-week="4" data-field="practice" contenteditable="false">관현악 마이크 세팅 반복, 대성전 모니터링/피드백 교육</span></div>
-              <div class="week-tool-row">
-                <span class="week-tool-text">🔗 <span class="editable-text" data-week="4" data-field="tool" contenteditable="false">탭3 "멀티트랙 믹스 밸런스" 채점으로 악기별 밸런스 감각을 훈련해보세요.</span></span>
-                <button class="week-go-btn" onclick="goToCurriculumTab('tab3')">➜ 이동</button>
-              </div>
-            </div>
-          </div><div class="phase-divider">모니터 스텝</div>
-          <div class="week-card accent-blue">
-            <input type="checkbox" class="week-check" onchange="toggleWeekDone(5)" aria-label="5주차 완료">
-            <div class="week-body">
-              <div class="week-head">
-                <span class="week-title editable-text" data-week="5" data-field="title" contenteditable="false">5주차</span>
-              </div>
-              <div class="week-goal"><b>목표</b> · <span class="editable-text" data-week="5" data-field="goal" contenteditable="false">3주간 교육 내용 이해·습득 점검</span></div>
-              <div class="week-practice"><b>실습 내용</b> · <span class="editable-text" data-week="5" data-field="practice" contenteditable="false">관현악 마이크 세팅 실전, 소/대성전 모니터링 실전</span></div>
-              <div class="week-tool-row">
-                <span class="week-tool-text">🔗 <span class="editable-text" data-week="5" data-field="tool" contenteditable="false">실전 투입 전 탭3 퀴즈 연속 정답·믹스 채점 점수로 자가 점검해보세요.</span></span>
-                <button class="week-go-btn" onclick="goToCurriculumTab('tab3')">➜ 이동</button>
-              </div>
-            </div>
-          </div><div class="phase-divider">단상 스텝</div>
-          <div class="week-card accent-yellow">
-            <input type="checkbox" class="week-check" onchange="toggleWeekDone(6)" aria-label="6주차 완료">
-            <div class="week-body">
-              <div class="week-head">
-                <span class="week-title editable-text" data-week="6" data-field="title" contenteditable="false">6주차</span>
-              </div>
-              <div class="week-goal"><b>목표</b> · <span class="editable-text" data-week="6" data-field="goal" contenteditable="false">싱어·지휘자 모니터 스피커 운영 방법 습득</span></div>
-              <div class="week-practice"><b>실습 내용</b> · <span class="editable-text" data-week="6" data-field="practice" contenteditable="false">모니터 스피커 특성·볼륨 조절 교육/실습,&nbsp;</span></div>
-              <div class="week-tool-row">
-                <span class="week-tool-text">🔗 <span class="editable-text" data-week="6" data-field="tool" contenteditable="false">탭3 "볼륨 변화 트레이닝"으로 모니터 스피커 볼륨 조절 감각을 반복 연습해보세요. (이동식 단상 실습은 현장에서만 가능)</span></span>
-                <button class="week-go-btn" onclick="goToCurriculumTab('tab3')">➜ 이동</button>
-              </div>
-            </div>
-          </div><div class="phase-divider">단상 스텝</div>
-          <div class="week-card accent-yellow">
-            <input type="checkbox" class="week-check" onchange="toggleWeekDone(7)" aria-label="7주차 완료">
-            <div class="week-body">
-              <div class="week-head">
-                <span class="week-title editable-text" data-week="7" data-field="title" contenteditable="false">7주차</span>
-              </div>
-              <div class="week-goal"><b>목표</b> · <span class="editable-text" data-week="7" data-field="goal" contenteditable="false">올바른 단상 마이크 운영 방법 습득</span></div>
-              <div class="week-practice"><b>실습 내용</b> · <span class="editable-text" data-week="7" data-field="practice" contenteditable="false">단상 마이크 세팅(위치 조정: 설교자 키, 카메라 중앙 등), 단상 모니터링(메인, 설교자, 전자칠판, 좌식(독경), 사회자)</span></div>
-              <div class="week-tool-row">
-                <span class="week-tool-text">🔗 <span class="editable-text" data-week="7" data-field="tool" contenteditable="false">탭2의 '단상' 구역 배치 개념과 느슨하게 연결되지만, 채널별 세부 모니터링 구분은 아직 다루지 않습니다.</span></span>
-                <button class="week-go-btn" onclick="goToCurriculumTab('tab2')">➜ 이동</button>
-              </div>
-            </div>
-          </div><div class="phase-divider">오퍼레이팅</div>
-          <div class="week-card accent-green">
-            <input type="checkbox" class="week-check" onchange="toggleWeekDone(8)" aria-label="8주차 완료">
-            <div class="week-body">
-              <div class="week-head">
-                <span class="week-title editable-text" data-week="8" data-field="title" contenteditable="false">8주차</span>
-              </div>
-              <div class="week-goal"><b>목표</b> · <span class="editable-text" data-week="8" data-field="goal" contenteditable="false">콘솔과 예배 음향 시스템의 기초 이해</span></div>
-              <div class="week-practice"><b>실습 내용</b> · <span class="editable-text" data-week="8" data-field="practice" contenteditable="false">콘솔 기본 구조 및 예배 시스템 흐름 교육</span></div>
-              <div class="week-tool-row">
-                <span class="week-tool-text">🔗 <span class="editable-text" data-week="8" data-field="tool" contenteditable="false">탭1 "확성 시스템의 기본"으로 신호 흐름과 기초 이론을 예습해보세요.</span></span>
-                <button class="week-go-btn" onclick="goToCurriculumTab('tab1')">➜ 이동</button>
-              </div>
-            </div>
-          </div><div class="phase-divider">오퍼레이팅</div>
-          <div class="week-card accent-green">
-            <input type="checkbox" class="week-check" onchange="toggleWeekDone(9)" aria-label="9주차 완료">
-            <div class="week-body">
-              <div class="week-head">
-                <span class="week-title editable-text" data-week="9" data-field="title" contenteditable="false">9주차</span>
-              </div>
-              <div class="week-goal"><b>목표</b> · <span class="editable-text" data-week="9" data-field="goal" contenteditable="false">실제 예배 중 콘솔 운영 관찰</span></div>
-              <div class="week-practice"><b>실습 내용</b> · <span class="editable-text" data-week="9" data-field="practice" contenteditable="false">콘솔 운영 참관 (오퍼레이터 옆에서 실제 예배 운영을 관찰)</span></div>
-              <div class="week-tool-row">
-                <span class="week-tool-text">🔗 <span class="editable-text" data-week="9" data-field="tool" contenteditable="false">탭2 "3층 음향 시스템"으로 참관 전 장비 배치·신호 경로를 재확인해보세요.</span></span>
-                <button class="week-go-btn" onclick="goToCurriculumTab('tab2')">➜ 이동</button>
-              </div>
-            </div>
-          </div><div class="phase-divider">오퍼레이팅</div>
-          <div class="week-card accent-green">
-            <input type="checkbox" class="week-check" onchange="toggleWeekDone(10)" aria-label="10주차 완료">
-            <div class="week-body">
-              <div class="week-head">
-                <span class="week-title editable-text" data-week="10" data-field="title" contenteditable="false">10주차</span>
-              </div>
-              <div class="week-goal"><b>목표</b> · <span class="editable-text" data-week="10" data-field="goal" contenteditable="false">콘솔 운영 실전 투입 준비</span></div>
-              <div class="week-practice"><b>실습 내용</b> · <span class="editable-text" data-week="10" data-field="practice" contenteditable="false">콘솔 운영 실전 (직접 운영해보기)</span></div>
-              <div class="week-tool-row">
-                <span class="week-tool-text">🔗 <span class="editable-text" data-week="10" data-field="tool" contenteditable="false">탭1·탭2·탭3 전체를 복습하고, 탭3 자가진단 점수로 실전 투입 전 최종 점검을 해보세요.</span></span>
-                
-              </div>
-            </div>
-          </div></div>
+      <div id="curriculumList"></div>
 
       <div class="curriculum-reset-row">
         <button class="curriculum-reset-btn" onclick="resetCurriculumProgress()">진행 상황 초기화</button>
@@ -5052,107 +4641,67 @@
 
     /* ===== 사운드팀 신입 스텝 10주 커리큘럼 ===== */
     const curriculumWeeks = [
-  {
-    "week": 1,
-    "phase": "오리엔테이션",
-    "phaseColor": "cyan",
-    "title": "1주차",
-    "goal": "교회 음향 시스템과 스텝 기본 예절 이해",
-    "practice": "스텝 예절(복장·태도·무전기 사용법), 3층 음향 시스템 설명, MG12XU 콘솔로 음향 시스템 구축해보기",
-    "tool": "탭1 \"MG12XU 콘솔로 음향 시스템 구축해보기\" 게임으로 먼저 연습한 뒤, 탭2 \"3층 음향 시스템\"으로 실제 장비 배치와 신호 경로(스테이지박스→콘솔→앰프→스피커)를 예습해보세요.",
-    "tab": "tab2"
-  },
-  {
-    "week": 2,
-    "phase": "모니터 스텝 1주",
-    "phaseColor": "blue",
-    "title": "2주차",
-    "goal": "소리의 다름을 인지하고 좋은/나쁜 소리를 구분",
-    "practice": "스피커 비교 청음, 예배 녹음 파일로 소리 비교, 모니터링 교육",
-    "tool": "탭3 \"대역별 오디오 샘플 비교 청취\"로 저음·중음·고음 강약을 먼저 구분해보세요.",
-    "tab": "tab3"
-  },
-  {
-    "week": 3,
-    "phase": "모니터 스텝 2주",
-    "phaseColor": "blue",
-    "title": "3주차",
-    "goal": "관현악 마이크 세팅 및 모니터링 피드백 습득",
-    "practice": "관현악 마이크 세팅 교육, 모니터링/볼륨 조절 교육",
-    "tool": "탭3 \"볼륨 변화 트레이닝\" 퀴즈 모드로 dB 변화를 귀로 감지하는 연습을 해보세요.",
-    "tab": "tab3"
-  },
-  {
-    "week": 4,
-    "phase": "모니터 스텝 3주",
-    "phaseColor": "blue",
-    "title": "4주차",
-    "goal": "대성전·소성전 소리 크기와 밸런스 피드백",
-    "practice": "관현악 마이크 세팅 반복, 대성전 모니터링/피드백 교육",
-    "tool": "탭3 \"멀티트랙 믹스 밸런스\" 채점으로 악기별 밸런스 감각을 훈련해보세요.",
-    "tab": "tab3"
-  },
-  {
-    "week": 5,
-    "phase": "모니터 스텝 4주",
-    "phaseColor": "blue",
-    "title": "5주차",
-    "goal": "3주간 교육 내용 이해·습득 점검",
-    "practice": "관현악 마이크 세팅 실전, 소/대성전 모니터링 실전",
-    "tool": "실전 투입 전 탭3 퀴즈 연속 정답·믹스 채점 점수로 자가 점검해보세요.",
-    "tab": "tab3"
-  },
-  {
-    "week": 6,
-    "phase": "단상 스텝 1주",
-    "phaseColor": "yellow",
-    "title": "6주차",
-    "goal": "싱어·지휘자 모니터 스피커 운영 방법 습득",
-    "practice": "모니터 스피커 특성·볼륨 조절 교육/실습,",
-    "tool": "탭3 \"볼륨 변화 트레이닝\"으로 모니터 스피커 볼륨 조절 감각을 반복 연습해보세요. (이동식 단상 실습은 현장에서만 가능)",
-    "tab": "tab3"
-  },
-  {
-    "week": 7,
-    "phase": "단상 스텝 2주",
-    "phaseColor": "yellow",
-    "title": "7주차",
-    "goal": "올바른 단상 마이크 운영 방법 습득",
-    "practice": "단상 마이크 세팅(위치 조정: 설교자 키, 카메라 중앙 등), 단상 모니터링(메인, 설교자, 전자칠판, 좌식(독경), 사회자)",
-    "tool": "탭2의 '단상' 구역 배치 개념과 느슨하게 연결되지만, 채널별 세부 모니터링 구분은 아직 다루지 않습니다.",
-    "tab": "tab2"
-  },
-  {
-    "week": 8,
-    "phase": "오퍼레이팅 1주",
-    "phaseColor": "green",
-    "title": "8주차",
-    "goal": "콘솔과 예배 음향 시스템의 기초 이해",
-    "practice": "콘솔 기본 구조 및 예배 시스템 흐름 교육",
-    "tool": "탭1 \"확성 시스템의 기본\"으로 신호 흐름과 기초 이론을 예습해보세요.",
-    "tab": "tab1"
-  },
-  {
-    "week": 9,
-    "phase": "오퍼레이팅 2주",
-    "phaseColor": "green",
-    "title": "9주차",
-    "goal": "실제 예배 중 콘솔 운영 관찰",
-    "practice": "콘솔 운영 참관 (오퍼레이터 옆에서 실제 예배 운영을 관찰)",
-    "tool": "탭2 \"3층 음향 시스템\"으로 참관 전 장비 배치·신호 경로를 재확인해보세요.",
-    "tab": "tab2"
-  },
-  {
-    "week": 10,
-    "phase": "오퍼레이팅 3주",
-    "phaseColor": "green",
-    "title": "10주차",
-    "goal": "콘솔 운영 실전 투입 준비",
-    "practice": "콘솔 운영 실전 (직접 운영해보기)",
-    "tool": "탭1·탭2·탭3 전체를 복습하고, 탭3 자가진단 점수로 실전 투입 전 최종 점검을 해보세요.",
-    "tab": null
-  }
-];
+      { week: 1, phase: '오리엔테이션', phaseColor: 'cyan',
+        title: '1주차',
+        goal: '교회 음향 시스템과 스텝 기본 예절 이해',
+        practice: '스텝 예절(복장·태도·무전기 사용법), 강동교회 음향 시스템 설명, MG12XU 콘솔로 음향 시스템 구축해보기',
+        tool: '탭1 "MG12XU 콘솔로 음향 시스템 구축해보기" 게임으로 먼저 연습한 뒤, 탭2 "3층 음향 시스템"으로 실제 장비 배치와 신호 경로(스테이지박스→콘솔→앰프→스피커)를 예습해보세요.',
+        tab: 'tab2' },
+      { week: 2, phase: '모니터 스텝 1주', phaseColor: 'blue',
+        title: '2주차',
+        goal: '소리의 다름을 인지하고 좋은/나쁜 소리를 구분',
+        practice: '스피커 비교 청음, 예배 녹음 파일로 소리 비교, 대성전 모니터링 교육',
+        tool: '탭3 "대역별 오디오 샘플 비교 청취"로 저음·중음·고음 강약을 먼저 구분해보세요.',
+        tab: 'tab3' },
+      { week: 3, phase: '모니터 스텝 2주', phaseColor: 'blue',
+        title: '3주차',
+        goal: '관현악 마이크 세팅 및 모니터링 피드백 습득',
+        practice: '관현악 마이크 세팅 교육, 대성전 모니터링/볼륨 조절 교육',
+        tool: '탭3 "볼륨 변화 트레이닝" 퀴즈 모드로 dB 변화를 귀로 감지하는 연습을 해보세요.',
+        tab: 'tab3' },
+      { week: 4, phase: '모니터 스텝 3주', phaseColor: 'blue',
+        title: '4주차',
+        goal: '대성전·소성전 소리 크기와 밸런스 피드백',
+        practice: '관현악 마이크 세팅 반복, 대성전 모니터링/피드백 교육',
+        tool: '탭3 "멀티트랙 믹스 밸런스" 채점으로 악기별 밸런스 감각을 훈련해보세요.',
+        tab: 'tab3' },
+      { week: 5, phase: '모니터 스텝 4주', phaseColor: 'blue',
+        title: '5주차',
+        goal: '3주간 교육 내용 이해·습득 점검',
+        practice: '관현악 마이크 세팅 실전, 소/대성전 모니터링 실전',
+        tool: '실전 투입 전 탭3 퀴즈 연속 정답·믹스 채점 점수로 자가 점검해보세요.',
+        tab: 'tab3' },
+      { week: 6, phase: '단상 스텝 1주', phaseColor: 'yellow',
+        title: '6주차',
+        goal: '싱어·지휘자 모니터 스피커 운영 방법 습득',
+        practice: '모니터 스피커 특성·볼륨 조절 교육/실습, 이동식 단상 교육/실습',
+        tool: '탭3 "볼륨 변화 트레이닝"으로 모니터 스피커 볼륨 조절 감각을 반복 연습해보세요. (이동식 단상 실습은 현장에서만 가능)',
+        tab: 'tab3' },
+      { week: 7, phase: '단상 스텝 2주', phaseColor: 'yellow',
+        title: '7주차',
+        goal: '올바른 단상 마이크 운영 방법 습득',
+        practice: '단상 마이크 세팅(위치 조정: 설교자 키, 카메라 중앙 등), 단상 모니터링(메인, 설교자, 전자칠판, 좌식(독경), 사회자)',
+        tool: '탭2의 \'단상\' 구역 배치 개념과 느슨하게 연결되지만, 채널별 세부 모니터링 구분은 아직 다루지 않습니다.',
+        tab: 'tab2' },
+      { week: 8, phase: '오퍼레이팅 1주', phaseColor: 'green',
+        title: '8주차',
+        goal: '콘솔과 예배 음향 시스템의 기초 이해',
+        practice: '콘솔 기본 구조 및 예배 시스템 흐름 교육',
+        tool: '탭1 "확성 시스템의 기본"으로 신호 흐름과 기초 이론을 예습해보세요.',
+        tab: 'tab1' },
+      { week: 9, phase: '오퍼레이팅 2주', phaseColor: 'green',
+        title: '9주차',
+        goal: '실제 예배 중 콘솔 운영 관찰',
+        practice: '콘솔 운영 참관 (오퍼레이터 옆에서 실제 예배 운영을 관찰)',
+        tool: '탭2 "3층 음향 시스템"으로 참관 전 장비 배치·신호 경로를 재확인해보세요.',
+        tab: 'tab2' },
+      { week: 10, phase: '오퍼레이팅 3주', phaseColor: 'green',
+        title: '10주차',
+        goal: '콘솔 운영 실전 투입 준비',
+        practice: '콘솔 운영 실전 (직접 운영해보기)',
+        tool: '탭1·탭2·탭3 전체를 복습하고, 탭3 자가진단 점수로 실전 투입 전 최종 점검을 해보세요.',
+        tab: null }
+    ];
 
     const CURRICULUM_KEY = 'soundTrainerCurriculumProgress_v1';
     function loadCurriculumProgress() {
@@ -6206,5 +5755,5 @@
       if (prog.mixBestScore !== undefined) renderBestTag('mixBestTag', '최고 점수', prog.mixBestScore + '점');
     })();
   </script>
-
-</body></html>
+</body>
+</html>
