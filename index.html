@@ -176,6 +176,87 @@
       z-index: 1;
     }
 
+    /* ===== 3층 음향 시스템: 3D 뷰 ===== */
+    .canvas3d-wrap {
+      position: relative;
+      width: 100%;
+      height: 620px;
+      background: #0b1220;
+      border: 2px dashed var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      touch-action: none;
+    }
+    .canvas3d-wrap canvas.gear3d-webgl-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      display: block;
+      cursor: grab;
+    }
+    .canvas3d-wrap canvas.gear3d-webgl-canvas:active { cursor: grabbing; }
+    .gear3d-css-layer {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .gear3d-cable-svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .gear3d-loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e2e8f0;
+      font-size: 0.95rem;
+      font-weight: 700;
+      z-index: 3;
+      background: #0b1220;
+    }
+    .gear3d-card {
+      position: absolute;
+      width: 68px;
+      height: 86px;
+      transform: translate(-50%, -100%);
+      pointer-events: auto;
+    }
+    .gear3d-card .gear-label { font-size: 0.58rem; }
+    .gear3d-tray-wrap {
+      background: var(--inner-bg);
+      border: 1px dashed var(--border-color);
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 14px;
+    }
+    .gear3d-tray-label {
+      font-size: 0.78rem;
+      color: var(--text-sub);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .gear3d-tray {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .gear3d-tray .draggable-gear {
+      position: relative;
+      width: 68px;
+      height: 86px;
+      cursor: pointer;
+    }
+    .gear3d-tray .draggable-gear.armed { border-color: var(--accent-yellow); box-shadow: 0 0 15px rgba(245, 158, 11, 0.5); }
+    .gear3d-tray-empty { font-size: 0.78rem; color: var(--text-sub); }
+
     .zone-guide {
       position: absolute;
       font-size: 0.85rem;
@@ -1710,32 +1791,31 @@
       </div>
     </div>
 
-    <!-- TAB 2: 3층 음향 시스템 -->
+    <!-- TAB 2: 3층 음향 시스템 (3D) -->
     <div id="tab2" class="tab-content">
       <div class="level-header">
-        <div class="level-title">3층 음향 시스템</div>
-        <div class="level-desc">장비를 드래그해 배치하고, 우측 하단의 파란색 핸들을 잡아당겨 원하는 카드만 개별적으로 크기(비율)를 조절해보세요! 장비를 클릭하면 케이블이 연결됩니다. 장비 왼쪽 위의 <b>ℹ️</b> 아이콘을 누르면 그 장비가 무엇인지 설명을 볼 수 있어요.</div>
+        <div class="level-title">3층 음향 시스템 (3D)</div>
+        <div class="level-desc">실제 공간을 3D로 둘러보며 장비를 배치해보세요. 마우스로 드래그하면 공간을 회전, 휠로 확대/축소할 수 있습니다. 아래 보관함에서 장비를 클릭해 선택한 뒤 3D 공간을 클릭하면 그 자리에 배치됩니다. 배치된 장비를 순서대로 클릭하면 케이블이 연결됩니다. 장비의 <b>ℹ️</b> 아이콘을 누르면 설명을 볼 수 있어요.</div>
         <div id="layoutBestTag"></div>
       </div>
 
       <div class="control-bar">
-        <span>💡 안내: 스마트폰에서는 영역 안을 스와이프하여 화면을 이동할 수 있습니다.</span>
-        <button style="padding:4px 10px; font-size:0.75rem; background:#cbd5e1; color:#0f172a; border:none; border-radius:6px; cursor:pointer;" onclick="resetCardSizes()">크기 초기화</button>
+        <span>💡 안내: 3D 공간 안을 드래그하면 회전, 휠/핀치로 확대·축소됩니다.</span>
+        <button style="padding:4px 10px; font-size:0.75rem; background:#cbd5e1; color:#0f172a; border:none; border-radius:6px; cursor:pointer;" onclick="reset3DPlacement()">배치 초기화</button>
       </div>
 
       <div class="cable-instruction">
-        <span id="cableStatusText">🔌 케이블 모드: 첫 번째 장비를 터치하세요 (예: 콘솔 ➔ 스테이지박스)</span>
+        <span id="cableStatusText">🔌 케이블 모드: 첫 번째 장비를 클릭하세요 (예: 콘솔 ➔ 스테이지박스)</span>
         <button style="padding:4px 10px; font-size:0.75rem; background:#cbd5e1; color:#0f172a; border:none; border-radius:6px; cursor:pointer;" onclick="resetCables()">선 초기화</button>
       </div>
 
-      <div class="workspace-canvas" id="workspaceCanvas">
-        <div class="canvas-inner" id="canvasInner">
-          <svg class="connection-svg" id="connectionSvg"></svg>
-          
-          <div class="zone-guide" style="top:15px; left:20px; width:200px; height:90px;">앰프룸</div>
-          <div class="zone-guide" style="top:15px; left:260px; width:360px; height:90px;">단상</div>
-          <div class="zone-guide" style="bottom:15px; left:360px; width:180px; height:80px;">방송실</div>
-        </div>
+      <div class="canvas3d-wrap" id="canvas3dWrap">
+        <div class="gear3d-loading" id="gear3dLoading">🏛️ 3D 공간을 불러오는 중…</div>
+      </div>
+
+      <div class="gear3d-tray-wrap">
+        <div class="gear3d-tray-label" id="gear3dTrayLabel">📦 배치할 장비 (클릭 후 위 3D 공간을 클릭해서 배치하세요)</div>
+        <div class="gear3d-tray" id="gear3dTray"></div>
       </div>
 
       <button class="btn" onclick="checkLayoutComplete()">🔍 시스템 배치 및 케이블링 검증하기</button>
@@ -2101,6 +2181,15 @@
       <div class="modal-body" id="modalBody"></div>
     </div>
   </div>
+
+  <!-- 3층 음향 시스템(3D)용 라이브러리 — file://로 직접 열어도 되도록(fetch/XHR의 CORS 제약을 받지 않는)
+       일반 <script> 전역 빌드를 로컬 파일로 포함합니다. assets3d/sanctuary_data.js는 건물 3D 모델(.glb)을
+       base64 문자열로 담고 있어, THREE.GLTFLoader가 네트워크 요청 없이 data: URI로 바로 읽습니다. -->
+  <script src="vendor/three.min.js"></script>
+  <script src="vendor/OrbitControls.js"></script>
+  <script src="vendor/GLTFLoader.js"></script>
+  <script src="vendor/CSS2DRenderer.js"></script>
+  <script src="assets3d/sanctuary_data.js"></script>
 
   <script>
     /* ===== 공통 모달 (alert 대체) ===== */
@@ -4637,6 +4726,7 @@
       const content = document.getElementById(tabId);
       if (content) content.classList.add('active');
       if (tabId === 'tab4') renderCurriculum();
+      if (tabId === 'tab2') init3DWorkspace();
     }
 
     /* ===== 사운드팀 신입 스텝 10주 커리큘럼 ===== */
@@ -4875,8 +4965,6 @@
       { id: 'console', name: '콘솔 (믹서)', img: 'console.jpg', x: 400, y: 720, w: 90, h: 116 }
     ];
 
-    let canvasInner = document.getElementById('canvasInner');
-    let svgLayer = document.getElementById('connectionSvg');
     let selectedGearForCable = null;
     let connectedCables = [];
 
@@ -4945,118 +5033,208 @@
       if (msg) msg.innerText = '↩️ 기본값을 불러왔습니다. 저장하려면 💾 저장을 눌러주세요.';
     }
 
-    function initWorkspace() {
-      canvasInner.querySelectorAll('.draggable-gear').forEach(el => el.remove());
-      gearItems.forEach(item => {
+    /* =========================================================================
+       3층 음향 시스템 — 3D 워크스페이스
+       - 실제 공간(assets3d/sanctuary_data.js에 base64로 담긴 .glb)을 Three.js로 불러와
+         마우스로 회전/확대할 수 있는 3D 뷰로 보여줍니다.
+       - 장비는 하단 "보관함"에서 클릭으로 선택한 뒤, 3D 공간을 클릭하면 그 지점(실제 벽/바닥
+         표면)에 배치됩니다. 배치된 장비는 THREE.CSS2DObject로 그 3D 좌표에 "매달아" 둔
+         기존 .draggable-gear 카드(이미지·이름표·ℹ️ 정보버튼 그대로 재사용)입니다 — 카메라를
+         돌리면 카드도 함께 화면상 위치가 갱신됩니다.
+       - 케이블 연결(순서대로 두 장비 클릭)과 정답 경로 채점(checkLayoutComplete)은 기존 로직을
+         그대로 재사용합니다 — 이 로직은 장비의 "좌표"가 아니라 "연결 관계"만 검사하기 때문에
+         2D든 3D든 변경 없이 그대로 동작합니다.
+       ========================================================================= */
+    const gear3d = {
+      inited: false,
+      scene: null, camera: null, renderer: null, cssRenderer: null, controls: null,
+      raycaster: null, modelRoot: null,
+      armedId: null,
+      placedPos: {},     // id -> THREE.Vector3 (world position)
+      cssObjects: {},    // id -> THREE.CSS2DObject
+      cardEls: {},        // id -> DOM element (card)
+    };
+
+    function gear3dBuildCardInner(item) {
+      return `
+        <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('${item.id}')">i</button>
+        <div class="gear-img-wrap">
+          <img src="${item.img}" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;><rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/><text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;>이미지없음</text><text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;>${item.img}</text></svg>'">
+        </div>
+        <div class="gear-label">${item.name}</div>
+      `;
+    }
+
+    function init3DWorkspace() {
+      if (gear3d.inited) { gear3dOnResize(); return; }
+      if (!window.THREE) {
+        const wrap = document.getElementById('canvas3dWrap');
+        if (wrap) wrap.innerHTML = '<div class="gear3d-loading">⚠️ 3D 라이브러리를 불러오지 못했습니다.</div>';
+        return;
+      }
+      gear3d.inited = true;
+      const wrap = document.getElementById('canvas3dWrap');
+      const w = wrap.clientWidth || 900;
+      const h = wrap.clientHeight || 620;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0b1220);
+      const camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 1000);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(w, h);
+      renderer.domElement.className = 'gear3d-webgl-canvas';
+      wrap.appendChild(renderer.domElement);
+
+      const cssRenderer = new THREE.CSS2DRenderer();
+      cssRenderer.setSize(w, h);
+      cssRenderer.domElement.className = 'gear3d-css-layer';
+      wrap.appendChild(cssRenderer.domElement);
+
+      const cableSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      cableSvg.setAttribute('class', 'gear3d-cable-svg');
+      cableSvg.id = 'gear3dCableSvg';
+      wrap.appendChild(cableSvg);
+
+      const hemi = new THREE.HemisphereLight(0xffffff, 0x3a3a3a, 1.15);
+      scene.add(hemi);
+      const dir = new THREE.DirectionalLight(0xffffff, 0.6);
+      dir.position.set(20, 40, 10);
+      scene.add(dir);
+
+      const controls = new THREE.OrbitControls(camera, wrap);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.08;
+      controls.maxDistance = 200;
+      controls.minDistance = 2;
+
+      gear3d.scene = scene;
+      gear3d.camera = camera;
+      gear3d.renderer = renderer;
+      gear3d.cssRenderer = cssRenderer;
+      gear3d.controls = controls;
+      gear3d.raycaster = new THREE.Raycaster();
+
+      const loader = new THREE.GLTFLoader();
+      const dataUri = 'data:model/gltf-binary;base64,' + (window.SANCTUARY_GLB_BASE64 || '');
+      loader.load(dataUri, function (gltf) {
+        scene.add(gltf.scene);
+        gear3d.modelRoot = gltf.scene;
+
+        const box = new THREE.Box3().setFromObject(gltf.scene);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        const maxHoriz = Math.max(size.x, size.z);
+        camera.position.set(center.x, center.y + size.y * 1.6 + maxHoriz * 0.25, center.z + maxHoriz * 0.75);
+        controls.target.copy(center);
+        controls.update();
+
+        const loading = document.getElementById('gear3dLoading');
+        if (loading) loading.remove();
+      }, undefined, function (err) {
+        const loading = document.getElementById('gear3dLoading');
+        if (loading) loading.innerHTML = '⚠️ 3D 공간을 불러오지 못했습니다.';
+        console.error('GLB load error', err);
+      });
+
+      wrap.addEventListener('click', gear3dOnCanvasClick);
+      window.addEventListener('resize', gear3dOnResize);
+
+      gear3dRenderTray();
+
+      function tick() {
+        requestAnimationFrame(tick);
+        controls.update();
+        renderer.render(scene, camera);
+        cssRenderer.render(scene, camera);
+        redrawCables3d();
+      }
+      tick();
+    }
+
+    function gear3dOnResize() {
+      const wrap = document.getElementById('canvas3dWrap');
+      if (!wrap || !gear3d.renderer) return;
+      const w = wrap.clientWidth || 900;
+      const h = wrap.clientHeight || 620;
+      gear3d.camera.aspect = w / h;
+      gear3d.camera.updateProjectionMatrix();
+      gear3d.renderer.setSize(w, h);
+      gear3d.cssRenderer.setSize(w, h);
+    }
+
+    function gear3dOnCanvasClick(e) {
+      if (e.target.closest('.gear3d-card')) return; // 카드 클릭은 handleGearCableClick3d가 처리
+      if (!gear3d.armedId || !gear3d.modelRoot) return;
+      const wrap = document.getElementById('canvas3dWrap');
+      const rect = wrap.getBoundingClientRect();
+      const mouse = new THREE.Vector2(
+        ((e.clientX - rect.left) / rect.width) * 2 - 1,
+        -((e.clientY - rect.top) / rect.height) * 2 + 1
+      );
+      gear3d.raycaster.setFromCamera(mouse, gear3d.camera);
+      const hits = gear3d.raycaster.intersectObject(gear3d.modelRoot, true);
+      if (hits.length === 0) return;
+      gear3dPlaceAt(gear3d.armedId, hits[0].point);
+    }
+
+    function gear3dPlaceAt(id, point) {
+      const item = gearItems.find(g => g.id === id);
+      if (!item) return;
+      gear3d.placedPos[id] = point.clone();
+
+      if (!gear3d.cssObjects[id]) {
+        const div = document.createElement('div');
+        div.className = 'draggable-gear gear3d-card';
+        div.innerHTML = gear3dBuildCardInner(item);
+        div.addEventListener('click', function (e) {
+          e.stopPropagation();
+          handleGearCableClick3d(item, div);
+        });
+        const obj = new THREE.CSS2DObject(div);
+        gear3d.scene.add(obj);
+        gear3d.cssObjects[id] = obj;
+        gear3d.cardEls[id] = div;
+      }
+      gear3d.cssObjects[id].position.copy(point);
+
+      gear3d.armedId = null;
+      gear3dRenderTray();
+      gear3dRefreshCardStates();
+    }
+
+    function gear3dRenderTray() {
+      const tray = document.getElementById('gear3dTray');
+      const label = document.getElementById('gear3dTrayLabel');
+      if (!tray) return;
+      tray.innerHTML = '';
+      const remaining = gearItems.filter(item => !gear3d.placedPos[item.id]);
+      if (remaining.length === 0) {
+        tray.innerHTML = '<div class="gear3d-tray-empty">✅ 모든 장비를 배치했습니다. 이제 순서대로 클릭해 케이블을 연결해보세요.</div>';
+        if (label) label.textContent = '📦 배치할 장비 (모두 배치 완료)';
+        return;
+      }
+      if (label) label.textContent = '📦 배치할 장비 (클릭 후 위 3D 공간을 클릭해서 배치하세요)';
+      remaining.forEach(item => {
         const div = document.createElement('div');
         div.className = 'draggable-gear';
-        div.style.left = item.x + 'px';
-        div.style.top = item.y + 'px';
-        div.style.width = item.w + 'px';
-        div.style.height = item.h + 'px';
-
-        div.innerHTML = `
-          <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('${item.id}')">i</button>
-          <div class="gear-img-wrap">
-            <img src="${item.img}" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;><rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/><text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;>이미지없음</text><text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;>${item.img}</text></svg>'">
-          </div>
-          <div class="gear-label">${item.name}</div>
-          <div class="resize-handle"></div>
-        `;
-        if (connectedCables.some(c => c.fromId === item.id || c.toId === item.id)) {
-          div.classList.add('connected');
-        }
-        makeInteractive(div, item);
-        canvasInner.appendChild(div);
+        if (gear3d.armedId === item.id) div.classList.add('armed');
+        div.innerHTML = gear3dBuildCardInner(item);
+        div.addEventListener('click', function (e) {
+          if (e.target.closest('.gear-info-btn')) return;
+          gear3d.armedId = (gear3d.armedId === item.id) ? null : item.id;
+          gear3dRenderTray();
+          const status = document.getElementById('cableStatusText');
+          if (status && gear3d.armedId) status.textContent = `📍 [${item.name}] 선택됨 — 위 3D 공간에서 놓을 위치를 클릭하세요.`;
+        });
+        tray.appendChild(div);
       });
-      drawCables();
     }
 
-    function makeInteractive(elm, item) {
-      let isResizing = false;
-      let startX, startY, startW, startH, startLeft, startTop;
-      const handle = elm.querySelector('.resize-handle');
-
-      handle.onpointerdown = function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        isResizing = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        startW = elm.offsetWidth;
-        startH = elm.offsetHeight;
-        document.onpointermove = onResizeMove;
-        document.onpointerup = onResizeUp;
-        document.onpointercancel = onResizeUp;
-      };
-
-      function onResizeMove(e) {
-        if (!isResizing) return;
-        let newW = startW + (e.clientX - startX);
-        let newH = startH + (e.clientY - startY);
-        if (newW < 50) newW = 50;
-        if (newH < 50) newH = 50;
-        elm.style.width = newW + 'px';
-        elm.style.height = newH + 'px';
-        item.w = newW;
-        item.h = newH;
-        drawCables();
-      }
-
-      function onResizeUp() {
-        isResizing = false;
-        document.onpointermove = null;
-        document.onpointerup = null;
-        document.onpointercancel = null;
-      }
-
-      let hasMoved = false;
-      elm.onpointerdown = function(e) {
-        if (isResizing) return;
-        if (e.target.classList.contains('resize-handle')) return;
-        if (e.target.closest('.gear-info-btn')) return;
-        e.preventDefault();
-        hasMoved = false;
-        startX = e.clientX;
-        startY = e.clientY;
-        startLeft = elm.offsetLeft;
-        startTop = elm.offsetTop;
-        document.onpointermove = onDragMove;
-        document.onpointerup = onDragUp;
-        document.onpointercancel = onDragUp;
-      };
-
-      function onDragMove(e) {
-        let dx = e.clientX - startX;
-        let dy = e.clientY - startY;
-        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasMoved = true;
-        let newLeft = startLeft + dx;
-        let newTop = startTop + dy;
-        
-        if(newTop < 0) newTop = 0;
-        if(newLeft < 0) newLeft = 0;
-        if(newTop > canvasInner.clientHeight - elm.offsetHeight) newTop = canvasInner.clientHeight - elm.offsetHeight;
-        if(newLeft > canvasInner.clientWidth - elm.offsetWidth) newLeft = canvasInner.clientWidth - elm.offsetWidth;
-        
-        elm.style.top = newTop + "px";
-        elm.style.left = newLeft + "px";
-        item.x = newLeft;
-        item.y = newTop;
-        drawCables();
-      }
-
-      function onDragUp(e) {
-        document.onpointermove = null;
-        document.onpointerup = null;
-        document.onpointercancel = null;
-        if (!hasMoved) handleGearCableClick(item, elm);
-      }
-    }
-
-    function handleGearCableClick(item, el) {
+    function handleGearCableClick3d(item, el) {
       if (!selectedGearForCable) {
         selectedGearForCable = item;
-        el.classList.add('selected-cable');
         document.getElementById('cableStatusText').innerText = `🔗 [${item.name}] 선택됨. 연결할 다음 장비를 클릭하세요.`;
       } else {
         if (selectedGearForCable.id !== item.id) {
@@ -5065,40 +5243,62 @@
           document.getElementById('cableStatusText').innerText = `✨ 케이블 연결 완료: ${selectedGearForCable.name} ➔ ${item.name}`;
         }
         selectedGearForCable = null;
-        initWorkspace();
       }
+      gear3dRefreshCardStates();
     }
 
-    function drawCables() {
-      svgLayer.innerHTML = '';
-      connectedCables.forEach(cable => {
-        let fromGear = gearItems.find(g => g.id === cable.fromId);
-        let toGear = gearItems.find(g => g.id === cable.toId);
-        if (fromGear && toGear) {
-          let x1 = fromGear.x + (fromGear.w / 2);
-          let y1 = fromGear.y + (fromGear.h / 2);
-          let x2 = toGear.x + (toGear.w / 2);
-          let y2 = toGear.y + (toGear.h / 2);
-          let line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-          line.setAttribute('x1', x1); line.setAttribute('y1', y1);
-          line.setAttribute('x2', x2); line.setAttribute('y2', y2);
-          line.setAttribute('stroke', '#0284c7'); line.setAttribute('stroke-width', '3');
-          line.setAttribute('stroke-dasharray', '6,3');
-          svgLayer.appendChild(line);
-        }
+    function gear3dRefreshCardStates() {
+      Object.keys(gear3d.cardEls).forEach(id => {
+        const el = gear3d.cardEls[id];
+        const isConnected = connectedCables.some(c => c.fromId === id || c.toId === id);
+        const isSelected = selectedGearForCable && selectedGearForCable.id === id;
+        el.classList.toggle('connected', !!isConnected);
+        el.classList.toggle('selected-cable', !!isSelected);
       });
     }
 
-    function resetCardSizes() {
-      gearItems.forEach(item => { item.w = 90; item.h = 116; });
-      initWorkspace();
+    function redrawCables3d() {
+      const svg = document.getElementById('gear3dCableSvg');
+      const wrap = document.getElementById('canvas3dWrap');
+      if (!svg || !wrap || !gear3d.camera) return;
+      svg.innerHTML = '';
+      if (connectedCables.length === 0) return;
+      const rect = wrap.getBoundingClientRect();
+      const toScreen = (v3) => {
+        const p = v3.clone().project(gear3d.camera);
+        return { x: (p.x * 0.5 + 0.5) * rect.width, y: (-p.y * 0.5 + 0.5) * rect.height, behind: p.z > 1 };
+      };
+      connectedCables.forEach(cable => {
+        const a = gear3d.placedPos[cable.fromId];
+        const b = gear3d.placedPos[cable.toId];
+        if (!a || !b) return;
+        const sa = toScreen(a), sb = toScreen(b);
+        if (sa.behind || sb.behind) return;
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', sa.x); line.setAttribute('y1', sa.y);
+        line.setAttribute('x2', sb.x); line.setAttribute('y2', sb.y);
+        line.setAttribute('stroke', '#38bdf8'); line.setAttribute('stroke-width', '3');
+        line.setAttribute('stroke-dasharray', '6,3');
+        svg.appendChild(line);
+      });
+    }
+
+    function reset3DPlacement() {
+      Object.keys(gear3d.cssObjects).forEach(id => {
+        gear3d.scene.remove(gear3d.cssObjects[id]);
+      });
+      gear3d.placedPos = {};
+      gear3d.cssObjects = {};
+      gear3d.cardEls = {};
+      gear3d.armedId = null;
+      gear3dRenderTray();
     }
 
     function resetCables() {
       connectedCables = [];
       selectedGearForCable = null;
-      document.getElementById('cableStatusText').innerText = "🔌 케이블 초기화됨. 첫 번째 장비를 터치하세요.";
-      initWorkspace();
+      document.getElementById('cableStatusText').innerText = "🔌 케이블 초기화됨. 첫 번째 장비를 클릭하세요.";
+      gear3dRefreshCardStates();
     }
 
     /* ===== 정답 신호 경로 (스테이지박스 → 콘솔 → 앰프 → 스피커) ===== */
@@ -5739,7 +5939,6 @@
       renderBestTag('mixBestTag', '최고 점수', best + '점');
     }
 
-    initWorkspace();
     initMg12xuGame();
     renderCurriculum();
     renderFaderPosition('sample', 0.0);
