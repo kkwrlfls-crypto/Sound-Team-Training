@@ -2688,6 +2688,8 @@
 
         // 테스트 톤 소스들의 레벨을 매 프레임 자연스럽게 출렁이게 갱신(실제 프로그램 소스처럼 체감)
         mg12xuUpdateSourceEnvelopes(ts / 1000);
+        // 실제 음원 트랙들이 서로/기준 시계 대비 어긋나지 않도록 매 프레임 미세 보정
+        mg12xuCorrectAudioDrift();
 
         const raw = {
           L: mg12xuRawChannelDb(mg12xuStereoAnalyserL, bufL),
@@ -2822,6 +2824,32 @@
         const mod = 0.4 * Math.sin(tSec * 0.9 + ph.a) + 0.25 * Math.sin(tSec * 2.1 + ph.b) + 0.15 * Math.sin(tSec * 3.7 + ph.c);
         const g = Math.max(base * 0.2, base * (1 + mod));
         node.oscGain.gain.value = g;
+      });
+    }
+
+    // 2026-10-08 추가: 소스를 "나중에" 연결해도(이미 오디오가 켜져서 다른 트랙들이 한참 재생 중인
+    // 상태에서 새 소스를 추가해도) 처음 로딩될 때 한 번 ctx.currentTime 기준으로 seek해서 맞춰주긴
+    // 하지만, 그 뒤로 브라우저 디코딩 지연·탭이 백그라운드로 가서 생기는 끊김 등으로 아주 조금씩
+    // 어긋날 수 있습니다. 매 프레임(미터 루프에서 호출) 각 실제 음원 트랙의 "있어야 할 위치"(ctx
+    // 기준 시계)와 "실제 위치"를 비교해서, 차이가 일정 수준(0.12초) 넘게 벌어지면 조용히 다시
+    // seek해서 맞춰줍니다 — 그래서 언제 연결하든, 얼마나 오래 틀어놓든 항상 같은 타이밍으로
+    // 맞물려 재생됩니다.
+    function mg12xuCorrectAudioDrift() {
+      const ctx = mg12xuAudioCtx;
+      if (!ctx || ctx.state !== 'running') return;
+      Object.values(mg12xuSourceNodes).forEach(node => {
+        if (!node || !node.usingRealAudio || !node.audioEl) return;
+        const el = node.audioEl;
+        const dur = el.duration;
+        if (!dur || !isFinite(dur) || dur <= 0) return;
+        if (el.paused) { el.play().catch(() => {}); return; }
+        const expected = ctx.currentTime % dur;
+        let diff = expected - el.currentTime;
+        if (diff > dur / 2) diff -= dur;   // 루프 경계를 막 넘은 경우를 오차로 오인하지 않도록 보정
+        if (diff < -dur / 2) diff += dur;
+        if (Math.abs(diff) > 0.12) {
+          try { el.currentTime = expected; } catch (err) {}
+        }
       });
     }
 
