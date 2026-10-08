@@ -37,6 +37,14 @@
       overscroll-behavior-y: none;
     }
 
+    /* 페이더/노브/케이블을 드래그하는 동안에는 html·body 스크롤 자체를 잠궈서,
+       모바일에서 손가락이 살짝 빗나가도 화면이 밀리지 않고 오직 조작 중인 컨트롤만 움직이게 합니다. */
+    html.mg12xu-drag-lock, html.mg12xu-drag-lock body {
+      overflow: hidden !important;
+      overscroll-behavior: none !important;
+      touch-action: none !important;
+    }
+
     .tab-nav {
       display: flex;
       gap: 8px;
@@ -86,6 +94,38 @@
     .level-header { margin-bottom: 16px; }
     .level-title { font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 6px; }
     .level-desc { font-size: 0.85rem; color: var(--text-sub); line-height: 1.4; }
+
+    /* ----- 편집 모드(설명/커리큘럼 텍스트 직접 수정 + 새 index.html로 저장) ----- */
+    .content-edit-bar { display: flex; gap: 8px; margin: 10px 0 16px; flex-wrap: wrap; }
+    .content-edit-btn {
+      padding: 7px 14px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #e2e8f0;
+      color: var(--text-main);
+    }
+    .content-edit-btn.save { background: var(--accent-green); color: #fff; display: none; }
+    .content-edit-btn.cancel { background: #fecaca; color: #7f1d1d; display: none; }
+    .content-edit-hint {
+      font-size: 0.72rem; color: var(--text-sub); display: none;
+      align-items: center; line-height: 1.3;
+    }
+    .edit-mode-on .content-edit-btn.save,
+    .edit-mode-on .content-edit-btn.cancel,
+    .edit-mode-on .content-edit-hint { display: flex; }
+    .editable-text { border-radius: 4px; transition: all 0.15s; }
+    .editable-text[contenteditable="true"] {
+      outline: 2px dashed rgba(59, 130, 246, 0.55);
+      outline-offset: 2px;
+      background: rgba(59, 130, 246, 0.06);
+      cursor: text;
+      min-width: 20px;
+      display: inline-block;
+    }
+    .editable-text[contenteditable="true"]:focus { outline-color: var(--primary); background: rgba(59, 130, 246, 0.1); }
 
     .control-bar {
       display: flex;
@@ -870,8 +910,11 @@
     .mg12xu-cable-core { fill: none; stroke-width: 4; stroke-linecap: round; pointer-events: none; }
     .mg12xu-cable-g:hover .mg12xu-cable-core { stroke: #dc2626 !important; }
     .mg12xu-cable-g:hover .mg12xu-cable-shadow { opacity: 0.75; }
-    .mg12xu-cable-plug-body { fill: #1e293b; stroke: #94a3b8; stroke-width: 1.4; }
-    .mg12xu-cable-plug-pin { fill: #cbd5e1; }
+    .mg12xu-cable-plug-body { fill: url(#mg12xuXlrBodyGrad); stroke: #94a3b8; stroke-width: 1.4; }
+    .mg12xu-cable-plug-body-trs { fill: url(#mg12xuTrsBodyGrad); stroke: #94a3b8; stroke-width: 1.4; }
+    .mg12xu-cable-plug-pin { fill: #e2e8f0; stroke: #475569; stroke-width: 0.3; }
+    .mg12xu-cable-plug-ring { fill: #0f172a; stroke: #475569; stroke-width: 0.6; }
+    .mg12xu-cable-sheen { fill: none; stroke: rgba(255,255,255,0.22); stroke-width: 1.1; stroke-linecap: round; pointer-events: none; }
     .mg12xu-cable-path.drag-preview { fill: none; stroke: #f59e0b; stroke-width: 4; stroke-dasharray: 7 5; pointer-events: none; }
     .mg12xu-stage-wrap {
       position: relative;
@@ -911,6 +954,18 @@
       font-size: 1.4rem;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       transition: all 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+    /* 2026-10-08 추가: icons/<소스id>.png(jpg/svg 등) 파일을 넣어주면 이모지 대신 실제 이미지가
+       보이도록 했습니다. 파일이 없으면(로드 실패) onerror로 이미지를 숨겨 기존 이모지가 그대로 보입니다. */
+    .mg12xu-source-icon-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
     }
     .mg12xu-source-item.selected .mg12xu-source-icon {
       border-color: var(--primary);
@@ -918,6 +973,16 @@
     }
     .mg12xu-source-item.assigned .mg12xu-source-icon { border-color: var(--accent-green); background: #ecfdf5; }
     .mg12xu-speaker-item.connected .mg12xu-speaker-icon { border-color: var(--accent-green); background: #ecfdf5; }
+    .mg12xu-source-item, .mg12xu-speaker-item { touch-action: none; }
+    .mg12xu-source-item.dragging, .mg12xu-speaker-item.dragging {
+      z-index: 20;
+      cursor: grabbing;
+    }
+    .mg12xu-source-item.dragging .mg12xu-source-icon,
+    .mg12xu-speaker-item.dragging .mg12xu-speaker-icon {
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      transform: scale(1.08);
+    }
     .mg12xu-source-label, .mg12xu-speaker-label {
       font-size: 0.62rem;
       font-weight: 700;
@@ -981,30 +1046,56 @@
     .mg12xu-full-console-row {
       position: relative;
       display: flex;
-      align-items: stretch;
+      /* 2026-10-08 수정: master_section.jpg가 console_strip.jpg보다 원본 종횡비가 훨씬 길어서,
+         기본값인 stretch를 쓰면 콘솔 쪽 래퍼가 실제 사진보다 더 길게 늘어나 버립니다. 그 결과
+         래퍼 안의 모든 %기준 오버레이(노브·페이더·버튼 등)가 "늘어난 래퍼" 기준으로 계산되어
+         사진 속 실제 위치보다 점점 아래로 밀려 보이는 버그가 있었습니다(아래로 갈수록 오차가 커짐).
+         flex-start로 바꿔 각 래퍼가 자기 이미지의 실제 높이만큼만 차지하도록 고정합니다. */
+      align-items: flex-start;
       width: 1491px;
       max-width: 100%;
       margin: 0 auto;
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      /* 2026-10-08 수정: 두 사진의 실측 배율을 맞추고 나니(위 72.855%/27.145%) master_section.jpg가
+         console_strip.jpg보다 더 길게 렌더링되어, 반대로 console 쪽 아래에 빈 공간이 생깁니다.
+         사진 맨 아래 가장자리 색을 실측(RGB 평균 38,42,45)해 그 색으로 배경을 깔아 자연스럽게
+         이어지도록 합니다. */
+      background: #262a2d;
     }
     .mg12xu-realconsole-wrap {
       position: relative;
-      flex: 0 0 70.758%;
-      max-width: 70.758%;
+      /* 2026-10-08 재수정: console_strip.jpg(1055px)와 master_section.jpg(340px)의 가로 "픽셀 수" 비율을
+         그대로 써서 배율을 맞췄더니(75.627%/24.373%) 전체적인 크기는 비슷해 보였지만, ON 버튼 줄이나
+         파란 띠 같은 가로선이 두 이미지 경계에서 계속 어긋났습니다. 원인을 찾아보니 이 두 사진은
+         픽셀당 실제 크기(DPI)가 서로 다른 사진이었습니다 — master_section.jpg는 같은 실물을 더 "타이트하게"
+         촬영/크롭한 고해상도 사진이라, 같은 물리적 폭이 console_strip.jpg보다 훨씬 더 많은 픽셀을 차지합니다.
+         이걸 확인하기 위해 이전에 쓰던, console_strip.jpg와 동일한 배율로 촬영된 구버전 마스터 사진
+         (assets/master/master_section_v3.png, 높이 1540px로 console과 정확히 일치)과 현재 master_section.jpg의
+         ON 버튼·ST 버튼 좌표를 다섯 쌍 대응시켜 최소자승으로 실제 배율을 역산했더니 1.156배였습니다
+         (단순 픽셀 수 비율이 아니라 이 실측 배율로 폭 비율을 다시 계산: 1055 : 340×1.156 ≈ 72.855% : 27.145%). */
+      flex: 0 0 72.855%;
+      max-width: 72.855%;
       margin: 0;
       user-select: none;
       touch-action: none;
     }
     .mg12xu-master-wrap {
       position: relative;
-      flex: 0 0 29.242%;
-      max-width: 29.242%;
+      flex: 0 0 27.145%;
+      max-width: 27.145%;
       margin: 0;
       user-select: none;
       touch-action: none;
-      border-left: 1px solid rgba(0,0,0,0.4);
+      /* 2026-10-08 수정: border는 박스 크기(1px)를 차지해서 master 이미지가 console 이미지보다
+         미세하게 작은 배율로 렌더링되는 원인이 되므로, 레이아웃에 영향 없는 box-shadow로
+         동일한 구분선 효과를 냅니다. */
+      box-shadow: -1px 0 0 0 rgba(0,0,0,0.4);
+      /* 2026-10-08 추가: 위 배율 보정 후에도 master_section.jpg 크롭의 시작점이 console_strip.jpg보다
+         실측상 아주 조금(약 8px, 실물 기준) 더 아래 지점부터 시작해, ON 버튼 줄이 미세하게(용 7px)
+         높게 보였습니다. 같은 비율(컨테이너 폭 기준 %)로 살짝 내려 정렬을 맞춥니다. */
+      margin-top: 0.56%;
     }
     .mg12xu-realconsole-img, .mg12xu-master-img {
       display: block;
@@ -1012,8 +1103,8 @@
       height: auto;
       pointer-events: none;
     }
-    #mg12xuChannelTags, #mg12xuHotspotLayer, #mg12xuKnobLayer, #mg12xuFaderLayer, #mg12xuFaderScaleLayer, #mg12xuReadoutLayer, #mg12xuOnLayer, #mg12xuMuteLayer, #mg12xuRouteLayer, #mg12xuPeakLayer,
-    #mg12xuMasterFaderLayer, #mg12xuMasterScaleLayer, #mg12xuMasterReadoutLayer, #mg12xuMasterMeterLayer {
+    #mg12xuChannelTags, #mg12xuHotspotLayer, #mg12xuKnobLayer, #mg12xuFaderLayer, #mg12xuFaderScaleLayer, #mg12xuReadoutLayer, #mg12xuOnLayer, #mg12xuMuteLayer, #mg12xuRouteLayer, #mg12xuPeakLayer, #mg12xuPflLayer,
+    #mg12xuMasterFaderLayer, #mg12xuMasterScaleLayer, #mg12xuMasterReadoutLayer, #mg12xuMasterMeterLayer, #mg12xuMasterKnobLayer, #mg12xuMasterOnLayer, #mg12xuMasterRouteLayer, #mg12xuMasterPflLayer {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
@@ -1025,12 +1116,17 @@
     #mg12xuFaderLayer { z-index: 5; }
     #mg12xuRouteLayer { z-index: 6; }
     #mg12xuOnLayer { z-index: 6; }
+    #mg12xuPflLayer { z-index: 6; }
     #mg12xuMuteLayer { z-index: 7; }
     #mg12xuChannelTags { z-index: 8; }
     #mg12xuPeakLayer { z-index: 8; }
     #mg12xuReadoutLayer { z-index: 9; }
     #mg12xuMasterScaleLayer { z-index: 4; }
     #mg12xuMasterFaderLayer { z-index: 5; }
+    #mg12xuMasterKnobLayer { z-index: 5; }
+    #mg12xuMasterOnLayer { z-index: 6; }
+    #mg12xuMasterRouteLayer { z-index: 6; }
+    #mg12xuMasterPflLayer { z-index: 6; }
     #mg12xuMasterMeterLayer { z-index: 7; }
     #mg12xuMasterReadoutLayer { z-index: 9; }
 
@@ -1060,6 +1156,19 @@
       width: 2px;
       background: rgba(0, 0, 0, 0.55);
       transform: translateX(-50%);
+    }
+    .mg12xu-fscale-chnum {
+      position: absolute;
+      top: 97.3%;
+      transform: translate(-50%, -50%);
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: 'Arial', sans-serif;
+      color: rgba(255, 255, 255, 0.92);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      pointer-events: none;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
     }
 
     .mg12xu-route-btn {
@@ -1091,6 +1200,75 @@
       transition: all 0.15s;
     }
     .mg12xu-on-hotspot:hover { border-color: rgba(250, 204, 21, 0.7); }
+    /* 2026-10-08 수정: 기존에는 ON 스위치를 누르면 채널 스트립 전체(.mg12xu-mute-col)가 어두워졌는데,
+       출력단(마스터 버스) ON 스위치처럼 스위치 자체만 변하도록 통일했습니다. "불이 꺼진" 느낌이 들도록
+       거의 검정에 가깝게 더 어둡게 만들었습니다(입력단/출력단 동일하게 적용). */
+    .mg12xu-on-hotspot.off { background: rgba(0, 0, 0, 0.9); border-color: rgba(220, 38, 38, 0.75); }
+    .mg12xu-pfl-hotspot {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 4.6%;
+      height: 2.6%;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: all 0.15s;
+    }
+    .mg12xu-pfl-hotspot:hover { border-color: rgba(74, 222, 128, 0.7); }
+    .mg12xu-pfl-hotspot.active { border-color: #4ade80; background: rgba(74, 222, 128, 0.35); box-shadow: 0 0 8px 2px rgba(74, 222, 128, 0.65); }
+    .mg12xu-pad-btn, .mg12xu-hpf-btn {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 3.4%;
+      height: 1.9%;
+      border-radius: 4px;
+      border: 1.5px solid rgba(148, 163, 184, 0.55);
+      background: rgba(10, 12, 18, 0.55);
+      color: #cbd5e1;
+      font-size: 0.5rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: all 0.15s;
+    }
+    .mg12xu-pad-btn:hover, .mg12xu-hpf-btn:hover { border-color: rgba(255, 255, 255, 0.85); }
+    /* 2026-10-08 수정: 빨간색은 PEAK 경고와 혼동되기 쉽다는 의견을 반영해, 다른 활성 상태 버튼들과
+       톤을 맞춘 차분한 호박색(amber)으로 변경했습니다. */
+    .mg12xu-pad-btn.on, .mg12xu-hpf-btn.on {
+      background: #d97706; border-color: #fbbf24; color: #1c1917;
+      box-shadow: 0 0 5px 1px rgba(217, 119, 6, 0.6);
+    }
+    /* 2026-10-08 추가: 패치베이(jack_strip.jpg)는 콘솔 전면 사진과 가로세로 비율이 전혀 달라서,
+       같은 % 크기를 그대로 쓰면 글자가 안 맞게 작거나 커 보입니다. 이 레이어 전용으로 폰트만 살짝 조정합니다. */
+    .mg12xu-jack-padhpf-btn { font-size: 0.42rem; border-radius: 3px; }
+    .mg12xu-source-sw-btn {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 9%;
+      height: 2.9%;
+      border-radius: 4px;
+      border: 2px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: all 0.15s;
+    }
+    .mg12xu-source-sw-btn::after {
+      content: '';
+      position: absolute;
+      left: 2px; right: 2px; top: 2px;
+      height: 44%;
+      border-radius: 2px;
+      background: rgba(250, 204, 21, 0.85);
+      box-shadow: 0 0 5px 1px rgba(250, 204, 21, 0.6);
+      transition: transform 0.15s;
+    }
+    .mg12xu-source-sw-btn.group::after { transform: translateY(115%); }
+    .mg12xu-source-sw-btn:hover { border-color: rgba(255, 255, 255, 0.5); }
     .mg12xu-mute-col {
       position: absolute;
       top: 3.8%;
@@ -1207,8 +1385,8 @@
     .mg12xu-master-fader-cap {
       position: absolute;
       left: 50%;
-      width: 13.8%;
-      height: 7%;
+      width: 9.5%;
+      height: 6%;
       transform: translate(-50%, -50%);
       cursor: grab;
       pointer-events: none;
@@ -1224,53 +1402,30 @@
     .mg12xu-master-label {
       position: absolute;
       transform: translate(-50%, -50%);
-      background: #0f172a;
-      color: #fff;
-      font-size: 0.58rem;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 8px;
-      white-space: nowrap;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-    /* 실제 사진 위에 겹쳐 그리면 YAMAHA 로고 등 인쇄된 글자와 부딪혀서, 사진 아래 별도의 깔끔한 띠로 뺐습니다. */
-    .mg12xu-bus-toggle-row {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-      width: 1491px;
-      max-width: 100%;
-      margin: 10px auto 0;
-      padding: 10px;
-      background: #0f172a;
-      border-radius: 0 0 10px 10px;
-    }
-    .mg12xu-master-on-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border-radius: 8px;
-      border: 2px solid rgba(255,255,255,0.35);
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-      font-size: 0.78rem;
+      font-size: 0.56rem;
       font-weight: 800;
       letter-spacing: 0.02em;
-      padding: 8px 16px;
+      color: rgba(226, 232, 240, 0.92);
+      white-space: nowrap;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+      pointer-events: none;
+    }
+    /* 2026-10-08: 기존의 "사진 아래 노란 박스" ON/OFF 버튼은 실제 콘솔에 없는 요소라 제거했습니다.
+       대신 채널 ON 버튼과 동일한 방식으로, 사진 속 실제 ON 스위치 위치에 투명 핫스팟을 올려 누르게 합니다. */
+    .mg12xu-master-on-hotspot {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 9%;
+      height: 2.6%;
+      border-radius: 6px;
+      border: 2px solid transparent;
+      background: transparent;
       cursor: pointer;
+      pointer-events: auto;
       transition: all 0.15s;
     }
-    .mg12xu-master-on-btn::before {
-      content: '';
-      width: 9px; height: 9px;
-      border-radius: 50%;
-      background: #64748b;
-      transition: all 0.15s;
-    }
-    .mg12xu-master-on-btn.on { background: #facc15; color: #111; border-color: #facc15; }
-    .mg12xu-master-on-btn.on::before { background: #16a34a; box-shadow: 0 0 5px 2px rgba(22,163,74,0.8); }
-    .mg12xu-master-on-btn:hover { border-color: #fff; }
+    .mg12xu-master-on-hotspot.off { background: rgba(0, 0, 0, 0.9); border-color: rgba(220, 38, 38, 0.75); }
+    .mg12xu-master-on-hotspot:hover { border-color: rgba(250, 204, 21, 0.7); }
     .mg12xu-peak-led {
       position: absolute;
       transform: translate(-50%, -50%);
@@ -1288,14 +1443,20 @@
     }
     .mg12xu-meter-seg {
       position: absolute;
-      transform: translate(0, -50%);
-      width: 2.3%;
-      height: 0.9%;
+      /* 2026-10-08 수정: 기존 크기(2.3%×0.9%, 세로만 중앙정렬)로는 사진에 찍혀있는
+         노란색/초록색 LED 막대를 완전히 덮지 못해 꺼진 상태에서도 색이 비쳐 보이는
+         버그가 있었습니다. 실측 결과 실제 LED 막대가 더 넓어서 폭/높이를 키우고
+         가로 중앙정렬도 추가합니다. */
+      transform: translate(-50%, -50%);
+      width: 6%;
+      height: 1.3%;
       border-radius: 1px;
-      opacity: 0.18;
-      transition: opacity 0.05s linear;
+      background: #050506 !important;
+      opacity: 1;
+      transition: background-color 0.05s linear;
     }
-    .mg12xu-meter-seg.on { opacity: 1; }
+    .mg12xu-meter-seg.on { background: var(--mg12xu-seg-color, currentColor) !important; }
+    .mg12xu-meter-seg.peak { background: var(--mg12xu-seg-color, currentColor) !important; box-shadow: 0 0 5px 1.5px currentColor; transition: background-color 0.03s linear; }
     .mg12xu-readout {
       position: absolute;
       transform: translate(-50%, -120%);
@@ -1434,34 +1595,41 @@
 <body>
 
   <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('tab1')">📢 확성 시스템의 기본</button>
-    <button class="tab-btn" onclick="switchTab('tab2')">🗺 3층 음향 시스템</button>
-    <button class="tab-btn" onclick="switchTab('tab3')">🎧 Ear Training</button>
-    <button class="tab-btn" onclick="switchTab('tab4')">📅 10주 커리큘럼</button>
+    <button class="tab-btn active" data-tab="tab4" onclick="switchTab('tab4')">📅 10주 커리큘럼</button>
+    <button class="tab-btn" data-tab="tab1" onclick="switchTab('tab1')">📢 확성 시스템의 기본</button>
+    <button class="tab-btn" data-tab="tab2" onclick="switchTab('tab2')">🗺 3층 음향 시스템</button>
+    <button class="tab-btn" data-tab="tab3" onclick="switchTab('tab3')">🎧 Ear Training</button>
   </div>
 
   <main class="game-container">
     
     <!-- TAB 1: 확성 시스템의 기본 -->
-    <div id="tab1" class="tab-content active">
+    <div id="tab1" class="tab-content">
       <div class="level-header">
-        <div class="level-title">확성 시스템의 기본 구조 학습</div>
-        <div class="level-desc">음향 신호가 전달되는 대표적인 3가지 기본 경로를 이해하고 습득할 수 있습니다.</div>
+        <div class="level-title editable-text" data-field="tab1.title">확성 시스템의 기본 구조 학습</div>
+        <div class="level-desc editable-text" data-field="tab1.desc">음향 신호가 전달되는 대표적인 3가지 기본 경로를 이해하고 습득할 수 있습니다.</div>
+      </div>
+
+      <div class="content-edit-bar" id="tab1EditBar">
+        <button type="button" class="content-edit-btn" id="tab1EditBtn" onclick="toggleContentEdit('tab1')">✏️ 설명 내용 편집</button>
+        <button type="button" class="content-edit-btn save" onclick="saveEditedContent('tab1')">💾 저장 (새 index.html 다운로드)</button>
+        <button type="button" class="content-edit-btn cancel" onclick="cancelContentEdit('tab1')">편집 취소</button>
+        <span class="content-edit-hint">텍스트를 직접 클릭해서 수정한 뒤 저장하면, 수정 내용이 담긴 새 index.html 파일이 다운로드됩니다. 그 파일로 기존 파일을 교체하면 수정이 반영됩니다.</span>
       </div>
 
       <div class="theory-card">
-        <h3>1) 마이크 ➔ 스피커</h3>
-        <p>믹서나 앰프를 거치지 않고 마이크 신호가 직접 스피커(또는 액티브 스피커)로 입력되는 소규모 시스템 구조입니다.</p>
+        <h3 class="editable-text" data-field="tab1.card1.title">1) 마이크 ➔ 스피커</h3>
+        <p class="editable-text" data-field="tab1.card1.desc">믹서나 앰프를 거치지 않고 마이크 신호가 직접 스피커(또는 액티브 스피커)로 입력되는 소규모 시스템 구조입니다.</p>
       </div>
 
       <div class="theory-card">
-        <h3>2) 마이크 ➔ 콘솔 ➔ 앰프 ➔ 스피커</h3>
-        <p>마이크 입력이 콘솔(믹서)에서 믹싱 및 프로세싱을 거친 후, 파워 앰프를 통해 증폭되어 패시브 스피커로 출력되는 가장 일반적인 교회 본당 음향 구조입니다.</p>
+        <h3 class="editable-text" data-field="tab1.card2.title">2) 마이크 ➔ 콘솔 ➔ 앰프 ➔ 스피커</h3>
+        <p class="editable-text" data-field="tab1.card2.desc">마이크 입력이 콘솔(믹서)에서 믹싱 및 프로세싱을 거친 후, 파워 앰프를 통해 증폭되어 패시브 스피커로 출력되는 가장 일반적인 교회 본당 음향 구조입니다.</p>
       </div>
 
       <div class="theory-card">
-        <h3>3) 마이크 ➔ 콘솔 ➔ 스피커</h3>
-        <p>콘솔에서 출력된 신호가 내장 앰프가 포함된 액티브(Powered) 스피커로 바로 전달되는 구조입니다.</p>
+        <h3 class="editable-text" data-field="tab1.card3.title">3) 마이크 ➔ 콘솔 ➔ 스피커</h3>
+        <p class="editable-text" data-field="tab1.card3.desc">콘솔에서 출력된 신호가 내장 앰프가 포함된 액티브(Powered) 스피커로 바로 전달되는 구조입니다.</p>
       </div>
 
       <div class="theory-card mg12xu-game-card">
@@ -1495,18 +1663,22 @@
                 <div id="mg12xuFaderLayer"></div>
                 <div id="mg12xuRouteLayer"></div>
                 <div id="mg12xuOnLayer"></div>
+                <div id="mg12xuPflLayer"></div>
                 <div id="mg12xuPeakLayer"></div>
                 <div id="mg12xuReadoutLayer"></div>
               </div>
               <div class="mg12xu-master-wrap" id="mg12xuMasterWrap">
-                <img src="master_section.jpg" class="mg12xu-master-img" draggable="false" alt="Yamaha MG12XU 마스터 섹션 (GROUP 1-2 / STEREO)">
+                <img src="master_section.jpg" class="mg12xu-master-img" draggable="false" alt="Yamaha MG12XU 마스터 섹션 (FX RTN / GROUP 1-2 / STEREO)">
                 <div id="mg12xuMasterScaleLayer"></div>
                 <div id="mg12xuMasterFaderLayer"></div>
+                <div id="mg12xuMasterKnobLayer"></div>
+                <div id="mg12xuMasterOnLayer"></div>
+                <div id="mg12xuMasterRouteLayer"></div>
+                <div id="mg12xuMasterPflLayer"></div>
                 <div id="mg12xuMasterMeterLayer"></div>
                 <div id="mg12xuMasterReadoutLayer"></div>
               </div>
             </div>
-            <div class="mg12xu-bus-toggle-row" id="mg12xuBusToggleRow"></div>
           </div>
           <button class="btn" style="margin-top:10px;" onclick="checkMg12xuStep1()">✅ 채널 배정 확인하기</button>
           <div class="result-panel" id="mg12xuStep1Result"></div>
@@ -1880,10 +2052,17 @@
     </div>
 
     <!-- TAB 4: 사운드팀 신입 스텝 10주 커리큘럼 -->
-    <div id="tab4" class="tab-content">
+    <div id="tab4" class="tab-content active">
       <div class="level-header">
-        <div class="level-title">📅 사운드팀 신입 스텝 10주 커리큘럼</div>
-        <div class="level-desc">오리엔테이션 1주 + 모니터 스텝 4주 + 단상 스텝 2주 + 오퍼레이팅 교육 3주, 총 10주 과정입니다. 각 주차를 마치면 체크해서 진행 상황을 기록하세요. "이동" 버튼을 누르면 그 주차와 연계된 학습툴 탭으로 바로 이동합니다.</div>
+        <div class="level-title editable-text" data-field="tab4.title">📅 사운드팀 신입 스텝 10주 커리큘럼</div>
+        <div class="level-desc editable-text" data-field="tab4.desc">오리엔테이션 1주 + 모니터 스텝 4주 + 단상 스텝 2주 + 오퍼레이팅 교육 3주, 총 10주 과정입니다. 각 주차를 마치면 체크해서 진행 상황을 기록하세요. "이동" 버튼을 누르면 그 주차와 연계된 학습툴 탭으로 바로 이동합니다.</div>
+      </div>
+
+      <div class="content-edit-bar" id="tab4EditBar">
+        <button type="button" class="content-edit-btn" id="tab4EditBtn" onclick="toggleContentEdit('tab4')">✏️ 커리큘럼 내용 편집</button>
+        <button type="button" class="content-edit-btn save" onclick="saveEditedContent('tab4')">💾 저장 (새 index.html 다운로드)</button>
+        <button type="button" class="content-edit-btn cancel" onclick="cancelContentEdit('tab4')">편집 취소</button>
+        <span class="content-edit-hint">각 주차의 제목·목표·실습 내용·도구 안내를 직접 클릭해서 수정한 뒤 저장하면, 수정 내용이 담긴 새 index.html 파일이 다운로드됩니다. 그 파일로 기존 파일을 교체하면 수정이 반영됩니다.</span>
       </div>
 
       <div class="curriculum-progress-wrap">
@@ -1954,23 +2133,40 @@
 
     /* ===== MG12XU 콘솔로 음향 시스템 구축해보기 (탭1 실습 게임) ===== */
     /* 무대 좌표는 .mg12xu-stage-wrap 기준 % 배치입니다 (반응형) */
+    // connector: 'xlr'(마이크류, 실제로도 XLR 케이블 사용) / 'trs'(DI박스·라인악기, 실제로도 TRS 케이블 사용)
+    // 2026-10-08 수정: 사용자 요청에 따라 캔버스 소스 목록을 실제 밴드 구성(리드보컬/드럼/건반/베이스/기타/
+    // 백보컬 3명)으로 교체했습니다. 사용자가 각 소스에 맞는 실제 음원 파일을 직접 공급할 예정이라
+    // 아래 MG12XU_SOURCE_TONE에는 파일이 없을 때 쓰일 합성음(임시 플레이스홀더)을 id별로 지정해 뒀습니다.
     const mg12xuSources = [
-      { id: 'vocal1', name: '보컬 마이크 1', icon: '🎤', x: 28.17, y: 4.35 },
-      { id: 'wireless', name: '무선 마이크', icon: '🎙️', x: 41.58, y: 4.35 },
-      { id: 'vocal2', name: '보컬 마이크 2', icon: '🎤', x: 14.76, y: 30.43 },
-      { id: 'guitar', name: '통기타 (DI)', icon: '🎸', x: 2.68, y: 60.87 },
-      { id: 'keys', name: '건반', icon: '🎹', x: 57.01, y: 60.87 }
+      { id: 'leadVox', name: 'Lead Vox', icon: '🎤', x: 8, y: 4.35, connector: 'xlr' },
+      { id: 'drumLR', name: 'Drum LR', icon: '🥁', x: 20, y: 4.35, connector: 'trs' },
+      { id: 'keysLR', name: 'KEYS LR', icon: '🎹', x: 32, y: 4.35, connector: 'trs' },
+      { id: 'bass', name: 'Bass', icon: '🎸', x: 44, y: 4.35, connector: 'trs' },
+      { id: 'gt', name: 'GT', icon: '🎸', x: 8, y: 30.43, connector: 'trs' },
+      { id: 'bav1', name: 'Bav 1', icon: '🎤', x: 20, y: 30.43, connector: 'xlr' },
+      { id: 'bav2', name: 'Bav 2', icon: '🎤', x: 32, y: 30.43, connector: 'xlr' },
+      { id: 'bav3', name: 'Bav 3', icon: '🎤', x: 44, y: 30.43, connector: 'xlr' }
     ];
     // 출력 스피커 — STEREO OUT / GROUP OUT 단자에서 케이블로 연결해야 소리가 납니다.
+    // STEREO OUT은 실제 콘솔에서도 XLR 단자, GROUP OUT은 TRS(폰) 단자라 케이블 모양도 다르게 표시합니다.
+    // AUX1/AUX2 SEND도 실제 단자(둘 다 TRS)에 케이블로 연결해야 해당 채널들의 AUX 노브로 보낸 소리가 납니다.
+    // 2026-10-08: AUX2/FX 보내는 신호는 이제 외부 "이펙트 유닛"이 아니라 콘솔에 내장된 SPX 이펙터로
+    // 바로 들어가 리버브/딜레이를 만든 뒤 FX RTN으로 돌아오므로, 상단 캔버스에서 별도로 케이블을
+    // 연결할 외부 기기 아이콘이 필요 없어 제거했습니다. 대신 헤드폰(PHONES) 출력 아이콘을 추가했습니다.
     const mg12xuOutputs = [
-      { id: 'mainSpeaker', bus: 'stereo', name: '메인 스피커 (STEREO)', icon: '🔊', x: 79.14, y: 13.04 },
-      { id: 'groupSpeaker', bus: 'group', name: '모니터/그룹 스피커', icon: '📢', x: 91.21, y: 60.87 }
+      { id: 'mainSpeaker', bus: 'stereo', name: '메인 스피커 (STEREO)', icon: '🔊', x: 79.14, y: 13.04, connector: 'xlr' },
+      { id: 'groupSpeaker', bus: 'group', name: '모니터/그룹 스피커', icon: '📢', x: 91.21, y: 60.87, connector: 'trs' },
+      { id: 'stageMonitor', bus: 'aux1', name: '스테이지 모니터 (AUX1)', icon: '🔈', x: 70.0, y: 30.43, connector: 'trs' },
+      { id: 'phonesOut', bus: 'phones', name: '헤드폰 (PHONES)', icon: '🎧', x: 91.21, y: 30.43, connector: 'trs' },
+      // 2026-10-08 추가: MONITOR OUT 단자(컨트롤룸 모니터 스피커) — 연결해야 MONITOR LEVEL 노브 소리가 들립니다.
+      { id: 'controlRoomMonitor', bus: 'monitorOut', name: '컨트롤룸 모니터 (MONITOR OUT)', icon: '🖥️', x: 41.58, y: 60.87, connector: 'trs' }
     ];
     let mg12xuSelected = null;
     let mg12xuSelectedOutput = null; // 선택된 스피커 id (출력 케이블 연결용)
+    let mg12xuIconDragJustHappened = false; // 아이콘 자유 배치 드래그 직후 클릭(선택) 이벤트를 무시하기 위한 플래그
     let mg12xuAssignments = {}; // sourceId -> channel id (ex: 'ch1', 'ch5_6')
-    let mg12xuOutputConnected = { stereo: false, group: false }; // 출력 케이블 연결 여부
-    let mg12xuMasterBusOn = { group: true, stereo: true }; // GROUP OUT / STEREO OUT ON-OFF
+    let mg12xuOutputConnected = { stereo: false, group: false, aux1: false, phones: false, monitorOut: false }; // 출력 케이블 연결 여부
+    let mg12xuMasterBusOn = { fxrtn: true, group: true, stereo: true }; // FX RTN / GROUP OUT / STEREO OUT ON-OFF
 
     // ----- 실제 콘솔 사진(전체 12채널)의 채널별 좌표(크롭 이미지 기준 %) -----
     const MG12XU_REAL_CHANNELS = ['ch1', 'ch2', 'ch3', 'ch4', 'ch5_6', 'ch7_8', 'ch9_10', 'ch11_12'];
@@ -1978,20 +2174,68 @@
     const MG12XU_KNOB_TYPES = ['gain', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'];
     // 채널별로 실제 보유한 노브만 (9/10, 11/12는 GAIN·MID 없이 HIGH·LOW·AUX1·AUX2·PAN만 있는 실제 콘솔 구성을 반영)
     const MG12XU_CHANNEL_KNOBS = {
-      ch1: ['gain', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
-      ch2: ['gain', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
-      ch3: ['gain', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
-      ch4: ['gain', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
+      ch1: ['gain', 'comp', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
+      ch2: ['gain', 'comp', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
+      ch3: ['gain', 'comp', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
+      ch4: ['gain', 'comp', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
       ch5_6: ['gain', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
       ch7_8: ['gain', 'high', 'mid', 'low', 'aux1', 'aux2', 'pan'],
       ch9_10: ['high', 'low', 'aux1', 'aux2', 'pan'],
       ch11_12: ['high', 'low', 'aux1', 'aux2', 'pan']
     };
+    // COMP(컴프레서) 노브는 1~4번 채널에만 실제로 존재합니다(사진 확인됨).
+    const MG12XU_COMP_CHANNELS = ['ch1', 'ch2', 'ch3', 'ch4'];
+    // PAD(-26dB 입력 감쇠)는 GAIN 노브가 있는 6개 채널(마이크/라인 입력)에서만 의미가 있습니다.
+    // 2026-10-08 수정: 사용자 요청에 따라 PAD 배지는 1~4번 채널에만 유지하고 5/6, 7/8 채널에서는 제거합니다.
+    const MG12XU_PAD_CHANNELS = ['ch1', 'ch2', 'ch3', 'ch4'];
+    // HPF(80Hz 하이패스) 버튼은 실제 사진상 5/6, 7/8번(콤보 마이크 입력) 채널에만 존재합니다.
+    // 2026-10-08 수정: 실제 사진에는 1~4번 채널에 HPF 버튼이 인쇄되어 있지 않지만,
+    // 사용자 요청에 따라 PAD와 동일하게 교육용 보조 토글 배지로 1~4번 채널에도 추가합니다.
+    const MG12XU_HPF_CHANNELS = ['ch1', 'ch2', 'ch3', 'ch4', 'ch5_6', 'ch7_8'];
+    // 각 노브 이미지(ch{n}_{type}.png)는 실제 콘솔 사진을 그대로 잘라낸 것이라,
+    // 사진 속 그 노브가 실제로 가리키고 있던 각도(=이미지 자체의 "기본 회전값")가 채널·종류마다 제각각입니다.
+    // (예: GAIN 노브들은 사진 속에서 대부분 최소값 근처를 가리키고 있었지만, CH4처럼 다른 각도인 경우도 있음)
+    // CSS로 rotate(logical_angle)만 적용하면 이 사진 속 기본 각도가 그대로 더해져 버려
+    // 실제 노브가 가리키는 방향과 화면에 표시되는 dB 라벨이 어긋나는 문제가 있었습니다.
+    // 아래 값은 각 이미지를 분석(OpenCV/PIL로 노브 캡 안의 검은 지침 방향을 자동 검출)해서 구한
+    // "사진 속 기본 각도"이며, mg12xuUpdateKnobVisual에서 이 값만큼 역보정해 실제 각도와 화면이 일치하게 합니다.
+    // 2026-10-08: EQ(HIGH/MID/LOW)·PAN·AUX1·AUX2 노브의 기준각이 채널마다 들쭉날쭉하던 문제를 수정했습니다.
+    // (GAIN은 기존 값 그대로 — 이미 정상 동작하는 것으로 확인되어 변경하지 않았습니다.)
+    // 각 노브 원본 사진에서 "지침이 실제로 가리키는 방향"을 방사형 밝기 프로파일로 재측정해
+    // 채널 간 기준각을 하나로 맞췄습니다 (EQ/PAN은 사진상 모두 중앙(0) 근처, AUX1/2는 모두 최소값 근처로 촬영됨).
+    const MG12XU_KNOB_BASELINE_OFFSET = {
+      ch1_gain: -147.4, ch1_high: -2.0, ch1_mid: -3.0, ch1_low: 0.0, ch1_aux1: -148.0, ch1_aux2: -145.0, ch1_pan: 4.0,
+      ch2_gain: -146.4, ch2_high: 6.0, ch2_mid: -3.0, ch2_low: 4.0, ch2_aux1: -144.0, ch2_aux2: -145.0, ch2_pan: -2.0,
+      ch3_gain: -147.4, ch3_high: 0.0, ch3_mid: -1.0, ch3_low: 5.0, ch3_aux1: -152.0, ch3_aux2: -152.0, ch3_pan: 3.0,
+      ch4_gain: -136.0, ch4_high: -1.0, ch4_mid: -5.0, ch4_low: 4.0, ch4_aux1: -151.0, ch4_aux2: -145.0, ch4_pan: 2.0,
+      ch5_6_gain: -148.2, ch5_6_high: 5.0, ch5_6_mid: 4.0, ch5_6_low: -5.0, ch5_6_aux1: -151.0, ch5_6_aux2: -152.0, ch5_6_pan: 3.0,
+      ch7_8_gain: -148.6, ch7_8_high: -3.0, ch7_8_mid: 0.0, ch7_8_low: 2.0, ch7_8_aux1: -149.0, ch7_8_aux2: -146.0, ch7_8_pan: 0.0,
+      ch9_10_high: 3.0, ch9_10_low: 1.0, ch9_10_aux1: -152.0, ch9_10_aux2: -145.0, ch9_10_pan: 0.0,
+      ch11_12_high: 0.0, ch11_12_low: 10.0, ch11_12_aux1: -148.0, ch11_12_aux2: -146.0, ch11_12_pan: 4.0,
+      master_aux1: -153.0, master_aux2: -163.0, master_monitorLevel: -164.0,
+      // 2026-10-08 수정: 기준각(0)을 그대로 쓰면 사진 속에 찍힌 지침의 실제 각도만큼 방향이 틀어져
+      // 보이는 버그가 있었습니다. ray-casting으로 각 캡 이미지의 실제 지침 각도를 다시 측정해서 반영.
+      ch1_comp: -129.7, ch2_comp: -143.1, ch3_comp: -142.0, ch4_comp: -143.1,
+      master_phones: -151.9, master_spxProgram: 0, master_spxParam: -151.6
+    };
+    // 노브 이미지는 이제 "지침(캡)" 부분만 남기고 나머지(고정 눈금·몸체)는 투명 처리되어 있어
+    // 사진 배경의 고정 눈금이 그대로 비쳐 보이고, 캡만 회전합니다. 이때 CSS 회전축(transform-origin)이
+    // 이미지 중앙이 아니라 "캡의 실제 중심"이어야 제자리에서 자연스럽게 돌아갑니다(값=이미지 크기 대비 %).
+    const MG12XU_KNOB_ORIGIN_PCT = {
+      ch1: { gain: [51.09, 48.59], comp: [49.06, 49.06], high: [47.48, 49.32], mid: [47.78, 49.01], low: [46.97, 49.0], aux1: [49.34, 49.0], aux2: [49.65, 48.41], pan: [47.94, 48.25] },
+      ch2: { gain: [53.31, 47.37], comp: [49.06, 49.06], high: [48.84, 49.84], mid: [48.01, 50.79], low: [49.02, 47.54], aux1: [52.47, 51.57], aux2: [52.92, 48.48], pan: [50.19, 47.28] },
+      ch3: { gain: [52.76, 47.43], comp: [49.06, 49.06], high: [47.92, 51.07], mid: [50.41, 50.5], low: [48.07, 51.57], aux1: [50.79, 49.95], aux2: [51.8, 48.37], pan: [50.29, 52.06] },
+      ch4: { gain: [53.05, 46.83], comp: [49.06, 49.06], high: [48.43, 48.87], mid: [49.0, 50.55], low: [48.05, 50.4], aux1: [51.47, 49.4], aux2: [51.88, 48.48], pan: [49.63, 50.04] },
+      ch5_6: { gain: [50.75, 48.12], high: [49.43, 52.53], mid: [49.34, 52.1], low: [50.16, 50.43], aux1: [49.96, 49.92], aux2: [49.57, 46.22], pan: [47.33, 48.32] },
+      ch7_8: { gain: [50.01, 47.22], high: [48.96, 52.37], mid: [48.28, 51.01], low: [49.1, 51.72], aux1: [49.43, 48.78], aux2: [48.71, 47.4], pan: [47.11, 48.43] },
+      ch9_10: { high: [49.02, 51.92], low: [48.52, 52.45], aux1: [47.76, 49.9], aux2: [48.89, 49.0], pan: [46.88, 51.48] },
+      ch11_12: { high: [48.89, 45.19], low: [48.97, 46.92], aux1: [48.29, 47.31], aux2: [48.46, 47.69], pan: [46.51, 48.68] }
+    };
     const MG12XU_KNOB_X_PCT = { ch1: 13.839, ch2: 24.834, ch3: 36.114, ch4: 47.299, ch5_6: 58.673, ch7_8: 69.953, ch9_10: 83.223, ch11_12: 94.502 };
     const MG12XU_FADER_X_PCT = { ch1: 11.848, ch2: 23.033, ch3: 34.028, ch4: 45.213, ch5_6: 56.398, ch7_8: 67.583, ch9_10: 80.664, ch11_12: 91.848 };
     const MG12XU_ON_X_PCT = { ch1: 14.123, ch2: 25.308, ch3: 36.493, ch4: 47.678, ch5_6: 58.863, ch7_8: 69.858, ch9_10: 82.939, ch11_12: 94.123 };
     const MG12XU_ON_Y_PCT = 60.909;
-    const MG12XU_KNOB_Y_PCT = { gain: 8.442, high: 25.130, mid: 30.844, low: 36.494, aux1: 42.208, aux2: 49.870, pan: 55.455 };
+    const MG12XU_KNOB_Y_PCT = { gain: 8.442, comp: 16.34, high: 25.130, mid: 30.844, low: 36.494, aux1: 42.208, aux2: 49.870, pan: 55.455 };
     const MG12XU_HOTSPOT_Y_PCT = 2.597;
     // PEAK LED는 GAIN이 있는 6개 채널(1~4, 5/6, 7/8)에만 존재합니다.
     const MG12XU_PEAK_LED_X_PCT = { ch1: 16.825, ch2: 28.009, ch3: 39.052, ch4: 50.284, ch5_6: 61.185, ch7_8: 72.417 };
@@ -2027,11 +2271,94 @@
     const MG12XU_ST_X_PCT = { ch1: 16.635, ch2: 27.867, ch3: 39.052, ch4: 50.190, ch5_6: 61.374, ch7_8: 72.559, ch9_10: 85.735, ch11_12: 96.730 };
     const MG12XU_ST_Y_PCT = 76.520;
 
-    // ----- 마스터 섹션(GROUP 1-2 / STEREO 메인 L·R) 좌표 (마스터 이미지 기준 %, 세로는 메인 콘솔과 동일 스케일) -----
+    // ----- 마스터 섹션(FX RTN / GROUP 1-2 / STEREO 메인 L·R) 좌표 -----
+    // 2026-10-08: 사용자가 제공한 고해상도 콘솔 사진으로 master_section.jpg(340x1405)를 깨끗하게 다시 잘라
+    // 교체했습니다(기존 이미지는 GROUP 1-2/STEREO 하단 페이더·PFL·라벨 부분이 원본부터 손상돼 있었습니다).
+    // 이 이미지는 채널 사진(console_strip.jpg)과 스케일이 달라서, 페이더 이동 구간(TOP/BOTTOM)도 별도 상수로 둡니다.
     const MG12XU_MASTER_BUSES = ['group', 'stereo'];
-    const MG12XU_MASTER_LABELS = { group: 'GROUP 1-2', stereo: 'STEREO (Main L/R)' };
-    const MG12XU_MASTER_FADER_X_PCT = { group: 35.780, stereo: 66.514 };
-    let mg12xuMasterFaderFracs = { group: 0.2692, stereo: 0.2692 }; // 기본값: 0dB(유니티)
+    const MG12XU_MASTER_LABELS = { fxrtn: 'FX RTN', group: 'GROUP 1-2', stereo: 'STEREO (Main L/R)', aux1: 'AUX1 SEND', aux2: 'AUX2/FX SEND', phones: 'PHONES', monitorOut: 'MONITOR OUT' };
+    const MG12XU_MASTER_FADER_X_PCT = { group: 43.97, stereo: 73.97 };
+    let mg12xuMasterFaderFracs = { fxrtn: 0.2692, group: 0.2692, stereo: 0.2692 }; // 기본값: 0dB(유니티)
+    const MG12XU_MASTER_FADER_TRAVEL_TOP_PCT = 65.0;
+    const MG12XU_MASTER_FADER_TRAVEL_BOTTOM_PCT = 89.0;
+    const MG12XU_MASTER_ON_Y_PCT = 57.08;
+    // 2026-10-08: 페이더 캡/눈금 지우기 작업 중 함께 흐려진 "FX RTN"/"GROUP 1-2"/"STEREO" 인쇄 글자 자리를
+    // 대신할 라벨의 y 좌표(사진 속 원래 글자 위치와 거의 같습니다).
+    const MG12XU_MASTER_LABEL_Y_PCT = 90.2;
+    // FX RTN(이펙트 리턴) 채널 — 페이더/ON 상호작용 추가
+    const MG12XU_FXRTN_X_PCT = 14.71;
+    const MG12XU_FXRTN_PFL_X_PCT = 23.53;
+    const MG12XU_FXRTN_PFL_Y_PCT = 85.41;
+    // GROUP 1-2의 ST 버튼 — 누르면 GROUP 버스 신호가 STEREO 버스로도 합쳐져 나갑니다
+    // 2026-10-08: master_section.jpg 기준으로 다시 정밀측정(y가 실제보다 아래로 틀어져 있었음)
+    const MG12XU_GROUP_ST_X_PCT = 51.47;
+    const MG12XU_GROUP_ST_Y_PCT = 71.17;
+    let mg12xuGroupToStereoOn = false;
+    // AUX1/AUX2 SEND MASTER 노브 — 채널 AUX 센드를 합산한 버스 전체의 출력 레벨
+    // 2026-10-08: x가 실제보다 오른쪽으로 틀어져 있어 재측정값으로 수정
+    const MG12XU_AUX_SEND_MASTER_X_PCT = 42.94;
+    const MG12XU_AUX_SEND_MASTER_Y_PCT = { aux1: 39.15, aux2: 46.26 };
+    const MG12XU_AUX_SEND_MASTER_ORIGIN_PCT = { aux1: [50, 50], aux2: [50, 50] };
+    // 2026-10-08 수정: aux1master.png/aux2master.png 원본 PNG에 투명 여백이 많이 남아있어
+    // (캔버스의 약 60%만 실제 노브 그림) 노브 폭을 사진 속 실제 노브 크기에 맞춰 계산해도
+    // 실제로 그려지는 원판은 그보다 훨씬 작아, 회전 시 사진에 찍힌 실제 노브 가장자리가
+    // 옆으로 삐져나와 "두 개가 겹쳐 보이는" 버그가 있었습니다. PNG를 내용물 기준으로
+    // 빡빡하게 재크롭하고, 그에 맞춰 폭 비율도 다시 계산했습니다.
+    const MG12XU_AUX_SEND_MASTER_WIDTH_PCT = 15.5;
+    // PHONES 레벨 노브 — 헤드폰 모니터 출력 레벨
+    const MG12XU_PHONES_X_PCT = 75.69;
+    const MG12XU_PHONES_Y_PCT = 46.62;
+    const MG12XU_PHONES_WIDTH_PCT = 15.0;
+    // MONITOR LEVEL 노브 — PHONES 바로 위, 같은 열에 있는 흰색 노브 (2026-10-08 추가)
+    const MG12XU_MONITOR_LEVEL_X_PCT = 74.71;
+    const MG12XU_MONITOR_LEVEL_Y_PCT = 39.15;
+    const MG12XU_MONITOR_LEVEL_WIDTH_PCT = 15.0;
+    let mg12xuMonitorSource = 'stereo'; // 'stereo' | 'group' — STEREO/GROUP SOURCE 스위치
+    // STEREO/GROUP SOURCE 스위치(모니터링 소스 선택) 좌표
+    const MG12XU_SOURCE_SW_X_PCT = 83.53;
+    const MG12XU_SOURCE_SW_Y_PCT = 51.14;
+    // SPX 이펙터 PROGRAM(프로그램 선택) / PARAMETER(디케이·딜레이타임) 노브
+    const MG12XU_SPX_PROGRAM_X_PCT = 13.38;
+    const MG12XU_SPX_PROGRAM_Y_PCT = 27.72;
+    const MG12XU_SPX_PROGRAM_WIDTH_PCT = 13.5;
+    const MG12XU_SPX_PARAM_X_PCT = 45.67;
+    const MG12XU_SPX_PARAM_Y_PCT = 27.89;
+    const MG12XU_SPX_PARAM_WIDTH_PCT = 15.5;
+    // SPX 프로그램 목록(사진 속 1~24 프로그램 중 대표적인 것만 선택) — type: 'reverb' | 'delay'
+    const MG12XU_SPX_PROGRAMS = [
+      { name: 'REV HALL', type: 'reverb', decay: 2.6 },
+      { name: 'REV ROOM', type: 'reverb', decay: 1.1 },
+      { name: 'REV PLATE', type: 'reverb', decay: 1.8 },
+      { name: 'SINGLE DELAY', type: 'delay', time: 0.32, feedback: 0.25 },
+      { name: 'DELAY', type: 'delay', time: 0.55, feedback: 0.4 }
+    ];
+    let mg12xuSpxProgramIdx = 0;
+    let mg12xuSpxParamAngle = 0; // -135~135
+    // 채널 PFL 버튼(콘솔 이미지 console_strip.jpg 기준 %) — 누르면 PHONES로 해당 채널만 솔로 전송됩니다
+    const MG12XU_PFL_X_PCT = { ch1: 16.64, ch2: 27.77, ch3: 38.63, ch4: 49.81, ch5_6: 60.90, ch7_8: 72.13, ch9_10: 85.59, ch11_12: 96.78 };
+    const MG12XU_PFL_Y_PCT = 89.12;
+    let mg12xuPflActive = {}; // 'ch1' -> true/false
+
+    // PAD(-26dB 입력 감쇠) 버튼 — 5/6, 7/8 채널은 콘솔 전면에 실제 버튼이 없어 제거되었고(사용자 요청),
+    // 1~4번 채널의 실제 PAD 버튼은 콘솔 전면이 아니라 패치베이(jack_strip.jpg)에 있어 아래
+    // MG12XU_JACK_PAD_X_PCT로 그 레이어에서 생성합니다. 이 Y좌표는 더 이상 사용되지 않습니다(레거시).
+    const MG12XU_PAD_Y_PCT = 3.9;
+    let mg12xuPadOn = {}; // 'ch1' -> true/false
+    // HPF(80Hz 하이패스) 버튼 — 실제 사진 속 5/6, 7/8 채널 PHANTOM 박스 아래 위치(콘솔 전면, 그대로 유지).
+    const MG12XU_HPF_X_PCT = {
+      ch5_6: 60.33, ch7_8: 69.81
+    };
+    const MG12XU_HPF_Y_PCT = 19.97;
+    let mg12xuHpfOn = {}; // 'ch5_6' -> true/false
+    // 2026-10-08 수정: 사용자 제공 사진으로 재확인한 결과, 1~4번 채널의 실제 PAD/HPF 스위치는
+    // 콘솔 전면이 아니라 입출력 패치베이 패널(jack_strip.jpg, 1491x440)의 XLR 입력 단자 옆에
+    // 인쇄되어 있었습니다. 그 사진을 기준으로 재측정한 좌표로 buildMg12xuJackstrip()에서 생성합니다.
+    const MG12XU_JACK_PAD_X_PCT = { ch1: 8.15, ch2: 16.06, ch3: 23.98, ch4: 31.86 };
+    const MG12XU_JACK_HPF_X_PCT = { ch1: 11.67, ch2: 19.45, ch3: 27.43, ch4: 35.48 };
+    const MG12XU_JACK_PADHPF_Y_PCT = 73.98;
+    const MG12XU_JACK_PADHPF_WIDTH_PCT = 3.6;
+    const MG12XU_JACK_PADHPF_HEIGHT_PCT = 11.5;
+    // COMP(컴프레서) 상태 — 0~10 노브값은 mg12xuKnobAngles[ch_comp]에서 바로 계산합니다.
 
     // ----- 입출력 단자 패널(jack_strip.jpg, 1491x440) 좌표 (% 기준) -----
     // 2026-10-07: jack_strip.jpg를 그리드 + Hough Circle 검출로 다시 정밀 측정해 좌표를 전면 수정했습니다.
@@ -2042,24 +2369,33 @@
     };
     const MG12XU_OUTPUT_JACK_PCT = {
       group: { x: 72.098, y: 39.318 },
-      stereo: { x: 86.486, y: 40.227 }
+      stereo: { x: 86.486, y: 40.227 },
+      // AUX1 SEND 단자 좌표 (Hough Circle로 측정). AUX2는 이제 외부 기기가 아니라 콘솔 내장 SPX
+      // 이펙터로 바로 들어가므로(아래 PHONES 참고), 패치베이 단자가 아닙니다.
+      aux1: { x: 58.048, y: 37.841 },
+      // PHONES 출력 — 실제로는 콘솔 상단 가장자리의 별도 잭이지만, 이 교육용 패치베이에서는
+      // AUX 단자들 옆 빈 자리에 배치해 케이블로 연결하는 연습을 할 수 있게 했습니다.
+      phones: { x: 89.64, y: 87.16 },
+      // MONITOR OUT(컨트롤룸 모니터) 단자 — jack_strip.jpg 패치베이 우측의 실제 L/R 잭 쌍(2026-10-08 정밀측정).
+      // 다른 스테레오 출력 단자들과 동일하게 두 잭의 중간 지점 좌표 하나로 대표합니다.
+      monitorOut: { x: 80.65, y: 76.59 }
     };
 
-    // ----- 마스터 섹션 레벨 미터 좌표 (master_section.jpg 기준 %) -----
-    const MG12XU_METER_L_X_PCT = 60.780;
-    const MG12XU_METER_R_X_PCT = 74.541;
+    // ----- 마스터 섹션 레벨 미터 좌표 (master_section.jpg 기준 %, 2026-10-08 재측정) -----
+    const MG12XU_METER_L_X_PCT = 64.2;
+    const MG12XU_METER_R_X_PCT = 80.45;
     const MG12XU_METER_SEGMENTS = [
-      { db: 10, y: 15.909, color: '#ef4444' },
-      { db: 6, y: 17.403, color: '#f59e0b' },
-      { db: 3, y: 18.831, color: '#f59e0b' },
-      { db: 0, y: 20.455, color: '#eab308' },
-      { db: -3, y: 22.727, color: '#22c55e' },
-      { db: -6, y: 23.896, color: '#22c55e' },
-      { db: -10, y: 25.195, color: '#22c55e' },
-      { db: -15, y: 26.623, color: '#22c55e' },
-      { db: -20, y: 28.442, color: '#22c55e' },
-      { db: -25, y: 29.870, color: '#22c55e' },
-      { db: -30, y: 31.169, color: '#22c55e' }
+      { db: 10, y: 15.10, color: '#ef4444' },
+      { db: 6, y: 16.52, color: '#f59e0b' },
+      { db: 3, y: 17.97, color: '#f59e0b' },
+      { db: 0, y: 19.39, color: '#eab308' },
+      { db: -3, y: 20.80, color: '#22c55e' },
+      { db: -6, y: 22.24, color: '#22c55e' },
+      { db: -10, y: 23.66, color: '#22c55e' },
+      { db: -15, y: 25.09, color: '#22c55e' },
+      { db: -20, y: 26.51, color: '#22c55e' },
+      { db: -25, y: 27.94, color: '#22c55e' },
+      { db: -30, y: 29.37, color: '#22c55e' }
     ];
 
     const mg12xuChainItems = [
@@ -2079,20 +2415,39 @@
     let mg12xuAudioCtx = null;
     let mg12xuAudioOn = false;
     let mg12xuMasterCompressor = null;
-    let mg12xuBusGain = { group: null, stereo: null };       // 마스터 페이더
+    let mg12xuBusGain = { group: null, stereo: null, aux1: null, aux2: null };       // 마스터 페이더(AUX1/2는 AUX SEND MASTER 노브로 조절)
     let mg12xuBusOnGain = { group: null, stereo: null };     // GROUP/STEREO OUT ON-OFF
-    let mg12xuBusConnGain = { group: null, stereo: null };   // 출력 케이블 연결 여부
+    let mg12xuBusConnGain = { group: null, stereo: null, aux1: null, phones: null, monitorOut: null };   // 출력 케이블 연결 여부(AUX2는 이제 내장 SPX로 직결되어 케이블 게이트가 없습니다)
+    let mg12xuSpxInput = null, mg12xuSpxReverbConv = null, mg12xuSpxReverbGain = null, mg12xuSpxDelayNode = null,
+        mg12xuSpxDelayFeedback = null, mg12xuSpxDelayGain = null, mg12xuSpxOutGain = null,
+        mg12xuFxrtnFaderGain = null, mg12xuFxrtnOnGain = null; // SPX 이펙터 + FX RTN 리턴 오디오 그래프
+    let mg12xuPhonesGain = null, mg12xuMonitorLevelGain = null, mg12xuMonitorSourceGain = { stereo: null, group: null }, mg12xuMonitorActiveGate = null;
+    let mg12xuPadGain = {}, mg12xuHpfNode = {}, mg12xuCompNode = {}; // 채널별 PAD/HPF/COMP 오디오 노드
+    let mg12xuGroupToStereoGain = null;  // GROUP 1-2 ST 버튼 — GROUP 버스를 STEREO 버스에도 합산
+    let mg12xuPflBus = null;             // PFL 솔로 모니터(PHONES로 간주) 버스 — 평소 무음, PFL 누른 채널만 합산
+    let mg12xuMainOutGate = null;        // PFL이 하나라도 켜지면 메인 믹스를 잠시 음소거(헤드폰 솔로 체감용)
     let mg12xuStereoAnalyser = null;
+    let mg12xuStereoAnalyserL = null;   // 2026-10-08: 레벨미터를 L/R 따로 움직이게 하려고 추가한 채널별 analyser
+    let mg12xuStereoAnalyserR = null;
     let mg12xuMeterRAF = null;
-    let mg12xuSourceNodes = {};   // sourceId -> { osc, oscGain }
-    let mg12xuChannelNodes = {};  // ch -> { input, low, mid, high, panner, faderGain, muteGain, groupSend, stereoSend }
+    let mg12xuMeterLastTs = null;
+    // 레벨미터 "바늘 물리" 상태 — 실제 LED 피크미터처럼 순간 레벨(raw)을 그대로 쓰지 않고,
+    // 어택은 거의 즉시, 릴리즈(하강)는 천천히, 그리고 잠깐 반짝였다 서서히 내려오는 피크홀드까지 흉내 냅니다.
+    let mg12xuMeterSmoothDb = { L: -Infinity, R: -Infinity };
+    let mg12xuMeterPeakDb = { L: -Infinity, R: -Infinity };
+    let mg12xuMeterPeakHoldUntil = { L: 0, R: 0 };
+    let mg12xuSourceNodes = {};   // sourceId -> { osc, oscGain, envPhase }
+    let mg12xuChannelNodes = {};  // ch -> { input, low, mid, high, panner, faderGain, muteGain, groupSend, stereoSend, aux1Send, aux2Send, pflSend }
 
     const MG12XU_SOURCE_TONE = {
-      vocal1:   { type: 'triangle', freq: 220 },
-      wireless: { type: 'sine',     freq: 330 },
-      vocal2:   { type: 'triangle', freq: 165 },
-      guitar:   { type: 'sawtooth', freq: 110 },
-      keys:     { type: 'sine',     freq: 440 }
+      leadVox: { type: 'triangle', freq: 220 },
+      drumLR:  { type: 'square',   freq: 80 },
+      keysLR:  { type: 'sine',     freq: 440 },
+      bass:    { type: 'sawtooth', freq: 60 },
+      gt:      { type: 'sawtooth', freq: 110 },
+      bav1:    { type: 'triangle', freq: 200 },
+      bav2:    { type: 'triangle', freq: 260 },
+      bav3:    { type: 'triangle', freq: 300 }
     };
 
     function mg12xuDbToGain(db) {
@@ -2107,7 +2462,7 @@
     // 노브 종류별 기본(초기) 각도 — GAIN은 과도한 초기 증폭을 피하기 위해 최소(맨 왼쪽)에서 시작하고,
     // 나머지(EQ·PAN·AUX)는 중앙(0=플랫/센터)에서 시작합니다.
     function mg12xuDefaultKnobAngle(type) {
-      return type === 'gain' ? -135 : 0;
+      return (type === 'gain' || type === 'comp') ? -135 : 0;
     }
 
     function ensureMg12xuAudioCtx() {
@@ -2116,7 +2471,19 @@
       if (!Ctx) return null;
       mg12xuAudioCtx = new Ctx();
       mg12xuMasterCompressor = mg12xuAudioCtx.createDynamicsCompressor();
-      mg12xuMasterCompressor.connect(mg12xuAudioCtx.destination);
+
+      // PFL을 누른 채널이 하나라도 있으면 메인 믹스를 잠시 끄고(헤드폰으로 솔로만 들리는 상황을 흉내),
+      // PFL 버스(=PHONES로 간주)만 들리게 합니다.
+      const mainOutGate = mg12xuAudioCtx.createGain();
+      mainOutGate.gain.value = 1;
+      mg12xuMasterCompressor.connect(mainOutGate);
+      mainOutGate.connect(mg12xuAudioCtx.destination);
+      mg12xuMainOutGate = mainOutGate;
+
+      const pflBus = mg12xuAudioCtx.createGain();
+      pflBus.gain.value = 0;
+      pflBus.connect(mg12xuAudioCtx.destination);
+      mg12xuPflBus = pflBus;
 
       // STEREO 버스: 마스터 페이더 → ON/OFF 버튼 → 출력 케이블 연결 여부 → 레벨 미터(분석) → 최종 출력
       const stereoGain = mg12xuAudioCtx.createGain();
@@ -2140,6 +2507,17 @@
       stereoConnGain.connect(stereoAnalyser);
       stereoAnalyser.connect(mg12xuMasterCompressor);
 
+      // 2026-10-08: L/R 레벨미터가 서로 다르게(= 실제처럼) 움직이도록, 메인 경로는 그대로 두고
+      // stereoConnGain에서 채널 분리기로 병렬 탭을 하나 더 뽑아 L/R을 따로 분석합니다.
+      const meterSplitter = mg12xuAudioCtx.createChannelSplitter(2);
+      const analyserL = mg12xuAudioCtx.createAnalyser(); analyserL.fftSize = 1024;
+      const analyserR = mg12xuAudioCtx.createAnalyser(); analyserR.fftSize = 1024;
+      meterSplitter.connect(analyserL, 0);
+      meterSplitter.connect(analyserR, 1);
+      stereoConnGain.connect(meterSplitter);
+      mg12xuStereoAnalyserL = analyserL;
+      mg12xuStereoAnalyserR = analyserR;
+
       // GROUP 버스: 독립된 모니터/그룹 스피커로 직접 연결 (실제 케이블이 꽂혀야 소리가 남)
       const groupGain = mg12xuAudioCtx.createGain();
       groupGain.gain.value = mg12xuDbToGain(mg12xuFaderDbFromFrac(mg12xuMasterFaderFracs.group ?? 0.2692));
@@ -2157,33 +2535,230 @@
       groupOnGain.connect(groupConnGain);
       groupConnGain.connect(mg12xuMasterCompressor);
 
+      // GROUP 1-2의 ST 버튼: 켜면 GROUP 페이더를 통과한 신호가 STEREO 버스(ON/연결 상태 공유)에도 합산됩니다.
+      const groupToStereoGain = mg12xuAudioCtx.createGain();
+      groupToStereoGain.gain.value = mg12xuGroupToStereoOn ? 1 : 0;
+      groupGain.connect(groupToStereoGain);
+      groupToStereoGain.connect(stereoOnGain);
+      mg12xuGroupToStereoGain = groupToStereoGain;
+
+      // AUX1 SEND 버스: 채널 AUX1 노브로 보낸 양을 합산해 AUX1 SEND MASTER 노브로 레벨을 조절하고,
+      // 실제 SEND 단자에 케이블이 연결됐을 때만(스테이지 모니터로) 들리게 합니다.
+      const aux1BusGain = mg12xuAudioCtx.createGain();
+      aux1BusGain.gain.value = (((mg12xuKnobAngles['master_aux1'] ?? 0) + 135) / 270);
+      mg12xuBusGain.aux1 = aux1BusGain;
+      const aux1ConnGain = mg12xuAudioCtx.createGain();
+      aux1ConnGain.gain.value = mg12xuOutputConnected.aux1 ? 1 : 0;
+      mg12xuBusConnGain.aux1 = aux1ConnGain;
+      aux1BusGain.connect(aux1ConnGain);
+      aux1ConnGain.connect(mg12xuMasterCompressor);
+
+      // AUX2/FX SEND 버스: 더 이상 외부 기기로 나가는 출력이 아니라, 콘솔에 내장된 SPX 디지털
+      // 이펙터(리버브/딜레이)의 입력입니다. 케이블 연결 여부와 무관하게 항상 SPX로 들어갑니다.
+      const aux2BusGain = mg12xuAudioCtx.createGain();
+      aux2BusGain.gain.value = (((mg12xuKnobAngles['master_aux2'] ?? 0) + 135) / 270);
+      mg12xuBusGain.aux2 = aux2BusGain;
+
+      // ----- SPX 디지털 멀티 이펙트 프로세서 (리버브/딜레이) -----
+      const spxInput = mg12xuAudioCtx.createGain();
+      aux2BusGain.connect(spxInput);
+      mg12xuSpxInput = spxInput;
+
+      // 리버브 경로: 알고리즘으로 생성한 지수감쇠 노이즈 임펄스 응답을 쓰는 ConvolverNode
+      const reverbConv = mg12xuAudioCtx.createConvolver();
+      const reverbWet = mg12xuAudioCtx.createGain();
+      reverbWet.gain.value = 0;
+      spxInput.connect(reverbConv);
+      reverbConv.connect(reverbWet);
+      mg12xuSpxReverbConv = reverbConv;
+      mg12xuSpxReverbGain = reverbWet;
+
+      // 딜레이 경로: DelayNode + 피드백 게인(에코 반복)
+      const delayNode = mg12xuAudioCtx.createDelay(2.0);
+      const delayFeedback = mg12xuAudioCtx.createGain();
+      const delayWet = mg12xuAudioCtx.createGain();
+      delayWet.gain.value = 0;
+      spxInput.connect(delayNode);
+      delayNode.connect(delayFeedback);
+      delayFeedback.connect(delayNode);
+      delayNode.connect(delayWet);
+      mg12xuSpxDelayNode = delayNode;
+      mg12xuSpxDelayFeedback = delayFeedback;
+      mg12xuSpxDelayGain = delayWet;
+
+      const spxOut = mg12xuAudioCtx.createGain();
+      reverbWet.connect(spxOut);
+      delayWet.connect(spxOut);
+      mg12xuSpxOutGain = spxOut;
+
+      // FX RTN(이펙트 리턴) — SPX 출력이 돌아오는 채널. 페이더/ON 버튼이 이제 실제로 이 신호를 제어합니다.
+      // mg12xuBusGain.fxrtn / mg12xuBusOnGain.fxrtn로 등록해 두면 GROUP/STEREO와 동일한 범용
+      // mg12xuApplyMasterFaderAudio('fxrtn') / mg12xuApplyMasterOnAudio('fxrtn') 경로가 그대로 동작합니다.
+      const fxrtnFaderGain = mg12xuAudioCtx.createGain();
+      fxrtnFaderGain.gain.value = mg12xuDbToGain(mg12xuFaderDbFromFrac(mg12xuMasterFaderFracs.fxrtn ?? 0.2692));
+      const fxrtnOnGain = mg12xuAudioCtx.createGain();
+      fxrtnOnGain.gain.value = mg12xuMasterBusOn.fxrtn ? 1 : 0;
+      spxOut.connect(fxrtnFaderGain);
+      fxrtnFaderGain.connect(fxrtnOnGain);
+      fxrtnOnGain.connect(mg12xuMasterCompressor);
+      mg12xuBusGain.fxrtn = fxrtnFaderGain;
+      mg12xuBusOnGain.fxrtn = fxrtnOnGain;
+      mg12xuFxrtnFaderGain = fxrtnFaderGain;
+      mg12xuFxrtnOnGain = fxrtnOnGain;
+
+      mg12xuApplySpxProgram();
+
+      // ----- PHONES(헤드폰) 모니터 — STEREO/GROUP SOURCE 스위치로 고른 버스를 PHONES 레벨 노브로 들려줍니다.
+      // PFL을 누른 채널이 있을 때는(기존 솔로 기능) 이 모니터 소스 대신 솔로 신호가 우선합니다.
+      const monitorStereoTap = mg12xuAudioCtx.createGain();
+      monitorStereoTap.gain.value = mg12xuMonitorSource === 'stereo' ? 1 : 0;
+      stereoOnGain.connect(monitorStereoTap);
+      const monitorGroupTap = mg12xuAudioCtx.createGain();
+      monitorGroupTap.gain.value = mg12xuMonitorSource === 'group' ? 1 : 0;
+      groupOnGain.connect(monitorGroupTap);
+      mg12xuMonitorSourceGain.stereo = monitorStereoTap;
+      mg12xuMonitorSourceGain.group = monitorGroupTap;
+
+      const monitorActiveGate = mg12xuAudioCtx.createGain();
+      const anyPflActiveNow = Object.keys(mg12xuPflActive).some(ch => mg12xuPflActive[ch]);
+      monitorActiveGate.gain.value = anyPflActiveNow ? 0 : 1;
+      monitorStereoTap.connect(monitorActiveGate);
+      monitorGroupTap.connect(monitorActiveGate);
+      mg12xuMonitorActiveGate = monitorActiveGate;
+
+      const phonesGain = mg12xuAudioCtx.createGain();
+      phonesGain.gain.value = (((mg12xuKnobAngles['master_phones'] ?? 0) + 135) / 270);
+      monitorActiveGate.connect(phonesGain);
+      const phonesConnGain = mg12xuAudioCtx.createGain();
+      phonesConnGain.gain.value = mg12xuOutputConnected.phones ? 1 : 0;
+      phonesGain.connect(phonesConnGain);
+      phonesConnGain.connect(mg12xuAudioCtx.destination);
+      mg12xuPhonesGain = phonesGain;
+      mg12xuBusConnGain.phones = phonesConnGain;
+
+      // ----- MONITOR LEVEL(컨트롤룸 모니터) — PHONES와 같은 모니터 소스를 듣지만 별도 레벨 노브로 조절합니다.
+      // 2026-10-08 수정: 처음엔 케이블 연결 없이 항상 들리게 만들었지만, 사용자 요청에 따라 다른 출력
+      // 버스들과 동일하게 MONITOR OUT 단자에 케이블을 연결해야만 소리가 나도록 phonesConnGain과
+      // 같은 패턴의 연결 게이트(monitorConnGain)를 추가했습니다.
+      const monitorLevelGain = mg12xuAudioCtx.createGain();
+      monitorLevelGain.gain.value = (((mg12xuKnobAngles['master_monitorLevel'] ?? 0) + 135) / 270);
+      monitorActiveGate.connect(monitorLevelGain);
+      const monitorConnGain = mg12xuAudioCtx.createGain();
+      monitorConnGain.gain.value = mg12xuOutputConnected.monitorOut ? 1 : 0;
+      monitorLevelGain.connect(monitorConnGain);
+      monitorConnGain.connect(mg12xuAudioCtx.destination);
+      mg12xuMonitorLevelGain = monitorLevelGain;
+      mg12xuBusConnGain.monitorOut = monitorConnGain;
+
       mg12xuStartMeterLoop();
 
       return mg12xuAudioCtx;
     }
 
     // 레벨 미터: STEREO 버스(최종 출력 직전)의 실시간 RMS 레벨을 측정해 LED 바 그래프를 움직입니다.
+    // 레벨미터 바늘 물리 상수 — 실제 피크 리딩 LED미터에 가깝게: 어택은 거의 즉시, 릴리즈는 초당 ~18dB로
+    // 천천히 떨어지고, 순간 최고점(피크)은 잠깐(1.1초) 밝게 머물렀다가 초당 ~10dB로 서서히 꺼집니다.
+    const MG12XU_METER_ATTACK_COEFF = 0.65;   // 프레임당 목표치로 다가가는 비율(클수록 더 빠른 어택)
+    const MG12XU_METER_RELEASE_DB_PER_SEC = 18;
+    const MG12XU_METER_PEAK_HOLD_MS = 1100;
+    const MG12XU_METER_PEAK_DECAY_DB_PER_SEC = 10;
+
+    function mg12xuRawChannelDb(analyser, buf) {
+      if (!analyser) return -Infinity;
+      analyser.getFloatTimeDomainData(buf);
+      let sum = 0;
+      for (let i = 0; i < buf.length; i++) sum += buf[i] * buf[i];
+      const rms = Math.sqrt(sum / buf.length);
+      return rms > 0 ? 20 * Math.log10(rms) : -Infinity;
+    }
+
     function mg12xuStartMeterLoop() {
       if (mg12xuMeterRAF) return;
-      const buf = new Float32Array(1024);
-      const tick = () => {
+      const bufL = new Float32Array(1024);
+      const bufR = new Float32Array(1024);
+      const tick = (ts) => {
         mg12xuMeterRAF = requestAnimationFrame(tick);
-        if (!mg12xuAudioOn || !mg12xuStereoAnalyser) { mg12xuUpdateMeterVisual(-Infinity); return; }
-        mg12xuStereoAnalyser.getFloatTimeDomainData(buf);
-        let sum = 0;
-        for (let i = 0; i < buf.length; i++) sum += buf[i] * buf[i];
-        const rms = Math.sqrt(sum / buf.length);
-        const db = rms > 0 ? 20 * Math.log10(rms) : -Infinity;
-        mg12xuUpdateMeterVisual(db);
+        const dt = mg12xuMeterLastTs ? Math.min(0.1, (ts - mg12xuMeterLastTs) / 1000) : 0.016;
+        mg12xuMeterLastTs = ts;
+
+        if (!mg12xuAudioOn) {
+          mg12xuUpdateMeterVisual({ L: -Infinity, R: -Infinity }, { L: -Infinity, R: -Infinity });
+          return;
+        }
+
+        // 테스트 톤 소스들의 레벨을 매 프레임 자연스럽게 출렁이게 갱신(실제 프로그램 소스처럼 체감)
+        mg12xuUpdateSourceEnvelopes(ts / 1000);
+
+        const raw = {
+          L: mg12xuRawChannelDb(mg12xuStereoAnalyserL, bufL),
+          R: mg12xuRawChannelDb(mg12xuStereoAnalyserR, bufR),
+        };
+
+        const now = performance.now();
+        ['L', 'R'].forEach(col => {
+          const prev = mg12xuMeterSmoothDb[col];
+          const r = raw[col];
+          let next;
+          if (!isFinite(prev)) next = r;
+          else if (!isFinite(r)) next = Math.max(-Infinity, prev - MG12XU_METER_RELEASE_DB_PER_SEC * dt);
+          else if (r > prev) next = prev + (r - prev) * MG12XU_METER_ATTACK_COEFF;
+          else next = Math.max(r, prev - MG12XU_METER_RELEASE_DB_PER_SEC * dt);
+          mg12xuMeterSmoothDb[col] = next;
+
+          if (isFinite(next) && next >= mg12xuMeterPeakDb[col]) {
+            mg12xuMeterPeakDb[col] = next;
+            mg12xuMeterPeakHoldUntil[col] = now + MG12XU_METER_PEAK_HOLD_MS;
+          } else if (now > mg12xuMeterPeakHoldUntil[col]) {
+            mg12xuMeterPeakDb[col] = Math.max(next, mg12xuMeterPeakDb[col] - MG12XU_METER_PEAK_DECAY_DB_PER_SEC * dt);
+          }
+        });
+
+        mg12xuUpdateMeterVisual(mg12xuMeterSmoothDb, mg12xuMeterPeakDb);
       };
       mg12xuMeterRAF = requestAnimationFrame(tick);
     }
 
-    function mg12xuUpdateMeterVisual(db) {
-      document.querySelectorAll('.mg12xu-meter-seg').forEach(seg => {
-        const segDb = parseFloat(seg.dataset.db);
-        seg.classList.toggle('on', isFinite(db) && db >= segDb);
+    function mg12xuPeakSegDb(col, peakDb) {
+      const pk = peakDb[col];
+      if (!isFinite(pk)) return null;
+      // peakDb 이하인 세그먼트 중 가장 높은(=가장 큰 db) 세그먼트 하나만 피크 표시 대상으로 고릅니다.
+      let best = null;
+      MG12XU_METER_SEGMENTS.forEach(seg => {
+        if (seg.db <= pk && (best === null || seg.db > best)) best = seg.db;
       });
+      return best;
+    }
+
+    function mg12xuUpdateMeterVisual(smoothDb, peakDb) {
+      const peakSegDb = { L: mg12xuPeakSegDb('L', peakDb), R: mg12xuPeakSegDb('R', peakDb) };
+      document.querySelectorAll('.mg12xu-meter-seg').forEach(seg => {
+        const col = seg.dataset.col === 'R' ? 'R' : 'L';
+        const segDb = parseFloat(seg.dataset.db);
+        const lit = isFinite(smoothDb[col]) && smoothDb[col] >= segDb;
+        seg.classList.toggle('on', lit);
+        // 피크홀드: 방금 찍은 순간 최고점에 해당하는 세그먼트 하나를 더 밝게 반짝여, 레벨이 내려간 뒤에도
+        // "방금 여기까지 올라갔었다"가 잠깐 보이게 합니다(실제 LED 피크미터의 대표적인 모습입니다).
+        seg.classList.toggle('peak', !lit && peakSegDb[col] !== null && segDb === peakSegDb[col]);
+      });
+    }
+
+    // 2026-10-08 추가: sources/<소스id>.mp3(또는 wav/m4a/ogg) 파일을 넣어주면 합성음 대신 그 실제
+    // 음원을 반복 재생합니다. index.html을 file://로 직접 열면(이 앱의 기본 사용 방식) fetch()는
+    // CORS 정책에 막혀 로컬 파일을 전혀 읽지 못하므로, <img>와 동일하게 CORS 제약이 없는 <audio>
+    // 엘리먼트로 로드합니다. 파일이 없으면 error 이벤트로 다음 확장자를 시도하다 모두 실패하면
+    // 조용히 기존 합성음을 계속 씁니다.
+    const MG12XU_SOURCE_AUDIO_EXTS = ['mp3', 'wav', 'm4a', 'ogg'];
+    function mg12xuTryLoadSourceAudioElement(sourceId, onReady) {
+      let i = 0;
+      function tryNext() {
+        if (i >= MG12XU_SOURCE_AUDIO_EXTS.length) return;
+        const ext = MG12XU_SOURCE_AUDIO_EXTS[i++];
+        const audioEl = new Audio(`sources/${sourceId}.${ext}`);
+        audioEl.addEventListener('error', tryNext, { once: true });
+        audioEl.addEventListener('canplaythrough', () => onReady(audioEl), { once: true });
+        audioEl.load();
+      }
+      tryNext();
     }
 
     function buildMg12xuSourceNode(sourceId) {
@@ -2198,44 +2773,132 @@
       oscGain.gain.value = 0.1;
       osc.connect(oscGain);
       try { osc.start(); } catch (err) {}
-      const node = { osc, oscGain };
+      // 실제 음원 파일이 있으면 비동기로 불러와서, 준비되는 즉시 위 합성 오실레이터를 멈추고
+      // 같은 oscGain 노드에 대신 연결합니다(다운스트림 배선은 그대로 유지).
+      mg12xuTryLoadSourceAudioElement(sourceId, (audioEl) => {
+        const cur = mg12xuSourceNodes[sourceId];
+        if (!cur) return; // 로딩 중 소스 노드가 이미 제거됨
+        try {
+          const mediaSrc = ctx.createMediaElementSource(audioEl);
+          try { cur.osc.stop(); } catch (err) {}
+          audioEl.loop = true;
+          mediaSrc.connect(cur.oscGain);
+          cur.oscGain.gain.value = 0.35; // 실제 음원은 합성음과 레벨 기준이 달라 별도로 보정
+          cur.usingRealAudio = true;
+          cur.audioEl = audioEl;
+          audioEl.play().catch(() => {}); // 자동재생 정책으로 막히면 음소거 상태로 남을 수 있음(치명적이지 않음)
+        } catch (err) {}
+      });
+      // 2026-10-08: 고정된 사인파 레벨은 늘 똑같은 크기라 레벨미터가 사실상 멈춰 보였습니다.
+      // 실제 보컬/악기처럼 레벨이 자연스럽게 출렁이도록, 소스마다 위상이 다른 저주파 변동을
+      // 매 프레임 계산해서 oscGain에 직접 걸어줍니다(mg12xuStartMeterLoop에서 갱신).
+      const envPhase = { a: Math.random() * Math.PI * 2, b: Math.random() * Math.PI * 2, c: Math.random() * Math.PI * 2 };
+      const node = { osc, oscGain, envPhase, usingRealAudio: false };
       mg12xuSourceNodes[sourceId] = node;
       return node;
+    }
+
+    // 소스 오실레이터의 레벨을 매 프레임 자연스럽게 출렁이도록 갱신합니다(서로 다른 소수 배수의 저주파
+    // 사인 3개를 더해 반복적이지 않은 "숨쉬는" 느낌을 냅니다). base(0.1)의 약 20%~180% 사이에서 움직입니다.
+    // 2026-10-08 수정: 실제 음원 파일로 교체된 소스(usingRealAudio)는 음원 자체에 이미 자연스러운
+    // 다이내믹이 있으므로 이 합성 "숨쉬기" 변조를 건너뜁니다.
+    function mg12xuUpdateSourceEnvelopes(tSec) {
+      const base = 0.1;
+      Object.keys(mg12xuSourceNodes).forEach(sourceId => {
+        const node = mg12xuSourceNodes[sourceId];
+        if (!node || !node.oscGain || !node.envPhase || node.usingRealAudio) return;
+        const ph = node.envPhase;
+        const mod = 0.4 * Math.sin(tSec * 0.9 + ph.a) + 0.25 * Math.sin(tSec * 2.1 + ph.b) + 0.15 * Math.sin(tSec * 3.7 + ph.c);
+        const g = Math.max(base * 0.2, base * (1 + mod));
+        node.oscGain.gain.value = g;
+      });
     }
 
     function buildMg12xuChannelChain(ch) {
       const ctx = ensureMg12xuAudioCtx();
       if (!ctx) return null;
       if (mg12xuChannelNodes[ch]) return mg12xuChannelNodes[ch];
+      const padGain = ctx.createGain();     // PAD(-26dB) 스위치 — 입력단에서 바로 감쇠
+      padGain.gain.value = mg12xuPadOn[ch] ? mg12xuDbToGain(-26) : 1;
+      const hpf = ctx.createBiquadFilter(); hpf.type = 'highpass'; // HPF(80Hz) 스위치
+      hpf.frequency.value = mg12xuHpfOn[ch] ? 80 : 20;
+      hpf.Q.value = 0.707;
       const input = ctx.createGain();       // GAIN 노브
       const low = ctx.createBiquadFilter();  low.type = 'lowshelf';  low.frequency.value = 100;
       const mid = ctx.createBiquadFilter();  mid.type = 'peaking';   mid.frequency.value = 1000; mid.Q.value = 1;
       const high = ctx.createBiquadFilter(); high.type = 'highshelf'; high.frequency.value = 8000;
+      let comp = null;
+      if (MG12XU_COMP_CHANNELS.includes(ch)) {
+        comp = ctx.createDynamicsCompressor();
+        comp.threshold.value = -3; comp.ratio.value = 1; comp.attack.value = 0.01; comp.release.value = 0.25; comp.knee.value = 10;
+      }
       const faderGain = ctx.createGain();   // 페이더
       const panner = (ctx.createStereoPanner ? ctx.createStereoPanner() : null); // PAN 노브
       const muteGain = ctx.createGain();    // ON/MUTE
       const groupSend = ctx.createGain();   // 1-2 라우팅
       const stereoSend = ctx.createGain();  // ST 라우팅
+      const aux1Send = ctx.createGain();    // AUX1 노브 → AUX1 SEND 버스
+      const aux2Send = ctx.createGain();    // AUX2 노브 → AUX2/FX SEND 버스
+      const pflSend = ctx.createGain();     // PFL — 프리페이더(페이더 이전 지점)에서 PHONES 솔로 버스로
 
+      padGain.connect(hpf);
+      hpf.connect(input);
       input.connect(low);
       low.connect(mid);
       mid.connect(high);
-      if (panner) { high.connect(panner); panner.connect(faderGain); }
-      else { high.connect(faderGain); }
+      const postEq = comp ? (high.connect(comp), comp) : high;
+      if (panner) { postEq.connect(panner); panner.connect(faderGain); }
+      else { postEq.connect(faderGain); }
+      // PFL은 "Pre-Fade Listen"이므로 페이더(faderGain) 이전 지점에서 탭합니다.
+      if (panner) { panner.connect(pflSend); } else { postEq.connect(pflSend); }
+      if (mg12xuPflBus) pflSend.connect(mg12xuPflBus);
       faderGain.connect(muteGain);
       muteGain.connect(groupSend);
       muteGain.connect(stereoSend);
+      muteGain.connect(aux1Send);
+      muteGain.connect(aux2Send);
       if (mg12xuBusGain.group) groupSend.connect(mg12xuBusGain.group);
       if (mg12xuBusGain.stereo) stereoSend.connect(mg12xuBusGain.stereo);
+      if (mg12xuBusGain.aux1) aux1Send.connect(mg12xuBusGain.aux1);
+      if (mg12xuBusGain.aux2) aux2Send.connect(mg12xuBusGain.aux2);
 
-      const node = { input, low, mid, high, panner, faderGain, muteGain, groupSend, stereoSend };
+      const node = { padGain, hpf, input, low, mid, high, comp, panner, faderGain, muteGain, groupSend, stereoSend, aux1Send, aux2Send, pflSend };
       mg12xuChannelNodes[ch] = node;
+      mg12xuPadGain[ch] = padGain;
+      mg12xuHpfNode[ch] = hpf;
+      mg12xuCompNode[ch] = comp;
 
       (MG12XU_CHANNEL_KNOBS[ch] || MG12XU_KNOB_TYPES).forEach(type => mg12xuApplyKnobAudio(ch, type));
       mg12xuApplyFaderAudio(ch);
       mg12xuApplyMuteAudio(ch);
       mg12xuApplyRouteAudio(ch);
+      mg12xuApplyPflAudio();
       return node;
+    }
+
+    // PAD(-26dB 입력 감쇠) 토글
+    function toggleMg12xuPad(ch) {
+      mg12xuPadOn[ch] = !mg12xuPadOn[ch];
+      mg12xuUpdatePadVisual(ch);
+      if (mg12xuAudioOn && mg12xuAudioCtx && mg12xuPadGain[ch]) {
+        mg12xuPadGain[ch].gain.setTargetAtTime(mg12xuPadOn[ch] ? mg12xuDbToGain(-26) : 1, mg12xuAudioCtx.currentTime, 0.01);
+      }
+    }
+    function mg12xuUpdatePadVisual(ch) {
+      const btn = document.querySelector(`.mg12xu-pad-btn[data-ch="${ch}"]`);
+      if (btn) btn.classList.toggle('on', !!mg12xuPadOn[ch]);
+    }
+    // HPF(80Hz 하이패스) 토글
+    function toggleMg12xuHpf(ch) {
+      mg12xuHpfOn[ch] = !mg12xuHpfOn[ch];
+      mg12xuUpdateHpfVisual(ch);
+      if (mg12xuAudioOn && mg12xuAudioCtx && mg12xuHpfNode[ch]) {
+        mg12xuHpfNode[ch].frequency.setTargetAtTime(mg12xuHpfOn[ch] ? 80 : 20, mg12xuAudioCtx.currentTime, 0.02);
+      }
+    }
+    function mg12xuUpdateHpfVisual(ch) {
+      const btn = document.querySelector(`.mg12xu-hpf-btn[data-ch="${ch}"]`);
+      if (btn) btn.classList.toggle('on', !!mg12xuHpfOn[ch]);
     }
 
     function mg12xuRewireAudioAssignments() {
@@ -2250,6 +2913,13 @@
     }
 
     function mg12xuApplyKnobAudio(ch, type) {
+      if (ch === 'master') {
+        if (type === 'aux1' || type === 'aux2') mg12xuApplyAuxSendMasterAudio(type);
+        else if (type === 'phones') mg12xuApplyPhonesAudio();
+        else if (type === 'monitorLevel') mg12xuApplyMonitorLevelAudio();
+        else if (type === 'spxParam') mg12xuApplySpxProgram();
+        return;
+      }
       if (type === 'gain') mg12xuUpdatePeakLed(ch);
       if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuChannelNodes[ch]) return;
       const node = mg12xuChannelNodes[ch];
@@ -2260,6 +2930,11 @@
         // 과도하게 올렸을 때 실제로 소리가 거칠어지는 게 느껴지도록 하드 클램프는 걸지 않고,
         // 대신 마스터 컴프레서(리미터)와 PEAK 램프로 "너무 세게 올리면 안 좋다"는 걸 체감하게 합니다.
         node.input.gain.setTargetAtTime(mg12xuDbToGain(db), t, 0.02);
+      } else if (type === 'comp' && node.comp) {
+        // COMP 노브(0~10): 값이 높을수록 스레숄드가 낮아지고 비율이 세져서 더 세게 눌러줍니다.
+        const frac = (angle + 135) / 270;
+        node.comp.threshold.setTargetAtTime(-3 - frac * 27, t, 0.02);
+        node.comp.ratio.setTargetAtTime(1 + frac * 9, t, 0.02);
       } else if (type === 'high') {
         node.high.gain.setTargetAtTime(angle / 135 * 15, t, 0.02);
       } else if (type === 'mid') {
@@ -2268,8 +2943,12 @@
         node.low.gain.setTargetAtTime(angle / 135 * 15, t, 0.02);
       } else if (type === 'pan' && node.panner) {
         node.panner.pan.setTargetAtTime(Math.max(-1, Math.min(1, angle / 135)), t, 0.02);
+      } else if (type === 'aux1' && node.aux1Send) {
+        // 노브 눈금 0~10과 동일하게 선형으로 AUX1 SEND 버스로 보내는 양을 조절합니다.
+        node.aux1Send.gain.setTargetAtTime((angle + 135) / 270, t, 0.02);
+      } else if (type === 'aux2' && node.aux2Send) {
+        node.aux2Send.gain.setTargetAtTime((angle + 135) / 270, t, 0.02);
       }
-      // aux1 / aux2는 현재 시뮬레이션에서 별도 출력 버스가 없어 조작 UI·수치만 제공합니다.
     }
 
     // GAIN을 너무 많이 올리면(+40dB 이상, 전체 회전의 약 3/4 지점) PEAK 램프가 켜지도록 합니다.
@@ -2321,6 +3000,109 @@
       mg12xuBusConnGain[bus].gain.setTargetAtTime(mg12xuOutputConnected[bus] ? 1 : 0, mg12xuAudioCtx.currentTime, 0.01);
     }
 
+    // GROUP 1-2의 ST 버튼: 켜면 GROUP 버스 신호가 STEREO 버스에도 합산되어 나갑니다.
+    function mg12xuApplyGroupToStereoAudio() {
+      if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuGroupToStereoGain) return;
+      mg12xuGroupToStereoGain.gain.setTargetAtTime(mg12xuGroupToStereoOn ? 1 : 0, mg12xuAudioCtx.currentTime, 0.01);
+    }
+
+    // AUX1/AUX2 SEND MASTER 노브: 버스 전체 출력 레벨(채널 AUX 센드 합산분 × 이 노브 값)을 조절합니다.
+    function mg12xuApplyAuxSendMasterAudio(bus) {
+      if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuBusGain[bus]) return;
+      const angle = mg12xuKnobAngles['master_' + bus] ?? 0;
+      mg12xuBusGain[bus].gain.setTargetAtTime((angle + 135) / 270, mg12xuAudioCtx.currentTime, 0.02);
+    }
+
+    // PHONES 레벨 노브 — STEREO/GROUP SOURCE로 고른 모니터 신호(PFL 비활성 시)의 헤드폰 출력 레벨.
+    function mg12xuApplyPhonesAudio() {
+      if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuPhonesGain) return;
+      const angle = mg12xuKnobAngles['master_phones'] ?? 0;
+      mg12xuPhonesGain.gain.setTargetAtTime((angle + 135) / 270, mg12xuAudioCtx.currentTime, 0.02);
+    }
+    // MONITOR LEVEL 노브 — PHONES와 마찬가지로 STEREO/GROUP SOURCE로 고른 버스를 듣는 레벨이지만,
+    // 헤드폰이 아니라 컨트롤룸 모니터 스피커 출력을 흉내냅니다. 이 시뮬레이터에는 별도의 모니터 스피커
+    // 단자/케이블이 없어 PHONES처럼 연결 여부를 따지지 않고, 켜져 있으면 항상 들리게 했습니다.
+    function mg12xuApplyMonitorLevelAudio() {
+      if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuMonitorLevelGain) return;
+      const angle = mg12xuKnobAngles['master_monitorLevel'] ?? 0;
+      mg12xuMonitorLevelGain.gain.setTargetAtTime((angle + 135) / 270, mg12xuAudioCtx.currentTime, 0.02);
+    }
+
+    // STEREO/GROUP SOURCE 스위치 — PHONES(모니터)로 들을 버스를 고릅니다.
+    function toggleMg12xuMonitorSource() {
+      mg12xuMonitorSource = mg12xuMonitorSource === 'stereo' ? 'group' : 'stereo';
+      mg12xuUpdateMonitorSourceVisual();
+      if (!mg12xuAudioOn || !mg12xuAudioCtx) return;
+      const t = mg12xuAudioCtx.currentTime;
+      if (mg12xuMonitorSourceGain.stereo) mg12xuMonitorSourceGain.stereo.gain.setTargetAtTime(mg12xuMonitorSource === 'stereo' ? 1 : 0, t, 0.01);
+      if (mg12xuMonitorSourceGain.group) mg12xuMonitorSourceGain.group.gain.setTargetAtTime(mg12xuMonitorSource === 'group' ? 1 : 0, t, 0.01);
+    }
+    function mg12xuUpdateMonitorSourceVisual() {
+      const btn = document.getElementById('mg12xuSourceSwBtn');
+      if (btn) btn.classList.toggle('group', mg12xuMonitorSource === 'group');
+    }
+
+    // ----- SPX 이펙터: PROGRAM(리버브/딜레이 종류 선택) + PARAMETER(디케이/딜레이타임) -----
+    // 지수감쇠 화이트노이즈로 간단한 알고리즘 리버브 임펄스 응답을 만듭니다(decay 초).
+    function mg12xuBuildReverbImpulse(ctx, decaySec) {
+      const rate = ctx.sampleRate;
+      const len = Math.max(1, Math.floor(rate * decaySec));
+      const buf = ctx.createBuffer(2, len, rate);
+      for (let c = 0; c < 2; c++) {
+        const data = buf.getChannelData(c);
+        for (let i = 0; i < len; i++) {
+          const t = i / len;
+          data[i] = (Math.random() * 2 - 1) * Math.pow(1 - t, 2.4);
+        }
+      }
+      return buf;
+    }
+    function toggleMg12xuSpxProgram() {
+      mg12xuSpxProgramIdx = (mg12xuSpxProgramIdx + 1) % MG12XU_SPX_PROGRAMS.length;
+      // 선택기 노브를 프로그램 개수만큼 균등 분할한 각도로 스냅시켜 손잡이가 돌아가는 모습을 보여줍니다.
+      const n = MG12XU_SPX_PROGRAMS.length;
+      mg12xuKnobAngles['master_spxProgram'] = -135 + (270 / (n - 1)) * mg12xuSpxProgramIdx;
+      mg12xuUpdateKnobVisual('master', 'spxProgram');
+      mg12xuApplySpxProgram();
+      const knobEl = document.querySelector('.mg12xu-knob[data-ch="master"][data-type="spxProgram"]');
+      if (knobEl) mg12xuShowReadout(knobEl, MG12XU_SPX_PROGRAMS[mg12xuSpxProgramIdx].name);
+    }
+    function mg12xuApplySpxProgram() {
+      if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuSpxOutGain) return;
+      const prog = MG12XU_SPX_PROGRAMS[mg12xuSpxProgramIdx] || MG12XU_SPX_PROGRAMS[0];
+      const angle = mg12xuKnobAngles['master_spxParam'] ?? 0;
+      const frac = (angle + 135) / 270; // 0~1
+      const t = mg12xuAudioCtx.currentTime;
+      if (prog.type === 'reverb') {
+        const decay = Math.max(0.3, prog.decay * (0.4 + frac * 1.4));
+        try { mg12xuSpxReverbConv.buffer = mg12xuBuildReverbImpulse(mg12xuAudioCtx, decay); } catch (err) {}
+        mg12xuSpxReverbGain.gain.setTargetAtTime(1, t, 0.05);
+        mg12xuSpxDelayGain.gain.setTargetAtTime(0, t, 0.05);
+        mg12xuSpxDelayFeedback.gain.setTargetAtTime(0, t, 0.05);
+      } else {
+        const delayTime = Math.max(0.05, Math.min(1.9, prog.time * (0.5 + frac * 1.2)));
+        mg12xuSpxDelayNode.delayTime.setTargetAtTime(delayTime, t, 0.02);
+        mg12xuSpxDelayFeedback.gain.setTargetAtTime(prog.feedback * (0.5 + frac * 0.6), t, 0.05);
+        mg12xuSpxReverbGain.gain.setTargetAtTime(0, t, 0.05);
+        mg12xuSpxDelayGain.gain.setTargetAtTime(1, t, 0.05);
+      }
+    }
+
+    // PFL: 누른 채널이 하나라도 있으면 메인 믹스를 잠시 끄고, 그 채널(들)의 프리페이더 신호만
+    // PFL 버스(=PHONES로 간주하는 분리된 모니터 출력)로 들려줍니다 — 실제 PFL을 "눌렀을 때만 들린다"로 체감.
+    function mg12xuApplyPflAudio() {
+      if (!mg12xuAudioOn || !mg12xuAudioCtx) return;
+      const t = mg12xuAudioCtx.currentTime;
+      const anyActive = Object.keys(mg12xuPflActive).some(ch => mg12xuPflActive[ch]);
+      if (mg12xuPflBus) mg12xuPflBus.gain.setTargetAtTime(anyActive ? 1 : 0, t, 0.01);
+      if (mg12xuMainOutGate) mg12xuMainOutGate.gain.setTargetAtTime(anyActive ? 0 : 1, t, 0.01);
+      if (mg12xuMonitorActiveGate) mg12xuMonitorActiveGate.gain.setTargetAtTime(anyActive ? 0 : 1, t, 0.01);
+      MG12XU_REAL_CHANNELS.forEach(ch => {
+        const node = mg12xuChannelNodes[ch];
+        if (node && node.pflSend) node.pflSend.gain.setTargetAtTime(mg12xuPflActive[ch] ? 1 : 0, t, 0.01);
+      });
+    }
+
     function toggleMg12xuAudio() {
       const btn = document.getElementById('mg12xuAudioToggleBtn');
       const hint = document.getElementById('mg12xuAudioHint');
@@ -2346,6 +3128,20 @@
           mg12xuApplyMasterOnAudio(bus);
           mg12xuApplyOutputConnAudio(bus);
         });
+        mg12xuApplyMasterFaderAudio('fxrtn');
+        mg12xuApplyMasterOnAudio('fxrtn');
+        mg12xuApplyOutputConnAudio('aux1');
+        mg12xuApplyOutputConnAudio('phones');
+        mg12xuApplyOutputConnAudio('monitorOut');
+        mg12xuApplyAuxSendMasterAudio('aux1');
+        mg12xuApplyAuxSendMasterAudio('aux2');
+        mg12xuApplyPhonesAudio();
+        mg12xuApplyMonitorLevelAudio();
+        mg12xuApplySpxProgram();
+        mg12xuApplyGroupToStereoAudio();
+        MG12XU_PAD_CHANNELS.forEach(ch => { if (mg12xuPadGain[ch]) mg12xuPadGain[ch].gain.value = mg12xuPadOn[ch] ? mg12xuDbToGain(-26) : 1; });
+        MG12XU_HPF_CHANNELS.forEach(ch => { if (mg12xuHpfNode[ch]) mg12xuHpfNode[ch].frequency.value = mg12xuHpfOn[ch] ? 80 : 20; });
+        mg12xuApplyPflAudio();
         if (btn) { btn.classList.add('on'); btn.textContent = '🔇 오디오 테스트 끄기'; }
         if (hint) hint.textContent = '켜짐 — 채널에 배정된 소스마다 테스트 톤이 흐릅니다. 페이더·GAIN·EQ·ON·1-2/ST 버튼과 마스터 페이더를 조작하면 소리가 바로 바뀝니다.';
       } else {
@@ -2365,7 +3161,8 @@
       const scaleLayer = document.getElementById('mg12xuFaderScaleLayer');
       const routeLayer = document.getElementById('mg12xuRouteLayer');
       const peakLayer = document.getElementById('mg12xuPeakLayer');
-      if (!knobLayer || !faderLayer || !hotspotLayer || !onLayer || !muteLayer || !scaleLayer || !routeLayer || !peakLayer) return;
+      const pflLayer = document.getElementById('mg12xuPflLayer');
+      if (!knobLayer || !faderLayer || !hotspotLayer || !onLayer || !muteLayer || !scaleLayer || !routeLayer || !peakLayer || !pflLayer) return;
 
       knobLayer.innerHTML = '';
       faderLayer.innerHTML = '';
@@ -2375,6 +3172,7 @@
       scaleLayer.innerHTML = '';
       routeLayer.innerHTML = '';
       peakLayer.innerHTML = '';
+      pflLayer.innerHTML = '';
 
       MG12XU_REAL_CHANNELS.forEach(ch => {
         const kx = MG12XU_KNOB_X_PCT[ch];
@@ -2401,12 +3199,23 @@
           img.src = `${ch}_${type}.png`;
           img.draggable = false;
           img.alt = `${MG12XU_CHANNEL_LABELS[ch]}번 채널 ${type.toUpperCase()} 노브`;
+          const origin = (MG12XU_KNOB_ORIGIN_PCT[ch] || {})[type];
+          if (origin) img.style.transformOrigin = `${origin[0]}% ${origin[1]}%`;
           knob.appendChild(img);
           knob.addEventListener('pointerdown', (e) => mg12xuKnobPointerDown(e, ch, type));
           knobLayer.appendChild(knob);
         });
 
         buildMg12xuFaderScale(scaleLayer, MG12XU_FADER_X_PCT[ch], false);
+
+        // 실제 사진에는 페이더 맨 아래에 작은 채널 번호가 인쇄되어 있는데, 촬영 각도 때문에
+        // 오른쪽 채널들(9/10, 11/12 등)만 일부 보이고 왼쪽 채널들은 사진에 아예 담기지 않았습니다.
+        // 모든 채널이 FX RTN처럼 일관되게 번호가 보이도록 동일한 스타일로 직접 그려 넣습니다.
+        const chNumTag = document.createElement('div');
+        chNumTag.className = 'mg12xu-fscale-chnum';
+        chNumTag.style.left = MG12XU_FADER_X_PCT[ch] + '%';
+        chNumTag.textContent = MG12XU_CHANNEL_LABELS[ch];
+        scaleLayer.appendChild(chNumTag);
 
         const fx = MG12XU_FADER_X_PCT[ch];
         const hit = document.createElement('div');
@@ -2438,6 +3247,34 @@
         onBtn.title = `CH ${MG12XU_CHANNEL_LABELS[ch]} ON/MUTE`;
         onBtn.addEventListener('click', () => toggleMg12xuOn(ch));
         onLayer.appendChild(onBtn);
+
+        // PFL(Pre-Fade Listen) — 누르면 해당 채널만 PHONES 솔로 모니터로 전송됩니다.
+        const pflBtn = document.createElement('button');
+        pflBtn.type = 'button';
+        pflBtn.className = 'mg12xu-pfl-hotspot';
+        pflBtn.style.left = MG12XU_PFL_X_PCT[ch] + '%';
+        pflBtn.style.top = MG12XU_PFL_Y_PCT + '%';
+        pflBtn.dataset.ch = ch;
+        pflBtn.title = `CH ${MG12XU_CHANNEL_LABELS[ch]} PFL (PHONES로 솔로 모니터)`;
+        pflBtn.addEventListener('click', () => toggleMg12xuPfl(ch));
+        pflLayer.appendChild(pflBtn);
+
+        // PAD(-26dB 입력 감쇠) — 1~4번 채널의 실제 PAD 버튼은 콘솔 전면이 아니라 패치베이(jack_strip.jpg)에
+        // 있어, 이제 buildMg12xuJackstrip()에서 그 레이어에 생성합니다(여기서는 생성하지 않음).
+        // HPF(80Hz 하이패스) — 실제 사진 속 버튼이 있는 5/6, 7/8 채널만(콘솔 전면). 1~4번은 패치베이에 있음.
+        if (ch === 'ch5_6' || ch === 'ch7_8') {
+          const hpfBtn = document.createElement('button');
+          hpfBtn.type = 'button';
+          hpfBtn.className = 'mg12xu-hpf-btn';
+          hpfBtn.dataset.ch = ch;
+          hpfBtn.style.left = MG12XU_HPF_X_PCT[ch] + '%';
+          hpfBtn.style.top = MG12XU_HPF_Y_PCT + '%';
+          hpfBtn.textContent = 'HPF';
+          hpfBtn.title = `CH ${MG12XU_CHANNEL_LABELS[ch]} HPF 80Hz`;
+          hpfBtn.addEventListener('click', () => toggleMg12xuHpf(ch));
+          routeLayer.appendChild(hpfBtn);
+          mg12xuUpdateHpfVisual(ch);
+        }
 
         const muteCol = document.createElement('div');
         muteCol.className = 'mg12xu-mute-col';
@@ -2492,20 +3329,25 @@
         mg12xuUpdateMuteVisual(ch);
         mg12xuUpdateRouteVisual(ch, 'group');
         mg12xuUpdateRouteVisual(ch, 'stereo');
+        mg12xuUpdatePflVisual(ch);
       });
     }
 
-    function buildMg12xuFaderScale(layer, xPct, isMaster) {
+    function buildMg12xuFaderScale(layer, xPct, isMaster, topPct, bottomPct) {
+      // topPct/bottomPct를 생략하면(일반 채널) 채널용 이동 구간을 쓰고, 마스터 섹션(FX RTN/GROUP/STEREO)은
+      // 사진 스케일이 달라 호출 쪽에서 MG12XU_MASTER_FADER_TRAVEL_TOP_PCT/BOTTOM_PCT를 넘겨줍니다.
+      const top = topPct ?? MG12XU_FADER_TRAVEL_TOP_PCT;
+      const bottom = bottomPct ?? MG12XU_FADER_TRAVEL_BOTTOM_PCT;
       const track = document.createElement('div');
       track.className = 'mg12xu-fscale-track';
       track.style.left = xPct + '%';
-      track.style.top = MG12XU_FADER_TRAVEL_TOP_PCT + '%';
-      track.style.height = (MG12XU_FADER_TRAVEL_BOTTOM_PCT - MG12XU_FADER_TRAVEL_TOP_PCT) + '%';
+      track.style.top = top + '%';
+      track.style.height = (bottom - top) + '%';
       layer.appendChild(track);
 
       const points = MG12XU_FADER_SCALE.concat([{ frac: 1.0, db: null }]);
       points.forEach(pt => {
-        const yPct = MG12XU_FADER_TRAVEL_TOP_PCT + pt.frac * (MG12XU_FADER_TRAVEL_BOTTOM_PCT - MG12XU_FADER_TRAVEL_TOP_PCT);
+        const yPct = top + pt.frac * (bottom - top);
         const tick = document.createElement('div');
         tick.className = 'mg12xu-fscale-tick' + (pt.db === 0 ? ' zero' : '') + (isMaster ? ' master' : '');
         tick.style.left = xPct + '%';
@@ -2541,10 +3383,37 @@
       mg12xuApplyMuteAudio(ch);
     }
 
+    // PFL(Pre-Fade Listen) — 채널(또는 FX RTN)의 PFL을 누르면 그 채널만 PHONES 솔로 버스로 보내고,
+    // 누르는 동안 메인 믹스는 잠시 음소거됩니다(실제 콘솔의 헤드폰 솔로 체감과 동일).
+    function toggleMg12xuPfl(ch) {
+      mg12xuPflActive[ch] = !mg12xuPflActive[ch];
+      mg12xuUpdatePflVisual(ch);
+      mg12xuApplyPflAudio();
+    }
+
+    function mg12xuUpdatePflVisual(ch) {
+      const btn = document.querySelector(`.mg12xu-pfl-hotspot[data-ch="${ch}"]`);
+      if (btn) btn.classList.toggle('active', !!mg12xuPflActive[ch]);
+    }
+
     function mg12xuUpdateMuteVisual(ch) {
-      const col = document.querySelector(`.mg12xu-mute-col[data-ch="${ch}"]`);
-      if (!col) return;
-      col.classList.toggle('active', mg12xuChannelOn[ch] === false);
+      // 2026-10-08 수정: 채널 전체를 어둡게 덮던 .mg12xu-mute-col 방식 대신, 출력단(마스터 버스)과
+      // 동일하게 ON 핫스팟 버튼 자체에만 "꺼짐" 표시를 합니다.
+      const btn = document.querySelector(`.mg12xu-on-hotspot[data-ch="${ch}"]`);
+      if (btn) btn.classList.toggle('off', mg12xuChannelOn[ch] === false);
+    }
+
+    // 모바일에서 페이더/노브/케이블을 드래그하는 동안 브라우저의 기본 '화면 스크롤' 제스처가 함께
+    // 발동해 화면이 밀리는 문제를 막기 위한 잠금입니다. 터치가 CSS touch-action만으로는 100% 막히지 않는
+    // 브라우저(특히 일부 모바일 인앱 브라우저)가 있어, 드래그 중엔 아예 html/body 스크롤 자체를 잠급니다.
+    let mg12xuDragLockCount = 0;
+    function mg12xuBeginDragLock() {
+      mg12xuDragLockCount++;
+      document.documentElement.classList.add('mg12xu-drag-lock');
+    }
+    function mg12xuEndDragLock() {
+      mg12xuDragLockCount = Math.max(0, mg12xuDragLockCount - 1);
+      if (mg12xuDragLockCount === 0) document.documentElement.classList.remove('mg12xu-drag-lock');
     }
 
     // 노브는 "중심 기준 절대 각도"가 아니라, 실제 오디오 소프트웨어 노브처럼 "잡은 지점에서부터 위/아래로
@@ -2557,6 +3426,7 @@
       const knobEl = e.currentTarget;
       knobEl.classList.add('active');
       try { knobEl.setPointerCapture(e.pointerId); } catch (err) {}
+      mg12xuBeginDragLock();
 
       const startY = e.clientY;
       const startX = e.clientX;
@@ -2579,6 +3449,7 @@
         knobEl.removeEventListener('pointerup', onUp);
         knobEl.removeEventListener('pointercancel', onUp);
         mg12xuHideReadout();
+        mg12xuEndDragLock();
       };
       knobEl.addEventListener('pointermove', onMove);
       knobEl.addEventListener('pointerup', onUp);
@@ -2593,6 +3464,7 @@
       if (!wrap) return;
       hitEl.classList.add('active');
       try { hitEl.setPointerCapture(e.pointerId); } catch (err) {}
+      mg12xuBeginDragLock();
 
       const onMove = (ev) => {
         const wrapRect = wrap.getBoundingClientRect();
@@ -2612,6 +3484,7 @@
         hitEl.removeEventListener('pointerup', onUp);
         hitEl.removeEventListener('pointercancel', onUp);
         mg12xuHideReadout();
+        mg12xuEndDragLock();
       };
       hitEl.addEventListener('pointermove', onMove);
       hitEl.addEventListener('pointerup', onUp);
@@ -2622,7 +3495,12 @@
 
     function mg12xuUpdateKnobVisual(ch, type) {
       const img = document.querySelector(`.mg12xu-knob[data-ch="${ch}"][data-type="${type}"] img`);
-      if (img) img.style.transform = `rotate(${mg12xuKnobAngles[ch + '_' + type] || 0}deg)`;
+      if (img) {
+        const key = ch + '_' + type;
+        const logicalAngle = mg12xuKnobAngles[key] || 0;
+        const baseline = MG12XU_KNOB_BASELINE_OFFSET[key] || 0;
+        img.style.transform = `rotate(${logicalAngle - baseline}deg)`;
+      }
       mg12xuApplyKnobAudio(ch, type);
     }
 
@@ -2638,9 +3516,35 @@
 
     function mg12xuKnobValueLabel(ch, type) {
       const angle = mg12xuKnobAngles[ch + '_' + type] || 0;
+      if (ch === 'master') {
+        if (type === 'aux1' || type === 'aux2') {
+          const v = (angle + 135) / 270 * 10;
+          const label = type === 'aux1' ? 'AUX1 SEND MASTER' : 'AUX2/FX SEND MASTER';
+          return `${label} ${v.toFixed(1)}`;
+        }
+        if (type === 'phones') {
+          const v = (angle + 135) / 270 * 10;
+          return `PHONES ${v.toFixed(1)}`;
+        }
+        if (type === 'monitorLevel') {
+          const v = (angle + 135) / 270 * 10;
+          return `MONITOR LEVEL ${v.toFixed(1)}`;
+        }
+        if (type === 'spxParam') {
+          const v = (angle + 135) / 270 * 10;
+          const prog = MG12XU_SPX_PROGRAMS[mg12xuSpxProgramIdx] || MG12XU_SPX_PROGRAMS[0];
+          const label = prog.type === 'reverb' ? 'DECAY' : 'DELAY TIME';
+          return `SPX ${label} ${v.toFixed(1)}`;
+        }
+        return '';
+      }
       if (type === 'gain') {
         const v = mg12xuGainDbFromAngle(angle);
         return `CH${MG12XU_CHANNEL_LABELS[ch]} GAIN ${v >= 0 ? '+' : ''}${v.toFixed(0)}dB`;
+      }
+      if (type === 'comp') {
+        const v = (angle + 135) / 270 * 10;
+        return `CH${MG12XU_CHANNEL_LABELS[ch]} COMP ${v.toFixed(1)}`;
       }
       if (type === 'aux1' || type === 'aux2') {
         const v = (angle + 135) / 270 * 10;
@@ -2677,35 +3581,51 @@
     }
 
     /* ===== 마스터 섹션: GROUP 1-2 / STEREO(Main L·R) 페이더 ===== */
+    // FX RTN / GROUP 1-2 / STEREO 세 "페이더 스트립"을 화면에 그립니다. 오디오 그래프가 있는 건
+    // group/stereo뿐이지만(MG12XU_MASTER_BUSES), FX RTN도 조작감(드래그·ON 토글)은 동일해야 하므로
+    // 화면 그리기·페이더 드래그·ON 버튼은 이 셋을 똑같이 다루고, 오디오 반영 함수들이 자체적으로
+    // "오디오 그래프가 없는 버스면 조용히 무시"하도록 되어 있어 FX RTN에 그대로 재사용할 수 있습니다.
+    const MG12XU_MASTER_STRIPS = ['fxrtn', 'group', 'stereo'];
+    function mg12xuMasterStripX(bus) {
+      return bus === 'fxrtn' ? MG12XU_FXRTN_X_PCT : MG12XU_MASTER_FADER_X_PCT[bus];
+    }
+
     function buildMg12xuMasterConsole() {
       const faderLayer = document.getElementById('mg12xuMasterFaderLayer');
       const scaleLayer = document.getElementById('mg12xuMasterScaleLayer');
-      const toggleRow = document.getElementById('mg12xuBusToggleRow');
+      const knobLayer = document.getElementById('mg12xuMasterKnobLayer');
+      const onLayer = document.getElementById('mg12xuMasterOnLayer');
+      const routeLayer = document.getElementById('mg12xuMasterRouteLayer');
+      const pflLayer = document.getElementById('mg12xuMasterPflLayer');
       const meterLayer = document.getElementById('mg12xuMasterMeterLayer');
-      if (!faderLayer || !scaleLayer || !toggleRow || !meterLayer) return;
+      if (!faderLayer || !scaleLayer || !knobLayer || !onLayer || !routeLayer || !pflLayer || !meterLayer) return;
       faderLayer.innerHTML = '';
       scaleLayer.innerHTML = '';
-      toggleRow.innerHTML = '';
+      knobLayer.innerHTML = '';
+      onLayer.innerHTML = '';
+      routeLayer.innerHTML = '';
+      pflLayer.innerHTML = '';
       meterLayer.innerHTML = '';
 
-      MG12XU_MASTER_BUSES.forEach(bus => {
-        const bx = MG12XU_MASTER_FADER_X_PCT[bus];
-        buildMg12xuFaderScale(scaleLayer, bx, true);
+      MG12XU_MASTER_STRIPS.forEach(bus => {
+        const bx = mg12xuMasterStripX(bus);
+        buildMg12xuFaderScale(scaleLayer, bx, true, MG12XU_MASTER_FADER_TRAVEL_TOP_PCT, MG12XU_MASTER_FADER_TRAVEL_BOTTOM_PCT);
 
         const onBtn = document.createElement('button');
         onBtn.type = 'button';
-        onBtn.className = 'mg12xu-master-on-btn';
+        onBtn.className = 'mg12xu-master-on-hotspot';
+        onBtn.style.left = bx + '%';
+        onBtn.style.top = MG12XU_MASTER_ON_Y_PCT + '%';
         onBtn.dataset.bus = bus;
-        onBtn.textContent = (bus === 'stereo' ? 'STEREO OUT' : 'GROUP OUT');
-        onBtn.title = `${MG12XU_MASTER_LABELS[bus]} 출력 ON/OFF`;
+        onBtn.title = `${MG12XU_MASTER_LABELS[bus]} ON/OFF`;
         onBtn.addEventListener('click', () => toggleMg12xuMasterOn(bus));
-        toggleRow.appendChild(onBtn);
+        onLayer.appendChild(onBtn);
 
         const hit = document.createElement('div');
         hit.className = 'mg12xu-master-fader-hit';
         hit.dataset.bus = bus;
         hit.style.left = bx + '%';
-        hit.style.top = ((MG12XU_FADER_TRAVEL_TOP_PCT + MG12XU_FADER_TRAVEL_BOTTOM_PCT) / 2) + '%';
+        hit.style.top = ((MG12XU_MASTER_FADER_TRAVEL_TOP_PCT + MG12XU_MASTER_FADER_TRAVEL_BOTTOM_PCT) / 2) + '%';
         hit.addEventListener('pointerdown', (e) => mg12xuMasterFaderPointerDown(e, bus));
         faderLayer.appendChild(hit);
 
@@ -2714,23 +3634,183 @@
         cap.dataset.bus = bus;
         cap.style.left = bx + '%';
         const capImg = document.createElement('img');
-        capImg.src = bus === 'stereo' ? 'stereo_fader_cap.png' : 'group_fader_cap.png';
+        // 2026-10-08: 실제 하드웨어는 STEREO만 빨간 캡이고 FX RTN·GROUP 1-2는 다른 채널들과 같은
+        // 회색 캡입니다. (이전 세션에서 "결손 사진을 메우려고" GROUP도 빨간 캡으로 통일했던 건 잘못된
+        // 수정이었습니다 — 이번에 새로 구한 고해상도 사진으로 교체하면서 원래 색으로 되돌립니다.)
+        capImg.src = bus === 'stereo' ? 'stereo_fader_cap.png' : 'fader_cap.png';
         capImg.draggable = false;
-        capImg.alt = `${MG12XU_MASTER_LABELS[bus]} 마스터 페이더`;
+        capImg.alt = `${MG12XU_MASTER_LABELS[bus]} 페이더`;
         cap.appendChild(capImg);
         faderLayer.appendChild(cap);
 
+        // 2026-10-08: 실제 사진 속 페이더 캡·눈금·채널명 인쇄를 지우고(위 페이더/눈금으로 대체) 나니,
+        // 그 자리에 있던 "FX RTN"/"GROUP 1-2"/"STEREO" 인쇄 글자도 일부 흐릿하게 함께 지워졌습니다.
+        // 사진을 다시 손상시키지 않고 깔끔하게 보이도록, 그 위치에 동일한 이름을 작은 라벨로 다시 그려줍니다.
         const label = document.createElement('div');
         label.className = 'mg12xu-master-label';
         label.style.left = bx + '%';
-        label.style.top = '97.2%';
+        label.style.top = MG12XU_MASTER_LABEL_Y_PCT + '%';
         label.textContent = MG12XU_MASTER_LABELS[bus];
         faderLayer.appendChild(label);
 
+        if (bus === 'fxrtn') {
+          // FX RTN의 PFL — 채널 PFL과 완전히 동일한 메커니즘(toggleMg12xuPfl/mg12xuUpdatePflVisual)을
+          // 'fxrtn'이라는 키로 재사용합니다. FX RTN은 모델링된 리턴 신호가 없어 솔로 버스에 더해지는
+          // 소리는 없지만, 눌렀을 때 메인 믹스가 잠시 음소거되는 동작은 실제 콘솔과 동일하게 체감됩니다.
+          const pflBtn = document.createElement('button');
+          pflBtn.type = 'button';
+          pflBtn.className = 'mg12xu-pfl-hotspot';
+          pflBtn.style.left = MG12XU_FXRTN_PFL_X_PCT + '%';
+          pflBtn.style.top = MG12XU_FXRTN_PFL_Y_PCT + '%';
+          pflBtn.dataset.ch = 'fxrtn';
+          pflBtn.title = 'FX RTN PFL (PHONES로 솔로 모니터)';
+          pflBtn.addEventListener('click', () => toggleMg12xuPfl('fxrtn'));
+          pflLayer.appendChild(pflBtn);
+          mg12xuUpdatePflVisual('fxrtn');
+        }
+
+        if (bus === 'group') {
+          // GROUP 1-2의 ST 버튼 — 누르면 GROUP 버스 신호가 STEREO 버스에도 합쳐져 나갑니다.
+          const stBtn = document.createElement('button');
+          stBtn.type = 'button';
+          stBtn.className = 'mg12xu-route-btn mg12xu-master-route-btn';
+          stBtn.id = 'mg12xuGroupStBtn';
+          stBtn.style.left = MG12XU_GROUP_ST_X_PCT + '%';
+          stBtn.style.top = MG12XU_GROUP_ST_Y_PCT + '%';
+          stBtn.title = 'GROUP 1-2 → STEREO 전송(ST)';
+          stBtn.addEventListener('click', () => toggleMg12xuGroupToStereo());
+          routeLayer.appendChild(stBtn);
+          mg12xuUpdateGroupToStereoVisual();
+        }
+
         if (!(bus in mg12xuMasterFaderFracs)) mg12xuMasterFaderFracs[bus] = 0.2692;
+        if (!(bus in mg12xuMasterBusOn)) mg12xuMasterBusOn[bus] = true;
         mg12xuUpdateMasterFaderVisual(bus);
         mg12xuUpdateMasterOnVisual(bus);
       });
+
+      // AUX1/AUX2 SEND MASTER 노브 — 채널 AUX 센드를 합산한 버스 전체의 출력 레벨을 조절합니다.
+      // (신호 흐름: 각 채널의 AUX1/AUX2 노브 → AUX1/AUX2 버스 합산 → 이 SEND MASTER 노브 → 출력)
+      ['aux1', 'aux2'].forEach(auxBus => {
+        const knob = document.createElement('div');
+        knob.className = 'mg12xu-knob';
+        knob.dataset.ch = 'master';
+        knob.dataset.type = auxBus;
+        knob.style.left = MG12XU_AUX_SEND_MASTER_X_PCT + '%';
+        knob.style.top = MG12XU_AUX_SEND_MASTER_Y_PCT[auxBus] + '%';
+        knob.style.width = MG12XU_AUX_SEND_MASTER_WIDTH_PCT + '%';
+        const img = document.createElement('img');
+        img.src = auxBus === 'aux1' ? 'aux1master.png' : 'aux2master.png';
+        img.draggable = false;
+        img.alt = `${auxBus === 'aux1' ? 'AUX1' : 'AUX2/FX'} SEND MASTER 노브`;
+        const origin = MG12XU_AUX_SEND_MASTER_ORIGIN_PCT[auxBus];
+        if (origin) img.style.transformOrigin = `${origin[0]}% ${origin[1]}%`;
+        knob.appendChild(img);
+        knob.addEventListener('pointerdown', (e) => mg12xuKnobPointerDown(e, 'master', auxBus));
+        knobLayer.appendChild(knob);
+
+        const key = 'master_' + auxBus;
+        if (!(key in mg12xuKnobAngles)) mg12xuKnobAngles[key] = mg12xuDefaultKnobAngle(auxBus);
+        mg12xuUpdateKnobVisual('master', auxBus);
+      });
+
+      // MONITOR LEVEL 노브 — 컨트롤룸 모니터 스피커 출력 레벨 (2026-10-08 추가)
+      {
+        const knob = document.createElement('div');
+        knob.className = 'mg12xu-knob';
+        knob.dataset.ch = 'master';
+        knob.dataset.type = 'monitorLevel';
+        knob.style.left = MG12XU_MONITOR_LEVEL_X_PCT + '%';
+        knob.style.top = MG12XU_MONITOR_LEVEL_Y_PCT + '%';
+        knob.style.width = MG12XU_MONITOR_LEVEL_WIDTH_PCT + '%';
+        const img = document.createElement('img');
+        img.src = 'monitor_level.png';
+        img.draggable = false;
+        img.alt = 'MONITOR LEVEL 노브';
+        knob.appendChild(img);
+        knob.addEventListener('pointerdown', (e) => mg12xuKnobPointerDown(e, 'master', 'monitorLevel'));
+        knobLayer.appendChild(knob);
+        if (!('master_monitorLevel' in mg12xuKnobAngles)) mg12xuKnobAngles.master_monitorLevel = 0;
+        mg12xuUpdateKnobVisual('master', 'monitorLevel');
+      }
+
+      // PHONES 레벨 노브 — 헤드폰 모니터 출력 레벨
+      {
+        const knob = document.createElement('div');
+        knob.className = 'mg12xu-knob';
+        knob.dataset.ch = 'master';
+        knob.dataset.type = 'phones';
+        knob.style.left = MG12XU_PHONES_X_PCT + '%';
+        knob.style.top = MG12XU_PHONES_Y_PCT + '%';
+        knob.style.width = MG12XU_PHONES_WIDTH_PCT + '%';
+        const img = document.createElement('img');
+        img.src = 'phones.png';
+        img.draggable = false;
+        img.alt = 'PHONES 레벨 노브';
+        knob.appendChild(img);
+        knob.addEventListener('pointerdown', (e) => mg12xuKnobPointerDown(e, 'master', 'phones'));
+        knobLayer.appendChild(knob);
+        if (!('master_phones' in mg12xuKnobAngles)) mg12xuKnobAngles.master_phones = 0;
+        mg12xuUpdateKnobVisual('master', 'phones');
+      }
+
+      // SPX PROGRAM 선택 노브 — 클릭할 때마다 리버브/딜레이 프로그램을 순환 선택합니다.
+      {
+        const knob = document.createElement('div');
+        knob.className = 'mg12xu-knob mg12xu-spx-program-knob';
+        knob.dataset.ch = 'master';
+        knob.dataset.type = 'spxProgram';
+        knob.style.left = MG12XU_SPX_PROGRAM_X_PCT + '%';
+        knob.style.top = MG12XU_SPX_PROGRAM_Y_PCT + '%';
+        knob.style.width = MG12XU_SPX_PROGRAM_WIDTH_PCT + '%';
+        knob.title = 'SPX PROGRAM — 클릭해서 리버브/딜레이 종류 선택';
+        const img = document.createElement('img');
+        img.src = 'spx_program.png';
+        img.draggable = false;
+        img.alt = 'SPX PROGRAM 노브';
+        knob.appendChild(img);
+        knob.addEventListener('click', () => toggleMg12xuSpxProgram());
+        knobLayer.appendChild(knob);
+        if (!('master_spxProgram' in mg12xuKnobAngles)) {
+          const n = MG12XU_SPX_PROGRAMS.length;
+          mg12xuKnobAngles.master_spxProgram = -135 + (270 / (n - 1)) * mg12xuSpxProgramIdx;
+        }
+        mg12xuUpdateKnobVisual('master', 'spxProgram');
+      }
+
+      // SPX PARAMETER 노브 — 선택된 프로그램의 디케이/딜레이타임을 조절합니다.
+      {
+        const knob = document.createElement('div');
+        knob.className = 'mg12xu-knob';
+        knob.dataset.ch = 'master';
+        knob.dataset.type = 'spxParam';
+        knob.style.left = MG12XU_SPX_PARAM_X_PCT + '%';
+        knob.style.top = MG12XU_SPX_PARAM_Y_PCT + '%';
+        knob.style.width = MG12XU_SPX_PARAM_WIDTH_PCT + '%';
+        const img = document.createElement('img');
+        img.src = 'spx_param.png';
+        img.draggable = false;
+        img.alt = 'SPX MIN/MAX PARAMETER 노브';
+        knob.appendChild(img);
+        knob.addEventListener('pointerdown', (e) => mg12xuKnobPointerDown(e, 'master', 'spxParam'));
+        knobLayer.appendChild(knob);
+        if (!('master_spxParam' in mg12xuKnobAngles)) mg12xuKnobAngles.master_spxParam = 0;
+        mg12xuUpdateKnobVisual('master', 'spxParam');
+      }
+
+      // STEREO/GROUP SOURCE 스위치 — PHONES(모니터)로 들을 버스를 고릅니다.
+      {
+        const swBtn = document.createElement('button');
+        swBtn.type = 'button';
+        swBtn.id = 'mg12xuSourceSwBtn';
+        swBtn.className = 'mg12xu-source-sw-btn';
+        swBtn.style.left = MG12XU_SOURCE_SW_X_PCT + '%';
+        swBtn.style.top = MG12XU_SOURCE_SW_Y_PCT + '%';
+        swBtn.title = 'STEREO/GROUP SOURCE — PHONES 모니터 소스 전환';
+        swBtn.addEventListener('click', () => toggleMg12xuMonitorSource());
+        routeLayer.appendChild(swBtn);
+        mg12xuUpdateMonitorSourceVisual();
+      }
 
       // STEREO 버스(최종 출력)의 레벨을 보여주는 L/R 미터 LED 바
       MG12XU_METER_SEGMENTS.forEach(seg => {
@@ -2741,7 +3821,8 @@
           el.dataset.db = seg.db;
           el.style.left = x + '%';
           el.style.top = seg.y + '%';
-          el.style.background = seg.color;
+          el.style.setProperty('--mg12xu-seg-color', seg.color);
+          el.style.color = seg.color; // peak 표시용 box-shadow(currentColor)가 세그먼트 색을 그대로 쓰도록
           meterLayer.appendChild(el);
         });
       });
@@ -2754,8 +3835,20 @@
     }
 
     function mg12xuUpdateMasterOnVisual(bus) {
-      const btn = document.querySelector(`.mg12xu-master-on-btn[data-bus="${bus}"]`);
-      if (btn) btn.classList.toggle('on', !!mg12xuMasterBusOn[bus]);
+      const btn = document.querySelector(`.mg12xu-master-on-hotspot[data-bus="${bus}"]`);
+      if (btn) btn.classList.toggle('off', mg12xuMasterBusOn[bus] === false);
+    }
+
+    // GROUP 1-2의 ST 버튼: 켜면 GROUP 버스 신호가 STEREO 버스에도 합쳐져 나갑니다.
+    function toggleMg12xuGroupToStereo() {
+      mg12xuGroupToStereoOn = !mg12xuGroupToStereoOn;
+      mg12xuUpdateGroupToStereoVisual();
+      mg12xuApplyGroupToStereoAudio();
+    }
+
+    function mg12xuUpdateGroupToStereoVisual() {
+      const btn = document.getElementById('mg12xuGroupStBtn');
+      if (btn) btn.classList.toggle('off', !mg12xuGroupToStereoOn);
     }
 
     function mg12xuMasterFaderPointerDown(e, bus) {
@@ -2765,11 +3858,12 @@
       if (!wrap) return;
       hitEl.classList.add('active');
       try { hitEl.setPointerCapture(e.pointerId); } catch (err) {}
+      mg12xuBeginDragLock();
 
       const onMove = (ev) => {
         const wrapRect = wrap.getBoundingClientRect();
-        const travelTopPx = wrapRect.top + wrapRect.height * (MG12XU_FADER_TRAVEL_TOP_PCT / 100);
-        const travelBottomPx = wrapRect.top + wrapRect.height * (MG12XU_FADER_TRAVEL_BOTTOM_PCT / 100);
+        const travelTopPx = wrapRect.top + wrapRect.height * (MG12XU_MASTER_FADER_TRAVEL_TOP_PCT / 100);
+        const travelBottomPx = wrapRect.top + wrapRect.height * (MG12XU_MASTER_FADER_TRAVEL_BOTTOM_PCT / 100);
         let frac = (ev.clientY - travelTopPx) / (travelBottomPx - travelTopPx);
         frac = Math.max(0, Math.min(1, frac));
         mg12xuMasterFaderFracs[bus] = frac;
@@ -2784,6 +3878,7 @@
         hitEl.removeEventListener('pointerup', onUp);
         hitEl.removeEventListener('pointercancel', onUp);
         mg12xuHideMasterReadout();
+        mg12xuEndDragLock();
       };
       hitEl.addEventListener('pointermove', onMove);
       hitEl.addEventListener('pointerup', onUp);
@@ -2796,7 +3891,7 @@
       const cap = document.querySelector(`.mg12xu-master-fader-cap[data-bus="${bus}"]`);
       const frac = mg12xuMasterFaderFracs[bus] ?? 0.2692;
       if (cap) {
-        const topPct = MG12XU_FADER_TRAVEL_TOP_PCT + frac * (MG12XU_FADER_TRAVEL_BOTTOM_PCT - MG12XU_FADER_TRAVEL_TOP_PCT);
+        const topPct = MG12XU_MASTER_FADER_TRAVEL_TOP_PCT + frac * (MG12XU_MASTER_FADER_TRAVEL_BOTTOM_PCT - MG12XU_MASTER_FADER_TRAVEL_TOP_PCT);
         cap.style.top = topPct + '%';
       }
       mg12xuApplyMasterFaderAudio(bus);
@@ -2855,8 +3950,8 @@
         else if (ch) cls.push('assigned');
         const tag = ch ? `<span class="mg12xu-source-ch-tag">CH ${MG12XU_CHANNEL_LABELS[ch]}</span>` : '';
         return `
-          <button type="button" class="${cls.join(' ')}" style="left:${s.x}%; top:${s.y}%;" onclick="clickMg12xuSource('${s.id}')" data-source="${s.id}">
-            <div class="mg12xu-source-icon">${s.icon}</div>
+          <button type="button" class="${cls.join(' ')}" style="left:${s.x}%; top:${s.y}%;" onclick="clickMg12xuSource('${s.id}')" onpointerdown="mg12xuIconPointerDown(event, 'source', '${s.id}')" data-source="${s.id}" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
+            <div class="mg12xu-source-icon"><span class="mg12xu-source-icon-emoji">${s.icon}</span><img class="mg12xu-source-icon-img" src="icons/${s.id}.png" alt="" onerror="this.style.display='none'" onload="this.previousElementSibling.style.visibility='hidden'"></div>
             <div class="mg12xu-source-label">${s.name}</div>
             ${tag}
             <div class="mg12xu-cable-nub" data-source="${s.id}" title="케이블을 드래그해서 아래 입력 단자에 연결하세요"></div>
@@ -2869,7 +3964,7 @@
         if (mg12xuSelectedOutput === o.id) cls.push('selected');
         if (connected) cls.push('connected');
         return `
-          <button type="button" class="${cls.join(' ')}" style="left:${o.x}%; top:${o.y}%;" onclick="clickMg12xuOutput('${o.id}')" data-output="${o.id}">
+          <button type="button" class="${cls.join(' ')}" style="left:${o.x}%; top:${o.y}%;" onclick="clickMg12xuOutput('${o.id}')" onpointerdown="mg12xuIconPointerDown(event, 'output', '${o.id}')" data-output="${o.id}" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
             <div class="mg12xu-speaker-icon">${o.icon}</div>
             <div class="mg12xu-speaker-label">${o.name}</div>
             <div class="mg12xu-cable-nub" data-output="${o.id}" title="케이블을 드래그해서 아래 OUT 단자에 연결하세요"></div>
@@ -2903,24 +3998,60 @@
     }
 
     // XLR 커넥터 모양(바디 + 3핀)을 케이블 양 끝에 그립니다.
-    function mg12xuPlugSvg(p, color) {
+    // XLR(마이크 케이블): 둥근 3핀 커넥터 모양
+    // 2026-10-08: 실물 사진처럼 완전히 똑같게 만들 순 없지만(임의의 두 점을 잇는 구부러진 케이블을
+    // 사진 텍스처로 늘려 그리는 건 벡터 도형으로는 한계가 있습니다), 금속 플러그에 그라데이션 하이라이트를
+    // 넣고 케이블 고무 피복에 광택 하이라이트 선을 추가해 입체감/사실감을 더 끌어올렸습니다.
+    function mg12xuPlugSvgXlr(p, color) {
       return `<g transform="translate(${p.x},${p.y})" pointer-events="none">
+        <circle r="9.2" fill="#0f172a" opacity="0.35"></circle>
         <circle r="8.5" class="mg12xu-cable-plug-body"></circle>
         <circle r="8.5" fill="none" stroke="${color}" stroke-width="2.2"></circle>
+        <circle cx="-2.3" cy="-2.8" r="2.6" fill="rgba(255,255,255,0.35)"></circle>
         <circle cx="0" cy="-3.3" r="1.15" class="mg12xu-cable-plug-pin"></circle>
         <circle cx="-2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
         <circle cx="2.9" cy="2.1" r="1.15" class="mg12xu-cable-plug-pin"></circle>
       </g>`;
     }
+    // TRS(폰/DI박스 케이블): 길쭉한 원통형 플러그 + 톰(tip)·링(ring)·슬리브(sleeve) 절연 밴드 모양
+    function mg12xuPlugSvgTrs(p, color) {
+      return `<g transform="translate(${p.x},${p.y})" pointer-events="none">
+        <rect x="-3.4" y="-10.5" width="6.8" height="21" rx="3.4" class="mg12xu-cable-plug-body-trs"></rect>
+        <rect x="-3.4" y="-10.5" width="6.8" height="21" rx="3.4" fill="none" stroke="${color}" stroke-width="2"></rect>
+        <rect x="-3.4" y="-2.6" width="6.8" height="1.7" class="mg12xu-cable-plug-ring"></rect>
+        <rect x="-3.4" y="1.6" width="6.8" height="1.7" class="mg12xu-cable-plug-ring"></rect>
+        <rect x="-1.6" y="-9.5" width="1.2" height="19" rx="0.6" fill="rgba(255,255,255,0.4)"></rect>
+      </g>`;
+    }
+    function mg12xuPlugSvg(p, color, connector) {
+      return connector === 'trs' ? mg12xuPlugSvgTrs(p, color) : mg12xuPlugSvgXlr(p, color);
+    }
 
-    function mg12xuCableSvg(p1, p2, color, onclickAttr) {
+    // 패치베이 SVG 전체에서 한 번만 참조하는 금속 플러그 그라데이션 정의(매 redraw마다 innerHTML이
+    // 통째로 바뀌므로, 이 defs 문자열도 매번 html 맨 앞에 함께 그려 넣습니다).
+    const MG12XU_CABLE_DEFS = `<defs>
+      <radialGradient id="mg12xuXlrBodyGrad" cx="35%" cy="30%" r="75%">
+        <stop offset="0%" stop-color="#64748b"></stop>
+        <stop offset="55%" stop-color="#334155"></stop>
+        <stop offset="100%" stop-color="#0f172a"></stop>
+      </radialGradient>
+      <linearGradient id="mg12xuTrsBodyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#1e293b"></stop>
+        <stop offset="35%" stop-color="#64748b"></stop>
+        <stop offset="55%" stop-color="#334155"></stop>
+        <stop offset="100%" stop-color="#0f172a"></stop>
+      </linearGradient>
+    </defs>`;
+
+    function mg12xuCableSvg(p1, p2, color, onclickAttr, connector) {
       const d = mg12xuCablePathD(p1.x, p1.y, p2.x, p2.y);
       return `<g class="mg12xu-cable-g">
         <path class="mg12xu-cable-hit" d="${d}" ${onclickAttr}></path>
         <path class="mg12xu-cable-shadow" d="${d}"></path>
         <path class="mg12xu-cable-core" style="stroke:${color}" d="${d}"></path>
-        ${mg12xuPlugSvg(p1, color)}
-        ${mg12xuPlugSvg(p2, color)}
+        <path class="mg12xu-cable-sheen" d="${d}" transform="translate(-0.8,-1.1)"></path>
+        ${mg12xuPlugSvg(p1, color, connector)}
+        ${mg12xuPlugSvg(p2, color, connector)}
       </g>`;
     }
 
@@ -2931,7 +4062,7 @@
       const wrapRect = wrap.getBoundingClientRect();
       if (wrapRect.width === 0) return;
       const colors = ['#16a34a', '#2563eb', '#db2777', '#d97706', '#7c3aed', '#059669'];
-      let html = '';
+      let html = MG12XU_CABLE_DEFS;
       let colorIdx = 0;
 
       Object.keys(mg12xuAssignments).forEach(sourceId => {
@@ -2942,7 +4073,8 @@
         const p1 = mg12xuWrapPoint(nub, wrapRect);
         const p2 = mg12xuWrapPoint(jack, wrapRect);
         const col = colors[colorIdx++ % colors.length];
-        html += mg12xuCableSvg(p1, p2, col, `onclick="mg12xuUnplugSource('${sourceId}')"`);
+        const srcInfo = mg12xuSources.find(s => s.id === sourceId);
+        html += mg12xuCableSvg(p1, p2, col, `onclick="mg12xuUnplugSource('${sourceId}')"`, srcInfo ? srcInfo.connector : 'xlr');
       });
 
       mg12xuOutputs.forEach(out => {
@@ -2952,7 +4084,7 @@
         if (!nub || !jack) return;
         const p1 = mg12xuWrapPoint(nub, wrapRect);
         const p2 = mg12xuWrapPoint(jack, wrapRect);
-        html += mg12xuCableSvg(p1, p2, '#ef4444', `onclick="mg12xuUnplugOutput('${out.bus}')"`);
+        html += mg12xuCableSvg(p1, p2, '#ef4444', `onclick="mg12xuUnplugOutput('${out.bus}')"`, out.connector);
       });
 
       svg.innerHTML = html;
@@ -2990,6 +4122,24 @@
       if (path) path.remove();
     }
 
+    // 모바일에서 손가락이 잭(지름 20px)의 정중앙을 정확히 짚지 못하면 연결이 간헐적으로 실패하던 문제를
+    // 보완하기 위해, 포인터 바로 아래 요소만 보는 대신 일정 반경(허용 오차) 안에서 "가장 가까운" 잭을
+    // 찾아 스냅시킵니다.
+    const MG12XU_JACK_SNAP_TOLERANCE_PX = 26;
+    function mg12xuFindNearestJack(clientX, clientY, kind, outInfo) {
+      const candidates = document.querySelectorAll(kind === 'source' ? '.mg12xu-jack-point.input' : '.mg12xu-jack-point.output');
+      let best = null, bestDist = Infinity;
+      candidates.forEach(el => {
+        if (kind === 'output' && (!outInfo || el.dataset.bus !== outInfo.bus)) return;
+        const r = el.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const d = Math.hypot(clientX - cx, clientY - cy);
+        if (d <= MG12XU_JACK_SNAP_TOLERANCE_PX && d < bestDist) { bestDist = d; best = el; }
+      });
+      return best;
+    }
+
     function mg12xuNubPointerDown(e, kind, id) {
       e.preventDefault();
       e.stopPropagation();
@@ -2997,6 +4147,7 @@
       const wrap = document.getElementById('mg12xuPatchbayWrap');
       if (!wrap) return;
       try { nubEl.setPointerCapture(e.pointerId); } catch (err) {}
+      mg12xuBeginDragLock();
       let dropTarget = null;
       const outInfo = kind === 'output' ? mg12xuOutputs.find(o => o.id === id) : null;
 
@@ -3007,12 +4158,8 @@
         mg12xuDrawPreviewCable(start, pt);
 
         document.querySelectorAll('.mg12xu-jack-point.drop-ready').forEach(j => j.classList.remove('drop-ready'));
-        dropTarget = null;
-        const el = document.elementFromPoint(ev.clientX, ev.clientY);
-        if (el && el.classList.contains('mg12xu-jack-point')) {
-          if (kind === 'source' && el.classList.contains('input')) { dropTarget = el; el.classList.add('drop-ready'); }
-          if (kind === 'output' && el.classList.contains('output') && outInfo && el.dataset.bus === outInfo.bus) { dropTarget = el; el.classList.add('drop-ready'); }
-        }
+        dropTarget = mg12xuFindNearestJack(ev.clientX, ev.clientY, kind, outInfo);
+        if (dropTarget) dropTarget.classList.add('drop-ready');
       };
       const onUp = () => {
         try { nubEl.releasePointerCapture(e.pointerId); } catch (err) {}
@@ -3032,13 +4179,68 @@
         } else {
           mg12xuRedrawCables();
         }
+        mg12xuEndDragLock();
       };
       nubEl.addEventListener('pointermove', onMove);
       nubEl.addEventListener('pointerup', onUp);
       nubEl.addEventListener('pointercancel', onUp);
     }
 
+    // ----- 상단 캔버스의 소스/스피커 아이콘 자유 배치(드래그 이동) -----
+    // 케이블 연결용 노브(mg12xu-cable-nub)를 잡았을 때는 mg12xuNubPointerDown이 stopPropagation() 하므로
+    // 여기까지 전파되지 않습니다. 아이콘 몸체(이미지/라벨)를 잡았을 때만 위치 이동 드래그가 시작됩니다.
+    function mg12xuIconPointerDown(e, kind, id) {
+      if (e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
+      const itemEl = e.currentTarget;
+      const stageEl = document.getElementById('mg12xuStage');
+      if (!stageEl) return;
+      const obj = kind === 'source' ? mg12xuSources.find(s => s.id === id) : mg12xuOutputs.find(o => o.id === id);
+      if (!obj) return;
+      const startClientX = e.clientX, startClientY = e.clientY;
+      const startObjX = obj.x, startObjY = obj.y;
+      let moved = false;
+      try { itemEl.setPointerCapture(e.pointerId); } catch (err) {}
+
+      const onMove = (ev) => {
+        const stageRect = stageEl.getBoundingClientRect();
+        if (stageRect.width === 0 || stageRect.height === 0) return;
+        if (!moved && Math.hypot(ev.clientX - startClientX, ev.clientY - startClientY) > 5) {
+          moved = true;
+          mg12xuBeginDragLock();
+          itemEl.classList.add('dragging');
+        }
+        if (!moved) return;
+        ev.preventDefault();
+        const dxPct = (ev.clientX - startClientX) / stageRect.width * 100;
+        const dyPct = (ev.clientY - startClientY) / stageRect.height * 100;
+        const xPct = Math.max(2, Math.min(98, startObjX + dxPct));
+        const yPct = Math.max(2, Math.min(96, startObjY + dyPct));
+        obj.x = xPct;
+        obj.y = yPct;
+        itemEl.style.left = xPct + '%';
+        itemEl.style.top = yPct + '%';
+        mg12xuRedrawCables();
+      };
+      const onUp = (ev) => {
+        try { itemEl.releasePointerCapture(e.pointerId); } catch (err) {}
+        itemEl.removeEventListener('pointermove', onMove);
+        itemEl.removeEventListener('pointerup', onUp);
+        itemEl.removeEventListener('pointercancel', onUp);
+        itemEl.classList.remove('dragging');
+        if (moved) {
+          mg12xuIconDragJustHappened = true;
+          mg12xuEndDragLock();
+          mg12xuRedrawCables();
+          setTimeout(() => { mg12xuIconDragJustHappened = false; }, 80);
+        }
+      };
+      itemEl.addEventListener('pointermove', onMove);
+      itemEl.addEventListener('pointerup', onUp);
+      itemEl.addEventListener('pointercancel', onUp);
+    }
+
     function clickMg12xuOutput(id) {
+      if (mg12xuIconDragJustHappened) { mg12xuIconDragJustHappened = false; return; }
       mg12xuSelectedOutput = (mg12xuSelectedOutput === id) ? null : id;
       renderMg12xuStep1();
     }
@@ -3083,7 +4285,7 @@
         layer.appendChild(jack);
       });
 
-      MG12XU_MASTER_BUSES.forEach(bus => {
+      Object.keys(MG12XU_OUTPUT_JACK_PCT).forEach(bus => {
         const pos = MG12XU_OUTPUT_JACK_PCT[bus];
         if (!pos) return;
         const jack = document.createElement('div');
@@ -3094,6 +4296,39 @@
         jack.title = `${MG12XU_MASTER_LABELS[bus]} 출력(OUT) 단자`;
         jack.addEventListener('click', () => mg12xuJackOutputClick(bus));
         layer.appendChild(jack);
+      });
+
+      // 2026-10-08 추가: 1~4번 채널의 실제 PAD/HPF 스위치는 이 패치베이 사진(jack_strip.jpg)의
+      // XLR 입력 단자 옆에 인쇄되어 있어, 여기서 생성합니다(기존 .mg12xu-pad-btn/.mg12xu-hpf-btn
+      // 클래스와 토글 함수를 그대로 재사용 — 위치/크기만 이 레이어 기준으로 다시 지정).
+      ['ch1', 'ch2', 'ch3', 'ch4'].forEach(ch => {
+        const padBtn = document.createElement('button');
+        padBtn.type = 'button';
+        padBtn.className = 'mg12xu-pad-btn mg12xu-jack-padhpf-btn';
+        padBtn.dataset.ch = ch;
+        padBtn.style.left = MG12XU_JACK_PAD_X_PCT[ch] + '%';
+        padBtn.style.top = MG12XU_JACK_PADHPF_Y_PCT + '%';
+        padBtn.style.width = MG12XU_JACK_PADHPF_WIDTH_PCT + '%';
+        padBtn.style.height = MG12XU_JACK_PADHPF_HEIGHT_PCT + '%';
+        padBtn.textContent = 'PAD';
+        padBtn.title = `CH ${MG12XU_CHANNEL_LABELS[ch]} PAD -26dB`;
+        padBtn.addEventListener('click', () => toggleMg12xuPad(ch));
+        layer.appendChild(padBtn);
+        mg12xuUpdatePadVisual(ch);
+
+        const hpfBtn = document.createElement('button');
+        hpfBtn.type = 'button';
+        hpfBtn.className = 'mg12xu-hpf-btn mg12xu-jack-padhpf-btn';
+        hpfBtn.dataset.ch = ch;
+        hpfBtn.style.left = MG12XU_JACK_HPF_X_PCT[ch] + '%';
+        hpfBtn.style.top = MG12XU_JACK_PADHPF_Y_PCT + '%';
+        hpfBtn.style.width = MG12XU_JACK_PADHPF_WIDTH_PCT + '%';
+        hpfBtn.style.height = MG12XU_JACK_PADHPF_HEIGHT_PCT + '%';
+        hpfBtn.textContent = 'HPF';
+        hpfBtn.title = `CH ${MG12XU_CHANNEL_LABELS[ch]} HPF 80Hz`;
+        hpfBtn.addEventListener('click', () => toggleMg12xuHpf(ch));
+        layer.appendChild(hpfBtn);
+        mg12xuUpdateHpfVisual(ch);
       });
     }
 
@@ -3134,6 +4369,7 @@
     }
 
     function clickMg12xuSource(id) {
+      if (mg12xuIconDragJustHappened) { mg12xuIconDragJustHappened = false; return; }
       mg12xuSelected = (mg12xuSelected === id) ? null : id;
       renderMg12xuStep1();
     }
@@ -3248,18 +4484,33 @@
       mg12xuSelected = null;
       mg12xuSelectedOutput = null;
       mg12xuAssignments = {};
-      mg12xuOutputConnected = { stereo: false, group: false };
-      mg12xuMasterBusOn = { group: true, stereo: true };
+      mg12xuOutputConnected = { stereo: false, group: false, aux1: false, phones: false, monitorOut: false };
+      mg12xuMasterBusOn = { fxrtn: true, group: true, stereo: true };
       mg12xuPeakLit = {};
       mg12xuChainShuffled = null;
       mg12xuChainPicks = [];
+      mg12xuPflActive = {};
+      mg12xuGroupToStereoOn = false;
+      mg12xuMeterSmoothDb = { L: -Infinity, R: -Infinity };
+      mg12xuMeterPeakDb = { L: -Infinity, R: -Infinity };
+      mg12xuMeterPeakHoldUntil = { L: 0, R: 0 };
       MG12XU_REAL_CHANNELS.forEach(ch => {
         (MG12XU_CHANNEL_KNOBS[ch] || MG12XU_KNOB_TYPES).forEach(type => { mg12xuKnobAngles[ch + '_' + type] = mg12xuDefaultKnobAngle(type); });
         mg12xuFaderFracs[ch] = 0.75;
         mg12xuChannelOn[ch] = true;
         mg12xuChannelRouting[ch] = { group: true, stereo: true };
       });
-      mg12xuMasterFaderFracs = { group: 0.2692, stereo: 0.2692 };
+      mg12xuKnobAngles['master_aux1'] = mg12xuDefaultKnobAngle('aux1');
+      mg12xuKnobAngles['master_aux2'] = mg12xuDefaultKnobAngle('aux2');
+      mg12xuKnobAngles['master_phones'] = 0;
+      mg12xuKnobAngles['master_monitorLevel'] = 0;
+      mg12xuKnobAngles['master_spxProgram'] = -135;
+      mg12xuKnobAngles['master_spxParam'] = 0;
+      mg12xuMasterFaderFracs = { fxrtn: 0.2692, group: 0.2692, stereo: 0.2692 };
+      mg12xuPadOn = {};
+      mg12xuHpfOn = {};
+      mg12xuSpxProgramIdx = 0;
+      mg12xuMonitorSource = 'stereo';
       const p1 = document.getElementById('mg12xuStep1Result');
       const p2 = document.getElementById('mg12xuStep2Result');
       if (p1) { p1.className = 'result-panel'; p1.innerHTML = ''; }
@@ -3272,13 +4523,34 @@
         mg12xuUpdateMuteVisual(ch);
         mg12xuUpdateRouteVisual(ch, 'group');
         mg12xuUpdateRouteVisual(ch, 'stereo');
+        mg12xuUpdatePflVisual(ch);
       });
-      MG12XU_MASTER_BUSES.forEach(bus => {
+      mg12xuUpdatePflVisual('fxrtn');
+      mg12xuUpdateGroupToStereoVisual();
+      mg12xuApplyGroupToStereoAudio();
+      mg12xuApplyPflAudio();
+      mg12xuUpdateKnobVisual('master', 'aux1');
+      mg12xuUpdateKnobVisual('master', 'aux2');
+      mg12xuUpdateKnobVisual('master', 'phones');
+      mg12xuUpdateKnobVisual('master', 'monitorLevel');
+      mg12xuUpdateKnobVisual('master', 'spxProgram');
+      mg12xuUpdateKnobVisual('master', 'spxParam');
+      MG12XU_MASTER_STRIPS.forEach(bus => {
         mg12xuUpdateMasterFaderVisual(bus);
         mg12xuUpdateMasterOnVisual(bus);
         mg12xuApplyMasterOnAudio(bus);
+      });
+      ['group', 'stereo', 'aux1', 'phones', 'monitorOut'].forEach(bus => {
         mg12xuApplyOutputConnAudio(bus);
       });
+      MG12XU_PAD_CHANNELS.forEach(ch => mg12xuUpdatePadVisual(ch));
+      MG12XU_HPF_CHANNELS.forEach(ch => mg12xuUpdateHpfVisual(ch));
+      mg12xuUpdateMonitorSourceVisual();
+      mg12xuApplyPhonesAudio();
+      mg12xuApplyMonitorLevelAudio();
+      mg12xuApplySpxProgram();
+      MG12XU_PAD_CHANNELS.forEach(ch => { if (mg12xuPadGain[ch]) mg12xuPadGain[ch].gain.value = 1; });
+      MG12XU_HPF_CHANNELS.forEach(ch => { if (mg12xuHpfNode[ch]) mg12xuHpfNode[ch].frequency.value = 20; });
       if (mg12xuAudioOn) {
         mg12xuChannelNodes = {};
         mg12xuRewireAudioAssignments();
@@ -3310,23 +4582,11 @@
         toggleMixPlay();
       }
 
-      if(tabId==='tab1') {
-        document.querySelectorAll('.tab-btn')[0].classList.add('active');
-        document.getElementById('tab1').classList.add('active');
-      }
-      else if(tabId==='tab2') {
-        document.querySelectorAll('.tab-btn')[1].classList.add('active');
-        document.getElementById('tab2').classList.add('active');
-      }
-      else if(tabId==='tab3') {
-        document.querySelectorAll('.tab-btn')[2].classList.add('active');
-        document.getElementById('tab3').classList.add('active');
-      }
-      else {
-        document.querySelectorAll('.tab-btn')[3].classList.add('active');
-        document.getElementById('tab4').classList.add('active');
-        renderCurriculum();
-      }
+      const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+      if (btn) btn.classList.add('active');
+      const content = document.getElementById(tabId);
+      if (content) content.classList.add('active');
+      if (tabId === 'tab4') renderCurriculum();
     }
 
     /* ===== 사운드팀 신입 스텝 10주 커리큘럼 ===== */
@@ -3442,12 +4702,12 @@
             <input type="checkbox" class="week-check" ${isDone ? 'checked' : ''} onchange="toggleWeekDone(${w.week})" aria-label="${w.week}주차 완료">
             <div class="week-body">
               <div class="week-head">
-                <span class="week-title">${w.title}</span>
+                <span class="week-title editable-text" data-week="${w.week}" data-field="title">${w.title}</span>
               </div>
-              <div class="week-goal"><b>목표</b> · ${w.goal}</div>
-              <div class="week-practice"><b>실습 내용</b> · ${w.practice}</div>
+              <div class="week-goal"><b>목표</b> · <span class="editable-text" data-week="${w.week}" data-field="goal">${w.goal}</span></div>
+              <div class="week-practice"><b>실습 내용</b> · <span class="editable-text" data-week="${w.week}" data-field="practice">${w.practice}</span></div>
               <div class="week-tool-row">
-                <span class="week-tool-text">🔗 ${w.tool}</span>
+                <span class="week-tool-text">🔗 <span class="editable-text" data-week="${w.week}" data-field="tool">${w.tool}</span></span>
                 ${goBtn}
               </div>
             </div>
@@ -3459,6 +4719,94 @@
       const textEl = document.getElementById('curriculumProgressText');
       if (fillEl) fillEl.style.width = pct + '%';
       if (textEl) textEl.textContent = `${doneCount} / ${curriculumWeeks.length}주 완료`;
+      // 편집 모드 중 체크박스 등으로 재렌더링되어도 편집 가능 상태를 유지합니다.
+      if (mg12xuContentEditing.tab4) mg12xuApplyEditableState('tab4', true);
+    }
+
+    /* ===== 탭1 설명 / 탭4 커리큘럼 내용 편집 모드 (저장 시 수정 내용이 담긴 새 index.html 다운로드) =====
+       - localStorage에 저장하지 않습니다. "저장" 버튼을 누르면 현재 페이지 전체를 다시 직렬화해서
+         새 index.html 파일로 다운로드하며, 사용자가 그 파일로 기존 파일을 교체해야 수정이 반영됩니다. */
+    let mg12xuContentEditing = { tab1: false, tab4: false };
+    let mg12xuEditSnapshot = { tab1: null, tab4: null };
+
+    function mg12xuApplyEditableState(tabId, editing) {
+      const container = document.getElementById(tabId);
+      if (!container) return;
+      container.querySelectorAll('.editable-text').forEach(el => {
+        el.contentEditable = editing ? 'true' : 'false';
+      });
+      const bar = document.getElementById(tabId + 'EditBar');
+      if (bar) bar.classList.toggle('edit-mode-on', editing);
+      const editBtn = document.getElementById(tabId + 'EditBtn');
+      if (editBtn) editBtn.style.display = editing ? 'none' : '';
+    }
+
+    function toggleContentEdit(tabId) {
+      mg12xuContentEditing[tabId] = true;
+      // 취소 시 되돌릴 수 있도록, 편집 시작 시점의 원본 텍스트를 스냅샷으로 저장해둡니다.
+      const container = document.getElementById(tabId);
+      const snap = [];
+      if (container) {
+        container.querySelectorAll('.editable-text').forEach(el => snap.push({ el, text: el.textContent }));
+      }
+      mg12xuEditSnapshot[tabId] = snap;
+      mg12xuApplyEditableState(tabId, true);
+    }
+
+    function cancelContentEdit(tabId) {
+      mg12xuContentEditing[tabId] = false;
+      const snap = mg12xuEditSnapshot[tabId];
+      if (snap) snap.forEach(({ el, text }) => { if (el.isConnected) el.textContent = text; });
+      mg12xuEditSnapshot[tabId] = null;
+      mg12xuApplyEditableState(tabId, false);
+      if (tabId === 'tab4') renderCurriculum();
+    }
+
+    // 탭4 커리큘럼 카드 DOM에서 편집된 텍스트를 읽어 curriculumWeeks 배열(실제 저장될 데이터)에 반영합니다.
+    function mg12xuSyncCurriculumFromDom() {
+      document.querySelectorAll('#curriculumList .editable-text[data-week]').forEach(el => {
+        const week = parseInt(el.dataset.week, 10);
+        const field = el.dataset.field;
+        const wk = curriculumWeeks.find(w => w.week === week);
+        if (wk && field) wk[field] = el.textContent.trim();
+      });
+    }
+
+    // 현재 문서를 그대로 직렬화해 새 index.html 파일로 다운로드합니다.
+    // curriculumWeeks 배열은 런타임에 메모리에서만 수정되므로, <script> 소스 텍스트 안의
+    // 원본 배열 리터럴을 최신 값으로 직접 치환해줘야 파일을 다시 열었을 때도 수정 내용이 보입니다.
+    function mg12xuDownloadEditedHtml() {
+      const startMarker = 'const curriculumWeeks = [';
+      const endMarker = '\n    ];';
+      let html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      const startIdx = html.indexOf(startMarker);
+      const endIdx = startIdx >= 0 ? html.indexOf(endMarker, startIdx) : -1;
+      if (startIdx >= 0 && endIdx >= 0) {
+        const endOfReplace = endIdx + endMarker.length;
+        const newLiteral = 'const curriculumWeeks = ' + JSON.stringify(curriculumWeeks, null, 2) + ';';
+        html = html.slice(0, startIdx) + newLiteral + html.slice(endOfReplace);
+      }
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'index.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function saveEditedContent(tabId) {
+      if (tabId === 'tab4') mg12xuSyncCurriculumFromDom();
+      // 저장 파일에 편집 UI 상태(점선 테두리, contenteditable 등)가 그대로 남지 않도록
+      // 양쪽 탭 모두 편집 모드를 끈 뒤 직렬화합니다.
+      ['tab1', 'tab4'].forEach(id => {
+        mg12xuContentEditing[id] = false;
+        mg12xuApplyEditableState(id, false);
+      });
+      mg12xuDownloadEditedHtml();
+      showModal('저장 완료', '<p>수정 내용이 담긴 새 <b>index.html</b> 파일이 다운로드되었습니다. 다운로드된 파일로 기존 index.html을 교체하면 수정 내용이 반영됩니다.</p>');
     }
 
     const gearItems = [
@@ -4343,6 +5691,7 @@
 
     initWorkspace();
     initMg12xuGame();
+    renderCurriculum();
     renderFaderPosition('sample', 0.0);
     trackKeys.forEach(ch => {
       if(ch !== 'sample') renderFaderPosition(ch, -60);
