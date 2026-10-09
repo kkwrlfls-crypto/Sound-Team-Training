@@ -230,16 +230,7 @@
       pointer-events: auto;
     }
     .gear3d-card .gear-label { font-size: 0.58rem; }
-    .gear3d-model-chip {
-      width: 100%;
-      flex: 1;
-      background: #f8fafc;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.6rem;
-    }
+    .gear3d-card.armed { border-color: var(--accent-yellow); box-shadow: 0 0 15px rgba(245, 158, 11, 0.5); }
     .gear3d-tray-wrap {
       background: var(--inner-bg);
       border: 1px dashed var(--border-color);
@@ -1805,7 +1796,7 @@
     <div id="tab2" class="tab-content">
       <div class="level-header">
         <div class="level-title">3층 음향 시스템 (3D)</div>
-        <div class="level-desc">실제 공간을 3D로 둘러보며 장비를 배치해보세요. 마우스로 드래그하면 공간을 회전, 휠로 확대/축소할 수 있습니다. 아래 보관함에서 장비를 클릭해 선택한 뒤 3D 공간을 클릭하면 그 자리에 배치됩니다. 배치된 장비를 순서대로 클릭하면 케이블이 연결됩니다. 장비의 <b>ℹ️</b> 아이콘을 누르면 설명을 볼 수 있어요.</div>
+        <div class="level-desc">실제 공간을 3D로 둘러보며 장비를 배치해보세요. 마우스로 드래그하면 공간을 회전, 휠로 확대/축소할 수 있습니다. 아래 보관함에서 장비를 클릭해 선택한 뒤(장비의 <b>ℹ️</b> 아이콘을 누르면 설명을 볼 수 있어요) 3D 공간을 클릭하면 그 자리에 배치됩니다. 배치 직후(또는 장비를 더블클릭하면)에는 키보드로 미세 조정할 수 있어요 — 화살표 키: 수평 이동, PageUp/PageDown: 높낮이, Q/E: 회전, Shift를 누르면 더 큰 폭으로 움직입니다(Esc로 조정 종료). 배치된 장비를 순서대로 클릭하면 케이블이 연결돼요.</div>
         <div id="layoutBestTag"></div>
       </div>
 
@@ -5061,11 +5052,13 @@
       scene: null, camera: null, renderer: null, cssRenderer: null, controls: null,
       raycaster: null, modelRoot: null,
       armedId: null,
+      keyboardTargetId: null, // 키보드(화살표/PageUp·Down/Q·E)로 미세 조정 중인 장비 id
       placedPos: {},     // id -> THREE.Vector3 (world position)
       cssObjects: {},    // id -> THREE.CSS2DObject
       cardEls: {},        // id -> DOM element (card)
       models: {},         // modelKey -> { scene: THREE.Object3D (템플릿), offset: THREE.Vector3, height: number }
       meshGroups: {},      // id -> THREE.Group (배치된 실제 3D 모델)
+      meshRotY: {},         // id -> number (모델의 현재 Y축 회전값, 라디안)
     };
 
     // 장비 id -> 실제 3D 모델(글b) 키. 여기 없는 장비(앰프/스테이지박스/콘솔 등)는
@@ -5078,6 +5071,8 @@
       e8_L: 'e8', e8_R: 'e8',
     };
 
+    // 보관함(배치 전) 카드 — 이미지 + 이름표 + 정보버튼. 배치 후에는 쓰이지 않습니다
+    // (정보버튼/이름표는 보관함에서만 보이게 해달라는 요청에 따라 분리했습니다).
     function gear3dBuildCardInner(item) {
       return `
         <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('${item.id}')">i</button>
@@ -5088,19 +5083,136 @@
       `;
     }
 
-    // 실제 3D 모델이 있는 장비는 카드에 깨진 이미지를 보여줄 필요가 없으니, 아이콘 칩 +
-    // 이름표만 있는 간단한 카드를 씁니다. 실물 모양은 3D 공간에 직접 배치되는 모델로 보여줍니다.
-    function gear3dBuildChipInner(item) {
+    function gear3dCardInnerFor(item) {
+      return gear3dBuildCardInner(item);
+    }
+
+    // 3D 모델이 없는 장비(앰프/스테이지박스/콘솔)가 배치된 뒤에는 이름표·정보버튼 없이
+    // 사진만 떠 있게 합니다 (요청: 배치 후에는 정보버튼/이름표를 보이지 않게).
+    function gear3dBuildImageOnlyInner(item) {
       return `
-        <button class="gear-info-btn" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation(); showGearInfo('${item.id}')">i</button>
-        <div class="gear3d-model-chip">🔊</div>
-        <div class="gear-label">${item.name}</div>
+        <div class="gear-img-wrap">
+          <img src="${item.img}" class="gear-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;60&quot; height=&quot;60&quot;><rect width=&quot;60&quot; height=&quot;60&quot; fill=&quot;%23fff&quot;/><text x=&quot;5&quot; y=&quot;30&quot; fill=&quot;red&quot; font-size=&quot;8&quot;>이미지없음</text><text x=&quot;5&quot; y=&quot;45&quot; fill=&quot;%230284c7&quot; font-size=&quot;6&quot;>${item.img}</text></svg>'">
+        </div>
       `;
     }
 
-    function gear3dCardInnerFor(item) {
-      return GEAR_MODEL_MAP[item.id] ? gear3dBuildChipInner(item) : gear3dBuildCardInner(item);
+    // 실제 3D 모델을 복제할 때 재질(material)도 함께 복제해, 이 인스턴스만 선택/연결
+    // 상태에 따라 색을 입혀도 다른 인스턴스나 원본 템플릿에 영향이 없게 합니다.
+    function gear3dCloneWithUniqueMaterials(obj) {
+      const clone = obj.clone(true);
+      clone.traverse(function (child) {
+        if (child.isMesh && child.material) {
+          child.material = Array.isArray(child.material)
+            ? child.material.map(function (m) { return m.clone(); })
+            : child.material.clone();
+        }
+      });
+      return clone;
     }
+
+    // 실제 3D 모델이 있는 장비는 카드 대신, 모델 표면 자체를 상태(연결됨/선택됨/이동중)에
+    // 따라 살짝 색을 입혀 피드백을 줍니다.
+    function gear3dApplyMeshHighlight(id) {
+      const group = gear3d.meshGroups[id];
+      if (!group) return;
+      const isConnected = connectedCables.some(c => c.fromId === id || c.toId === id);
+      const isSelected = selectedGearForCable && selectedGearForCable.id === id;
+      const isArmed = gear3d.armedId === id || gear3d.keyboardTargetId === id;
+      let hex = null;
+      if (isArmed || isSelected) hex = 0xf59e0b;
+      else if (isConnected) hex = 0x10b981;
+      group.traverse(function (child) {
+        if (!child.isMesh || !child.material) return;
+        const mats = Array.isArray(child.material) ? child.material : [child.material];
+        mats.forEach(function (m) {
+          if (!m.emissive) return;
+          if (hex !== null) {
+            m.emissive.setHex(hex);
+            m.emissiveIntensity = 0.55;
+          } else {
+            m.emissive.setHex(0x000000);
+            m.emissiveIntensity = 1;
+          }
+        });
+      });
+    }
+
+    // 현재 카메라가 바라보는 방향을 기준으로 한 "화면상 좌/우", "화면상 앞/뒤" 수평
+    // 방향 벡터를 구합니다 — 화살표 키로 옮길 때 카메라를 아무리 돌려놓아도 항상
+    // 화면에서 보이는 방향대로 자연스럽게 움직이도록 하기 위함입니다.
+    function gear3dCameraRelativeAxes() {
+      const e = gear3d.camera.matrixWorld.elements;
+      const right = new THREE.Vector3(e[0], 0, e[2]);
+      const forward = new THREE.Vector3(-e[8], 0, -e[10]);
+      if (right.lengthSq() > 1e-8) right.normalize(); else right.set(1, 0, 0);
+      if (forward.lengthSq() > 1e-8) forward.normalize(); else forward.set(0, 0, -1);
+      return { forward, right };
+    }
+
+    // 키보드 조작 대상(gear3d.keyboardTargetId) 장비를 dx/dz(수평)·dy(높이)만큼 옮기고,
+    // dRotY(라디안)만큼 Y축 회전시킵니다. 아직 한 번도 배치되지 않은 장비는 옮길 좌표가
+    // 없으므로 무시합니다.
+    function gear3dNudgeTarget(dx, dz, dy, dRotY) {
+      const id = gear3d.keyboardTargetId;
+      if (!id || !gear3d.placedPos[id]) return;
+
+      const pos = gear3d.placedPos[id].clone();
+      pos.x += dx; pos.y += dy; pos.z += dz;
+      gear3d.placedPos[id] = pos;
+
+      const group = gear3d.meshGroups[id];
+      if (group) {
+        group.position.copy(pos);
+        if (dRotY) {
+          gear3d.meshRotY[id] = (gear3d.meshRotY[id] || 0) + dRotY;
+          group.rotation.y = gear3d.meshRotY[id];
+        }
+      }
+      const cssObj = gear3d.cssObjects[id];
+      if (cssObj) cssObj.position.copy(pos);
+    }
+
+    (function gear3dSetupKeyboardControl() {
+      window.addEventListener('keydown', function (e) {
+        if (!gear3d.inited || !gear3d.keyboardTargetId) return;
+        const tab2El = document.getElementById('tab2');
+        if (!tab2El || !tab2El.classList.contains('active')) return;
+        const tag = (document.activeElement && document.activeElement.tagName) || '';
+        if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+        const step = e.shiftKey ? 0.2 : 0.05;
+        const rotStep = e.shiftKey ? (Math.PI / 4) : (Math.PI / 24);
+        let handled = true;
+
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          const axes = gear3dCameraRelativeAxes();
+          let dx = 0, dz = 0;
+          if (e.key === 'ArrowUp') { dx = axes.forward.x * step; dz = axes.forward.z * step; }
+          else if (e.key === 'ArrowDown') { dx = -axes.forward.x * step; dz = -axes.forward.z * step; }
+          else if (e.key === 'ArrowLeft') { dx = -axes.right.x * step; dz = -axes.right.z * step; }
+          else if (e.key === 'ArrowRight') { dx = axes.right.x * step; dz = axes.right.z * step; }
+          gear3dNudgeTarget(dx, dz, 0, 0);
+        } else if (e.key === 'PageUp') {
+          gear3dNudgeTarget(0, 0, step, 0);
+        } else if (e.key === 'PageDown') {
+          gear3dNudgeTarget(0, 0, -step, 0);
+        } else if (e.key === 'q' || e.key === 'Q') {
+          gear3dNudgeTarget(0, 0, 0, rotStep);
+        } else if (e.key === 'e' || e.key === 'E') {
+          gear3dNudgeTarget(0, 0, 0, -rotStep);
+        } else if (e.key === 'Escape') {
+          gear3d.armedId = null;
+          gear3d.keyboardTargetId = null;
+          gear3dRefreshCardStates();
+          const status = document.getElementById('cableStatusText');
+          if (status) status.textContent = '🔌 케이블 모드: 첫 번째 장비를 클릭하세요 (예: 콘솔 ➔ 스테이지박스)';
+        } else {
+          handled = false;
+        }
+        if (handled) e.preventDefault();
+      });
+    })();
 
     function init3DWorkspace() {
       if (gear3d.inited) { gear3dOnResize(); return; }
@@ -5144,7 +5256,8 @@
       controls.enableDamping = true;
       controls.dampingFactor = 0.08;
       controls.maxDistance = 200;
-      controls.minDistance = 2;
+      controls.minDistance = 0.4;
+      controls.zoomSpeed = 2.5;
 
       gear3d.scene = scene;
       gear3d.camera = camera;
@@ -5207,6 +5320,7 @@
       });
 
       wrap.addEventListener('click', gear3dOnCanvasClick);
+      wrap.addEventListener('dblclick', gear3dOnCanvasDblClick);
       window.addEventListener('resize', gear3dOnResize);
 
       gear3dRenderTray();
@@ -5232,19 +5346,65 @@
       gear3d.cssRenderer.setSize(w, h);
     }
 
-    function gear3dOnCanvasClick(e) {
-      if (e.target.closest('.gear3d-card')) return; // 카드 클릭은 handleGearCableClick3d가 처리
-      if (!gear3d.armedId || !gear3d.modelRoot) return;
+    function gear3dMouseNDC(e) {
       const wrap = document.getElementById('canvas3dWrap');
       const rect = wrap.getBoundingClientRect();
-      const mouse = new THREE.Vector2(
+      return new THREE.Vector2(
         ((e.clientX - rect.left) / rect.width) * 2 - 1,
         -((e.clientY - rect.top) / rect.height) * 2 + 1
       );
+    }
+
+    // 클릭이 이미 배치된 실제 3D 모델(들) 중 하나를 맞혔는지 확인해서 그 장비의 id를 돌려줍니다.
+    function gear3dRaycastMeshGroups(mouse) {
+      const groups = Object.keys(gear3d.meshGroups).map(id => gear3d.meshGroups[id]);
+      if (groups.length === 0) return null;
       gear3d.raycaster.setFromCamera(mouse, gear3d.camera);
-      const hits = gear3d.raycaster.intersectObject(gear3d.modelRoot, true);
-      if (hits.length === 0) return;
-      gear3dPlaceAt(gear3d.armedId, hits[0].point);
+      const hits = gear3d.raycaster.intersectObjects(groups, true);
+      if (hits.length === 0) return null;
+      let obj = hits[0].object;
+      while (obj && !obj.userData.gearId) obj = obj.parent;
+      return obj ? obj.userData.gearId : null;
+    }
+
+    function gear3dOnCanvasClick(e) {
+      if (e.target.closest('.gear3d-card')) return; // 카드(사진만 있는) 클릭은 handleGearCableClick3d가 처리
+      const mouse = gear3dMouseNDC(e);
+
+      if (gear3d.armedId) {
+        if (!gear3d.modelRoot) return;
+        gear3d.raycaster.setFromCamera(mouse, gear3d.camera);
+        const hits = gear3d.raycaster.intersectObject(gear3d.modelRoot, true);
+        let point = null;
+        if (hits.length > 0) {
+          point = hits[0].point;
+        } else {
+          // 건물 표면 밖(허공)을 클릭한 경우: 카메라가 바라보고 있는 높이를 기준으로 한
+          // 수평면에 투영해서, 플라잉 스피커처럼 "공중에 띄우는" 배치도 가능하게 합니다.
+          const planeY = gear3d.controls.target.y;
+          const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -planeY);
+          const pt = new THREE.Vector3();
+          if (gear3d.raycaster.ray.intersectPlane(plane, pt)) point = pt;
+        }
+        if (!point) return;
+        gear3dPlaceAt(gear3d.armedId, point);
+        return;
+      }
+
+      // 무장 상태가 아니면, 이미 배치된 실제 3D 모델을 클릭했는지 확인해 케이블 선택으로 처리합니다.
+      const hitId = gear3dRaycastMeshGroups(mouse);
+      if (hitId) {
+        const item = gearItems.find(g => g.id === hitId);
+        if (item) handleGearCableClick3d(item, null);
+      }
+    }
+
+    // 실제 3D 모델은 카드가 없어 버튼을 둘 곳이 없으므로, 더블클릭으로 "이동 모드"를 켭니다.
+    function gear3dOnCanvasDblClick(e) {
+      if (e.target.closest('.gear3d-card')) return;
+      const mouse = gear3dMouseNDC(e);
+      const hitId = gear3dRaycastMeshGroups(mouse);
+      if (hitId) gear3dArmForMove(hitId);
     }
 
     function gear3dPlaceAt(id, point) {
@@ -5252,43 +5412,72 @@
       if (!item) return;
       gear3d.placedPos[id] = point.clone();
 
-      // 실제 3D 모델이 있는 장비는 클릭한 지점에 실물 스피커 모델을 세우고,
-      // 이름표 카드는 그 위에 떠 있도록 합니다.
       const modelKey = GEAR_MODEL_MAP[id];
       const template = modelKey && gear3d.models[modelKey];
-      let labelPoint = point;
+
       if (template) {
+        // 실제 3D 모델이 있는 장비: 모델을 가리지 않도록 카드(이름표) 없이 실물 모양만
+        // 그 지점에 세웁니다. 선택/연결 상태는 모델 자체에 색을 입혀 표시합니다.
         if (gear3d.meshGroups[id]) {
           gear3d.scene.remove(gear3d.meshGroups[id]);
         }
         const group = new THREE.Group();
         group.position.copy(point);
-        const mesh = template.scene.clone(true);
+        group.rotation.y = gear3d.meshRotY[id] || 0; // 이동해도 이전 회전값 유지
+        group.userData.gearId = id;
+        const mesh = gear3dCloneWithUniqueMaterials(template.scene);
         mesh.position.copy(template.offset);
         group.add(mesh);
         gear3d.scene.add(group);
         gear3d.meshGroups[id] = group;
-        labelPoint = point.clone().add(new THREE.Vector3(0, template.height + 0.18, 0));
+      } else {
+        // 3D 모델이 없는 장비(앰프/스테이지박스/콘솔)는 사진만 있는 작은 카드로 표시합니다
+        // (이름표·정보버튼은 배치 후에는 보이지 않습니다).
+        if (!gear3d.cssObjects[id]) {
+          const div = document.createElement('div');
+          div.className = 'draggable-gear gear3d-card';
+          div.innerHTML = gear3dBuildImageOnlyInner(item);
+          div.addEventListener('click', function (e) {
+            e.stopPropagation();
+            handleGearCableClick3d(item, div);
+          });
+          div.addEventListener('dblclick', function (e) {
+            e.stopPropagation();
+            gear3dArmForMove(id);
+          });
+          const obj = new THREE.CSS2DObject(div);
+          gear3d.scene.add(obj);
+          gear3d.cssObjects[id] = obj;
+          gear3d.cardEls[id] = div;
+        }
+        gear3d.cssObjects[id].position.copy(point);
       }
-
-      if (!gear3d.cssObjects[id]) {
-        const div = document.createElement('div');
-        div.className = 'draggable-gear gear3d-card';
-        div.innerHTML = gear3dCardInnerFor(item);
-        div.addEventListener('click', function (e) {
-          e.stopPropagation();
-          handleGearCableClick3d(item, div);
-        });
-        const obj = new THREE.CSS2DObject(div);
-        gear3d.scene.add(obj);
-        gear3d.cssObjects[id] = obj;
-        gear3d.cardEls[id] = div;
-      }
-      gear3d.cssObjects[id].position.copy(labelPoint);
 
       gear3d.armedId = null;
+      // 클릭으로 막 배치/이동한 장비는 바로 키보드로 미세 조정할 수 있도록 계속
+      // "키보드 조작 대상"으로 남겨둡니다 (화살표/PageUp·Down/Q·E).
+      gear3d.keyboardTargetId = id;
       gear3dRenderTray();
       gear3dRefreshCardStates();
+      const status = document.getElementById('cableStatusText');
+      if (status) status.textContent = `🔌 [${item.name}] 배치됨 — 화살표 키로 위치, PageUp/PageDown으로 높이, Q/E로 회전을 조정할 수 있어요.`;
+    }
+
+    // 이미 배치된 장비를 다시 무장(armed) 상태로 만듭니다 — 그 다음 3D 공간을 클릭하면
+    // 그 자리로 옮겨집니다. 모델이 있는 장비는 더블클릭으로, 사진 카드는 더블클릭(또는
+    // 카드를 더블클릭)으로 호출됩니다. 동시에 키보드 조작 대상으로도 지정됩니다.
+    function gear3dArmForMove(id) {
+      const item = gearItems.find(g => g.id === id);
+      if (!item) return;
+      gear3d.armedId = (gear3d.armedId === id) ? null : id;
+      gear3d.keyboardTargetId = gear3d.armedId;
+      gear3dRefreshCardStates();
+      const status = document.getElementById('cableStatusText');
+      if (status) {
+        status.textContent = gear3d.armedId === id
+          ? `📍 [${item.name}] 이동 모드 — 3D 공간을 클릭해 옮기거나, 화살표/PageUp·Down/Q·E 키로 조정하세요.`
+          : '🔌 이동이 취소됐습니다.';
+      }
     }
 
     function gear3dRenderTray() {
@@ -5311,7 +5500,9 @@
         div.addEventListener('click', function (e) {
           if (e.target.closest('.gear-info-btn')) return;
           gear3d.armedId = (gear3d.armedId === item.id) ? null : item.id;
+          gear3d.keyboardTargetId = gear3d.armedId;
           gear3dRenderTray();
+          gear3dRefreshCardStates();
           const status = document.getElementById('cableStatusText');
           if (status && gear3d.armedId) status.textContent = `📍 [${item.name}] 선택됨 — 위 3D 공간에서 놓을 위치를 클릭하세요.`;
         });
@@ -5339,9 +5530,12 @@
         const el = gear3d.cardEls[id];
         const isConnected = connectedCables.some(c => c.fromId === id || c.toId === id);
         const isSelected = selectedGearForCable && selectedGearForCable.id === id;
+        const isArmed = gear3d.armedId === id || gear3d.keyboardTargetId === id;
         el.classList.toggle('connected', !!isConnected);
         el.classList.toggle('selected-cable', !!isSelected);
+        el.classList.toggle('armed', !!isArmed);
       });
+      Object.keys(gear3d.meshGroups).forEach(gear3dApplyMeshHighlight);
     }
 
     function redrawCables3d() {
@@ -5378,10 +5572,12 @@
         gear3d.scene.remove(gear3d.meshGroups[id]);
       });
       gear3d.meshGroups = {};
+      gear3d.meshRotY = {};
       gear3d.placedPos = {};
       gear3d.cssObjects = {};
       gear3d.cardEls = {};
       gear3d.armedId = null;
+      gear3d.keyboardTargetId = null;
       gear3dRenderTray();
     }
 
