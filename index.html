@@ -258,6 +258,104 @@
     .gear3d-tray .draggable-gear.armed { border-color: var(--accent-yellow); box-shadow: 0 0 15px rgba(245, 158, 11, 0.5); }
     .gear3d-tray-empty { font-size: 0.78rem; color: var(--text-sub); }
 
+    /* ===== CL5 콘솔 트레이닝 탭 =====
+       확성 시스템의 기본(MG12XU) 탭과 같은 방식 — 실제 콘솔 사진 위에 보이지 않는 클릭
+       버튼(.cl5-on-hotspot)을 정확한 위치에 겹쳐두고, 그 버튼을 누르면 켜짐/꺼짐이 바뀝니다. */
+    .cl5-order-stage {
+      background: #0f172a;
+      border-radius: 16px;
+      padding: 22px 14px;
+      margin-bottom: 16px;
+      min-height: 92px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-align: center;
+    }
+    .cl5-order-idle { color: #64748b; font-size: 0.95rem; font-weight: 700; }
+    .cl5-order-live-text {
+      font-size: 2.1rem;
+      font-weight: 900;
+      color: #fbbf24;
+      text-shadow: 0 0 20px rgba(251, 191, 36, 0.55);
+      animation: cl5PopIn 0.4s ease;
+    }
+    @keyframes cl5PopIn {
+      from { opacity: 0; transform: translateY(8px) scale(0.85); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .cl5-order-progress { font-size: 0.8rem; color: #94a3b8; font-weight: 700; }
+    .cl5-timer-bar {
+      width: 260px;
+      max-width: 80%;
+      height: 8px;
+      border-radius: 4px;
+      background: #1e293b;
+      overflow: hidden;
+    }
+    .cl5-timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #4ade80, #fbbf24, #ef4444);
+      border-radius: 4px;
+    }
+    .cl5-result-flash {
+      font-size: 1rem;
+      font-weight: 800;
+      padding: 2px 10px;
+      border-radius: 20px;
+    }
+    .cl5-result-flash.pass { color: #4ade80; }
+    .cl5-result-flash.fail { color: #f87171; }
+    .cl5-result-flash.practice { color: #94a3b8; }
+
+    .cl5-order-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .cl5-order-controls .cl5-step-btn {
+      padding: 7px 16px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: #1e293b;
+      color: #e2e8f0;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .cl5-order-controls .cl5-step-btn:hover { background: #334155; }
+    .cl5-order-controls .cl5-step-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .cl5-order-controls .cl5-start-btn { background: var(--accent-green, #16a34a); color: #fff; }
+    .cl5-order-controls .cl5-start-btn:hover { background: #15803d; }
+
+    .cl5-img-wrap {
+      position: relative;
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px dashed var(--border-color);
+      margin-bottom: 16px;
+      background: #fff;
+    }
+    .cl5-console-img { width: 100%; display: block; user-select: none; -webkit-user-drag: none; }
+    .cl5-on-hotspot {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      border-radius: 4px;
+      border: 2px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: all 0.12s;
+    }
+    .cl5-on-hotspot:hover { border-color: rgba(250, 204, 21, 0.85); }
+    .cl5-on-hotspot.off { background: rgba(0, 0, 0, 0.82); border-color: rgba(220, 38, 38, 0.6); }
+
     .zone-guide {
       position: absolute;
       font-size: 0.85rem;
@@ -1691,6 +1789,7 @@
     <button class="tab-btn active" data-tab="tab4" onclick="switchTab('tab4')">📅 10주 커리큘럼</button>
     <button class="tab-btn" data-tab="tab1" onclick="switchTab('tab1')">📢 확성 시스템의 기본</button>
     <button class="tab-btn" data-tab="tab2" onclick="switchTab('tab2')">🗺 3층 음향 시스템</button>
+    <button class="tab-btn" data-tab="tab5" onclick="switchTab('tab5')">🎚 CL5 콘솔 트레이닝</button>
     <button class="tab-btn" data-tab="tab3" onclick="switchTab('tab3')">🎧 Ear Training</button>
   </div>
 
@@ -1822,6 +1921,30 @@
       <button class="btn" onclick="checkLayoutComplete()">🔍 시스템 배치 및 케이블링 검증하기</button>
 
       <div class="result-panel" id="layoutResultPanel"></div>
+    </div>
+
+    <!-- TAB 5: CL5 콘솔 트레이닝 -->
+    <div id="tab5" class="tab-content">
+      <div class="level-header">
+        <div class="level-title">🎚 CL5 콘솔 트레이닝</div>
+        <div class="level-desc">시작 버튼을 누르면 예배 식순이 하나씩 화면에 나타나요. 식순이 바뀔 때마다 <b>5초 안에</b> 아래 콘솔 사진에서 그 순서에 맞는 채널의 <b>ON 버튼</b>을 정확히 눌러야 통과합니다. ON 버튼을 누르면 켜짐/꺼짐이 토글돼요.</div>
+      </div>
+
+      <div class="cl5-order-stage" id="cl5OrderStage">
+        <div class="cl5-order-idle" id="cl5OrderIdle">▶ 시작 버튼을 누르면 예배 식순이 순서대로 하나씩 나타납니다.</div>
+      </div>
+
+      <div class="cl5-order-controls">
+        <button class="cl5-step-btn cl5-start-btn" id="cl5StartBtn" onclick="cl5StartGame()">▶ 시작</button>
+        <button class="cl5-step-btn" id="cl5StopBtn" onclick="cl5StopGame()" disabled>⏹ 정지</button>
+        <button class="cl5-step-btn" onclick="cl5ResetChannels()">🔄 채널 전체 초기화</button>
+      </div>
+
+      <div class="cl5-img-wrap" id="cl5ImgWrap">
+        <img src="cl5_top.jpg" class="cl5-console-img" draggable="false" alt="Yamaha CL5 콘솔 (위에서 본 모습)">
+      </div>
+
+      <div class="result-panel" id="cl5ResultPanel"></div>
     </div>
 
     <!-- TAB 3: Ear Training -->
@@ -4729,6 +4852,8 @@
       if (content) content.classList.add('active');
       if (tabId === 'tab4') renderCurriculum();
       if (tabId === 'tab2') init3DWorkspace();
+      if (tabId === 'tab5') initCL5Workspace();
+      else if (typeof cl5StopGame === 'function') cl5StopGame(); // 다른 탭으로 이동하면 타이머가 뒤에서 계속 돌지 않도록 정지
     }
 
     /* ===== 사운드팀 신입 스텝 10주 커리큘럼 ===== */
@@ -5695,6 +5820,240 @@
       selectedGearForCable = null;
       document.getElementById('cableStatusText').innerText = "🔌 케이블 초기화됨. 첫 번째 장비를 클릭하세요.";
       gear3dRefreshCardStates();
+    }
+
+    /* =========================================================================
+       CL5 콘솔 트레이닝 탭
+       - 실제 CL5 콘솔 상판 사진(cl5_top.jpg) 위에, 각 채널의 ON 버튼이 있는 정확한
+         위치(사진 픽셀을 분석해서 좌표를 구했습니다)에 보이지 않는 클릭 버튼을 겹쳐두고,
+         그 버튼을 누르면 켜짐/꺼짐이 바뀝니다 — 확성 시스템의 기본(MG12XU) 탭과 같은 방식입니다.
+       - "시작"을 누르면 예배 식순이 한 번에 하나씩 나타나고, 각 식순마다 5초의 제한시간
+         안에 정답 채널의 ON 버튼을 눌러야 통과합니다. 모든 식순이 끝나면 결과를 보여줍니다.
+       - CL5_STEP_CHANNEL_MAP 은 "이 식순에서는 어떤 채널이 켜져 있어야 하는지"를 담는
+         자리입니다. 아직 세부 식순(각 순서마다 정확히 어떤 채널인지)을 받지 못해 비어
+         있으며, 전달받으면 이 객체만 채우면 바로 채점이 동작합니다. 매핑이 없는 식순은
+         "연습(자동 통과)"으로 처리되어, 지금도 시작→진행→결과 흐름 전체를 테스트해볼 수 있습니다.
+       ========================================================================= */
+    const worshipOrder = [
+      '묵도', '영광찬송', '대표기도', '경배찬송', '설교', '축복기도',
+      '감사찬송', '광고', '구호', '주기도문', '영광', '신천지가'
+    ];
+    const CL5_STEP_SECONDS = 5;
+
+    // 아직 세부 식순(각 순서마다 어떤 채널을 켜야 하는지)을 전달받지 못해 비어 있습니다.
+    // 예: { '묵도': { on: ['ch1'], off: ['ch2','ch3'] }, ... } 형태로 채워질 예정입니다.
+    const CL5_STEP_CHANNEL_MAP = {};
+
+    // 사진(1998x1323)에서 각 채널 ON 버튼의 중심 좌표를 퍼센트(%)로 환산해둔 값입니다.
+    // 사진 픽셀을 직접 분석해서 구했기 때문에 화면 크기가 달라져도(반응형) 정확히 맞습니다.
+    const CL5_ON_BUTTON_POS = [
+      {"id":"ch1","xPct":9.334,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch2","xPct":11.111,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch3","xPct":12.888,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch4","xPct":14.69,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch5","xPct":16.466,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch6","xPct":18.243,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch7","xPct":20.045,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch8","xPct":21.822,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch9","xPct":25.601,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch10","xPct":27.377,"yPct":56.047,"wPct":2.6,"hPct":2.4},
+      {"id":"ch11","xPct":29.179,"yPct":56.047,"wPct":2.6,"hPct":2.4},
+      {"id":"ch12","xPct":30.956,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch13","xPct":32.733,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch14","xPct":34.535,"yPct":56.047,"wPct":2.6,"hPct":2.4},
+      {"id":"ch15","xPct":36.311,"yPct":56.047,"wPct":2.6,"hPct":2.4},
+      {"id":"ch16","xPct":38.088,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch17","xPct":44.62,"yPct":56.047,"wPct":2.6,"hPct":2.4},
+      {"id":"ch18","xPct":46.396,"yPct":56.047,"wPct":2.6,"hPct":2.4},
+      {"id":"ch19","xPct":48.198,"yPct":56.047,"wPct":2.6,"hPct":2.4},
+      {"id":"ch20","xPct":49.975,"yPct":56.047,"wPct":2.6,"hPct":2.4},
+      {"id":"ch21","xPct":51.752,"yPct":56.047,"wPct":2.6,"hPct":2.4},
+      {"id":"ch22","xPct":53.554,"yPct":56.047,"wPct":2.6,"hPct":2.4},
+      {"id":"ch23","xPct":55.33,"yPct":56.047,"wPct":2.6,"hPct":2.4},
+      {"id":"ch24","xPct":57.107,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch25","xPct":71.021,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch26","xPct":72.798,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch27","xPct":74.575,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch28","xPct":76.351,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"ch29","xPct":78.153,"yPct":56.047,"wPct":2.6,"hPct":2.4},
+      {"id":"ch30","xPct":79.93,"yPct":56.047,"wPct":2.6,"hPct":2.4},
+      {"id":"ch31","xPct":81.732,"yPct":56.047,"wPct":2.6,"hPct":2.4},
+      {"id":"ch32","xPct":83.509,"yPct":56.009,"wPct":2.6,"hPct":2.4},
+      {"id":"stL","xPct":89.189,"yPct":56.047,"wPct":2.6,"hPct":2.4},
+      {"id":"mono","xPct":90.966,"yPct":56.047,"wPct":2.6,"hPct":2.4}
+    ];
+    function cl5LabelFor(id) {
+      if (id === 'stL') return 'ST L';
+      if (id === 'mono') return 'MONO';
+      return id;
+    }
+
+    const cl5Channels = CL5_ON_BUTTON_POS.map(function (p) { return { id: p.id, on: false }; });
+
+    let cl5Inited = false;
+    let cl5GameRunning = false;
+    let cl5StepIndex = 0;
+    let cl5StepResults = [];
+    let cl5StepTimeoutHandle = null;
+    let cl5StepStartedAt = 0;
+
+    function initCL5Workspace() {
+      cl5RenderIdleStage();
+      if (cl5Inited) return;
+      cl5Inited = true;
+      const wrap = document.getElementById('cl5ImgWrap');
+      if (!wrap) return;
+      CL5_ON_BUTTON_POS.forEach(function (pos) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'cl5-on-hotspot off';
+        btn.style.left = pos.xPct + '%';
+        btn.style.top = pos.yPct + '%';
+        btn.style.width = pos.wPct + '%';
+        btn.style.height = pos.hPct + '%';
+        btn.dataset.id = pos.id;
+        btn.title = cl5LabelFor(pos.id) + ' ON/MUTE';
+        btn.addEventListener('click', function () { cl5ToggleChannel(pos.id); });
+        wrap.appendChild(btn);
+      });
+    }
+
+    function cl5ToggleChannel(id) {
+      const ch = cl5Channels.find(function (c) { return c.id === id; });
+      if (!ch) return;
+      ch.on = !ch.on;
+      const btn = document.querySelector(`.cl5-on-hotspot[data-id="${id}"]`);
+      if (btn) btn.classList.toggle('off', !ch.on);
+    }
+
+    function cl5ResetChannels() {
+      cl5Channels.forEach(function (c) { c.on = false; });
+      document.querySelectorAll('.cl5-on-hotspot').forEach(function (btn) { btn.classList.add('off'); });
+      const panel = document.getElementById('cl5ResultPanel');
+      if (panel) { panel.classList.remove('show'); panel.innerHTML = ''; }
+    }
+
+    function cl5RenderIdleStage() {
+      const stage = document.getElementById('cl5OrderStage');
+      if (!stage) return;
+      stage.innerHTML = '<div class="cl5-order-idle" id="cl5OrderIdle">▶ 시작 버튼을 누르면 예배 식순이 순서대로 하나씩 나타납니다.</div>';
+    }
+
+    function cl5StartGame() {
+      if (cl5GameRunning) return;
+      cl5GameRunning = true;
+      cl5StepIndex = 0;
+      cl5StepResults = [];
+      const startBtn = document.getElementById('cl5StartBtn');
+      const stopBtn = document.getElementById('cl5StopBtn');
+      if (startBtn) startBtn.disabled = true;
+      if (stopBtn) stopBtn.disabled = false;
+      const panel = document.getElementById('cl5ResultPanel');
+      if (panel) { panel.classList.remove('show'); panel.innerHTML = ''; }
+      cl5RunStep();
+    }
+
+    function cl5StopGame() {
+      if (cl5StepTimeoutHandle) { clearTimeout(cl5StepTimeoutHandle); cl5StepTimeoutHandle = null; }
+      if (!cl5GameRunning) return;
+      cl5GameRunning = false;
+      const startBtn = document.getElementById('cl5StartBtn');
+      const stopBtn = document.getElementById('cl5StopBtn');
+      if (startBtn) startBtn.disabled = false;
+      if (stopBtn) stopBtn.disabled = true;
+      cl5RenderIdleStage();
+    }
+
+    function cl5RunStep() {
+      if (!cl5GameRunning) return;
+      if (cl5StepIndex >= worshipOrder.length) { cl5FinishGame(); return; }
+      cl5Channels.forEach(function (c) { c.on = false; }); // 매 순서마다 채널을 꺼진 상태로 초기화
+      document.querySelectorAll('.cl5-on-hotspot').forEach(function (btn) { btn.classList.add('off'); });
+      cl5RenderLiveStage();
+      cl5StartTimerBar(CL5_STEP_SECONDS);
+      cl5StepStartedAt = Date.now();
+      cl5StepTimeoutHandle = setTimeout(function () {
+        cl5EvaluateCurrentStep();
+        cl5StepIndex++;
+        cl5RunStep();
+      }, CL5_STEP_SECONDS * 1000);
+    }
+
+    function cl5RenderLiveStage() {
+      const stage = document.getElementById('cl5OrderStage');
+      if (!stage) return;
+      const stepName = worshipOrder[cl5StepIndex];
+      stage.innerHTML = `
+        <div class="cl5-order-live-text" id="cl5OrderLiveText">${stepName}</div>
+        <div class="cl5-order-progress">${cl5StepIndex + 1} / ${worshipOrder.length} — 5초 안에 맞는 채널의 ON 버튼을 누르세요</div>
+        <div class="cl5-timer-bar"><div class="cl5-timer-fill" id="cl5TimerFill"></div></div>
+      `;
+    }
+
+    function cl5StartTimerBar(seconds) {
+      const fill = document.getElementById('cl5TimerFill');
+      if (!fill) return;
+      fill.style.transition = 'none';
+      fill.style.width = '100%';
+      void fill.offsetWidth; // 강제 리플로우 — 트랜지션을 매번 처음부터 다시 재생시키기 위함
+      requestAnimationFrame(function () {
+        fill.style.transition = `width ${seconds}s linear`;
+        fill.style.width = '0%';
+      });
+    }
+
+    function cl5EvaluateCurrentStep() {
+      const stepName = worshipOrder[cl5StepIndex];
+      const expected = CL5_STEP_CHANNEL_MAP[stepName];
+      if (!expected) {
+        cl5StepResults.push({ step: stepName, status: 'practice' });
+        return;
+      }
+      const onList = expected.on || [];
+      const offList = expected.off || [];
+      const wrong = [];
+      onList.forEach(function (id) {
+        const ch = cl5Channels.find(function (c) { return c.id === id; });
+        if (!ch || !ch.on) wrong.push(`${cl5LabelFor(id)} 가 꺼져 있었어요 (켜야 함)`);
+      });
+      offList.forEach(function (id) {
+        const ch = cl5Channels.find(function (c) { return c.id === id; });
+        if (ch && ch.on) wrong.push(`${cl5LabelFor(id)} 가 켜져 있었어요 (꺼야 함)`);
+      });
+      cl5StepResults.push({ step: stepName, status: wrong.length === 0 ? 'pass' : 'fail', wrong: wrong });
+    }
+
+    function cl5FinishGame() {
+      cl5GameRunning = false;
+      const startBtn = document.getElementById('cl5StartBtn');
+      const stopBtn = document.getElementById('cl5StopBtn');
+      if (startBtn) startBtn.disabled = false;
+      if (stopBtn) stopBtn.disabled = true;
+      cl5RenderIdleStage();
+
+      const graded = cl5StepResults.filter(function (r) { return r.status !== 'practice'; });
+      const passed = graded.filter(function (r) { return r.status === 'pass'; }).length;
+      const practiceCount = cl5StepResults.length - graded.length;
+
+      const panel = document.getElementById('cl5ResultPanel');
+      if (!panel) return;
+      panel.classList.add('show');
+      const summary = graded.length > 0
+        ? `정답이 입력된 ${graded.length}개 순서 중 <b>${passed}개 통과</b>`
+        : '아직 정답 채널이 입력된 식순이 없어 전체가 연습(자동 통과) 모드로 진행됐어요';
+      const cls = graded.length === 0 ? 'result-warn' : (passed === graded.length ? 'result-good' : 'result-bad');
+      const rows = cl5StepResults.map(function (r) {
+        const icon = r.status === 'pass' ? '✅' : r.status === 'fail' ? '❌' : '➖';
+        const detail = r.status === 'fail' && r.wrong && r.wrong.length
+          ? '<ul>' + r.wrong.map(function (w) { return '<li>' + w + '</li>'; }).join('') + '</ul>'
+          : (r.status === 'practice' ? '<span style="color:#94a3b8;">정답 미입력 — 연습으로 처리</span>' : '');
+        return `<li>${icon} <b>${r.step}</b>${detail}</li>`;
+      }).join('');
+      panel.className = 'result-panel show ' + cls;
+      panel.innerHTML = `
+        <div class="result-title">🏁 트레이닝 완료 — ${summary}${practiceCount > 0 ? ` (연습 ${practiceCount}개 제외)` : ''}</div>
+        <ul>${rows}</ul>
+      `;
     }
 
     /* ===== 정답 신호 경로 (스테이지박스 → 콘솔 → 앰프 → 스피커) ===== */
