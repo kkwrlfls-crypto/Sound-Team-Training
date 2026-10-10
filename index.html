@@ -333,28 +333,191 @@
     .cl5-order-controls .cl5-start-btn { background: var(--accent-green, #16a34a); color: #fff; }
     .cl5-order-controls .cl5-start-btn:hover { background: #15803d; }
 
+    /* CL5 탭이 열려 있는 동안엔 전체 패널 폭을 넓혀서 콘솔 사진이 더 크게 보이게 합니다.
+       (다른 탭들은 기존 960px 폭을 그대로 유지) */
+    .game-container.cl5-wide-mode {
+      max-width: 1500px;
+      transition: max-width 0.15s ease;
+    }
+
+    .cl5-name-sync-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin: -6px 0 14px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(100, 116, 139, 0.1);
+    }
+    .cl5-name-sync-hint {
+      font-size: 0.78rem;
+      color: var(--text-sub);
+      line-height: 1.4;
+      flex: 1 1 260px;
+    }
+
+    /* 사진 전체(1998x1323) 중 위쪽(로고/노브/터치스크린/미터브릿지, 450px 정도)은
+       실제로 쓰이지 않아서 잘라내고, 채널 스트립이 있는 아래쪽(556~1323px)만
+       보여줍니다. 바깥 div(.cl5-img-wrap)는 그 잘린 비율만큼만 높이를 갖는
+       "보이는 창"이고, 안쪽 div(.cl5-img-inner)는 사진 원본 전체 크기를 그대로
+       유지한 채 위로 밀어 올려서 윗부분이 창 밖으로 벗어나게 만듭니다.
+       이렇게 하면 기존에 사진 전체(1998x1323) 기준 퍼센트로 잡아둔 모든 버튼/라벨
+       좌표를 하나도 바꾸지 않고도 "확대해서 자른" 효과를 낼 수 있습니다. */
     .cl5-img-wrap {
       position: relative;
       width: 100%;
+      aspect-ratio: 1998 / 767; /* 1323 - 556 */
       border-radius: 16px;
       overflow: hidden;
       border: 2px dashed var(--border-color);
       margin-bottom: 16px;
-      background: #fff;
+      background: #1c1a19;
+    }
+    .cl5-img-inner {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      transform: translateY(-42.025%); /* 556 / 1323 * 100 */
     }
     .cl5-console-img { width: 100%; display: block; user-select: none; -webkit-user-drag: none; }
     .cl5-on-hotspot {
       position: absolute;
       transform: translate(-50%, -50%);
-      border-radius: 4px;
+      border-radius: 3px;
       border: 2px solid transparent;
       background: transparent;
       cursor: pointer;
       pointer-events: auto;
       transition: all 0.12s;
+      z-index: 2;
     }
     .cl5-on-hotspot:hover { border-color: rgba(250, 204, 21, 0.85); }
     .cl5-on-hotspot.off { background: rgba(0, 0, 0, 0.82); border-color: rgba(220, 38, 38, 0.6); }
+    /* 실제 콘솔에서 ON 버튼을 누르면 주황빛으로 환하게 켜지는 모습을 재현했습니다. */
+    .cl5-on-hotspot:not(.off) {
+      border-color: rgba(234, 88, 12, 0.9);
+      background: rgba(234, 88, 12, 0.16);
+      box-shadow: 0 0 9px 2px rgba(249, 115, 22, 0.55), inset 0 0 7px rgba(255, 196, 130, 0.55);
+    }
+
+    /* 사진에 원래부터 찍혀 있는(= 작동하지 않는) 레벨미터 표시들을 가려서, 실제로
+       클릭할 수 있는 ON 버튼들에만 시선이 가게 합니다. 콘솔 패널의 어두운 색과
+       비슷한 톤으로 덮어서 자연스럽게 "꺼진" 패널처럼 보이게 했어요. */
+    .cl5-meter-mask {
+      position: absolute;
+      background: rgba(44, 41, 39, 0.97);
+      border-radius: 3px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* 채널 레이어 버튼 (1-16/17-32/.../CUSTOM, INPUT/OUTPUT 등) — 사진 속 실제 버튼 위치에
+       겹쳐둔 보이지 않는 클릭 버튼입니다. 실제 CL5 콘솔은 입력채널 레이어를 선택하면
+       초록색으로, DCA/MIX/MATRIX 등 출력(버스) 레이어를 선택하면 주황색으로 버튼이
+       켜지는데, 그 모습을 그대로 재현했습니다. */
+    .cl5-layer-btn {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      border-radius: 3px;
+      border: 2px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: all 0.12s;
+      z-index: 2;
+    }
+    .cl5-layer-btn:hover { border-color: rgba(250, 204, 21, 0.85); }
+    .cl5-layer-btn.active { border-color: rgba(45, 212, 191, 0.95); box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.35); }
+    .cl5-layer-btn.active.cl5-color-green {
+      border-color: #22c55e;
+      background: rgba(34, 197, 94, 0.22);
+      box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.4);
+    }
+    .cl5-layer-btn.active.cl5-color-orange {
+      border-color: #ea580c;
+      background: rgba(234, 88, 12, 0.24);
+      box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.45);
+    }
+
+    /* 채널 이름표 — 사진에 원래 인쇄된 "ch 1" 같은 글자 위에 덮어서, 클릭하면 직접
+       이름을 입력할 수 있게 만든 편집 가능한 칸입니다. 레이어를 바꾸면 이 칸들의
+       내용(채널 주소)도 같이 바뀌고, 사용자가 입력한 이름은 그 주소에 계속 저장됩니다. */
+    .cl5-name-label {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.92);
+      color: #e2e8f0;
+      border: 1px solid rgba(100, 116, 139, 0.6);
+      border-radius: 3px;
+      font-size: 0.5rem;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.1;
+      padding: 0px 1px;
+      cursor: text;
+      pointer-events: auto;
+      z-index: 2;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: clip;
+    }
+    .cl5-name-label:focus { white-space: normal; word-break: break-word; } /* 편집 중일 때만 긴 이름이 줄바꿈되게 */
+    .cl5-name-label:hover { border-color: rgba(250, 204, 21, 0.85); }
+    .cl5-name-label:focus { outline: none; border-color: rgba(45, 212, 191, 0.95); background: rgba(15, 23, 42, 0.98); }
+    .cl5-name-label.cl5-blank-slot { cursor: default; opacity: 0.35; }
+
+    /* 콘솔 사진 속 이름표 글씨가 너무 작아서 보기 힘들다는 요청으로 추가한, 같은
+       내용을 큼직한 글씨로 보여주는 "확대 패널"입니다. 사진 위 이름표와 완전히
+       연동되어, 어느 쪽에서 이름을 바꿔도 양쪽 다 똑같이 바뀝니다. */
+    .cl5-biglabel-section { margin-bottom: 16px; }
+    .cl5-biglabel-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+    }
+    .cl5-biglabel-bank-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .cl5-biglabel-bank-row:last-child { margin-bottom: 0; }
+    .cl5-name-label-lg {
+      flex: 1 1 60px;
+      min-width: 0;
+      background: rgba(15, 23, 42, 0.92);
+      color: #e2e8f0;
+      border: 1px solid rgba(100, 116, 139, 0.6);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.25;
+      padding: 10px 4px;
+      cursor: text;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      word-break: break-word;
+      transition: border-color 0.12s, background 0.12s;
+    }
+    .cl5-name-label-lg:hover { border-color: rgba(250, 204, 21, 0.85); }
+    .cl5-name-label-lg:focus { outline: none; border-color: rgba(45, 212, 191, 0.95); background: rgba(15, 23, 42, 0.98); }
+    .cl5-name-label-lg.cl5-blank-slot { cursor: default; opacity: 0.35; }
+    /* 사진 속 ON 버튼을 눌러서 그 채널이 켜지면, "크게 보기" 패널의 같은 칸도 실제
+       ON 버튼이 켜졌을 때와 똑같은 주황빛으로 환하게 밝아지게 했습니다. */
+    .cl5-name-label-lg.cl5-on {
+      border-color: rgba(234, 88, 12, 0.9);
+      background: rgba(234, 88, 12, 0.24);
+      box-shadow: 0 0 10px 2px rgba(249, 115, 22, 0.55), inset 0 0 8px rgba(255, 196, 130, 0.45);
+      color: #fff7ed;
+    }
 
     .zone-guide {
       position: absolute;
@@ -1940,8 +2103,22 @@
         <button class="cl5-step-btn" onclick="cl5ResetChannels()">🔄 채널 전체 초기화</button>
       </div>
 
+      <div class="cl5-name-sync-row">
+        <button class="cl5-step-btn" onclick="cl5ExportNames()">📤 채널 이름표 내보내기</button>
+        <button class="cl5-step-btn" onclick="document.getElementById('cl5ImportFileInput').click()">📥 채널 이름표 불러오기</button>
+        <input type="file" id="cl5ImportFileInput" accept="application/json,.json" style="display:none" onchange="cl5ImportNamesFile(this)">
+        <span class="cl5-name-sync-hint">내가 입력한 이름은 이 브라우저에만 저장돼요. 다른 사람과 같은 이름을 보려면, 이름을 다 입력한 뒤 <b>내보내기</b>로 파일을 만들어 공유하고, 상대방은 그 파일을 <b>불러오기</b>로 열면 돼요.</span>
+      </div>
+
+      <div class="cl5-biglabel-section">
+        <div class="cl5-biglabel-title">🔎 채널 이름 크게 보기 (아래 콘솔 사진 속 이름표와 똑같이 연동돼요 — 여기서 눌러서 바로 수정 가능)</div>
+        <div id="cl5BigLabelPanel"></div>
+      </div>
+
       <div class="cl5-img-wrap" id="cl5ImgWrap">
-        <img src="cl5_top.jpg" class="cl5-console-img" draggable="false" alt="Yamaha CL5 콘솔 (위에서 본 모습)">
+        <div class="cl5-img-inner" id="cl5ImgInner">
+          <img src="cl5_top.jpg" class="cl5-console-img" draggable="false" alt="Yamaha CL5 콘솔 (위에서 본 모습)">
+        </div>
       </div>
 
       <div class="result-panel" id="cl5ResultPanel"></div>
@@ -4850,6 +5027,8 @@
       if (btn) btn.classList.add('active');
       const content = document.getElementById(tabId);
       if (content) content.classList.add('active');
+      const gameContainerEl = document.querySelector('.game-container');
+      if (gameContainerEl) gameContainerEl.classList.toggle('cl5-wide-mode', tabId === 'tab5'); // CL5 탭은 콘솔 사진이 크게 보이도록 패널을 넓힘
       if (tabId === 'tab4') renderCurriculum();
       if (tabId === 'tab2') init3DWorkspace();
       if (tabId === 'tab5') initCL5Workspace();
@@ -5846,46 +6025,423 @@
 
     // 사진(1998x1323)에서 각 채널 ON 버튼의 중심 좌표를 퍼센트(%)로 환산해둔 값입니다.
     // 사진 픽셀을 직접 분석해서 구했기 때문에 화면 크기가 달라져도(반응형) 정확히 맞습니다.
+    // wPct/hPct, yPct는 사용자가 그림판으로 직접 원본 사진 위에 ON 버튼 테두리를
+    // 그려서 보내준 것을 원본과 픽셀 단위로 비교(diff)해서 뽑아낸 값입니다
+    // (ch13 기준 29x20px, 중심 yPct=56.009 — 1998x1323 기준). 이전 자동 측정값보다
+    // 훨씬 더 정확합니다.
     const CL5_ON_BUTTON_POS = [
-      {"id":"ch1","xPct":9.334,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch2","xPct":11.111,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch3","xPct":12.888,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch4","xPct":14.69,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch5","xPct":16.466,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch6","xPct":18.243,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch7","xPct":20.045,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch8","xPct":21.822,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch9","xPct":25.601,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch10","xPct":27.377,"yPct":56.047,"wPct":2.6,"hPct":2.4},
-      {"id":"ch11","xPct":29.179,"yPct":56.047,"wPct":2.6,"hPct":2.4},
-      {"id":"ch12","xPct":30.956,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch13","xPct":32.733,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch14","xPct":34.535,"yPct":56.047,"wPct":2.6,"hPct":2.4},
-      {"id":"ch15","xPct":36.311,"yPct":56.047,"wPct":2.6,"hPct":2.4},
-      {"id":"ch16","xPct":38.088,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch17","xPct":44.62,"yPct":56.047,"wPct":2.6,"hPct":2.4},
-      {"id":"ch18","xPct":46.396,"yPct":56.047,"wPct":2.6,"hPct":2.4},
-      {"id":"ch19","xPct":48.198,"yPct":56.047,"wPct":2.6,"hPct":2.4},
-      {"id":"ch20","xPct":49.975,"yPct":56.047,"wPct":2.6,"hPct":2.4},
-      {"id":"ch21","xPct":51.752,"yPct":56.047,"wPct":2.6,"hPct":2.4},
-      {"id":"ch22","xPct":53.554,"yPct":56.047,"wPct":2.6,"hPct":2.4},
-      {"id":"ch23","xPct":55.33,"yPct":56.047,"wPct":2.6,"hPct":2.4},
-      {"id":"ch24","xPct":57.107,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch25","xPct":71.021,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch26","xPct":72.798,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch27","xPct":74.575,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch28","xPct":76.351,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"ch29","xPct":78.153,"yPct":56.047,"wPct":2.6,"hPct":2.4},
-      {"id":"ch30","xPct":79.93,"yPct":56.047,"wPct":2.6,"hPct":2.4},
-      {"id":"ch31","xPct":81.732,"yPct":56.047,"wPct":2.6,"hPct":2.4},
-      {"id":"ch32","xPct":83.509,"yPct":56.009,"wPct":2.6,"hPct":2.4},
-      {"id":"stL","xPct":89.189,"yPct":56.047,"wPct":2.6,"hPct":2.4},
-      {"id":"mono","xPct":90.966,"yPct":56.047,"wPct":2.6,"hPct":2.4}
+      {"id":"ch1","xPct":9.334,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch2","xPct":11.111,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch3","xPct":12.888,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch4","xPct":14.69,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch5","xPct":16.466,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch6","xPct":18.243,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch7","xPct":20.045,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch8","xPct":21.822,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch9","xPct":25.601,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch10","xPct":27.377,"yPct":56.047,"wPct":1.45,"hPct":1.51},
+      {"id":"ch11","xPct":29.179,"yPct":56.047,"wPct":1.45,"hPct":1.51},
+      {"id":"ch12","xPct":30.956,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch13","xPct":32.733,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch14","xPct":34.535,"yPct":56.047,"wPct":1.45,"hPct":1.51},
+      {"id":"ch15","xPct":36.311,"yPct":56.047,"wPct":1.45,"hPct":1.51},
+      {"id":"ch16","xPct":38.088,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch17","xPct":44.62,"yPct":56.047,"wPct":1.45,"hPct":1.51},
+      {"id":"ch18","xPct":46.396,"yPct":56.047,"wPct":1.45,"hPct":1.51},
+      {"id":"ch19","xPct":48.198,"yPct":56.047,"wPct":1.45,"hPct":1.51},
+      {"id":"ch20","xPct":49.975,"yPct":56.047,"wPct":1.45,"hPct":1.51},
+      {"id":"ch21","xPct":51.752,"yPct":56.047,"wPct":1.45,"hPct":1.51},
+      {"id":"ch22","xPct":53.554,"yPct":56.047,"wPct":1.45,"hPct":1.51},
+      {"id":"ch23","xPct":55.33,"yPct":56.047,"wPct":1.45,"hPct":1.51},
+      {"id":"ch24","xPct":57.107,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch25","xPct":71.021,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch26","xPct":72.798,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch27","xPct":74.575,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch28","xPct":76.351,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"ch29","xPct":78.153,"yPct":56.047,"wPct":1.45,"hPct":1.51},
+      {"id":"ch30","xPct":79.93,"yPct":56.047,"wPct":1.45,"hPct":1.51},
+      {"id":"ch31","xPct":81.732,"yPct":56.047,"wPct":1.45,"hPct":1.51},
+      {"id":"ch32","xPct":83.509,"yPct":56.009,"wPct":1.45,"hPct":1.51},
+      {"id":"stL","xPct":89.189,"yPct":56.047,"wPct":1.45,"hPct":1.51},
+      {"id":"mono","xPct":90.966,"yPct":56.047,"wPct":1.45,"hPct":1.51}
     ];
     function cl5LabelFor(id) {
       if (id === 'stL') return 'ST L';
       if (id === 'mono') return 'MONO';
       return id;
+    }
+
+    // 사진 속에 원래부터 인쇄돼 있는(=실제로는 움직이지 않는) 레벨미터 표시들의 위치입니다.
+    // 채널 그룹별 미터 사다리(ch1-8 / ch9-16 / ch17-24 / ch25-32 / ST,MONO) 5곳과,
+    // 오른쪽 위 전체 미터브릿지(MIX/MATRIX/STEREO MONO CUE) 1곳, 총 6곳을 가립니다.
+    const CL5_METER_MASKS = [
+      { left: 8.36, top: 50.42, width: 14.72, height: 4.84 },   // ch1-8 레벨미터 (각 그룹 마지막 채널의 라벨 글자가 더 오른쪽까지 걸쳐 있어서 폭을 조금 더 넓게 잡았습니다)
+      { left: 24.62, top: 50.42, width: 14.16, height: 4.84 },  // ch9-16 레벨미터
+      { left: 43.64, top: 50.42, width: 14.16, height: 4.84 },  // ch17-24 레벨미터
+      { left: 69.97, top: 50.42, width: 14.11, height: 4.84 },  // ch25-32 레벨미터
+      { left: 88.19, top: 50.42, width: 4.66, height: 4.84 },   // ST L / MONO 레벨미터
+      { left: 67.07, top: 21.01, width: 26.77, height: 8.62 }   // 오른쪽 위 메인 미터브릿지
+    ];
+
+    /* =========================================================================
+       채널 레이어 버튼 + 이름표 직접 입력
+       실제 CL5는 페이더 구역이 3군데(왼쪽 16채널=zone A, 가운데 8채널=zone B, 오른쪽
+       8채널=zone C)로 나뉘고, 각 구역마다 독립된 "레이어" 버튼이 있어서 눌러보면 그
+       구역 페이더들이 가리키는 채널이 통째로 바뀝니다. zone B 버튼은 입력채널 번호와
+       출력버스 이름이 함께 적혀 있는데, 화면 가운데의 INPUT/OUTPUT 스위치로 둘 중
+       어느 뜻으로 쓸지 고릅니다. zone C는 이 INPUT/OUTPUT 스위치와 무관하게, 자기
+       레이어 버튼(DCA1-8/DCA9-16/ST IN/CUSTOM C1~C6)을 누르는 즉시 그 결과가 바로
+       반영됩니다.
+       채널 이름표(ch1, ch2 자리)는 클릭하면 직접 글자를 입력할 수 있고, 입력한 이름은
+       "채널 주소"(예: ch33, DCA1, MIX1) 기준으로 저장돼서 레이어를 바꿨다가 돌아오거나
+       브라우저를 껐다 켜도 남아있습니다 (이 브라우저에만 저장됩니다).
+       ========================================================================= */
+    function cl5Range(prefix, start, end) {
+      const arr = [];
+      for (let n = start; n <= end; n++) arr.push(prefix + n);
+      return arr;
+    }
+    function cl5Blanks(count) {
+      const arr = [];
+      for (let i = 0; i < count; i++) arr.push(null);
+      return arr;
+    }
+
+    const CL5_ZONE_A_LAYERS = [
+      { key: '1-16', label: '1-16', xPct: 40.44, yPct: 55.98 },
+      { key: '17-32', label: '17-32', xPct: 40.44, yPct: 58.50 },
+      { key: '33-48', label: '33-48', xPct: 40.44, yPct: 61.02 },
+      { key: '49-64', label: '49-64', xPct: 40.44, yPct: 63.54 },
+      { key: '65-72', label: '65-72', xPct: 40.44, yPct: 66.06 },
+      { key: 'ST IN', label: 'ST IN', xPct: 40.44, yPct: 68.58 },
+      { key: 'DCA', label: 'DCA', xPct: 40.44, yPct: 71.10 },
+      { key: 'CUSTOM A1', label: 'CUSTOM A1', xPct: 40.44, yPct: 73.62 },
+      { key: 'CUSTOM A2', label: 'CUSTOM A2', xPct: 40.44, yPct: 76.14 }
+    ];
+    const CL5_ZONE_B_LAYERS = [
+      { key: '1-8', labelIn: '1-8', labelOut: 'DCA 1-8', xPct: 60.76, yPct: 55.95 },
+      { key: '9-16', labelIn: '9-16', labelOut: 'DCA 9-16', xPct: 60.76, yPct: 58.49 },
+      { key: '17-24', labelIn: '17-24', labelOut: 'MIX 1-8', xPct: 60.76, yPct: 61.03 },
+      { key: '25-32', labelIn: '25-32', labelOut: 'MIX 9-16', xPct: 60.76, yPct: 63.57 },
+      { key: '33-40', labelIn: '33-40', labelOut: 'MIX 17-24', xPct: 60.76, yPct: 66.11 },
+      { key: '41-48', labelIn: '41-48', labelOut: 'MATRIX', xPct: 60.76, yPct: 68.65 },
+      { key: '49-56', labelIn: '49-56', labelOut: 'STEREO', xPct: 60.76, yPct: 71.19 },
+      { key: '57-64', labelIn: '57-64', labelOut: 'ST IN', xPct: 60.76, yPct: 73.73 },
+      { key: '65-72', labelIn: '65-72', labelOut: 'CUSTOM B1', xPct: 60.76, yPct: 76.27 }
+    ];
+    const CL5_ZONE_C_LAYERS = [
+      { key: 'DCA1-8', label: 'DCA 1-8', xPct: 85.81, yPct: 56.02 },
+      { key: 'DCA9-16', label: 'DCA 9-16', xPct: 85.81, yPct: 58.56 },
+      { key: 'ST IN', label: 'ST IN', xPct: 85.81, yPct: 61.10 },
+      { key: 'CUSTOM C1', label: 'CUSTOM C1', xPct: 85.81, yPct: 63.64 },
+      { key: 'CUSTOM C2', label: 'CUSTOM C2', xPct: 85.81, yPct: 66.18 },
+      { key: 'CUSTOM C3', label: 'CUSTOM C3', xPct: 85.81, yPct: 68.72 },
+      { key: 'CUSTOM C4', label: 'CUSTOM C4', xPct: 85.81, yPct: 71.26 },
+      { key: 'CUSTOM C5', label: 'CUSTOM C5', xPct: 85.81, yPct: 73.80 },
+      { key: 'CUSTOM C6', label: 'CUSTOM C6', xPct: 85.81, yPct: 76.34 }
+    ];
+    const CL5_IO_TOGGLE = [
+      { key: 'input', label: 'INPUT', xPct: 59.81, yPct: 52.19 },
+      { key: 'output', label: 'OUTPUT', xPct: 62.26, yPct: 52.19 }
+    ];
+    // 실제 사진 속 버튼 크기를 다시 측정해서 넣은 값입니다 (레이어 버튼 ≈19x13px,
+    // INPUT/OUTPUT 버튼 ≈24x23px, 1998x1323 기준) — 예전 값은 너무 커서 옆의 글자까지
+    // 덮고 있었습니다.
+    const CL5_LAYER_BTN_W = 1.05, CL5_LAYER_BTN_H = 1.21;
+    const CL5_IO_BTN_W = 1.35, CL5_IO_BTN_H = 1.36;
+
+    // 실제 CL5 콘솔은 "입력 채널"을 보여주는 레이어는 초록색으로, "출력(DCA/MIX/
+    // MATRIX/STEREO 등 버스)"을 보여주는 레이어는 주황색으로 버튼이 켜집니다.
+    // zone A/C는 버튼마다 의미가 고정이라 아래 표로 미리 정해두고, zone B는 버튼
+    // 하나가 INPUT/OUTPUT에 따라 의미가 바뀌므로 지금의 IO 모드를 보고 그때그때 정합니다.
+    const CL5_ZONE_A_COLOR = {
+      '1-16': 'green', '17-32': 'green', '33-48': 'green', '49-64': 'green', '65-72': 'green', 'ST IN': 'green',
+      'DCA': 'orange', 'CUSTOM A1': 'orange', 'CUSTOM A2': 'orange'
+    };
+    const CL5_ZONE_C_COLOR = {
+      'ST IN': 'green',
+      'DCA1-8': 'orange', 'DCA9-16': 'orange',
+      'CUSTOM C1': 'orange', 'CUSTOM C2': 'orange', 'CUSTOM C3': 'orange',
+      'CUSTOM C4': 'orange', 'CUSTOM C5': 'orange', 'CUSTOM C6': 'orange'
+    };
+
+    // zone별 현재 선택된 레이어 + 공용 INPUT/OUTPUT 상태
+    let cl5ZoneALayer = '1-16';
+    let cl5ZoneBLayer = '17-24';
+    let cl5ZoneCLayer = 'CUSTOM C1'; // 사진 속 기본 활성 버튼과 맞춤. INPUT/OUTPUT 스위치와 무관하게 항상 바로 적용됨
+    let cl5IOMode = 'input';
+
+    function cl5AddrsForZoneA(key) {
+      switch (key) {
+        case '1-16': return cl5Range('ch', 1, 16);
+        case '17-32': return cl5Range('ch', 17, 32);
+        case '33-48': return cl5Range('ch', 33, 48);
+        case '49-64': return cl5Range('ch', 49, 64);
+        case '65-72': return cl5Range('ch', 65, 72).concat(cl5Blanks(8));
+        case 'ST IN': return cl5Range('STIN', 1, 8).concat(cl5Blanks(8));
+        case 'DCA': return cl5Range('DCA', 1, 16);
+        case 'CUSTOM A1': return cl5Range('CUSTOM A1-', 1, 16);
+        case 'CUSTOM A2': return cl5Range('CUSTOM A2-', 1, 16);
+        default: return cl5Blanks(16);
+      }
+    }
+    function cl5AddrsForZoneB(key, io) {
+      if (io === 'input') {
+        const m = { '1-8': [1, 8], '9-16': [9, 16], '17-24': [17, 24], '25-32': [25, 32], '33-40': [33, 40], '41-48': [41, 48], '49-56': [49, 56], '57-64': [57, 64], '65-72': [65, 72] };
+        const r = m[key] || [17, 24];
+        return cl5Range('ch', r[0], r[1]);
+      }
+      switch (key) {
+        case '1-8': return cl5Range('DCA', 1, 8);
+        case '9-16': return cl5Range('DCA', 9, 16);
+        case '17-24': return cl5Range('MIX', 1, 8);
+        case '25-32': return cl5Range('MIX', 9, 16);
+        case '33-40': return cl5Range('MIX', 17, 24);
+        case '41-48': return cl5Range('MATRIX', 1, 8);
+        case '49-56': return ['STEREO L', 'STEREO R'].concat(cl5Blanks(6));
+        case '57-64': return cl5Range('STIN', 1, 8);
+        case '65-72': return cl5Range('CUSTOM B1-', 1, 8);
+        default: return cl5Blanks(8);
+      }
+    }
+    // zone C(오른쪽 8채널)는 가운데 INPUT/OUTPUT 스위치와 상관없이, 자기 자신의
+    // 레이어 버튼(DCA1-8/DCA9-16/ST IN/CUSTOM C1~C6)을 누르면 바로 그 결과가 반영됩니다.
+    function cl5AddrsForZoneC(key) {
+      switch (key) {
+        case 'DCA1-8': return cl5Range('DCA', 1, 8);
+        case 'DCA9-16': return cl5Range('DCA', 9, 16);
+        case 'ST IN': return cl5Range('STIN', 1, 8);
+        case 'CUSTOM C1': return cl5Range('CUSTOM C1-', 1, 8);
+        case 'CUSTOM C2': return cl5Range('CUSTOM C2-', 1, 8);
+        case 'CUSTOM C3': return cl5Range('CUSTOM C3-', 1, 8);
+        case 'CUSTOM C4': return cl5Range('CUSTOM C4-', 1, 8);
+        case 'CUSTOM C5': return cl5Range('CUSTOM C5-', 1, 8);
+        case 'CUSTOM C6': return cl5Range('CUSTOM C6-', 1, 8);
+        default: return cl5Blanks(8);
+      }
+    }
+    // ch1~ch32 이름표 32칸에 지금 상태 기준으로 어떤 채널 주소가 들어가야 하는지 순서대로 반환
+    function cl5CurrentAddrs() {
+      return cl5AddrsForZoneA(cl5ZoneALayer)
+        .concat(cl5AddrsForZoneB(cl5ZoneBLayer, cl5IOMode))
+        .concat(cl5AddrsForZoneC(cl5ZoneCLayer));
+    }
+
+    // 사용자가 직접 입력한 채널 이름 (주소 -> 이름), 이 브라우저에 영구 저장
+    let cl5CustomNames = {};
+    try {
+      const saved = localStorage.getItem('cl5CustomChannelNames');
+      if (saved) cl5CustomNames = JSON.parse(saved) || {};
+    } catch (e) { cl5CustomNames = {}; }
+    function cl5SaveCustomNames() {
+      try { localStorage.setItem('cl5CustomChannelNames', JSON.stringify(cl5CustomNames)); } catch (e) { /* 저장 공간이 없으면 조용히 무시 */ }
+    }
+
+    // 이 앱은 서버 없이 파일 하나로 동작하기 때문에, 내가 입력한 채널 이름은 내 브라우저
+    // 안에만 저장되고 다른 사람에게 자동으로 전달되지 않습니다. 그래서 "내보내기"로
+    // 이름 목록을 작은 json 파일로 저장해서 (카톡/메일 등으로) 공유하고, 받은 사람은
+    // "불러오기"로 그 파일을 열면 똑같은 이름들을 자기 화면에도 적용할 수 있습니다.
+    function cl5ExportNames() {
+      try {
+        const keys = Object.keys(cl5CustomNames);
+        if (keys.length === 0) {
+          alert('아직 저장된 채널 이름이 없어요. 채널 이름을 먼저 입력한 뒤 내보내기 해주세요.');
+          return;
+        }
+        const data = JSON.stringify(cl5CustomNames, null, 2);
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'CL5_채널이름.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      } catch (e) {
+        alert('이름표 내보내기에 실패했어요.');
+      }
+    }
+    function cl5ImportNamesFile(inputEl) {
+      const file = inputEl.files && inputEl.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function () {
+        try {
+          const obj = JSON.parse(String(reader.result));
+          if (!obj || typeof obj !== 'object' || Array.isArray(obj)) throw new Error('bad format');
+          cl5CustomNames = obj;
+          cl5SaveCustomNames();
+          cl5RenderChannelLabels();
+          alert('채널 이름 ' + Object.keys(obj).length + '개를 불러왔어요.');
+        } catch (e) {
+          alert('이 파일을 읽을 수 없어요. "채널 이름표 내보내기"로 만든 json 파일이 맞는지 확인해주세요.');
+        } finally {
+          inputEl.value = '';
+        }
+      };
+      reader.readAsText(file, 'utf-8');
+    }
+
+    function cl5RenderChannelLabels() {
+      const addrs = cl5CurrentAddrs(); // 32개, ch1~ch32 자리 순서
+      for (let i = 0; i < 32; i++) {
+        const addr = addrs[i];
+        // 사진 위의 작은 이름표(.cl5-name-label)와 아래 "크게 보기" 패널의 큰
+        // 이름표(.cl5-name-label-lg)는 data-slot 값이 같은 짝이라, 항상 둘 다
+        // 같이 갱신해서 서로 내용이 어긋나지 않게 합니다.
+        const els = document.querySelectorAll(`[data-slot="${i}"].cl5-name-label, [data-slot="${i}"].cl5-name-label-lg`);
+        if (!els.length) continue;
+        els.forEach(function (el) {
+          el.dataset.addr = addr || '';
+          if (!addr) {
+            el.textContent = '—';
+            el.title = '사용하지 않는 자리';
+            el.classList.add('cl5-blank-slot');
+            el.contentEditable = 'false';
+          } else {
+            const shown = cl5CustomNames[addr] || addr;
+            el.textContent = shown;
+            el.title = addr + (cl5CustomNames[addr] ? ' (' + addr + ') — 클릭해서 이름 수정' : ' — 클릭해서 이름 입력');
+            el.classList.remove('cl5-blank-slot');
+            el.contentEditable = 'true';
+          }
+        });
+      }
+      // 레이어/IO 버튼 활성 표시 갱신 — 실제 콘솔처럼 입력 레이어는 초록색,
+      // 출력(버스) 레이어는 주황색으로 켜지게 합니다.
+      function setColor(b, type) {
+        b.classList.remove('cl5-color-green', 'cl5-color-orange');
+        if (type) b.classList.add('cl5-color-' + type);
+      }
+      document.querySelectorAll('.cl5-layer-btn[data-zone="A"]').forEach(function (b) {
+        b.classList.toggle('active', b.dataset.key === cl5ZoneALayer);
+        setColor(b, CL5_ZONE_A_COLOR[b.dataset.key] || 'orange');
+      });
+      document.querySelectorAll('.cl5-layer-btn[data-zone="B"]').forEach(function (b) {
+        b.classList.toggle('active', b.dataset.key === cl5ZoneBLayer);
+        setColor(b, cl5IOMode === 'input' ? 'green' : 'orange');
+      });
+      document.querySelectorAll('.cl5-layer-btn[data-zone="C"]').forEach(function (b) {
+        b.classList.toggle('active', b.dataset.key === cl5ZoneCLayer);
+        setColor(b, CL5_ZONE_C_COLOR[b.dataset.key] || 'orange');
+      });
+      document.querySelectorAll('.cl5-io-toggle-btn').forEach(function (b) {
+        b.classList.toggle('active', b.dataset.key === cl5IOMode);
+        setColor(b, b.dataset.key === 'input' ? 'green' : 'orange');
+      });
+    }
+
+    function cl5OnNameLabelBlur(el) {
+      const addr = el.dataset.addr;
+      if (!addr) return;
+      const typed = el.textContent.replace(/\s+/g, ' ').trim();
+      if (!typed || typed === addr) {
+        delete cl5CustomNames[addr];
+      } else {
+        cl5CustomNames[addr] = typed;
+      }
+      cl5SaveCustomNames();
+      // el.textContent만 바꾸면 이 칸만 갱신되므로, 사진 위 작은 이름표와 "크게
+      // 보기" 패널의 큰 이름표가 항상 같은 내용을 보여주도록 전체를 다시 그립니다.
+      cl5RenderChannelLabels();
+    }
+
+    function cl5SetupLayerControls(wrap) {
+      function makeLayerBtn(zone, item) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'cl5-layer-btn';
+        btn.dataset.zone = zone;
+        btn.dataset.key = item.key;
+        btn.style.left = item.xPct + '%';
+        btn.style.top = item.yPct + '%';
+        btn.style.width = CL5_LAYER_BTN_W + '%';
+        btn.style.height = CL5_LAYER_BTN_H + '%';
+        btn.title = (zone === 'B' ? (item.labelIn + ' / ' + item.labelOut) : item.label);
+        btn.addEventListener('click', function () {
+          if (zone === 'A') cl5ZoneALayer = item.key;
+          else if (zone === 'B') cl5ZoneBLayer = item.key;
+          else cl5ZoneCLayer = item.key;
+          cl5RenderChannelLabels();
+        });
+        wrap.appendChild(btn);
+      }
+      CL5_ZONE_A_LAYERS.forEach(function (item) { makeLayerBtn('A', item); });
+      CL5_ZONE_B_LAYERS.forEach(function (item) { makeLayerBtn('B', item); });
+      CL5_ZONE_C_LAYERS.forEach(function (item) { makeLayerBtn('C', item); });
+
+      CL5_IO_TOGGLE.forEach(function (item) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'cl5-layer-btn cl5-io-toggle-btn';
+        btn.dataset.key = item.key;
+        btn.style.left = item.xPct + '%';
+        btn.style.top = item.yPct + '%';
+        btn.style.width = CL5_IO_BTN_W + '%';
+        btn.style.height = CL5_IO_BTN_H + '%';
+        btn.title = item.label;
+        btn.addEventListener('click', function () {
+          cl5IOMode = item.key;
+          cl5RenderChannelLabels();
+        });
+        wrap.appendChild(btn);
+      });
+
+      // 이름표 하나(작은 사진 위 버전이든, 큰 "크게 보기" 패널 버전이든)에 공통으로
+      // 붙이는 편집 동작입니다. 두 군데 모두 같은 data-slot을 갖고,
+      // cl5RenderChannelLabels()가 항상 둘을 같이 갱신해주므로 어느 쪽에서 이름을
+      // 바꿔도 서로 자동으로 맞춰집니다.
+      function attachNameLabelBehavior(el) {
+        el.spellcheck = false;
+        el.addEventListener('click', function () {
+          if (el.classList.contains('cl5-blank-slot')) return;
+          // 클릭하면 전체 선택 상태로 포커스 — 바로 타이핑해서 덮어쓸 수 있게
+          el.focus();
+          const range = document.createRange();
+          range.selectNodeContents(el);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        });
+        el.addEventListener('blur', function () { cl5OnNameLabelBlur(el); });
+        el.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+        });
+      }
+
+      for (let i = 0; i < 32; i++) {
+        const pos = CL5_ON_BUTTON_POS[i]; // ch1~ch32 는 배열 앞 32개와 순서가 같음
+        const el = document.createElement('div');
+        el.className = 'cl5-name-label';
+        el.dataset.slot = String(i);
+        el.style.left = pos.xPct + '%';
+        el.style.top = '59.64%';
+        el.style.width = '1.55%';
+        el.style.height = '1.97%';
+        attachNameLabelBehavior(el);
+        wrap.appendChild(el);
+      }
+
+      // "채널 이름 크게 보기" 패널 — 사진 위 작은 이름표와 똑같은 32칸을 8개씩
+      // 4줄로 묶어서(실제 콘솔의 뱅크 구분과 맞춰) 큰 글씨로 보여줍니다.
+      const bigPanel = document.getElementById('cl5BigLabelPanel');
+      if (bigPanel) {
+        bigPanel.innerHTML = '';
+        for (let bank = 0; bank < 4; bank++) {
+          const row = document.createElement('div');
+          row.className = 'cl5-biglabel-bank-row';
+          for (let j = 0; j < 8; j++) {
+            const i = bank * 8 + j;
+            const big = document.createElement('div');
+            big.className = 'cl5-name-label-lg';
+            big.dataset.slot = String(i);
+            attachNameLabelBehavior(big);
+            row.appendChild(big);
+          }
+          bigPanel.appendChild(row);
+        }
+      }
     }
 
     const cl5Channels = CL5_ON_BUTTON_POS.map(function (p) { return { id: p.id, on: false }; });
@@ -5901,9 +6457,18 @@
       cl5RenderIdleStage();
       if (cl5Inited) return;
       cl5Inited = true;
-      const wrap = document.getElementById('cl5ImgWrap');
+      const wrap = document.getElementById('cl5ImgInner');
       if (!wrap) return;
-      CL5_ON_BUTTON_POS.forEach(function (pos) {
+      CL5_METER_MASKS.forEach(function (m) {
+        const mask = document.createElement('div');
+        mask.className = 'cl5-meter-mask';
+        mask.style.left = m.left + '%';
+        mask.style.top = m.top + '%';
+        mask.style.width = m.width + '%';
+        mask.style.height = m.height + '%';
+        wrap.appendChild(mask);
+      });
+      CL5_ON_BUTTON_POS.forEach(function (pos, idx) {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'cl5-on-hotspot off';
@@ -5912,10 +6477,15 @@
         btn.style.width = pos.wPct + '%';
         btn.style.height = pos.hPct + '%';
         btn.dataset.id = pos.id;
+        // "크게 보기" 패널의 같은 자리(data-slot)와 짝지어서, ON 버튼을 누르면 그
+        // 칸도 같이 불이 들어오게 합니다 (ch1~ch32에 해당하는 앞 32개만 해당, stL/mono 제외).
+        if (idx < 32) btn.dataset.slot = String(idx);
         btn.title = cl5LabelFor(pos.id) + ' ON/MUTE';
         btn.addEventListener('click', function () { cl5ToggleChannel(pos.id); });
         wrap.appendChild(btn);
       });
+      cl5SetupLayerControls(wrap);
+      cl5RenderChannelLabels();
     }
 
     function cl5ToggleChannel(id) {
@@ -5923,12 +6493,21 @@
       if (!ch) return;
       ch.on = !ch.on;
       const btn = document.querySelector(`.cl5-on-hotspot[data-id="${id}"]`);
-      if (btn) btn.classList.toggle('off', !ch.on);
+      if (btn) {
+        btn.classList.toggle('off', !ch.on);
+        // "채널 이름 크게 보기" 패널의 같은 칸도 실제 ON 버튼처럼 같이 불이 들어오게 동기화
+        const slot = btn.dataset.slot;
+        if (slot !== undefined && slot !== '') {
+          const big = document.querySelector(`.cl5-name-label-lg[data-slot="${slot}"]`);
+          if (big) big.classList.toggle('cl5-on', ch.on);
+        }
+      }
     }
 
     function cl5ResetChannels() {
       cl5Channels.forEach(function (c) { c.on = false; });
       document.querySelectorAll('.cl5-on-hotspot').forEach(function (btn) { btn.classList.add('off'); });
+      document.querySelectorAll('.cl5-name-label-lg').forEach(function (el) { el.classList.remove('cl5-on'); });
       const panel = document.getElementById('cl5ResultPanel');
       if (panel) { panel.classList.remove('show'); panel.innerHTML = ''; }
     }
