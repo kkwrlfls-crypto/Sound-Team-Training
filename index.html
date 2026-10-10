@@ -2433,6 +2433,7 @@
         </div>
 
         <div class="mix-bottom-buttons">
+          <button class="db-btn" style="flex:1; background:#a78bfa; color:#1e1b4b;" onclick="randomizeMixTargets()">🎲 새 문제</button>
           <button class="db-btn" style="flex:1; background:#cbd5e1; color:#0f172a;" onclick="resetMixFaders()">초기화</button>
           <button class="btn" style="flex:1; height:40px; font-size:0.85rem;" onclick="checkMixBalance()">채점</button>
         </div>
@@ -6989,6 +6990,12 @@
     let activeSolo = null;
     let mixMode = 'original';
 
+    // "정답" dB의 기준(기본)값 — 랜덤 문제를 만들 때 이 값을 중심으로 소폭(±2.5dB) 흔듭니다.
+    const BASE_IDEAL_VALUES = { gg: -3.0, ag: -5.0, bass: -1.5, drum: 0.0, elec_rhythm: -4.0, elec_solo: -2.0, piano: -3.5 };
+    // 이번 라운드에 실제로 적용되는 정답 dB — 채점(checkMixBalance)과 "원본" 실시간 합성
+    // 재생(applyMixVolumes) 둘 다 이 값을 기준으로 삼습니다. "새 문제" 버튼을 누르면 바뀝니다.
+    let currentIdealValues = Object.assign({}, BASE_IDEAL_VALUES);
+
     /* 파일을 못 불러왔을 때 공통으로 보여주는 안내 (같은 폴더 / 로컬 서버 체크리스트) */
     function fileLoadErrorHtml(failedFiles) {
       const isFileProtocol = location.protocol === 'file:';
@@ -7108,9 +7115,11 @@
         let gNode = channelGainNodes[ch];
         if (!gNode) return;
 
-        let isActiveMode = (mixMode === 'original' && ch === 'sample') || (mixMode === 'mymix' && ch !== 'sample');
-
-        if (!isActiveMode) {
+        if (ch === 'sample') {
+          // "원본(Sample)"은 더 이상 미리 믹스된 All.mp3를 그대로 틀지 않습니다.
+          // 대신 아래에서 개별 악기 트랙들을 이번 라운드의 목표(정답) dB로
+          // 실시간으로 섞어서 들려주므로, sample 트랙 자체는 항상 무음 처리합니다.
+          // (이렇게 해야 "새 문제"로 정답이 바뀌어도 원본 소리가 그 정답과 항상 일치합니다.)
           gNode.gain.setValueAtTime(0, mixAudioCtx.currentTime);
           return;
         }
@@ -7118,7 +7127,8 @@
         let isMuted = trackMutes[ch];
         if (activeSolo && activeSolo !== ch) isMuted = true;
 
-        let db = faderValues[ch];
+        // 원본 모드 = 이번 라운드의 목표(정답) dB, 내 믹스 모드 = 사용자가 직접 맞춘 페이더 dB
+        let db = (mixMode === 'original') ? currentIdealValues[ch] : faderValues[ch];
         if (isMuted || db <= -55) {
           gNode.gain.setValueAtTime(0, mixAudioCtx.currentTime);
         } else {
@@ -7126,6 +7136,31 @@
           gNode.gain.setValueAtTime(Math.min(1, Math.max(0, vol)), mixAudioCtx.currentTime);
         }
       });
+    }
+
+    // "🎲 새 문제" — 기존 정답(BASE_IDEAL_VALUES) 근처에서 악기별로 ±2.5dB 안에서 살짝씩
+    // 바뀐 새 목표 밸런스를 만듭니다. 매번 똑같은 정답을 외워버리는 것을 막고,
+    // 매번 귀로 새로 비교해서 맞추는 훈련이 되도록 하기 위함입니다.
+    function randomizeMixTargets() {
+      const JITTER = 2.5;
+      trackKeys.forEach(ch => {
+        if (ch === 'sample') return;
+        const base = BASE_IDEAL_VALUES[ch];
+        const offset = (Math.random() * 2 - 1) * JITTER; // -2.5 ~ +2.5dB
+        let val = Math.round((base + offset) * 10) / 10;
+        if (val < -15) val = -15; // 너무 작아져서 거의 안 들리는 악기가 되지 않도록 하한선
+        if (val > 6) val = 6;
+        currentIdealValues[ch] = val;
+      });
+
+      // 이전 라운드에 맞춰둔 페이더/채점 결과는 새 문제에 방해되므로 같이 초기화
+      resetMixFaders();
+      const panel = document.getElementById('mixResultPanel');
+      if (panel) {
+        panel.className = 'result-panel show result-warn';
+        panel.innerHTML = '<div class="result-line">🎲 새로운 믹스 문제가 준비됐어요! "원본 (Sample)" 버튼을 눌러 이번 목표 밸런스를 들어본 뒤, 다시 맞혀보세요.</div>';
+      }
+      applyMixVolumes();
     }
 
     function toggleMute(ch) {
@@ -7228,12 +7263,12 @@
     function checkMixBalance() {
       let totalScore = 100;
       let penalty = 0;
-      const idealValues = { gg: -3.0, ag: -5.0, bass: -1.5, drum: 0.0, elec_rhythm: -4.0, elec_solo: -2.0, piano: -3.5 };
+      // "새 문제"로 랜덤하게 바뀔 수 있는 이번 라운드의 정답 dB(currentIdealValues)로 채점합니다.
       const channelResults = [];
 
       trackKeys.forEach(ch => {
         if(ch === 'sample') return;
-        let diff = faderValues[ch] - idealValues[ch];
+        let diff = faderValues[ch] - currentIdealValues[ch];
         let absDiff = Math.abs(diff);
         penalty += absDiff * 1.5;
         channelResults.push({ ch, diff, absDiff });
