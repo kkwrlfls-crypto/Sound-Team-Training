@@ -2496,9 +2496,17 @@
   <script src="assets3d/sanctuary_data.js"></script>
   <script src="assets3d/gear_models_data.js"></script>
   <!-- 확성 시스템의 기본(MG12XU) 탭의 실제 음원 트랙(리드보컬/드럼/키보드/베이스/기타/백보컬 3명) —
-       같은 이유(file:// CORS 제약)로 base64 data: URI로 내장합니다. 자세한 사정은
-       mg12xu_audio_data.js 파일 상단 주석 참고. -->
-  <script src="assets3d/mg12xu_audio_data.js"></script>
+       같은 이유(file:// CORS 제약)로 base64 data: URI로 내장합니다. 2026-10-11 수정: 처음엔 파일
+       하나(mg12xu_audio_data.js, 약 28.6MB)에 전부 담았는데, 깃허브 웹 업로드가 파일당 25MB로
+       막혀 있어 소스별로 8개 파일(각 약 3.6MB)로 쪼갰습니다. -->
+  <script src="assets3d/mg12xu_audio_leadVox.js"></script>
+  <script src="assets3d/mg12xu_audio_drumLR.js"></script>
+  <script src="assets3d/mg12xu_audio_keysLR.js"></script>
+  <script src="assets3d/mg12xu_audio_bass.js"></script>
+  <script src="assets3d/mg12xu_audio_gt.js"></script>
+  <script src="assets3d/mg12xu_audio_bav1.js"></script>
+  <script src="assets3d/mg12xu_audio_bav2.js"></script>
+  <script src="assets3d/mg12xu_audio_bav3.js"></script>
 
   <script>
     /* ===== 공통 모달 (alert 대체) ===== */
@@ -3170,8 +3178,9 @@
     // (콘솔에 "MediaElementAudioSource outputs zeroes due to CORS access restrictions" 경고가 뜸).
     // 즉 사용자가 소스를 채널에 연결해도 음악이 전혀 들리지 않았던 원인이 바로 이것입니다.
     // data: URI(파일 내용을 base64로 통째로 내장)는 "교차 출처" 자체가 성립하지 않아 이 문제가
-    // 생기지 않으므로, assets3d/mg12xu_audio_data.js에 8개 트랙을 전부 base64로 미리 내장해 두고
-    // 여기서는 그걸 우선 사용합니다. (혹시 나중에 내장되지 않은 새 소스 id를 추가한 경우를 대비해,
+    // 생기지 않으므로, assets3d/mg12xu_audio_<소스id>.js (소스별 8개 파일 — 깃허브 웹 업로드의
+    // 파일당 25MB 제한 때문에 분할함) 에 8개 트랙을 전부 base64로 미리 내장해 두고 여기서는 그걸
+    // 우선 사용합니다. (혹시 나중에 내장되지 않은 새 소스 id를 추가한 경우를 대비해,
     // 예전 방식의 상대경로 로드도 폴백으로 남겨뒀습니다 — 다만 이 폴백은 file://에서는 위와 같은
     // 이유로 무음이 될 수 있고, 서버(http/https)로 호스팅할 때만 정상 동작합니다.)
     const MG12XU_SOURCE_AUDIO_EXTS = ['mp3', 'wav', 'm4a', 'ogg'];
