@@ -1221,28 +1221,6 @@
     .mg12xu-audio-toggle-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; padding: 8px 10px; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); border-radius: 8px; }
     #mg12xuAudioToggleBtn.on { background: var(--accent-green, #10b981); color: #fff; }
     .mg12xu-audio-hint { font-size: 0.72rem; color: var(--text-sub); line-height: 1.3; }
-    .mg12xu-item {
-      padding: 9px 10px;
-      min-height: 38px;
-      background: #e2e8f0;
-      color: var(--text-main);
-      font-weight: 700;
-      font-size: 0.78rem;
-      border: 2px solid transparent;
-      border-radius: 8px;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.15s;
-    }
-    .mg12xu-item.selected {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: #1d4ed8;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-    }
-    .mg12xu-item.assigned { background: #ecfdf5; border-color: var(--accent-green); color: #065f46; }
-    .mg12xu-item.filled { background: #1e293b; color: #ffffff; }
-
     /* ----- 패치베이: 무대(소스·스피커) → 잭 스트립 → 콘솔 전체를 케이블로 연결 ----- */
     .mg12xu-patchbay-wrap {
       position: relative;
@@ -1273,39 +1251,64 @@
     .mg12xu-stage-wrap {
       position: relative;
       width: 100%;
-      aspect-ratio: 1491 / 230;
-      min-height: 260px;
-      background: linear-gradient(#eef2f7, #e2e8f0);
+      aspect-ratio: 1491 / 320;
+      min-height: 360px;
+      background: var(--inner-bg);
       border: 2px dashed var(--border-color);
       border-radius: 14px 14px 0 0;
       overflow: visible;
     }
+    /* 2026-10-10 추가: 소스/스피커 아이콘들을 올려두는 캔버스가 그냥 평평한 회색 사각형이라
+       실제 "무대"처럼 느껴지지 않는다는 요청으로, 뒤에 원근감 있는 무대 바닥(사다리꼴 + 안쪽으로
+       모이는 깊이선)을 SVG로 깔아 입체적인 느낌을 더했습니다. 아이콘 좌표(%)는 그대로 두고
+       배경만 바꾼 것이라 기존 드래그·케이블 연결 로직에는 영향이 없습니다. */
+    .mg12xu-stage-floor-svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      display: block;
+    }
     .mg12xu-stage { position: relative; width: 100%; height: 100%; }
+    /* 아이콘 아래 은은한 그림자를 깔아, 바닥 위에 실제로 놓여 있는 듯한 입체감을 줍니다. */
+    .mg12xu-source-item::before, .mg12xu-speaker-item::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 56px;
+      transform: translateX(-50%);
+      width: 44px;
+      height: 11px;
+      background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.35) 0%, rgba(15, 23, 42, 0) 72%);
+      border-radius: 50%;
+    }
     .mg12xu-source-item, .mg12xu-speaker-item {
       position: absolute;
       transform: translateX(-50%);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
+      gap: 4px;
       width: 15%;
-      max-width: 80px;
+      max-width: 98px;
       cursor: pointer;
       z-index: 3;
       background: none;
       border: none;
       padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
     }
     .mg12xu-source-icon, .mg12xu-speaker-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
       background: #ffffff;
-      border: 2px solid var(--border-color);
+      border: 2px solid transparent;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.4rem;
+      font-size: 1.75rem;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       transition: all 0.15s;
       position: relative;
@@ -1320,6 +1323,9 @@
       height: 100%;
       object-fit: cover;
       border-radius: 10px;
+      -webkit-user-drag: none;
+      user-select: none;
+      pointer-events: none;
     }
     .mg12xu-source-item.selected .mg12xu-source-icon {
       border-color: var(--primary);
@@ -1338,17 +1344,17 @@
       transform: scale(1.08);
     }
     .mg12xu-source-label, .mg12xu-speaker-label {
-      font-size: 0.62rem;
+      font-size: 0.72rem;
       font-weight: 700;
       color: var(--text-main);
       text-align: center;
       background: rgba(255, 255, 255, 0.85);
-      padding: 1px 4px;
+      padding: 2px 5px;
       border-radius: 4px;
       line-height: 1.2;
     }
     .mg12xu-source-ch-tag {
-      font-size: 0.62rem;
+      font-size: 0.68rem;
       font-weight: 800;
       color: #065f46;
       background: #d1fae5;
@@ -1356,8 +1362,8 @@
       border-radius: 8px;
     }
     .mg12xu-cable-nub {
-      width: 14px;
-      height: 14px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
       background: #334155;
       border: 2px solid #facc15;
@@ -1825,24 +1831,6 @@
       pointer-events: none;
       box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
-    .mg12xu-chain-order-row {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      min-height: 34px;
-      margin-bottom: 10px;
-    }
-    .mg12xu-order-chip {
-      background: #1e293b;
-      color: #ffffff;
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 6px 10px;
-      border-radius: 8px;
-      white-space: nowrap;
-    }
-    .mg12xu-chain-area { display: flex; gap: 8px; flex-wrap: wrap; }
-
     /* ===== 10주 커리큘럼 탭 ===== */
     .curriculum-progress-wrap { margin-bottom: 18px; }
     .curriculum-progress-bar-bg {
@@ -1989,10 +1977,10 @@
 
       <div class="theory-card mg12xu-game-card">
         <h3>🎚 실습 게임: MG12XU 콘솔로 음향 시스템 구축해보기</h3>
-        <p>실제 페이더·EQ 조작은 현장에서 배우지만, "무엇을 어디에 연결해야 하는지"는 미리 게임으로 연습할 수 있습니다. 2단계를 순서대로 완료해보세요.</p>
+        <p>실제 페이더·EQ 조작은 현장에서 배우지만, "무엇을 어디에 연결해야 하는지"는 미리 게임으로 연습할 수 있습니다.</p>
 
         <div class="mg12xu-step">
-          <div class="mg12xu-step-title">1단계 · 무대 위 소스를 실제 MG12XU 콘솔 채널에 연결하기</div>
+          <div class="mg12xu-step-title">무대 위 소스를 실제 MG12XU 콘솔 채널에 연결하기</div>
           <div class="mg12xu-step-desc">무대 위 아이콘의 <b>노란 점(케이블 단자)</b>을 눌러서 그대로 아래 입력 단자까지 드래그하면 실제 케이블처럼 연결됩니다 (아이콘을 먼저 누르고 채널 헤더를 눌러 연결해도 됩니다). 오른쪽 <b>스피커</b>도 STEREO/GROUP OUT 단자에서 드래그해 연결해야 소리가 납니다. 연결 후에는 <b>GAIN·HIGH·MID·LOW·PAN·AUX1·AUX2 노브</b>를 돌리고 <b>페이더</b>를 드래그하고, <b>ON</b>으로 뮤트, <b>1-2/ST</b>로 버스 전송을 조절할 수 있어요. GAIN을 너무 올리면 <b>PEAK</b> 램프가 켜지고, 오른쪽 <b>GROUP 1-2 / STEREO 마스터 페이더</b>와 <b>ON/OFF 버튼</b>, 레벨 미터로 전체 출력을 관리합니다.</div>
           <div class="mg12xu-audio-toggle-row">
             <button class="btn" id="mg12xuAudioToggleBtn" onclick="toggleMg12xuAudio()">🔊 오디오 테스트 켜기 (채널 조작 시 실제 소리 변화)</button>
@@ -2001,6 +1989,28 @@
           <div class="mg12xu-patchbay-wrap" id="mg12xuPatchbayWrap">
             <svg class="mg12xu-patchbay-svg" id="mg12xuConnectSvg"></svg>
             <div class="mg12xu-stage-wrap" id="mg12xuStageWrap">
+              <svg class="mg12xu-stage-floor-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="mg12xuFloorGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#efe6d4"/>
+                    <stop offset="100%" stop-color="#dcc9a3"/>
+                  </linearGradient>
+                </defs>
+                <!-- 무대 바닥(사다리꼴 — 위가 좁고 아래가 넓어 원근감을 줍니다) -->
+                <polygon points="6,3 94,3 100,98 0,98" fill="url(#mg12xuFloorGrad)"/>
+                <!-- 무대 뒤쪽 트러스/백드롭 라인 -->
+                <rect x="0" y="0" width="100" height="3" fill="#334155"/>
+                <!-- 안쪽으로 모이는 깊이선(위로 갈수록 촘촘해져 멀어지는 느낌을 줍니다) -->
+                <line x1="5.56" y1="10" x2="94.44" y2="10" stroke="#b9a37c" stroke-width="1" vector-effect="non-scaling-stroke"/>
+                <line x1="4.67" y1="24" x2="95.33" y2="24" stroke="#b9a37c" stroke-width="1" vector-effect="non-scaling-stroke"/>
+                <line x1="3.54" y1="42" x2="96.46" y2="42" stroke="#b9a37c" stroke-width="1" vector-effect="non-scaling-stroke"/>
+                <line x1="2.15" y1="64" x2="97.85" y2="64" stroke="#b9a37c" stroke-width="1" vector-effect="non-scaling-stroke"/>
+                <line x1="0.38" y1="92" x2="99.62" y2="92" stroke="#b9a37c" stroke-width="1" vector-effect="non-scaling-stroke"/>
+                <!-- 무대 중앙선 -->
+                <line x1="50" y1="3" x2="50" y2="98" stroke="#b9a37c" stroke-width="1" stroke-dasharray="1.2 1.2" vector-effect="non-scaling-stroke"/>
+                <!-- 무대 테두리 -->
+                <polygon points="6,3 94,3 100,98 0,98" fill="none" stroke="#a98d5c" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+              </svg>
               <div class="mg12xu-stage" id="mg12xuStage"></div>
             </div>
             <div class="mg12xu-jackstrip-wrap" id="mg12xuJackstripWrap">
@@ -2037,14 +2047,6 @@
           </div>
           <button class="btn" style="margin-top:10px;" onclick="checkMg12xuStep1()">✅ 채널 배정 확인하기</button>
           <div class="result-panel" id="mg12xuStep1Result"></div>
-        </div>
-
-        <div class="mg12xu-step">
-          <div class="mg12xu-step-title">2단계 · 콘솔에서 스피커까지 출력 경로 연결하기</div>
-          <div class="mg12xu-step-desc">신호가 나가는 순서대로 블록을 눌러보세요.</div>
-          <div class="mg12xu-chain-order-row" id="mg12xuChainOrderRow"></div>
-          <div class="mg12xu-chain-area" id="mg12xuChainArea"></div>
-          <div class="result-panel" id="mg12xuStep2Result"></div>
         </div>
 
         <div id="mg12xuBestTag"></div>
@@ -2556,19 +2558,24 @@
     // 2026-10-08: AUX2/FX 보내는 신호는 이제 외부 "이펙트 유닛"이 아니라 콘솔에 내장된 SPX 이펙터로
     // 바로 들어가 리버브/딜레이를 만든 뒤 FX RTN으로 돌아오므로, 상단 캔버스에서 별도로 케이블을
     // 연결할 외부 기기 아이콘이 필요 없어 제거했습니다. 대신 헤드폰(PHONES) 출력 아이콘을 추가했습니다.
+    // 2026-10-10 수정: 메인 스피커는 실제로 STEREO OUT의 L/R 두 단자에 각각 연결해야 하는
+    // 좌우 한 쌍이라, 아이콘도 L/R 두 개로 나누고 각자 자기 쪽 잭(stereoL/stereoR)에만 꽂히도록
+    // 했습니다. 두 아이콘 모두 소리는 같은 STEREO 오디오 버스(audioBus)를 쓰며, 실제처럼 L/R이
+    // 둘 다 연결돼야 소리가 납니다(mg12xuApplyOutputConnAudio 참고).
     const mg12xuOutputs = [
-      { id: 'mainSpeaker', bus: 'stereo', name: '메인 스피커 (STEREO)', icon: '🔊', x: 79.14, y: 13.04, connector: 'xlr' },
-      { id: 'groupSpeaker', bus: 'group', name: '모니터/그룹 스피커', icon: '📢', x: 91.21, y: 60.87, connector: 'trs' },
-      { id: 'stageMonitor', bus: 'aux1', name: '스테이지 모니터 (AUX1)', icon: '🔈', x: 70.0, y: 30.43, connector: 'trs' },
-      { id: 'phonesOut', bus: 'phones', name: '헤드폰 (PHONES)', icon: '🎧', x: 91.21, y: 30.43, connector: 'trs' },
+      { id: 'mainSpeakerL', bus: 'stereoL', audioBus: 'stereo', name: '메인 스피커 (L)', icon: '🔊', x: 73, y: 5, connector: 'xlr' },
+      { id: 'mainSpeakerR', bus: 'stereoR', audioBus: 'stereo', name: '메인 스피커 (R)', icon: '🔊', x: 88, y: 5, connector: 'xlr' },
+      { id: 'groupSpeaker', bus: 'group', audioBus: 'group', name: '모니터/그룹 스피커', icon: '📢', x: 91.21, y: 60.87, connector: 'trs' },
+      { id: 'stageMonitor', bus: 'aux1', audioBus: 'aux1', name: '스테이지 모니터 (AUX1)', icon: '🔈', x: 70.0, y: 30.43, connector: 'trs' },
+      { id: 'phonesOut', bus: 'phones', audioBus: 'phones', name: '헤드폰 (PHONES)', icon: '🎧', x: 91.21, y: 30.43, connector: 'trs' },
       // 2026-10-08 추가: MONITOR OUT 단자(컨트롤룸 모니터 스피커) — 연결해야 MONITOR LEVEL 노브 소리가 들립니다.
-      { id: 'controlRoomMonitor', bus: 'monitorOut', name: '컨트롤룸 모니터 (MONITOR OUT)', icon: '🖥️', x: 41.58, y: 60.87, connector: 'trs' }
+      { id: 'controlRoomMonitor', bus: 'monitorOut', audioBus: 'monitorOut', name: '컨트롤룸 모니터 (MONITOR OUT)', icon: '🖥️', x: 41.58, y: 60.87, connector: 'trs' }
     ];
     let mg12xuSelected = null;
     let mg12xuSelectedOutput = null; // 선택된 스피커 id (출력 케이블 연결용)
     let mg12xuIconDragJustHappened = false; // 아이콘 자유 배치 드래그 직후 클릭(선택) 이벤트를 무시하기 위한 플래그
     let mg12xuAssignments = {}; // sourceId -> channel id (ex: 'ch1', 'ch5_6')
-    let mg12xuOutputConnected = { stereo: false, group: false, aux1: false, phones: false, monitorOut: false }; // 출력 케이블 연결 여부
+    let mg12xuOutputConnected = { stereoL: false, stereoR: false, group: false, aux1: false, phones: false, monitorOut: false }; // 출력 케이블 연결 여부
     let mg12xuMasterBusOn = { fxrtn: true, group: true, stereo: true }; // FX RTN / GROUP OUT / STEREO OUT ON-OFF
 
     // ----- 실제 콘솔 사진(전체 12채널)의 채널별 좌표(크롭 이미지 기준 %) -----
@@ -2679,7 +2686,7 @@
     // 교체했습니다(기존 이미지는 GROUP 1-2/STEREO 하단 페이더·PFL·라벨 부분이 원본부터 손상돼 있었습니다).
     // 이 이미지는 채널 사진(console_strip.jpg)과 스케일이 달라서, 페이더 이동 구간(TOP/BOTTOM)도 별도 상수로 둡니다.
     const MG12XU_MASTER_BUSES = ['group', 'stereo'];
-    const MG12XU_MASTER_LABELS = { fxrtn: 'FX RTN', group: 'GROUP 1-2', stereo: 'STEREO (Main L/R)', aux1: 'AUX1 SEND', aux2: 'AUX2/FX SEND', phones: 'PHONES', monitorOut: 'MONITOR OUT' };
+    const MG12XU_MASTER_LABELS = { fxrtn: 'FX RTN', group: 'GROUP 1-2', stereo: 'STEREO (Main L/R)', stereoL: 'STEREO OUT (L)', stereoR: 'STEREO OUT (R)', aux1: 'AUX1 SEND', aux2: 'AUX2/FX SEND', phones: 'PHONES', monitorOut: 'MONITOR OUT' };
     const MG12XU_MASTER_FADER_X_PCT = { group: 43.97, stereo: 73.97 };
     let mg12xuMasterFaderFracs = { fxrtn: 0.2692, group: 0.2692, stereo: 0.2692 }; // 기본값: 0dB(유니티)
     const MG12XU_MASTER_FADER_TRAVEL_TOP_PCT = 65.0;
@@ -2772,16 +2779,26 @@
     };
     const MG12XU_OUTPUT_JACK_PCT = {
       group: { x: 72.098, y: 39.318 },
-      stereo: { x: 86.486, y: 40.227 },
+      // STEREO OUT 단자는 실제로 L/R 두 개의 분리된 XLR 잭입니다. 기존에는 두 잭의 중간 지점
+      // 좌표 하나로만 대표했지만, 사용자 요청으로 메인 스피커를 L/R 각각 별도 아이콘으로 두어
+      // 자기 쪽 잭에만 연결하게 바꾸면서 2026-10-10에 L/R을 분리 측정했습니다. jack_strip.jpg
+      // (1491x440)에서 색상 기반 연결요소 분석으로 직접 측정했고, 두 측정값의 중점(86.452%,
+      // 40.512%)이 기존 중간지점 좌표(86.486%, 40.227%)와 거의 일치해 측정 신뢰도를 교차 검증했습니다.
+      stereoL: { x: 82.562, y: 40.455 },
+      stereoR: { x: 90.342, y: 40.568 },
       // AUX1 SEND 단자 좌표 (Hough Circle로 측정). AUX2는 이제 외부 기기가 아니라 콘솔 내장 SPX
       // 이펙터로 바로 들어가므로(아래 PHONES 참고), 패치베이 단자가 아닙니다.
       aux1: { x: 58.048, y: 37.841 },
       // PHONES 출력 — 실제로는 콘솔 상단 가장자리의 별도 잭이지만, 이 교육용 패치베이에서는
       // AUX 단자들 옆 빈 자리에 배치해 케이블로 연결하는 연습을 할 수 있게 했습니다.
       phones: { x: 89.64, y: 87.16 },
-      // MONITOR OUT(컨트롤룸 모니터) 단자 — jack_strip.jpg 패치베이 우측의 실제 L/R 잭 쌍(2026-10-08 정밀측정).
-      // 다른 스테레오 출력 단자들과 동일하게 두 잭의 중간 지점 좌표 하나로 대표합니다.
-      monitorOut: { x: 80.65, y: 76.59 }
+      // MONITOR OUT(컨트롤룸 모니터) 단자 — 2026-10-10 재측정(사용자가 직접 실제 화면을 캡처해
+      // "MONITOR OUT" 잭과 현재 핫스팟 위치를 빨간/초록 박스로 표시해준 덕분에, 기존 좌표가
+      // 엉뚱하게 STEREO OUT과 FOOT SW 사이 빈 공간(원래 핫스팟이 찍혀 있던 자리)에 가 있었던
+      // 것을 발견했습니다. jack_strip.jpg(1491x440)에서 실제 MONITOR OUT L/R 잭 구멍을 색상
+      // 기반 연결요소 분석으로 다시 정밀 측정해(L: 74.603%,67.397% / R: 74.559%,86.585%)
+      // 다른 스테레오 출력 단자들과 동일하게 두 잭의 중간 지점으로 좌표를 바로잡았습니다.
+      monitorOut: { x: 74.58, y: 76.99 }
     };
 
     // ----- 마스터 섹션 레벨 미터 좌표 (master_section.jpg 기준 %, 2026-10-08 재측정) -----
@@ -2801,15 +2818,6 @@
       { db: -30, y: 29.37, color: '#22c55e' }
     ];
 
-    const mg12xuChainItems = [
-      { id: 'console', name: 'MG12XU 콘솔' },
-      { id: 'mainout', name: '메인 아웃 (Main L/R)' },
-      { id: 'amp', name: '파워앰프' },
-      { id: 'speaker', name: '스피커' }
-    ];
-    const mg12xuChainCorrectOrder = ['console', 'mainout', 'amp', 'speaker'];
-    let mg12xuChainShuffled = null;
-    let mg12xuChainPicks = [];
 
     /* ===== Web Audio 엔진: 콘솔 조작이 실제 소리 변화로 들리게 ===== */
     // 소스마다 서로 다른 테스트 톤(오실레이터)을 흘려보내고, 각 채널의 GAIN·EQ·페이더·ON·1-2/ST 라우팅을
@@ -2898,7 +2906,7 @@
       mg12xuBusOnGain.stereo = stereoOnGain;
 
       const stereoConnGain = mg12xuAudioCtx.createGain();
-      stereoConnGain.gain.value = mg12xuOutputConnected.stereo ? 1 : 0;
+      stereoConnGain.gain.value = (mg12xuOutputConnected.stereoL && mg12xuOutputConnected.stereoR) ? 1 : 0;
       mg12xuBusConnGain.stereo = stereoConnGain;
 
       const stereoAnalyser = mg12xuAudioCtx.createAnalyser();
@@ -3437,9 +3445,15 @@
     }
 
     // 출력 케이블이 실제로 스피커에 연결되어 있는지 여부를 오디오 그래프에 반영합니다(연결 전엔 소리가 나지 않음).
-    function mg12xuApplyOutputConnAudio(bus) {
-      if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuBusConnGain[bus]) return;
-      mg12xuBusConnGain[bus].gain.setTargetAtTime(mg12xuOutputConnected[bus] ? 1 : 0, mg12xuAudioCtx.currentTime, 0.01);
+    // audioBus(group/stereo/aux1/phones/monitorOut)는 실제 콘솔의 한 오디오 경로이고, 그 경로가
+    // 쓰는 물리적 잭(jack)은 하나일 수도(group/aux1/phones/monitorOut), STEREO처럼 L/R 두 개일
+    // 수도 있습니다. 두 개 이상인 경우 실제처럼 그 잭들이 전부 연결돼야 소리가 나갑니다.
+    const MG12XU_AUDIO_BUS_JACKS = { group: ['group'], stereo: ['stereoL', 'stereoR'], aux1: ['aux1'], phones: ['phones'], monitorOut: ['monitorOut'] };
+    function mg12xuApplyOutputConnAudio(audioBus) {
+      if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuBusConnGain[audioBus]) return;
+      const jacks = MG12XU_AUDIO_BUS_JACKS[audioBus] || [audioBus];
+      const allConnected = jacks.every(j => mg12xuOutputConnected[j]);
+      mg12xuBusConnGain[audioBus].gain.setTargetAtTime(allConnected ? 1 : 0, mg12xuAudioCtx.currentTime, 0.01);
     }
 
     // GROUP 1-2의 ST 버튼: 켜면 GROUP 버스 신호가 STEREO 버스에도 합산되어 나갑니다.
@@ -4393,7 +4407,7 @@
         const tag = ch ? `<span class="mg12xu-source-ch-tag">CH ${MG12XU_CHANNEL_LABELS[ch]}</span>` : '';
         return `
           <button type="button" class="${cls.join(' ')}" style="left:${s.x}%; top:${s.y}%;" onclick="clickMg12xuSource('${s.id}')" onpointerdown="mg12xuIconPointerDown(event, 'source', '${s.id}')" data-source="${s.id}" title="아이콘을 드래그하면 자유롭게 위치를 옮길 수 있습니다">
-            <div class="mg12xu-source-icon"><span class="mg12xu-source-icon-emoji">${s.icon}</span><img class="mg12xu-source-icon-img" src="icons/${s.id}.png" alt="" onerror="this.style.display='none'" onload="this.previousElementSibling.style.visibility='hidden'"></div>
+            <div class="mg12xu-source-icon"><span class="mg12xu-source-icon-emoji">${s.icon}</span><img class="mg12xu-source-icon-img" src="icons/${s.id}.png" alt="" draggable="false" onerror="this.style.display='none'" onload="this.previousElementSibling.style.visibility='hidden'"></div>
             <div class="mg12xu-source-label">${s.name}</div>
             ${tag}
             <div class="mg12xu-cable-nub" data-source="${s.id}" title="케이블을 드래그해서 아래 입력 단자에 연결하세요"></div>
@@ -4693,7 +4707,7 @@
       mg12xuOutputConnected[bus] = true;
       mg12xuSelectedOutput = null;
       renderMg12xuStep1();
-      mg12xuApplyOutputConnAudio(bus);
+      mg12xuApplyOutputConnAudio(out.audioBus || bus);
     }
 
     function mg12xuUnplugSource(sourceId) {
@@ -4705,7 +4719,8 @@
     function mg12xuUnplugOutput(bus) {
       mg12xuOutputConnected[bus] = false;
       renderMg12xuStep1();
-      mg12xuApplyOutputConnAudio(bus);
+      const out = mg12xuOutputs.find(o => o.bus === bus);
+      mg12xuApplyOutputConnAudio(out ? (out.audioBus || bus) : bus);
     }
 
     /* ----- 입출력 단자 패널(jack_strip.jpg) 위의 클릭 가능한 잭 ----- */
@@ -4855,68 +4870,12 @@
       renderMg12xuBestTag();
     }
 
-    function renderMg12xuStep2() {
-      const orderRowEl = document.getElementById('mg12xuChainOrderRow');
-      const chainAreaEl = document.getElementById('mg12xuChainArea');
-      if (!orderRowEl || !chainAreaEl) return;
-
-      if (!mg12xuChainShuffled) {
-        mg12xuChainShuffled = [...mg12xuChainItems].sort(() => Math.random() - 0.5);
-      }
-
-      orderRowEl.innerHTML = mg12xuChainPicks.map((id, i) => {
-        const item = mg12xuChainItems.find(c => c.id === id);
-        return `<span class="mg12xu-order-chip">${i + 1}. ${item.name}</span>`;
-      }).join('');
-
-      chainAreaEl.innerHTML = mg12xuChainShuffled.map(item => {
-        const picked = mg12xuChainPicks.includes(item.id);
-        const cls = ['mg12xu-item'];
-        if (picked) cls.push('filled');
-        return `<button class="${cls.join(' ')}" ${picked ? 'disabled' : ''} onclick="pickMg12xuChain('${item.id}')">${item.name}</button>`;
-      }).join('');
-    }
-
-    function pickMg12xuChain(id) {
-      if (mg12xuChainPicks.includes(id)) return;
-      mg12xuChainPicks.push(id);
-      renderMg12xuStep2();
-      if (mg12xuChainPicks.length === mg12xuChainCorrectOrder.length) {
-        checkMg12xuStep2();
-      }
-    }
-
-    function checkMg12xuStep2() {
-      const panel = document.getElementById('mg12xuStep2Result');
-      if (!panel) return;
-      const correct = mg12xuChainCorrectOrder.every((id, i) => mg12xuChainPicks[i] === id);
-      if (correct) {
-        panel.className = 'result-panel show result-good';
-        panel.innerHTML = `<div class="result-title">✅ 출력 경로 완성!</div><div class="result-line">콘솔 → 메인 아웃 → 파워앰프 → 스피커, 올바른 순서로 연결했습니다.</div>`;
-        saveProgress({ mg12xuStep2Done: true });
-        renderMg12xuBestTag();
-      } else {
-        const hint = mg12xuChainCorrectOrder.map(id => mg12xuChainItems.find(c => c.id === id).name).join(' → ');
-        panel.className = 'result-panel show result-bad';
-        panel.innerHTML = `<div class="result-title">❌ 순서가 달라요</div><div class="result-line">정답 순서: ${hint}</div><div class="result-line">아래 "다시 하기"를 눌러 다시 시도해보세요.</div><button class="curriculum-reset-btn" style="margin-top:6px;" onclick="resetMg12xuChain()">↩️ 다시 하기</button>`;
-      }
-    }
-
-    function resetMg12xuChain() {
-      mg12xuChainPicks = [];
-      const panel = document.getElementById('mg12xuStep2Result');
-      if (panel) { panel.className = 'result-panel'; panel.innerHTML = ''; }
-      renderMg12xuStep2();
-    }
-
     function renderMg12xuBestTag() {
       const progress = loadProgress();
       const el = document.getElementById('mg12xuBestTag');
       if (!el) return;
-      if (progress.mg12xuStep1Done && progress.mg12xuStep2Done) {
-        el.innerHTML = '<span class="best-score-tag">🏅 2단계 모두 완료</span>';
-      } else if (progress.mg12xuStep1Done) {
-        el.innerHTML = '<span class="best-score-tag">🏅 1단계 완료</span>';
+      if (progress.mg12xuStep1Done) {
+        el.innerHTML = '<span class="best-score-tag">🏅 완료</span>';
       } else {
         el.innerHTML = '';
       }
@@ -4926,11 +4885,9 @@
       mg12xuSelected = null;
       mg12xuSelectedOutput = null;
       mg12xuAssignments = {};
-      mg12xuOutputConnected = { stereo: false, group: false, aux1: false, phones: false, monitorOut: false };
+      mg12xuOutputConnected = { stereoL: false, stereoR: false, group: false, aux1: false, phones: false, monitorOut: false };
       mg12xuMasterBusOn = { fxrtn: true, group: true, stereo: true };
       mg12xuPeakLit = {};
-      mg12xuChainShuffled = null;
-      mg12xuChainPicks = [];
       mg12xuPflActive = {};
       mg12xuGroupToStereoOn = false;
       mg12xuMeterSmoothDb = { L: -Infinity, R: -Infinity };
@@ -4954,11 +4911,8 @@
       mg12xuSpxProgramIdx = 0;
       mg12xuMonitorSource = 'stereo';
       const p1 = document.getElementById('mg12xuStep1Result');
-      const p2 = document.getElementById('mg12xuStep2Result');
       if (p1) { p1.className = 'result-panel'; p1.innerHTML = ''; }
-      if (p2) { p2.className = 'result-panel'; p2.innerHTML = ''; }
       renderMg12xuStep1();
-      renderMg12xuStep2();
       MG12XU_REAL_CHANNELS.forEach(ch => {
         (MG12XU_CHANNEL_KNOBS[ch] || MG12XU_KNOB_TYPES).forEach(type => mg12xuUpdateKnobVisual(ch, type));
         mg12xuUpdateFaderVisual(ch);
@@ -5007,7 +4961,6 @@
       buildMg12xuMasterConsole();
       buildMg12xuJackstrip();
       renderMg12xuStep1();
-      renderMg12xuStep2();
       renderMg12xuBestTag();
       window.addEventListener('resize', mg12xuRedrawCables);
     }
@@ -5274,6 +5227,9 @@
 
     let selectedGearForCable = null;
     let connectedCables = [];
+    // 2026-10-10 추가(케이블 3D 외형 1단계): cableKey("fromId__toId") -> THREE.Mesh.
+    // 장비를 이동/회전하거나 케이블을 추가/제거할 때만 갱신하고, 매 프레임 다시 만들지 않습니다.
+    const gear3dCableMeshes = {};
 
     /* ===== 장비 설명 (ℹ️ 아이콘용) — 기본값. 사용자가 직접 수정 가능 ===== */
     const gearInfoDefaults = {
@@ -5377,6 +5333,8 @@
       y7p_L: 'yi7p', y7p_R: 'yi7p',
       y10p_C: 'yi10p',
       e8_L: 'e8', e8_R: 'e8',
+      amp_40d: 'amp40d', amp_10d: 'amp10d',
+      stagebox: 'rio3224d',
     };
 
     // 보관함(배치 전) 카드 — 이미지 + 이름표 + 정보버튼. 배치 후에는 쓰이지 않습니다
@@ -5482,6 +5440,8 @@
       }
       const cssObj = gear3d.cssObjects[id];
       if (cssObj) cssObj.position.copy(pos);
+
+      gear3dUpdateCablesForGear(id);
     }
 
     // ===== 되돌리기(Ctrl+Z) / 다시실행(Ctrl+Shift+Z) =====
@@ -5514,6 +5474,8 @@
       gear3d.armedId = null;
       gear3dRenderTray();
       gear3dRefreshCardStates();
+      // 한 번에 여러 장비가 옮겨질 수 있어, 개별 훅 대신 전체를 한 번 맞춰 정확성을 보장합니다.
+      gear3dRebuildAllCables();
     }
 
     function gear3dUndo() {
@@ -5554,6 +5516,9 @@
       delete gear3d.meshRotZ[id];
       if (gear3d.armedId === id) gear3d.armedId = null;
       if (gear3d.keyboardTargetId === id) gear3d.keyboardTargetId = null;
+      // placedPos가 사라졌으므로, 이 장비가 걸린 케이블 메시는 gear3dUpdateCableMesh 안에서
+      // 끝점을 못 찾아 자동으로 정리(dispose)됩니다.
+      gear3dUpdateCablesForGear(id);
       if (!skipUndo) {
         gear3dRenderTray();
         gear3dRefreshCardStates();
@@ -5660,11 +5625,6 @@
       cssRenderer.domElement.className = 'gear3d-css-layer';
       wrap.appendChild(cssRenderer.domElement);
 
-      const cableSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      cableSvg.setAttribute('class', 'gear3d-cable-svg');
-      cableSvg.id = 'gear3dCableSvg';
-      wrap.appendChild(cableSvg);
-
       const hemi = new THREE.HemisphereLight(0xffffff, 0x3a3a3a, 1.15);
       scene.add(hemi);
       const dir = new THREE.DirectionalLight(0xffffff, 0.6);
@@ -5687,9 +5647,18 @@
 
       const loader = new THREE.GLTFLoader();
 
-      // 건물(성소) 모델 + 배치용 장비 모델(Vi10p, V-SUB, Yi7P, Yi10P, E8)을 함께 불러옵니다.
-      // 로딩 화면은 전부 다 준비된 뒤에 사라집니다.
+      // 건물(성소) 모델 + 배치용 장비 모델(Vi10p, V-SUB, Yi7P, Yi10P, E8, XLR 커넥터 등)을
+      // 함께 불러옵니다. 로딩 화면은 전부 다 준비된 뒤에 사라집니다.
       const gearModelKeys = Object.keys(window.GEAR_GLB_BASE64 || {});
+      // 1단계 점검: assets3d/gear_models_data.js에 xlrConnector 키 자체가 실제로 있는지
+      // 시작 시점에 바로 확인해 명확히 로그로 남깁니다(나중에 커넥터를 처음 쓸 때야
+      // 알게 되는 게 아니라, 바로 알 수 있도록).
+      if (!window.GEAR_GLB_BASE64 || !window.GEAR_GLB_BASE64.xlrConnector) {
+        console.error('[gear3d] assets3d/gear_models_data.js의 GEAR_GLB_BASE64에 "xlrConnector" 키가 없습니다. ' +
+          '케이블 연결 시 XLR 커넥터는 임시 원통으로만 표시됩니다. 현재 키 목록: ' + JSON.stringify(gearModelKeys));
+      } else {
+        console.info('[gear3d] xlrConnector 키 확인됨 (assets3d/gear_models_data.js) — 로딩을 시작합니다.');
+      }
       let pendingLoads = 1 + gearModelKeys.length;
       function gear3dCheckAllLoaded() {
         pendingLoads--;
@@ -5731,9 +5700,19 @@
             -(box.min.z + box.max.z) / 2
           );
           gear3d.models[key] = { scene: gltf.scene, offset: offset, height: box.max.y - box.min.y };
+          // 3단계 점검: xlrConnector 모델이 (늦게) 로딩 완료되면, 그 전에 이미
+          // 임시 원통으로 연결돼 있던 케이블들을 즉시 실제 모델로 교체합니다.
+          // (다른 동작, 예: 장비를 옮기거나 회전시키는 동작이 전혀 없어도
+          // 자동으로 갱신되도록 하기 위한 처리입니다.)
+          if (key === 'xlrConnector') {
+            gear3dUpgradeFallbackConnectors();
+          }
           gear3dCheckAllLoaded();
         }, undefined, function (err) {
           console.error('Gear model load error:', key, err);
+          if (key === 'xlrConnector') {
+            console.error('[gear3d] xlrConnector 모델 로딩 자체가 실패했습니다. 위 오류 내용을 확인하세요. 이 경우 케이블 커넥터는 계속 임시 원통으로 표시됩니다.');
+          }
           gear3dCheckAllLoaded();
         });
       });
@@ -5749,7 +5728,9 @@
         controls.update();
         renderer.render(scene, camera);
         cssRenderer.render(scene, camera);
-        redrawCables3d();
+        // 케이블은 이제 실제 3D 메시라서(2D 화면 좌표로 매번 재투영하던 예전 점선과 달리)
+        // 카메라가 움직여도 매 프레임 다시 계산할 필요가 없습니다 — 장비가 실제로 움직이거나
+        // 케이블이 추가/제거될 때만 gear3dUpdateCablesForGear / gear3dRebuildAllCables를 호출합니다.
       }
       tick();
     }
@@ -5883,6 +5864,7 @@
       // 클릭으로 막 배치/이동한 장비는 바로 키보드로 미세 조정할 수 있도록 계속
       // "키보드 조작 대상"으로 남겨둡니다 (화살표/PageUp·Down/Q·E).
       gear3d.keyboardTargetId = id;
+      gear3dUpdateCablesForGear(id);
       if (!skipUndo) {
         gear3dRenderTray();
         gear3dRefreshCardStates();
@@ -5928,7 +5910,9 @@
       } else {
         if (selectedGearForCable.id !== item.id) {
           connectedCables = connectedCables.filter(c => !(c.fromId === selectedGearForCable.id && c.toId === item.id));
-          connectedCables.push({ fromId: selectedGearForCable.id, fromName: selectedGearForCable.name, toId: item.id, toName: item.name });
+          const newCable = { fromId: selectedGearForCable.id, fromName: selectedGearForCable.name, toId: item.id, toName: item.name };
+          connectedCables.push(newCable);
+          gear3dUpdateCableMesh(newCable);
           document.getElementById('cableStatusText').innerText = `✨ 케이블 연결 완료: ${selectedGearForCable.name} ➔ ${item.name}`;
         }
         selectedGearForCable = null;
@@ -5949,30 +5933,426 @@
       Object.keys(gear3d.meshGroups).forEach(gear3dApplyMeshHighlight);
     }
 
-    function redrawCables3d() {
-      const svg = document.getElementById('gear3dCableSvg');
-      const wrap = document.getElementById('canvas3dWrap');
-      if (!svg || !wrap || !gear3d.camera) return;
-      svg.innerHTML = '';
-      if (connectedCables.length === 0) return;
-      const rect = wrap.getBoundingClientRect();
-      const toScreen = (v3) => {
-        const p = v3.clone().project(gear3d.camera);
-        return { x: (p.x * 0.5 + 0.5) * rect.width, y: (-p.y * 0.5 + 0.5) * rect.height, behind: p.z > 1 };
-      };
-      connectedCables.forEach(cable => {
-        const a = gear3d.placedPos[cable.fromId];
-        const b = gear3d.placedPos[cable.toId];
-        if (!a || !b) return;
-        const sa = toScreen(a), sb = toScreen(b);
-        if (sa.behind || sb.behind) return;
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', sa.x); line.setAttribute('y1', sa.y);
-        line.setAttribute('x2', sb.x); line.setAttribute('y2', sb.y);
-        line.setAttribute('stroke', '#38bdf8'); line.setAttribute('stroke-width', '3');
-        line.setAttribute('stroke-dasharray', '6,3');
-        svg.appendChild(line);
+    /* =========================================================================
+       케이블 3D 외형 — 1단계: 검은색 원통형 케이블로 두 장비를 자연스럽게 연결
+       2단계: 장비별 "단자 좌표"를 고정으로 두고, 그 좌표를 장비의 현재 위치·회전값으로
+       변환해 케이블을 연결 — 장비를 옮기거나 돌리면 단자도 함께 움직이므로 케이블이
+       자연스럽게 따라옵니다.
+       3단계: XLR 커넥터 셸(금속/플라스틱 느낌의 원통 캡)을 양 끝에 추가하고, 장비
+       종류에 따라 케이블 굵기를 다르게 하고(스피커 케이블이 가장 굵음), 새로 연결될
+       때 길이가 쭉 뻗어나가는 간단한 애니메이션을 재생합니다.
+       ========================================================================= */
+    // 장비 종류별 케이블 굵기 — 실제로 스피커/파워앰프에 쓰이는 Speakon 케이블이 가장
+    // 굵고, 스테이지박스로 가는 멀티코어(스네이크)가 그 다음, 콘솔의 XLR 마이크/라인
+    // 케이블이 가장 가늡니다. 두 장비가 서로 다른 종류면 더 굵은 쪽 기준을 씁니다.
+    const GEAR3D_CONNECTOR_TYPE = {
+      vi10p_L: 'speaker', vi10p_R: 'speaker',
+      woofer_L: 'speaker', woofer_R: 'speaker',
+      y7p_L: 'speaker', y7p_R: 'speaker', y10p_C: 'speaker',
+      e8_L: 'speaker', e8_R: 'speaker',
+      amp_40d: 'speaker', amp_10d: 'speaker',
+      stagebox: 'snake',
+      console: 'xlr'
+    };
+    const GEAR3D_CABLE_RADIUS_BY_TYPE = { speaker: 0.034, snake: 0.040, xlr: 0.024 };
+    const GEAR3D_CABLE_RADIUS_DEFAULT = 0.028; // 종류를 알 수 없는 조합의 기본 굵기
+    const GEAR3D_CONNECTOR_LEN = 0.09;          // (모델 로드 실패 시 예외적으로 쓰는 원통 폴백의) 커넥터 길이
+
+    function gear3dCableRadiusFor(cable) {
+      const tA = GEAR3D_CONNECTOR_TYPE[cable.fromId];
+      const tB = GEAR3D_CONNECTOR_TYPE[cable.toId];
+      const rA = tA ? GEAR3D_CABLE_RADIUS_BY_TYPE[tA] : GEAR3D_CABLE_RADIUS_DEFAULT;
+      const rB = tB ? GEAR3D_CABLE_RADIUS_BY_TYPE[tB] : GEAR3D_CABLE_RADIUS_DEFAULT;
+      return Math.max(rA, rB);
+    }
+
+    // 재질은 THREE가 실제로 로드된 뒤(최초로 케이블을 만들 때) 한 번만 지연 생성합니다 —
+    // init3DWorkspace()가 window.THREE 존재 여부를 따로 확인하므로, 모듈 최상단에서 바로
+    // new THREE.MeshStandardMaterial(...)을 실행하면 라이브러리 로드 실패 시 전체 스크립트가
+    // 깨질 수 있어 피했습니다.
+    let gear3dCableMaterial = null;
+    function gear3dGetCableMaterial() {
+      if (!gear3dCableMaterial) {
+        gear3dCableMaterial = new THREE.MeshStandardMaterial({
+          color: 0x16161a,     // 검은색 고무 외피
+          roughness: 0.7,      // 무광에 가까우면서도 원통의 입체감(명암)이 살짝 드러나도록
+          metalness: 0.04
+        });
+      }
+      return gear3dCableMaterial;
+    }
+
+    let gear3dConnectorMaterial = null;
+    function gear3dGetConnectorMaterial() {
+      if (!gear3dConnectorMaterial) {
+        gear3dConnectorMaterial = new THREE.MeshStandardMaterial({
+          color: 0x9da0a6,   // XLR 커넥터 특유의 금속/다이캐스트 셸 색 (케이블 고무보다 밝게 해 뒷면에서도 구분되도록)
+          roughness: 0.35,
+          metalness: 0.6
+        });
+      }
+      return gear3dConnectorMaterial;
+    }
+
+    // 올려준 실제 XLR 커넥터 3D 모델(assets3d/gear_models_data.js의 "xlrConnector" 키)에서,
+    // 여러 참고용 변형 중 깔끔한 암(female) 커넥터 하나("XLR-F" 노드)만 뽑아 재사용 가능한
+    // 템플릿으로 다듬어둡니다. 핀 구멍이 있는 소켓면 중심을 피벗 원점(0,0,0)으로 옮기고,
+    // 커넥터 몸통이 로컬 +Z 방향으로 뻗도록 정리합니다 — 이렇게 해야 케이블이 그 지점에서
+    // 나가는 방향(tangent)에 맞춰 커넥터를 "단자에 꽂힌" 모양으로 바로 정렬할 수 있습니다.
+    // 모델이 아직 로드되지 않았으면(로딩 중) null을 돌려주고, 로드된 뒤 다시 시도합니다.
+    //
+    // 실패 원인을 조용히 넘기지 않도록, "GLB 자체가 아직/영영 없음"과 "GLB는 로드됐는데
+    // 그 안에 XLR-F 오브젝트가 없음"을 구분해서 콘솔에 명확히 남깁니다. 같은 경고가
+    // 매 프레임/매 호출마다 반복 출력되지 않도록 각각 한 번만 찍습니다(gear3dXlrDiag 플래그).
+    let gear3dXlrConnectorTemplate = null;
+    const gear3dXlrDiag = { loggedMissingGlb: false, loggedMissingNode: false, loggedFound: false };
+    function gear3dGetXlrConnectorTemplate() {
+      if (gear3dXlrConnectorTemplate) return gear3dXlrConnectorTemplate;
+      const raw = gear3d.models.xlrConnector;
+      if (!raw || !raw.scene) {
+        if (!gear3dXlrDiag.loggedMissingGlb) {
+          gear3dXlrDiag.loggedMissingGlb = true;
+          const keyExists = !!(window.GEAR_GLB_BASE64 && window.GEAR_GLB_BASE64.xlrConnector);
+          console.warn(
+            '[gear3d] XLR 커넥터 모델(xlrConnector)을 아직 쓸 수 없습니다. ' +
+            (keyExists
+              ? 'assets3d/gear_models_data.js에 xlrConnector 키는 있지만 아직 비동기 로딩이 끝나지 않았을 수 있습니다 — ' +
+                '로딩이 끝나면 자동으로 실제 모델로 교체됩니다.'
+              : 'assets3d/gear_models_data.js에 "xlrConnector" 키 자체가 없습니다. 자산 파일이 바뀌었거나 ' +
+                '잘못된 빌드가 배포됐을 수 있습니다 — GEAR_GLB_BASE64의 키 목록을 확인하세요.')
+          );
+        }
+        return null;
+      }
+      const node = raw.scene.getObjectByName('XLR-F');
+      if (!node) {
+        if (!gear3dXlrDiag.loggedMissingNode) {
+          gear3dXlrDiag.loggedMissingNode = true;
+          const topNames = [];
+          raw.scene.traverse(function (o) { if (o.name) topNames.push(o.name); });
+          console.error(
+            '[gear3d] xlrConnector GLB는 로드됐지만 그 안에서 "XLR-F" 오브젝트를 찾지 못했습니다. ' +
+            '모델 구조가 바뀌었을 수 있습니다. 실제로 들어있는 오브젝트 이름들: ' +
+            JSON.stringify(topNames.slice(0, 40)) + (topNames.length > 40 ? ` 외 ${topNames.length - 40}개 더` : '')
+          );
+        }
+        return null;
+      }
+
+      node.updateWorldMatrix(true, false);
+      const worldMatrix = node.matrixWorld.clone();
+      const holder = new THREE.Group(); // 원래 장면 계층에서 떼어내 월드 트랜스폼을 구워 독립시키는 용도(장면엔 추가 안 함)
+      holder.add(node);
+      node.matrix.copy(worldMatrix);
+      node.matrix.decompose(node.position, node.quaternion, node.scale);
+
+      const box = new THREE.Box3().setFromObject(node);
+      const center = box.getCenter(new THREE.Vector3());
+      const socketCenter = new THREE.Vector3(center.x, center.y, box.min.z); // 핀 구멍 쪽(로컬 -Z 끝) 면의 중심
+      node.position.sub(socketCenter);
+      holder.remove(node);
+
+      gear3dXlrConnectorTemplate = node;
+      if (!gear3dXlrDiag.loggedFound) {
+        gear3dXlrDiag.loggedFound = true;
+        console.info('[gear3d] XLR 커넥터 실제 3D 모델("XLR-F") 로딩 및 추출 완료 — 이제부터 원통 대체물 대신 이 모델을 씁니다.');
+      }
+      return node;
+    }
+
+    // 템플릿을 복제해 케이블 하나의 커넥터 인스턴스를 만듭니다. clone(true)는 지오메트리를
+    // 복사하지 않고 템플릿과 공유하므로(장면에 추가된 인스턴스가 몇 개든 GPU 메모리는 한 벌만
+    // 씀), 인스턴스를 치울 때 지오메트리를 dispose하면 안 됩니다 — scene.remove()만 하면 됩니다.
+    function gear3dCloneConnectorInstance() {
+      const template = gear3dGetXlrConnectorTemplate();
+      if (!template) return null;
+      // 모델에 원래 들어있던 재질을 그대로 씁니다 — 어두운 회색 플라스틱/고무 셸
+      // 재질("[0135_DarkGray]4")과 금속 핀/몸통 재질(흰색 베이스+metalness 1)이 부위별로
+      // 이미 구분되어 있어서, 사용자가 올려준 참고 사진처럼 "검은 고무 그립 + 금속 셸"
+      // 투톤이 자연스럽게 나옵니다. clone(true)는 재질도 깊은 복사가 아니라 템플릿과
+      // 같은 재질 객체를 공유하므로(지오메트리와 동일한 원리), 모든 커넥터 인스턴스가 이
+      // 재질들을 재사용합니다 — 인스턴스 개수와 무관하게 재질 2개만 존재합니다.
+      return template.clone(true);
+    }
+
+    // 케이블 끝에 꽂힌 XLR 커넥터를 만들거나(없으면) 위치·방향을 갱신합니다. 실제 모델을
+    // 아직 못 불러온 경우에만 단순 원통으로 "임시" 대체합니다 — 이때 그 원통에
+    // userData.isFallbackConnector = true 표시를 남겨둡니다. 모델이 늦게 로드 완료되는
+    // 경우(비동기 로딩이라 케이블이 모델보다 먼저 연결될 수 있음)에도 조용히 원통인 채로
+    // 남아있지 않도록, 이 함수가 다시 호출될 때마다(장비 이동/회전/케이블 갱신 시, 그리고
+    // 모델 로딩이 끝난 직후 전체 케이블을 한 번 훑어주는 gear3dUpgradeFallbackConnectors
+    // 에서도) "지금 혹시 실제 모델을 쓸 수 있게 됐는지" 다시 확인해서, 가능해졌으면 원통을
+    // 실제 모델로 교체합니다. 원통은 다른 인스턴스와 지오메트리를 공유하지 않는 전용
+    // 지오메트리라 dispose해도 안전합니다(공유되는 실제 모델 지오메트리와는 다름).
+    //
+    // 커넥터의 로컬 +Z가 "핀 구멍 반대쪽, 케이블이 이어지는 방향"이므로, +Z를 단자가
+    // 꽂히는 방향(패널의 바깥쪽 법선 — normal)에 맞춥니다. 케이블이 처지는 방향(tangent)이
+    // 아니라 반드시 단자 자신의 고정된 방향을 기준으로 삼아야, 장비를 어디로 연결하든
+    // 플러그가 항상 패널에 수직으로 "꽂힌" 모양을 유지하고 케이블이 당기는 대로 기울어지지
+    // 않습니다.
+    function gear3dMakeOrUpdateConnector(existing, point, normal) {
+      let mesh = existing;
+
+      if (mesh && mesh.userData.isFallbackConnector) {
+        const upgraded = gear3dCloneConnectorInstance();
+        if (upgraded) {
+          gear3d.scene.remove(mesh);
+          mesh.geometry.dispose(); // 폴백 원통 전용 지오메트리 — 공유되지 않으므로 dispose 가능
+          gear3d.scene.add(upgraded);
+          mesh = upgraded;
+          console.info('[gear3d] 임시 원통으로 표시돼 있던 커넥터를 실제 XLR 모델로 교체했습니다.');
+        }
+      }
+
+      if (!mesh) {
+        mesh = gear3dCloneConnectorInstance();
+        if (!mesh) {
+          // gear3dGetXlrConnectorTemplate()가 이미 구체적인 원인(모델 미로딩 / XLR-F 노드
+          // 없음)을 console.warn/console.error로 남겼으므로, 여기서는 "그래서 지금은 원통을
+          // 쓴다"는 결과만 명확히 남깁니다 — 조용히 넘어가지 않습니다.
+          console.error('[gear3d] 실제 XLR 커넥터 모델을 쓸 수 없어 임시 원통으로 대체합니다. (원인은 위 로그 참고)');
+          mesh = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.018, 0.018, GEAR3D_CONNECTOR_LEN, 10),
+            gear3dGetConnectorMaterial()
+          );
+          mesh.userData.isFallbackConnector = true;
+        }
+        gear3d.scene.add(mesh);
+      }
+      mesh.position.copy(point);
+      const zAxis = new THREE.Vector3(0, 0, 1);
+      const dir = normal.lengthSq() > 1e-8 ? normal.clone().normalize() : zAxis;
+      mesh.quaternion.setFromUnitVectors(zAxis, dir);
+      return mesh;
+    }
+
+    // xlrConnector 모델이 로딩 완료된 "바로 그 순간"에 호출해, 그 시점까지 임시 원통으로
+    // 꽂혀 있던 모든 케이블의 커넥터를 즉시 실제 모델로 갱신합니다. 장비를 옮기거나
+    // 돌리기를 기다리지 않고도 곧바로 교체되도록 하기 위한 보강 경로입니다(핵심 복구
+    // 로직 자체는 gear3dMakeOrUpdateConnector 안에 있어 이 함수가 없어도 동작은 하지만,
+    // 사용자가 아무 것도 더 안 건드리면 영영 원통인 채로 남는 걸 막아줍니다).
+    function gear3dUpgradeFallbackConnectors() {
+      const hasFallback = Object.keys(gear3dCableMeshes).some(function (key) {
+        const entry = gear3dCableMeshes[key];
+        return (entry.connA && entry.connA.userData.isFallbackConnector) ||
+          (entry.connB && entry.connB.userData.isFallbackConnector);
       });
+      if (!hasFallback) return;
+      console.info('[gear3d] XLR 커넥터 모델이 늦게 로드되어, 이미 연결된 케이블의 임시 원통을 실제 모델로 갱신합니다.');
+      connectedCables.forEach(function (cable) { gear3dUpdateCableMesh(cable); });
+    }
+
+    function gear3dCableKey(fromId, toId) { return fromId + '__' + toId; }
+
+    // 장비 종류별 "단자(입출력 잭) 위치"를 장비 자신의 로컬 좌표계(장비가 회전하지 않았을
+    // 때 기준, 배치 지점이 원점)로 정의합니다 — 실제 오디오 장비의 입출력 단자가 보통
+    // 뒷면 패널 아래쪽에 있는 것을 본떠 "뒷면(-Z쪽), 바닥에서 35% 높이"를 고정 지점으로
+    // 씁니다. 모델별 크기는 로드된 GLB의 로컬 바운딩박스에서 한 번만 계산해 캐시합니다.
+    // (실제 커넥터 모양·종류별 위치 구분은 3단계에서 추가 — 지금은 "장비 자신을 기준으로
+    // 고정된 한 지점"이라는 2단계 핵심 요구사항을 충족합니다.)
+    // 기본은 로컬 -Z쪽(뒷면)을 단자 위치로 쓰지만, RIO 스테이지박스처럼 실제 입출력
+    // 단자가 전면 패널에 몰려 있는 장비는 예외로 +Z쪽(앞면)을 씁니다. (확인해보니 RIO3224D
+    // 모델은 +Z면에 XLR 단자 여러 개가, -Z면엔 전원/팬만 있어서 +Z가 실제 "앞면"이었습니다.)
+    const GEAR3D_TERMINAL_FACE_SIGN = {
+      rio3224d: 1
+    };
+
+    // 일부 모델은 "면의 대략적인 한 지점"이 아니라, 패널에 실제로 모델링된 특정 XLR 잭
+    // 구멍에 정확히 꽂힌 것처럼 보여야 합니다(RIO 출력 잭). 이 좌표는 RIO 모델에서 그
+    // 잭 위치로 레이캐스트를 쏴서 실제로 맞힌 지점(그룹 로컬 좌표, 즉 바닥=0·중심=0
+    // 기준으로 보정된 좌표계 — gear3dPlaceAt에서 mesh.position에 쓰는 template.offset과
+    // 동일한 기준)을 그대로 가져온 값입니다. 사용자가 직접 올려준 SketchUp 참고 장면
+    // (RIO + XLR 커넥터를 실제로 배치해둔 scene)에서 커넥터가 꽂힌 위치를 RIO 바운딩
+    // 박스 대비 비율(가로 63.4%, 바닥에서 33.9% 높이)로 역산해, 그 비율 그대로 우리
+    // 모델에 다시 레이캐스트해 얻은 잭 좌표라 사용자가 의도한 실제 잭 위치와 일치합니다.
+    // (THREE 로드 실패 시에도 모듈 최상단이 깨지지 않도록, Vector3가 아닌 일반 배열로 둡니다.)
+    const GEAR3D_TERMINAL_LOCAL_OVERRIDE = {
+      rio3224d: [0.06433383587870936, 0.0787180850714857, 0.17523439362745594]
+    };
+
+    function gear3dGetLocalTerminal(id) {
+      const modelKey = GEAR_MODEL_MAP[id];
+      const template = modelKey && gear3d.models[modelKey];
+      if (template) {
+        if (!template.terminalLocal) {
+          const override = GEAR3D_TERMINAL_LOCAL_OVERRIDE[modelKey];
+          if (override) {
+            template.terminalLocal = new THREE.Vector3(override[0], override[1], override[2]);
+          } else {
+            const box = new THREE.Box3().setFromObject(template.scene);
+            const size = box.getSize(new THREE.Vector3());
+            const h = template.height || size.y || 1;
+            const faceSign = GEAR3D_TERMINAL_FACE_SIGN[modelKey] || -1;
+            template.terminalLocal = new THREE.Vector3(0, h * 0.35, faceSign * size.z / 2);
+          }
+        }
+        return template.terminalLocal.clone();
+      }
+      // 3D 모델이 없는 장비(콘솔/앰프/스테이지박스 - 평면 카드로만 표시되며 회전하지 않음):
+      // 카드 앞쪽 아래의 고정된 지점을 씁니다.
+      return new THREE.Vector3(0, 0, 0.18);
+    }
+
+    // 장비의 현재 배치 위치·회전값을 적용해, 단자의 실제 월드 좌표를 구합니다.
+    // 장비를 옮기면 pos가, 돌리면 meshRotY/meshRotZ가 바뀌므로 이 함수를 다시 부르면
+    // 케이블이 붙는 지점도 항상 장비를 따라 움직입니다.
+    function gear3dGetWorldTerminal(id) {
+      const pos = gear3d.placedPos[id];
+      if (!pos) return null;
+      const localTerm = gear3dGetLocalTerminal(id);
+      const group = gear3d.meshGroups[id];
+      if (group) {
+        // group.rotation.set(0, meshRotY, meshRotZ)와 동일한 순서(XYZ)로 회전을 적용합니다.
+        const euler = new THREE.Euler(0, gear3d.meshRotY[id] || 0, gear3d.meshRotZ[id] || 0, 'XYZ');
+        return localTerm.applyEuler(euler).add(pos);
+      }
+      return localTerm.add(pos);
+    }
+
+    // 단자가 "향하는 방향"(패널에서 바깥으로 수직하게 꽂혀 들어가는 방향)을 장비 자신의
+    // 로컬 좌표계로 정의합니다. GEAR3D_TERMINAL_FACE_SIGN과 같은 면(+Z 또는 -Z)을 가리키며,
+    // 실제 단자가 몇 개든(= 패널이 평평한 하나의 면인 한) 이 방향은 동일합니다. 카드형
+    // 장비(3D 모델이 없는 경우)는 회전하지 않으므로 카드 앞면(+Z)을 그대로 씁니다.
+    function gear3dGetLocalTerminalNormal(id) {
+      const modelKey = GEAR_MODEL_MAP[id];
+      if (modelKey) {
+        const faceSign = GEAR3D_TERMINAL_FACE_SIGN[modelKey] || -1;
+        return new THREE.Vector3(0, 0, faceSign);
+      }
+      return new THREE.Vector3(0, 0, 1);
+    }
+
+    // 장비의 현재 회전값을 적용해, 단자가 꽂히는 방향(패널 바깥쪽 법선)의 실제 월드
+    // 방향을 구합니다. 플러그 몸체는 케이블이 처지는 쪽이 아니라 반드시 이 방향으로
+    // 삽입되어야 "단자 방향과 일치하는" 꽂힘이 됩니다.
+    function gear3dGetWorldTerminalNormal(id) {
+      const localNormal = gear3dGetLocalTerminalNormal(id);
+      const group = gear3d.meshGroups[id];
+      if (group) {
+        const euler = new THREE.Euler(0, gear3d.meshRotY[id] || 0, gear3d.meshRotZ[id] || 0, 'XYZ');
+        return localNormal.applyEuler(euler).normalize();
+      }
+      return localNormal.normalize();
+    }
+
+    // 중력으로 자연스럽게 처진 곡선 경로를 만듭니다 — 팽팽한 직선이 아니라 약간 늘어진 느낌.
+    // 두 끝점이 이미 서로 가까운 경우(장비가 맞닿아 있는 경우) 처짐을 과하게 주면 오히려
+    // 장비 몸체 속으로 다시 들어가 버리므로, 최소 처짐량을 아주 작게 둡니다.
+    // normalA/normalB를 넘기면(단자 방향을 아는 경우) 각 끝에서 그 방향으로 살짝("stub")
+    // 뻗어나간 뒤에야 처진 중앙으로 휘어지도록 제어점을 추가합니다 — 그래야 케이블이
+    // 커넥터 몸통에서 갑자기 꺾이지 않고, 실제 사진처럼 단자에서 수직으로 빠져나온 뒤
+    // 자연스럽게 아래로 늘어지는 모양이 됩니다.
+    function gear3dCableCurve(a, b, normalA, normalB) {
+      const dist = a.distanceTo(b);
+      const mid = a.clone().add(b).multiplyScalar(0.5);
+      const sag = Math.min(Math.max(dist * 0.2, 0.03), 0.6);
+      mid.y -= sag;
+
+      if (normalA && normalB) {
+        const stub = Math.min(Math.max(dist * 0.18, 0.025), 0.09);
+        const aOut = a.clone().addScaledVector(normalA, stub);
+        const bOut = b.clone().addScaledVector(normalB, stub);
+        return new THREE.CatmullRomCurve3([a, aOut, mid, bOut, b]);
+      }
+      return new THREE.CatmullRomCurve3([a, mid, b]);
+    }
+
+    function gear3dDisposeCableMesh(key) {
+      const entry = gear3dCableMeshes[key];
+      if (!entry) return;
+      if (entry.animId) cancelAnimationFrame(entry.animId);
+      gear3d.scene.remove(entry.mesh);
+      entry.mesh.geometry.dispose();
+      // connA/connB는 XLR 커넥터 템플릿을 clone(true)한 THREE.Group이며, 지오메트리는
+      // 템플릿 및 다른 케이블 인스턴스와 공유하므로 여기서 dispose하면 안 됩니다 — scene에서
+      // 제거만 합니다. (폴백으로 쓰이는 간단한 실린더 Mesh도 공유 재질만 쓰므로 동일하게 처리.)
+      if (entry.connA) gear3d.scene.remove(entry.connA);
+      if (entry.connB) gear3d.scene.remove(entry.connB);
+      delete gear3dCableMeshes[key];
+    }
+
+    // 케이블이 막 "새로 연결"된 순간에만, 길이가 0에서 전체 길이까지 약 0.3초 동안
+    // 쭉 뻗어나가는 간단한 연결 애니메이션을 재생합니다 — 장비를 옮기거나 돌릴 때
+    // 지오메트리를 갱신하는 경우(이미 있던 케이블)에는 호출되지 않습니다. 애니메이션은
+    // 그 케이블 하나에 대해서만, 끝날 때까지 짧게만 매 프레임 갱신되고 끝나면 더 이상
+    // 프레임을 요청하지 않습니다(계속 반복되는 애니메이션이 아님).
+    function gear3dAnimateCableConnect(key, curve, radius) {
+      const DURATION = 300; // ms
+      const startTime = performance.now();
+      const fullPoints = curve.getPoints(24);
+
+      function step(now) {
+        const entry = gear3dCableMeshes[key];
+        if (!entry) return; // 애니메이션 도중 케이블이 지워졌으면 중단
+        const t = Math.min(1, (now - startTime) / DURATION);
+        const eased = 1 - Math.pow(1 - t, 3); // ease-out — 쭉 뻗다가 탁 걸리는 느낌
+
+        if (t < 1) {
+          const count = Math.max(2, Math.round(fullPoints.length * eased));
+          const partialCurve = new THREE.CatmullRomCurve3(fullPoints.slice(0, count));
+          entry.mesh.geometry.dispose();
+          entry.mesh.geometry = new THREE.TubeGeometry(partialCurve, Math.max(2, count - 1), radius, 8, false);
+          if (entry.connB) entry.connB.visible = eased >= 0.92; // 끝 커넥터는 거의 다 도달했을 때 팝인
+          entry.animId = requestAnimationFrame(step);
+        } else {
+          entry.mesh.geometry.dispose();
+          entry.mesh.geometry = new THREE.TubeGeometry(curve, 24, radius, 8, false);
+          if (entry.connB) entry.connB.visible = true;
+          entry.animId = null;
+        }
+      }
+      gear3dCableMeshes[key].animId = requestAnimationFrame(step);
+    }
+
+    // 케이블 하나를 새로 만들거나(없으면), 이미 있으면 지오메트리만 다시 계산해 갱신합니다.
+    // 재질은 모든 케이블이 공유하므로 매번 새로 만들지 않습니다.
+    function gear3dUpdateCableMesh(cable) {
+      const key = gear3dCableKey(cable.fromId, cable.toId);
+      const a = gear3dGetWorldTerminal(cable.fromId);
+      const b = gear3dGetWorldTerminal(cable.toId);
+      if (!a || !b) { gear3dDisposeCableMesh(key); return; }
+
+      const normalA = gear3dGetWorldTerminalNormal(cable.fromId);
+      const normalB = gear3dGetWorldTerminalNormal(cable.toId);
+      const curve = gear3dCableCurve(a, b, normalA, normalB);
+      const radius = gear3dCableRadiusFor(cable);
+
+      let entry = gear3dCableMeshes[key];
+      if (entry) {
+        if (entry.animId) { cancelAnimationFrame(entry.animId); entry.animId = null; }
+        entry.mesh.geometry.dispose();
+        entry.mesh.geometry = new THREE.TubeGeometry(curve, 24, radius, 8, false);
+        entry.connA = gear3dMakeOrUpdateConnector(entry.connA, a, normalA);
+        entry.connB = gear3dMakeOrUpdateConnector(entry.connB, b, normalB);
+        if (!entry.connB.visible) entry.connB.visible = true; // 이동/회전 갱신 중엔 항상 다 보여야 함
+      } else {
+        const mesh = new THREE.Mesh(new THREE.TubeGeometry(curve, 24, radius, 8, false), gear3dGetCableMaterial());
+        mesh.userData.cableKey = key;
+        gear3d.scene.add(mesh);
+        entry = { mesh: mesh, connA: null, connB: null, animId: null };
+        entry.connA = gear3dMakeOrUpdateConnector(null, a, normalA);
+        entry.connB = gear3dMakeOrUpdateConnector(null, b, normalB);
+        entry.connB.visible = false; // 연결 애니메이션이 끝에 다다를 때 팝인되도록, 생성 직후엔 숨김
+        gear3dCableMeshes[key] = entry;
+        gear3dAnimateCableConnect(key, curve, radius);
+      }
+    }
+
+    // 연결된 장비 중 하나(id)가 이동/회전했을 때, 그 장비가 걸린 케이블만 갱신합니다
+    // (전체를 매 프레임 다시 만들지 않기 위한 최소 갱신).
+    function gear3dUpdateCablesForGear(id) {
+      connectedCables.forEach(cable => {
+        if (cable.fromId === id || cable.toId === id) gear3dUpdateCableMesh(cable);
+      });
+    }
+
+    // connectedCables 배열 전체를 기준으로 케이블 메시를 다시 맞춥니다(추가된 건 새로 만들고,
+    // connectedCables에서 사라졌거나 끝점이 없어진 건 정리) — 케이블 연결/초기화/되돌리기처럼
+    // 한 번에 여러 개가 바뀌는 시점에만 호출합니다.
+    function gear3dRebuildAllCables() {
+      const liveKeys = new Set(connectedCables.map(c => gear3dCableKey(c.fromId, c.toId)));
+      Object.keys(gear3dCableMeshes).forEach(key => { if (!liveKeys.has(key)) gear3dDisposeCableMesh(key); });
+      connectedCables.forEach(gear3dUpdateCableMesh);
     }
 
     function reset3DPlacement() {
@@ -5993,9 +6373,12 @@
       gear3d.undoStack = [];
       gear3d.redoStack = [];
       gear3dRenderTray();
+      // 모든 장비의 배치 지점이 사라졌으므로, 걸려있던 케이블 메시도 전부 정리합니다.
+      gear3dRebuildAllCables();
     }
 
     function resetCables() {
+      Object.keys(gear3dCableMeshes).forEach(gear3dDisposeCableMesh);
       connectedCables = [];
       selectedGearForCable = null;
       document.getElementById('cableStatusText').innerText = "🔌 케이블 초기화됨. 첫 번째 장비를 클릭하세요.";
