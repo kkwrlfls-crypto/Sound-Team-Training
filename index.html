@@ -82,6 +82,14 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
+    /* 2026-10-14 추가: 탭이 6개가 되어 버튼 폭이 줄었으므로 한글 단어 중간에서 줄바꿈하지 않게 */
+    .tab-nav .tab-btn { word-break: keep-all; }
+    /* 2026-10-14 추가: 탭이 6개가 되어 휴대폰 폭에서는 3개씩 두 줄로 배치 (글자가 세로로 쪼개지지 않게) */
+    @media (max-width: 640px) {
+      .tab-nav { flex-wrap: wrap; }
+      .tab-nav .tab-btn { flex: 1 1 calc(33.333% - 6px); word-break: keep-all; }
+    }
+
     .tab-btn.active {
       background: var(--primary);
       color: #ffffff;
@@ -510,6 +518,27 @@
     .cl5-name-label-lg:hover { border-color: rgba(250, 204, 21, 0.85); }
     .cl5-name-label-lg:focus { outline: none; border-color: rgba(45, 212, 191, 0.95); background: rgba(15, 23, 42, 0.98); }
     .cl5-name-label-lg.cl5-blank-slot { cursor: default; opacity: 0.35; }
+    /* 2026-10-15: 사용하지 않는 채널(이름 없음)은 주소만 흐리게, DCA 로 꺼진 채널은 노란 빗금 */
+    .cl5-name-label-lg.cl5-unused-ch, .cl5-name-label.cl5-unused-ch { opacity: 0.45; font-weight: 500; font-style: italic; }
+    .cl5-on-hotspot.dca-muted { border-color: rgba(250, 204, 21, 0.95) !important; background: repeating-linear-gradient(135deg, rgba(250,204,21,0.35) 0 3px, rgba(0,0,0,0.78) 3px 6px) !important; box-shadow: none !important; }
+    .cl5-name-label-lg.dca-muted { border: 2px dashed rgba(250, 204, 21, 0.95) !important; background: rgba(66, 32, 6, 0.92) !important; box-shadow: none !important; color: #fde68a; }
+    .cl5-name-label-lg.dca-muted::after { content: 'DCA OFF'; display: block; font-size: 0.6rem; color: #facc15; margin-left: 4px; }
+    .cl5-dca-member.unused { opacity: 0.45; font-style: italic; }
+    .cl5-on-hotspot.cl5-no-addr { opacity: 0.35; cursor: default; }
+    .cl5-dca-section { margin: 12px 0; }
+    .cl5-dca-panel { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+    @media (max-width: 760px) { .cl5-dca-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .cl5-dca-card { background: rgba(15, 23, 42, 0.92); border: 1px solid rgba(100, 116, 139, 0.6); border-radius: 10px; padding: 8px; color: #e2e8f0; min-width: 0; }
+    .cl5-dca-card.unused { opacity: 0.45; }
+    .cl5-dca-btn { width: 100%; display: grid; grid-template-columns: auto 1fr auto; gap: 6px; align-items: center; background: rgba(0,0,0,0.35); color: inherit; border: 2px solid rgba(220,38,38,0.7); border-radius: 8px; padding: 6px 8px; cursor: pointer; font: inherit; text-align: left; }
+    .cl5-dca-card.on .cl5-dca-btn { border-color: rgba(234, 88, 12, 0.95); background: rgba(234, 88, 12, 0.22); box-shadow: 0 0 9px 1px rgba(249, 115, 22, 0.45); }
+    .cl5-dca-btn b { font-size: 0.72rem; color: #94a3b8; } .cl5-dca-btn span { font-weight: 800; font-size: 0.95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .cl5-dca-btn i { font-style: normal; font-size: 0.72rem; font-weight: 800; }
+    .cl5-dca-card.muted .cl5-dca-btn i { color: #fca5a5; } .cl5-dca-card.on .cl5-dca-btn i { color: #fdba74; }
+    .cl5-dca-btn:disabled { cursor: default; }
+    .cl5-dca-members { margin-top: 6px; font-size: 0.7rem; line-height: 1.7; color: #94a3b8; }
+    .cl5-dca-member { display: inline-block; margin: 0 3px 3px 0; padding: 0 5px; border-radius: 4px; background: rgba(148,163,184,0.15); color: #cbd5e1; }
+    .cl5-dca-member.on { background: rgba(234, 88, 12, 0.3); color: #fff7ed; }
+    .cl5-dca-empty { font-style: italic; }
     /* 사진 속 ON 버튼을 눌러서 그 채널이 켜지면, "크게 보기" 패널의 같은 칸도 실제
        ON 버튼이 켜졌을 때와 똑같은 주황빛으로 환하게 밝아지게 했습니다. */
     .cl5-name-label-lg.cl5-on {
@@ -1211,6 +1240,128 @@
       resize: vertical;
       color: var(--text-main);
     }
+
+    /* ===== 3D 장비 연결 실습 (탭1, 2026-10-14 추가) ===== */
+    .pa3d-card { background: #ffffff; }
+    .pa3d-intro { font-size: 0.85rem; color: var(--text-sub); line-height: 1.5; margin-bottom: 10px; }
+    .pa3d-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; align-items: center; }
+    .pa3d-row .pa3d-label { font-size: 0.75rem; font-weight: 800; color: var(--text-main); margin-right: 4px; }
+    .pa3d-btn { border: 1px solid var(--border-color); background: #fff; border-radius: 8px; padding: 6px 10px; font-size: 0.8rem; cursor: pointer; color: var(--text-main); }
+    .pa3d-btn.on { background: var(--accent-cyan); border-color: var(--accent-cyan); color: #fff; }
+    .pa3d-cable-btn.on { background: var(--accent-yellow); border-color: var(--accent-yellow); }
+    .pa3d-viewport { position: relative; width: 100%; height: clamp(320px, 58vw, 540px); border-radius: 10px; overflow: hidden; background: #eef1f5; border: 1px solid var(--border-color); touch-action: none; }
+    .pa3d-canvas { display: block; width: 100%; height: 100%; }
+    .pa3d-tip { position: absolute; display: none; pointer-events: none; background: rgba(17,24,39,0.88); color: #fff; font-size: 0.72rem; padding: 4px 8px; border-radius: 6px; white-space: nowrap; z-index: 2; }
+    .pa3d-busy { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(255,255,255,0.55); font-size: 0.85rem; font-weight: 700; color: var(--text-main); z-index: 3; }
+    .pa3d-start { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; text-align: center; padding: 16px; font-size: 0.8rem; color: var(--text-sub); }
+    .pa3d-msg { min-height: 20px; font-size: 0.8rem; color: var(--text-main); margin: 6px 0; line-height: 1.4; }
+    .pa3d-msg.bad { color: var(--accent-red); } .pa3d-msg.good { color: var(--accent-green); }
+    .pa3d-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; margin-top: 8px; }
+    .pa3d-box { border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 12px; background: #f8fafc; min-width: 0; }
+    .pa3d-box h4 { font-size: 0.8rem; margin: 0 0 6px; color: var(--text-main); }
+    .pa3d-mtitle { font-weight: 800; font-size: 0.85rem; margin-bottom: 4px; } .pa3d-done { color: var(--accent-green); }
+    .pa3d-mdesc { font-size: 0.78rem; color: var(--text-sub); line-height: 1.45; margin-bottom: 6px; }
+    .pa3d-check, .pa3d-conns { list-style: none; padding: 0; margin: 0; font-size: 0.78rem; line-height: 1.6; }
+    .pa3d-check li.ok { color: var(--accent-green); font-weight: 700; }
+    .pa3d-chip { display: inline-block; font-size: 0.74rem; border-radius: 999px; padding: 2px 8px; margin: 0 4px 4px 0; border: 1px solid var(--border-color); }
+    .pa3d-chip.on { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.4); color: #047857; } .pa3d-chip.off { color: var(--text-sub); }
+    .pa3d-spk { font-size: 0.78rem; margin: 4px 0; line-height: 1.45; } .pa3d-spk.good b { color: #047857; } .pa3d-spk.warn b { color: var(--accent-yellow); } .pa3d-spk.none b { color: var(--text-sub); }
+    .pa3d-path { font-size: 0.7rem; color: var(--text-sub); overflow-wrap: anywhere; }
+    .pa3d-note { font-size: 0.72rem; color: var(--accent-yellow); margin-top: 4px; }
+    .pa3d-conns li { overflow-wrap: anywhere; } .pa3d-conns li.pa3d-empty { color: var(--text-sub); }
+    .pa3d-ctype { font-size: 0.68rem; font-weight: 800; border-radius: 4px; padding: 1px 5px; background: #e5e7eb; }
+    .pa3d-ctype.speakon { background: #dbe4f5; } .pa3d-ctype.ac { background: #fde7c7; }
+
+    /* 2026-10-15: MG12XU 기능부 설명 (같은 기능부 테두리 묶음 + 말풍선) */
+    .mg12xu-sec-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 8px 0; }
+    #mg12xuSecToggle.on { background: var(--accent-cyan, #0891b2); color: #fff; }
+    .mg12xu-sec-hint { font-size: 0.78rem; color: var(--text-sub); flex: 1 1 260px; min-width: 0; }
+    .mg12xu-sec-layer { position: absolute; inset: 0; z-index: 40; pointer-events: none; display: none; }
+    .mg12xu-sec-on .mg12xu-sec-layer { display: block; pointer-events: auto; }
+    .mg12xu-sec-zone { position: absolute; border: 2px solid transparent; border-radius: 6px; cursor: help; transition: border-color 0.12s, background 0.12s, box-shadow 0.12s; }
+    .mg12xu-sec-on .mg12xu-sec-zone { border-color: rgba(255,255,255,0.14); }
+    .mg12xu-sec-zone.hl { border-color: #facc15; background: rgba(250,204,21,0.16); box-shadow: 0 0 0 2px rgba(0,0,0,0.35), 0 0 12px rgba(250,204,21,0.55); }
+    .mg12xu-sec-zone.hl.main { background: rgba(250,204,21,0.28); }
+    .mg12xu-sec-bubble { position: absolute; z-index: 60; max-width: min(320px, 86vw); background: #111827; color: #f9fafb; border-radius: 10px; padding: 10px 12px; font-size: 0.8rem; line-height: 1.5; box-shadow: 0 8px 24px rgba(0,0,0,0.35); display: none; }
+    .mg12xu-sec-bubble::after { content: ''; position: absolute; left: var(--tail-x, 24px); width: 12px; height: 12px; background: #111827; transform: rotate(45deg); }
+    .mg12xu-sec-bubble.below::after { top: -6px; } .mg12xu-sec-bubble.above::after { bottom: -6px; }
+    .mg12xu-sec-bubble b { display: block; color: #facc15; margin-bottom: 4px; font-size: 0.85rem; }
+    .mg12xu-sec-bubble .mg12xu-sec-part { color: #9ca3af; font-size: 0.72rem; margin-top: 6px; }
+    .mg12xu-sec-bubble [contenteditable="true"] { outline: 1px dashed #facc15; outline-offset: 2px; border-radius: 4px; }
+    .mg12xu-sec-bubble .mg12xu-sec-close { position: absolute; top: 4px; right: 6px; background: none; border: 0; color: #9ca3af; font-size: 1rem; cursor: pointer; }
+    .mg12xu-sec-list { margin-top: 12px; border: 1px solid var(--border-color); border-radius: 10px; padding: 8px 12px; background: #f8fafc; }
+    .mg12xu-sec-list summary { cursor: pointer; font-weight: 700; font-size: 0.85rem; }
+    .mg12xu-sec-texts { list-style: none; padding: 0; margin: 8px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; }
+    .mg12xu-sec-src { font-size: 0.8rem; line-height: 1.5; background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 10px; min-width: 0; cursor: pointer; }
+    .mg12xu-sec-src b { display: block; margin-bottom: 2px; }
+    .pa3d-how { font-size: 0.78rem; }
+    .pa3d-actions { margin-top: 8px; display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+    .pa3d-ctls { display: flex; flex-direction: column; gap: 6px; }
+    .pa3d-ctl { display: flex; flex-direction: column; gap: 2px; font-size: 0.76rem; color: var(--text-main); }
+    .pa3d-ctl > span { display: flex; justify-content: space-between; gap: 6px; } .pa3d-ctl b { font-variant-numeric: tabular-nums; color: var(--text-sub); font-weight: 700; }
+    .pa3d-ctl input[type=range] { width: 100%; }
+    .pa3d-tg { align-self: flex-start; padding: 3px 10px; }
+    .pa3d-meter { height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden; margin: 4px 0 2px; }
+    .pa3d-meter i { display: block; height: 100%; background: #94a3b8; } .pa3d-meter i.good { background: #10b981; } .pa3d-meter i.clip { background: #ef4444; } .pa3d-meter i.low { background: #f59e0b; }
+    .pa3d-empty { color: var(--text-sub); font-size: 0.76rem; }
+    /* 2026-10-15: 음향 트러블슈팅 탭 */
+    .ts-root { display: flex; flex-direction: column; gap: 12px; }
+    .ts-root [hidden] { display: none !important; }
+    .ts-note { font-size: 0.78rem; line-height: 1.5; color: #92400e; background: #fffbeb; border: 1px solid #fcd34d; border-radius: 10px; padding: 8px 12px; }
+    .ts-h3 { font-size: 0.95rem; margin: 4px 0 8px; }
+    .ts-mgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; }
+    .ts-mcard, .ts-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; min-width: 0; }
+    .ts-level { display: inline-block; font-size: 0.68rem; font-weight: 800; color: #047857; background: rgba(16,185,129,0.12); border-radius: 999px; padding: 1px 8px; margin-bottom: 4px; }
+    .ts-mname, .ts-mtitle { font-weight: 800; font-size: 0.92rem; color: var(--text-main); }
+    .ts-chain { font-size: 0.75rem; color: var(--text-sub); margin: 2px 0 6px; }
+    .ts-symptom-s { font-size: 0.78rem; line-height: 1.45; color: var(--text-main); background: var(--inner-bg); border-radius: 8px; padding: 6px 8px; margin-bottom: 8px; }
+    .ts-scen, .ts-tools, .ts-head-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ts-btn { border: 1px solid var(--border-color); background: #fff; color: var(--text-main); border-radius: 8px; padding: 6px 10px; font-size: 0.78rem; cursor: pointer; text-align: left; }
+    .ts-btn:hover { border-color: var(--primary); } .ts-btn small { color: var(--text-sub); }
+    .ts-btn.ts-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .ts-small { font-size: 0.72rem; color: var(--text-sub); line-height: 1.45; margin-top: 4px; }
+    .ts-head { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: flex-start; }
+    .ts-symptom { font-size: 0.85rem; line-height: 1.5; background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 8px 12px; }
+    .ts-symptom b { color: var(--accent-red); margin-right: 6px; }
+    .ts-hints { font-size: 0.8rem; line-height: 1.5; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .ts-verifymsg { font-size: 0.82rem; border-radius: 10px; padding: 8px 12px; } .ts-verifymsg.bad { background: #fff7ed; border: 1px solid #fdba74; }
+    .ts-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 10px; }
+    @media (max-width: 860px) { .ts-grid { grid-template-columns: minmax(0, 1fr); } }
+    .ts-flowcard, .ts-logcard { grid-column: 1 / -1; }
+    .ts-card h4 { font-size: 0.82rem; margin: 0 0 8px; color: var(--text-main); } .ts-card h4 small { font-weight: 500; color: var(--text-sub); margin-left: 4px; }
+    .ts-viewport { position: relative; width: 100%; height: clamp(260px, 42vw, 400px); border-radius: 10px; overflow: hidden; background: #eef1f5; border: 1px solid var(--border-color); touch-action: none; }
+    .ts-canvas { display: block; width: 100%; height: 100%; }
+    .ts-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 12px; font-size: 0.8rem; color: var(--text-sub); }
+    .ts-tip { position: absolute; display: none; pointer-events: none; background: rgba(17,24,39,0.88); color: #fff; font-size: 0.72rem; padding: 4px 8px; border-radius: 6px; white-space: nowrap; z-index: 2; }
+    .ts-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+    .ts-chip { border: 1px solid var(--border-color); background: var(--inner-bg); border-radius: 999px; padding: 3px 9px; font-size: 0.72rem; cursor: pointer; color: var(--text-main); }
+    .ts-chip.on { background: #f59e0b; border-color: #f59e0b; color: #fff; }
+    .ts-flow { overflow-x: auto; } .ts-flow svg { display: block; width: 100%; height: auto; min-width: 520px; }
+    .ts-node { cursor: pointer; } .ts-node text, .ts-edge text { pointer-events: none; } .ts-node rect { fill: #f8fafc; stroke: #94a3b8; stroke-width: 1.5; } .ts-node.sel rect { stroke: #f59e0b; stroke-width: 3; fill: #fffbeb; }
+    .ts-node text { text-anchor: middle; font-size: 11px; fill: var(--text-main); } .ts-node text.nm { font-weight: 800; font-size: 11.5px; }
+    .ts-node tspan.sig { fill: #047857; font-weight: 700; } .ts-node tspan.none { fill: #dc2626; font-weight: 700; } .ts-node tspan.unk { fill: #94a3b8; } .ts-node tspan.stale { opacity: 0.45; }
+    .ts-edge { cursor: pointer; } .ts-edge path { fill: none; stroke: #cbd5e1; stroke-width: 3; } .ts-edge path.hit { stroke: transparent; stroke-width: 16; }
+    .ts-edge.ok path:first-child { stroke: #10b981; } .ts-edge.open path:first-child { stroke: #dc2626; stroke-dasharray: 6 5; } .ts-edge.stale path:first-child { opacity: 0.45; }
+    .ts-edge.sel path:first-child { stroke-width: 5; } .ts-edge text { text-anchor: middle; font-size: 10px; fill: var(--text-sub); }
+    .ts-legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 0.68rem; color: var(--text-sub); margin-top: 6px; align-items: center; }
+    .ts-legend i { display: inline-block; width: 14px; height: 4px; border-radius: 2px; margin-right: 3px; vertical-align: middle; }
+    .lg-sig { background: #10b981; } .lg-none { background: #dc2626; } .lg-open { background: repeating-linear-gradient(90deg, #dc2626 0 4px, transparent 4px 7px); } .lg-unk { background: #cbd5e1; } .lg-stale { background: #10b981; opacity: 0.4; }
+    .ts-sub { font-size: 0.72rem; font-weight: 800; color: var(--text-sub); margin: 8px 0 4px; }
+    .ts-empty { font-size: 0.76rem; color: var(--text-sub); }
+    .ts-res { border-radius: 8px; padding: 8px 10px; margin-top: 8px; font-size: 0.78rem; line-height: 1.5; background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .ts-res.warn { background: #fffbeb; border-color: #fde68a; } .ts-res.bad { background: #fef2f2; border-color: #fecaca; }
+    .ts-res ul { margin: 4px 0 0 16px; } .ts-found { margin-top: 4px; font-weight: 700; color: var(--text-main); }
+    .ts-ops { display: flex; flex-direction: column; gap: 6px; }
+    .ts-op { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px; font-size: 0.78rem; }
+    .ts-op.ts-range { flex-direction: column; align-items: stretch; } .ts-op.ts-range span { display: flex; justify-content: space-between; } .ts-op input[type=range] { width: 100%; } .ts-op select { max-width: 100%; font-size: 0.78rem; }
+    .ts-logcard { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 4px 16px; }
+    .ts-evidence, .ts-log { margin: 0 0 0 18px; font-size: 0.76rem; line-height: 1.55; max-height: 260px; overflow-y: auto; }
+    .ts-evidence li.stale { opacity: 0.55; } .ts-log li { margin-bottom: 4px; } .ts-log li.un { color: #b45309; } .ts-log .lg-i.bad small { color: #dc2626; } .ts-log .lg-v.ok { color: #047857; font-weight: 700; }
+    .ts-resultcard { display: flex; flex-direction: column; gap: 8px; } .ts-resultcard p, .ts-resultcard li { font-size: 0.82rem; line-height: 1.5; } .ts-resultcard ul { margin-left: 18px; }
+    .ts-resultcard li.root { font-weight: 700; color: #047857; }
+    .ts-score { font-size: 1.1rem; } .ts-score b { font-size: 2rem; color: var(--primary); } .ts-score span { color: #f59e0b; margin-left: 6px; }
+    .ts-rgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+    .pa3d-x { border: 1px solid var(--border-color); background: #fff; border-radius: 6px; font-size: 0.7rem; padding: 1px 6px; cursor: pointer; margin-left: 4px; }
 
     /* ===== MG12XU 콘솔 구축 게임 (탭1) ===== */
     .mg12xu-game-card { background: #ffffff; }
@@ -1939,6 +2090,8 @@
   <div class="tab-nav">
     <button class="tab-btn active" data-tab="tab4" onclick="switchTab('tab4')">📅 10주 커리큘럼</button>
     <button class="tab-btn" data-tab="tab1" onclick="switchTab('tab1')">📢 확성 시스템의 기본</button>
+    <button class="tab-btn" data-tab="tab6" onclick="switchTab('tab6')">🎛 MG12XU 실습</button>
+    <button class="tab-btn" data-tab="tab7" onclick="switchTab('tab7')">🛠 음향 트러블슈팅</button>
     <button class="tab-btn" data-tab="tab2" onclick="switchTab('tab2')">🗺 3층 음향 시스템</button>
     <button class="tab-btn" data-tab="tab5" onclick="switchTab('tab5')">🎚 CL5 콘솔 트레이닝</button>
     <button class="tab-btn" data-tab="tab3" onclick="switchTab('tab3')">🎧 Ear Training</button>
@@ -1975,6 +2128,29 @@
         <p class="editable-text" data-field="tab1.card3.desc">콘솔에서 출력된 신호가 내장 앰프가 포함된 액티브(Powered) 스피커로 바로 전달되는 구조입니다.</p>
       </div>
 
+      <!-- 2026-10-14 추가 / 10-15 세분화: 3D 장비 연결·조작 실습 3개 (각 카드가 자기 캔버스를 가짐, 내용은 assets3d/pa_practice_3d.js 가 그림) -->
+      <div class="theory-card pa3d-card" data-pa3d="s1"></div>
+      <div class="theory-card pa3d-card" data-pa3d="s2"></div>
+      <div class="theory-card pa3d-card" data-pa3d="s3"></div>
+    </div>
+
+    <!-- TAB 6 (2026-10-14 분리): MG12XU 콘솔 실습 게임 — 원래 탭1 안에 있던 카드를 그대로 옮김 -->
+    <!-- TAB 7 (2026-10-15 추가): 음향 트러블슈팅 — 고장 증상을 검사해 원인을 찾고 복구하는 교육용 시뮬레이터.
+         내용은 assets3d/pa_troubleshoot.js(화면) + assets3d/pa_troubleshoot_engine.js(진단 엔진)가 그림 -->
+    <div id="tab7" class="tab-content">
+      <div class="level-header">
+        <div class="level-title">음향 트러블슈팅</div>
+        <div class="level-desc">이미 설치된 시스템에 고장이 하나 생겼습니다. 증상을 보고 장비와 케이블을 검사해 원인을 찾고, 직접 고친 뒤 최종 검증까지 해 보세요.</div>
+      </div>
+      <div id="tsRoot" class="ts-root"></div>
+    </div>
+
+    <div id="tab6" class="tab-content">
+      <div class="level-header">
+        <div class="level-title">MG12XU 콘솔 실습</div>
+        <div class="level-desc">무대 위 소스를 실제 MG12XU 콘솔 채널에 연결하고, 노브·페이더·라우팅으로 소리를 만들어 봅니다.</div>
+      </div>
+
       <div class="theory-card mg12xu-game-card">
         <h3>🎚 실습 게임: MG12XU 콘솔로 음향 시스템 구축해보기</h3>
         <p>실제 페이더·EQ 조작은 현장에서 배우지만, "무엇을 어디에 연결해야 하는지"는 미리 게임으로 연습할 수 있습니다.</p>
@@ -1985,6 +2161,12 @@
           <div class="mg12xu-audio-toggle-row">
             <button class="btn" id="mg12xuAudioToggleBtn" onclick="toggleMg12xuAudio()">🔊 오디오 테스트 켜기 (채널 조작 시 실제 소리 변화)</button>
             <span class="mg12xu-audio-hint" id="mg12xuAudioHint">꺼짐 — 켜면 각 소스마다 테스트 톤이 재생되고, 페이더·GAIN·EQ·ON·라우팅 조작이 실시간으로 소리에 반영됩니다.</span>
+          </div>
+
+          <!-- 2026-10-15 추가: 기능부 설명 (같은 기능부를 테두리로 묶어 표시 + 말풍선 설명, 설명 문구는 편집 후 저장 가능) -->
+          <div class="mg12xu-sec-bar">
+            <button type="button" class="btn" id="mg12xuSecToggle" onclick="mg12xuSecToggle()">🔍 기능부 설명 보기</button>
+            <span class="mg12xu-sec-hint" id="mg12xuSecHint">켜면 콘솔·단자 사진 위에 마우스를 올렸을 때(휴대폰은 누르면) 같은 기능을 하는 부분이 모두 테두리로 묶여 보이고 설명 말풍선이 나타납니다. 설명 모드에서는 노브·페이더 조작과 케이블 연결이 잠시 멈춥니다.</span>
           </div>
           <div class="mg12xu-patchbay-wrap" id="mg12xuPatchbayWrap">
             <svg class="mg12xu-patchbay-svg" id="mg12xuConnectSvg"></svg>
@@ -2047,6 +2229,16 @@
           </div>
           <button class="btn" style="margin-top:10px;" onclick="checkMg12xuStep1()">✅ 채널 배정 확인하기</button>
           <div class="result-panel" id="mg12xuStep1Result"></div>
+          <details class="mg12xu-sec-list" id="mg12xuSecList">
+            <summary>📖 기능부 설명 전체 보기 / 편집</summary>
+            <div class="content-edit-bar" id="tab6EditBar">
+              <button type="button" class="content-edit-btn" id="tab6EditBtn" onclick="toggleContentEdit('tab6')">✏️ 기능부 설명 편집</button>
+              <button type="button" class="content-edit-btn save" onclick="saveEditedContent('tab6')">💾 저장 (새 index.html 다운로드)</button>
+              <button type="button" class="content-edit-btn cancel" onclick="cancelContentEdit('tab6')">편집 취소</button>
+              <span class="content-edit-hint">아래 목록이나 말풍선 안의 글을 직접 고친 뒤 저장하면 수정 내용이 담긴 새 index.html 이 다운로드됩니다. 그 파일로 기존 파일을 바꾸면 반영됩니다.</span>
+            </div>
+            <ul class="mg12xu-sec-texts"><li class="mg12xu-sec-src" data-sec="input"><b class="editable-text" data-field="tab6.sec.input.title">입력 단자 (MIC / LINE)</b><div class="editable-text" data-field="tab6.sec.input.desc">마이크나 악기를 꽂는 곳입니다. 1~4번은 XLR과 잭을 함께 쓰는 콤보 단자(MIC/LINE), 5~8번은 MIC(XLR)와 LINE(잭)이 따로 있고, 9~12번은 스테레오 라인 입력(잭·RCA)과 USB 오디오 입력입니다.</div></li><li class="mg12xu-sec-src" data-sec="padhpf"><b class="editable-text" data-field="tab6.sec.padhpf.title">PAD · HPF</b><div class="editable-text" data-field="tab6.sec.padhpf.desc">PAD는 입력 신호를 26dB 줄여 큰 소리(라인 기기, 드럼 등)가 찌그러지지 않게 합니다. HPF는 80Hz 아래 저음(무대 울림, 핸들링 소음, 바람 소리)을 잘라냅니다. 보컬·말 마이크는 HPF를 켜 두는 경우가 많습니다.</div></li><li class="mg12xu-sec-src" data-sec="phantom"><b class="editable-text" data-field="tab6.sec.phantom.title">팬텀 전원 (+48V)</b><div class="editable-text" data-field="tab6.sec.phantom.desc">콘덴서 마이크에 필요한 +48V 전원으로, CH1~7/8 MIC 입력에 한꺼번에 걸립니다. SM58 같은 다이내믹 마이크에는 필요 없고, 마이크를 꽂거나 뺄 때는 꺼 두는 것이 안전합니다.</div></li><li class="mg12xu-sec-src" data-sec="gain"><b class="editable-text" data-field="tab6.sec.gain.title">GAIN · PEAK</b><div class="editable-text" data-field="tab6.sec.gain.desc">입력 신호를 알맞은 크기로 키우는 첫 단계입니다. 실제로 말하거나 노래하게 하면서 GAIN을 올리고, PEAK 램프가 가끔 깜빡이면 조금 내립니다. 음량은 GAIN이 아니라 페이더로 맞춥니다.</div></li><li class="mg12xu-sec-src" data-sec="comp"><b class="editable-text" data-field="tab6.sec.comp.title">COMP (컴프레서)</b><div class="editable-text" data-field="tab6.sec.comp.desc">1~4번 채널의 원 노브 컴프레서입니다. 오른쪽으로 돌릴수록 큰 소리를 눌러 작은 소리와의 차이를 줄입니다. 말소리·보컬을 고르게 할 때 조금만 사용합니다.</div></li><li class="mg12xu-sec-src" data-sec="eq"><b class="editable-text" data-field="tab6.sec.eq.title">EQ (HIGH · MID · LOW)</b><div class="editable-text" data-field="tab6.sec.eq.desc">3밴드 이퀄라이저입니다. HIGH 10kHz, MID 2.5kHz, LOW 100Hz를 ±15dB 조절합니다(9~12번은 HIGH·LOW만). 가운데(0)가 기본이고, 거슬리는 대역을 조금 깎는 쪽으로 쓰는 것이 좋습니다.</div></li><li class="mg12xu-sec-src" data-sec="aux1"><b class="editable-text" data-field="tab6.sec.aux1.title">AUX1 (모니터 보내기)</b><div class="editable-text" data-field="tab6.sec.aux1.desc">무대 모니터 스피커(연주자·싱어가 듣는 소리)로 보내는 양입니다. 채널마다 AUX1 노브로 보내고, SEND MASTER의 AUX1로 전체 양을 정하면 AUX1 SEND 단자로 나갑니다. PRE 버튼을 누르면 페이더와 상관없이 보냅니다.</div></li><li class="mg12xu-sec-src" data-sec="fx"><b class="editable-text" data-field="tab6.sec.fx.title">AUX2/FX · SPX 이펙터 · FX RTN</b><div class="editable-text" data-field="tab6.sec.fx.desc">내장 SPX 이펙터(리버브·딜레이)로 보내는 경로입니다. 채널 AUX2/FX 노브 → SEND MASTER AUX2 → SPX(PROGRAM으로 효과 선택, PARAMETER로 길이 조절) → FX RTN 페이더로 메인에 섞입니다. AUX2 SEND 단자로 외부 장비에 보낼 수도 있습니다.</div></li><li class="mg12xu-sec-src" data-sec="pan"><b class="editable-text" data-field="tab6.sec.pan.title">PAN / BAL</b><div class="editable-text" data-field="tab6.sec.pan.desc">소리를 왼쪽(L)·오른쪽(R) 어디에 둘지 정합니다. 스테레오 채널(5/6 이후)은 BAL로 좌우 균형을 맞춥니다.</div></li><li class="mg12xu-sec-src" data-sec="on"><b class="editable-text" data-field="tab6.sec.on.title">ON (채널 켜기)</b><div class="editable-text" data-field="tab6.sec.on.desc">채널을 켜고 끄는 버튼입니다(켜지면 불이 들어옴). 꺼지면 메인·그룹·FX와 페이더 뒤(POST) AUX로 나가는 소리가 모두 꺼집니다.</div></li><li class="mg12xu-sec-src" data-sec="route"><b class="editable-text" data-field="tab6.sec.route.title">버스 할당 (1-2 / ST)</b><div class="editable-text" data-field="tab6.sec.route.desc">채널 소리를 어디로 보낼지 고릅니다. ST는 STEREO(메인) 버스, 1-2는 GROUP 1-2 버스입니다. 보통 ST를 켜 둡니다.</div></li><li class="mg12xu-sec-src" data-sec="fader"><b class="editable-text" data-field="tab6.sec.fader.title">채널 페이더</b><div class="editable-text" data-field="tab6.sec.fader.desc">채널의 최종 음량입니다. 0 표시(유니티) 근처에서 쓰는 것이 기본이고, 페이더를 많이 올려야 한다면 GAIN이 낮은 것은 아닌지 먼저 확인합니다.</div></li><li class="mg12xu-sec-src" data-sec="pfl"><b class="editable-text" data-field="tab6.sec.pfl.title">PFL (사전 청취)</b><div class="editable-text" data-field="tab6.sec.pfl.desc">PFL을 누르면 페이더 앞 신호를 헤드폰(PHONES)과 레벨 미터로 따로 들어볼 수 있습니다. 메인 소리를 건드리지 않고 GAIN을 맞추거나 문제 채널을 찾을 때 씁니다.</div></li><li class="mg12xu-sec-src" data-sec="group"><b class="editable-text" data-field="tab6.sec.group.title">GROUP 1-2</b><div class="editable-text" data-field="tab6.sec.group.desc">GROUP 1-2 버스의 마스터입니다. 여러 채널을 묶어 한 번에 조절하거나 GROUP OUT 단자로 따로 내보냅니다. ST 버튼을 누르면 STEREO 메인에도 섞입니다.</div></li><li class="mg12xu-sec-src" data-sec="stereo"><b class="editable-text" data-field="tab6.sec.stereo.title">STEREO 마스터 (메인 출력)</b><div class="editable-text" data-field="tab6.sec.stereo.desc">메인 출력(L/R)의 마스터 페이더입니다. 여기 신호가 STEREO OUT(XLR·잭) 단자로 나가 메인 스피커나 파워앰프로 갑니다.</div></li><li class="mg12xu-sec-src" data-sec="meter"><b class="editable-text" data-field="tab6.sec.meter.title">레벨 미터 · POWER</b><div class="editable-text" data-field="tab6.sec.meter.desc">STEREO 출력(PFL을 누르면 그 채널)의 레벨을 보여 줍니다. 0 근처에서 가끔 노란색까지 오르는 정도가 알맞고, 빨간색(+10)이 자주 켜지면 줄입니다. POWER 램프는 전원 표시입니다.</div></li><li class="mg12xu-sec-src" data-sec="monitor"><b class="editable-text" data-field="tab6.sec.monitor.title">모니터 · 헤드폰</b><div class="editable-text" data-field="tab6.sec.monitor.desc">엔지니어가 듣는 모니터입니다. MONITOR LEVEL은 MONITOR OUT 단자(컨트롤룸 모니터 스피커), PHONES는 헤드폰 음량이고, SOURCE 스위치로 STEREO와 GROUP 중 들을 소스를 고릅니다.</div></li><li class="mg12xu-sec-src" data-sec="footsw"><b class="editable-text" data-field="tab6.sec.footsw.title">FOOT SW (풋 스위치)</b><div class="editable-text" data-field="tab6.sec.footsw.desc">발로 밟는 스위치를 꽂아 내장 이펙터(FX)를 켜고 끕니다.</div></li></ul>
+          </details>
         </div>
 
         <div id="mg12xuBestTag"></div>
@@ -2110,6 +2302,12 @@
         <button class="cl5-step-btn" onclick="document.getElementById('cl5ImportFileInput').click()">📥 채널 이름표 불러오기</button>
         <input type="file" id="cl5ImportFileInput" accept="application/json,.json" style="display:none" onchange="cl5ImportNamesFile(this)">
         <span class="cl5-name-sync-hint">내가 입력한 이름은 이 브라우저에만 저장돼요. 다른 사람과 같은 이름을 보려면, 이름을 다 입력한 뒤 <b>내보내기</b>로 파일을 만들어 공유하고, 상대방은 그 파일을 <b>불러오기</b>로 열면 돼요.</span>
+      </div>
+
+      <!-- 2026-10-15 추가: DCA 그룹 (끄면 묶인 채널이 함께 꺼짐) -->
+      <div class="cl5-dca-section">
+        <div class="cl5-biglabel-title">🎛 DCA 그룹 — 버튼을 누르면 그 DCA 에 묶인 채널이 한꺼번에 꺼지고(MUTE) 다시 누르면 켜져요. 콘솔 오른쪽 8개 자리에서 <b>DCA 1-8</b> 레이어를 고르면 사진 위 ON 버튼으로도 조작할 수 있어요.</div>
+        <div id="cl5DcaPanel" class="cl5-dca-panel"></div>
       </div>
 
       <div class="cl5-biglabel-section">
@@ -2507,6 +2705,21 @@
   <script src="assets3d/mg12xu_audio_bav1.js"></script>
   <script src="assets3d/mg12xu_audio_bav2.js"></script>
   <script src="assets3d/mg12xu_audio_bav3.js"></script>
+  <!-- 2026-10-14 추가: 3D 장비 연결 실습 (탭1) — 각 파일은 전역 하나만 추가 -->
+  <script src="assets3d/shure_sm58_model.js"></script>
+  <script src="assets3d/yamaha_mg12xu_model.js"></script>
+  <script src="assets3d/ev_zxa1_model.js"></script>
+  <script src="assets3d/ev_zx1_model.js"></script>
+  <script src="assets3d/crown_xli1500_model.js"></script>
+  <script src="assets3d/korean_outlet_model.js"></script>
+  <script src="assets3d/xlr_cable_model.js"></script>
+  <script src="assets3d/speakon_cable_model.js"></script>
+  <script src="assets3d/ac_power_cable_model.js"></script>
+  <script src="assets3d/speaker_stand_model.js"></script>
+  <script src="assets3d/mic_stand_model.js"></script>
+  <script src="assets3d/pa_practice_3d.js"></script>
+  <script src="assets3d/pa_troubleshoot_engine.js"></script>
+  <script src="assets3d/pa_troubleshoot.js"></script>
 
   <script>
     /* ===== 공통 모달 (alert 대체) ===== */
@@ -5051,7 +5264,7 @@
         title: '1주차',
         goal: '교회 음향 시스템과 스텝 기본 예절 이해',
         practice: '스텝 예절(복장·태도·무전기 사용법), 강동교회 음향 시스템 설명, MG12XU 콘솔로 음향 시스템 구축해보기',
-        tool: '탭1 "MG12XU 콘솔로 음향 시스템 구축해보기" 게임으로 먼저 연습한 뒤, 탭2 "3층 음향 시스템"으로 실제 장비 배치와 신호 경로(스테이지박스→콘솔→앰프→스피커)를 예습해보세요.',
+        tool: '"🎛 MG12XU 실습" 탭의 "MG12XU 콘솔로 음향 시스템 구축해보기" 게임으로 먼저 연습한 뒤, 탭2 "3층 음향 시스템"으로 실제 장비 배치와 신호 경로(스테이지박스→콘솔→앰프→스피커)를 예습해보세요.',
         tab: 'tab2' },
       { week: 2, phase: '모니터 스텝 1주', phaseColor: 'blue',
         title: '2주차',
@@ -5182,8 +5395,8 @@
     /* ===== 탭1 설명 / 탭4 커리큘럼 내용 편집 모드 (저장 시 수정 내용이 담긴 새 index.html 다운로드) =====
        - localStorage에 저장하지 않습니다. "저장" 버튼을 누르면 현재 페이지 전체를 다시 직렬화해서
          새 index.html 파일로 다운로드하며, 사용자가 그 파일로 기존 파일을 교체해야 수정이 반영됩니다. */
-    let mg12xuContentEditing = { tab1: false, tab4: false };
-    let mg12xuEditSnapshot = { tab1: null, tab4: null };
+    let mg12xuContentEditing = { tab1: false, tab4: false, tab6: false };
+    let mg12xuEditSnapshot = { tab1: null, tab4: null, tab6: null };
 
     function mg12xuApplyEditableState(tabId, editing) {
       const container = document.getElementById(tabId);
@@ -5257,7 +5470,7 @@
       if (tabId === 'tab4') mg12xuSyncCurriculumFromDom();
       // 저장 파일에 편집 UI 상태(점선 테두리, contenteditable 등)가 그대로 남지 않도록
       // 양쪽 탭 모두 편집 모드를 끈 뒤 직렬화합니다.
-      ['tab1', 'tab4'].forEach(id => {
+      ['tab1', 'tab4', 'tab6'].forEach(id => {
         mg12xuContentEditing[id] = false;
         mg12xuApplyEditableState(id, false);
       });
@@ -7101,6 +7314,77 @@
       try { localStorage.setItem('cl5CustomChannelNames', JSON.stringify(cl5CustomNames)); } catch (e) { /* 저장 공간이 없으면 조용히 무시 */ }
     }
 
+    /* ===== 2026-10-15 추가: 본당 CL5 기본 채널 이름 + DCA 그룹 =====
+       - 기본 이름은 사용자(사운드팀)가 알려준 실제 패치 목록입니다. 사용하지 않는 채널은 ''(빈 이름)로 두어 주소(ch15 등)만 흐리게 보입니다.
+       - 직접 입력한 이름(cl5CustomNames, 이 브라우저 저장)이 있으면 그것이 우선입니다.
+       - ON 상태는 "화면 자리"가 아니라 "채널 주소(ch1~ch72, DCA1~16 …)"마다 따로 기억합니다. 레이어를 바꿔도 각 채널의 ON 상태가 유지됩니다.
+       - DCA 를 끄면(MUTE) 그 DCA 에 묶인 채널이 모두 함께 꺼지고, 다시 켜면 각 채널 자신의 ON 상태로 돌아옵니다(실제 CL5 의 DCA 뮤트와 같은 방식). */
+    const CL5_DEFAULT_NAMES = (function () {
+      const n = { ch1: 'Podium L', ch2: 'Podium R', ch3: 'Board', ch4: 'MC', ch5: 'Read', ch6: 'C Mic', ch7: '2F L', ch8: '2F R', ch9: 'PPT L', ch10: 'PPT R', ch11: 'Play L', ch12: 'Play R', ch13: 'Net L', ch14: 'Net R',
+        ch28: 'Leader', ch41: 'Org L', ch42: 'Org R', ch43: 'Piano L', ch44: 'Piano R', ch45: 'Synth1 L', ch46: 'Synth1 R', ch47: 'Synth2 L', ch48: 'Synth2 R',
+        ch49: 'Vn 1-1', ch50: 'Vn 1-2', ch51: 'Vn 2-1', ch52: 'Vn 2-2', ch53: 'Fl', ch54: 'Trp', ch56: 'Tuba', ch57: 'SN', ch58: 'Hg 1', ch59: 'Hg 2',
+        ch65: 'Drum L', ch66: 'Drum R', ch67: 'E.Bass', ch68: 'Elec', ch72: 'talkback',
+        DCA1: 'Choir', DCA2: 'Orc', DCA3: 'Piano', DCA4: 'Fx', DCA5: 'Vox', DCA6: 'INST' };
+      for (let i = 1; i <= 11; i++) n['ch' + (16 + i)] = 'Hand ' + i;      // 17~27
+      for (let i = 1; i <= 4; i++) n['ch' + (28 + i)] = 'Line ' + i;       // 29~32
+      for (let i = 1; i <= 4; i++) n['ch' + (32 + i)] = 'S/A ' + i;        // 33~36
+      for (let i = 1; i <= 3; i++) n['ch' + (36 + i)] = 'T/B ' + i;        // 37~39
+      [15, 16, 40, 55, 60, 61, 62, 63, 64, 69, 70, 71].forEach(function (c) { n['ch' + c] = ''; });   // 없음
+      n.DCA7 = ''; n.DCA8 = '';
+      return n;
+    })();
+    // DCA 배정 (DCA4 Fx 는 아직 배정 채널을 받지 못해 비어 있음, DCA7·8 없음)
+    const CL5_DCA_ASSIGN = {
+      DCA1: cl5Range('ch', 33, 39), DCA2: cl5Range('ch', 49, 59), DCA3: cl5Range('ch', 41, 48), DCA4: [],
+      DCA5: cl5Range('ch', 17, 27), DCA6: cl5Range('ch', 65, 68), DCA7: [], DCA8: []
+    };
+    const cl5On = {};   // 주소 → 자기 ON 상태 (채널 기본 꺼짐, DCA 기본 켜짐)
+    function cl5IsDca(addr) { return /^DCA\d+$/.test(addr || ''); }
+    function cl5OwnOn(addr) { return cl5On[addr] !== undefined ? cl5On[addr] : cl5IsDca(addr); }
+    function cl5DcasOf(addr) { return Object.keys(CL5_DCA_ASSIGN).filter(function (d) { return CL5_DCA_ASSIGN[d].indexOf(addr) >= 0; }); }
+    function cl5DcaMutedBy(addr) { return cl5IsDca(addr) ? [] : cl5DcasOf(addr).filter(function (d) { return !cl5OwnOn(d); }); }
+    // 실제로 소리가 나가는 상태 = 자기 ON && 묶인 DCA 가 모두 ON
+    function cl5Effective(addr) { return !!addr && cl5OwnOn(addr) && cl5DcaMutedBy(addr).length === 0; }
+    function cl5NameFor(addr) {
+      if (!addr) return '';
+      if (cl5CustomNames[addr]) return cl5CustomNames[addr];
+      const d = CL5_DEFAULT_NAMES[addr];
+      return d ? d : addr;
+    }
+    function cl5IsUnused(addr) { return !!addr && !cl5CustomNames[addr] && CL5_DEFAULT_NAMES[addr] === ''; }
+    function cl5SlotAddr(slotId) {   // ON 버튼 자리(ch1~ch32 / stL / mono) → 지금 그 자리에 보이는 주소
+      if (slotId === 'stL') return 'STEREO';
+      if (slotId === 'mono') return 'MONO';
+      const i = CL5_ON_BUTTON_POS.findIndex(function (p) { return p.id === slotId; });
+      return i >= 0 && i < 32 ? cl5CurrentAddrs()[i] : null;
+    }
+    function cl5SetOn(addr, on) { if (!addr) return; cl5On[addr] = !!on; cl5RefreshOnStates(); }
+    function cl5RefreshOnStates() {
+      document.querySelectorAll('.cl5-on-hotspot').forEach(function (btn) {
+        const addr = cl5SlotAddr(btn.dataset.id), eff = cl5Effective(addr), muted = !!addr && cl5OwnOn(addr) && !eff;
+        btn.classList.toggle('off', !eff); btn.classList.toggle('dca-muted', muted); btn.classList.toggle('cl5-no-addr', !addr);
+        btn.title = !addr ? '사용하지 않는 자리' : (cl5NameFor(addr) + (cl5NameFor(addr) !== addr ? ' (' + addr + ')' : '') + ' — ' + (eff ? 'ON' : muted ? 'DCA ' + cl5DcaMutedBy(addr).map(function (d) { return cl5NameFor(d); }).join(', ') + ' 꺼짐으로 소리 안 남' : 'OFF') + (cl5IsDca(addr) ? ' · 묶인 채널: ' + (CL5_DCA_ASSIGN[addr] && CL5_DCA_ASSIGN[addr].length ? CL5_DCA_ASSIGN[addr].join(', ') : '없음') : ''));
+        const slot = btn.dataset.slot;
+        if (slot !== undefined && slot !== '') {
+          const big = document.querySelector(`.cl5-name-label-lg[data-slot="${slot}"]`);
+          if (big) { big.classList.toggle('cl5-on', eff); big.classList.toggle('dca-muted', muted); }
+        }
+      });
+      cl5RenderDcaPanel();
+    }
+    function cl5RenderDcaPanel() {
+      const panel = document.getElementById('cl5DcaPanel');
+      if (!panel) return;
+      panel.innerHTML = Object.keys(CL5_DCA_ASSIGN).map(function (d) {
+        const members = CL5_DCA_ASSIGN[d], on = cl5OwnOn(d), unused = cl5IsUnused(d) && !members.length;
+        const list = members.length ? members.map(function (c) { return '<span class="cl5-dca-member' + (cl5Effective(c) ? ' on' : '') + (cl5IsUnused(c) ? ' unused' : '') + '" title="' + c + '">' + (cl5NameFor(c) || c) + '</span>'; }).join('') : '<span class="cl5-dca-empty">배정된 채널 없음</span>';
+        return '<div class="cl5-dca-card' + (on ? ' on' : ' muted') + (unused ? ' unused' : '') + '" data-dca="' + d + '"><button type="button" class="cl5-dca-btn" data-dca="' + d + '"' + (unused ? ' disabled' : '') + '>' +
+          '<b>' + d.replace('DCA', 'DCA ') + '</b><span>' + (unused ? '없음' : cl5NameFor(d)) + '</span><i>' + (unused ? '—' : on ? 'ON' : 'MUTE') + '</i></button>' +
+          '<div class="cl5-dca-members">' + (members.length ? 'ch' + members[0].slice(2) + '~' + members[members.length - 1].slice(2) + ' · ' : '') + list + '</div></div>';
+      }).join('');
+    }
+    function cl5ToggleDca(d) { if (!CL5_DCA_ASSIGN[d]) return; cl5SetOn(d, !cl5OwnOn(d)); }
+
     // 이 앱은 서버 없이 파일 하나로 동작하기 때문에, 내가 입력한 채널 이름은 내 브라우저
     // 안에만 저장되고 다른 사람에게 자동으로 전달되지 않습니다. 그래서 "내보내기"로
     // 이름 목록을 작은 json 파일로 저장해서 (카톡/메일 등으로) 공유하고, 받은 사람은
@@ -7164,10 +7448,11 @@
             el.classList.add('cl5-blank-slot');
             el.contentEditable = 'false';
           } else {
-            const shown = cl5CustomNames[addr] || addr;
+            const shown = cl5NameFor(addr);
             el.textContent = shown;
-            el.title = addr + (cl5CustomNames[addr] ? ' (' + addr + ') — 클릭해서 이름 수정' : ' — 클릭해서 이름 입력');
+            el.title = (shown !== addr ? shown + ' (' + addr + ')' : addr) + (cl5IsUnused(addr) ? ' — 사용하지 않는 채널' : '') + ' — 클릭해서 이름 수정';
             el.classList.remove('cl5-blank-slot');
+            el.classList.toggle('cl5-unused-ch', cl5IsUnused(addr));
             el.contentEditable = 'true';
           }
         });
@@ -7194,13 +7479,14 @@
         b.classList.toggle('active', b.dataset.key === cl5IOMode);
         setColor(b, b.dataset.key === 'input' ? 'green' : 'orange');
       });
+      cl5RefreshOnStates();   // 레이어가 바뀌면 각 자리의 ON 표시도 그 자리에 보이는 채널 기준으로 다시 그림
     }
 
     function cl5OnNameLabelBlur(el) {
       const addr = el.dataset.addr;
       if (!addr) return;
       const typed = el.textContent.replace(/\s+/g, ' ').trim();
-      if (!typed || typed === addr) {
+      if (!typed || typed === addr || typed === CL5_DEFAULT_NAMES[addr]) {
         delete cl5CustomNames[addr];
       } else {
         cl5CustomNames[addr] = typed;
@@ -7350,28 +7636,24 @@
       });
       cl5SetupLayerControls(wrap);
       cl5RenderChannelLabels();
+      const dp = document.getElementById('cl5DcaPanel');
+      if (dp) dp.addEventListener('click', function (e) { const b = e.target.closest && e.target.closest('.cl5-dca-btn'); if (b && !b.disabled) cl5ToggleDca(b.dataset.dca); });
+      cl5RefreshOnStates();
     }
 
+    // id = ON 버튼 자리(ch1~ch32 / stL / mono). 그 자리에 지금 보이는 주소(레이어에 따라 ch33, DCA1 …)의 ON 을 바꿉니다.
     function cl5ToggleChannel(id) {
+      const addr = cl5SlotAddr(id);
+      if (!addr) return;
+      cl5SetOn(addr, !cl5OwnOn(addr));
       const ch = cl5Channels.find(function (c) { return c.id === id; });
-      if (!ch) return;
-      ch.on = !ch.on;
-      const btn = document.querySelector(`.cl5-on-hotspot[data-id="${id}"]`);
-      if (btn) {
-        btn.classList.toggle('off', !ch.on);
-        // "채널 이름 크게 보기" 패널의 같은 칸도 실제 ON 버튼처럼 같이 불이 들어오게 동기화
-        const slot = btn.dataset.slot;
-        if (slot !== undefined && slot !== '') {
-          const big = document.querySelector(`.cl5-name-label-lg[data-slot="${slot}"]`);
-          if (big) big.classList.toggle('cl5-on', ch.on);
-        }
-      }
+      if (ch) ch.on = cl5Effective(addr);   // 예전 코드 호환 (자리 기준 상태)
     }
 
     function cl5ResetChannels() {
       cl5Channels.forEach(function (c) { c.on = false; });
-      document.querySelectorAll('.cl5-on-hotspot').forEach(function (btn) { btn.classList.add('off'); });
-      document.querySelectorAll('.cl5-name-label-lg').forEach(function (el) { el.classList.remove('cl5-on'); });
+      Object.keys(cl5On).forEach(function (k) { delete cl5On[k]; });   // 채널 모두 꺼짐, DCA 모두 켜짐(기본)
+      cl5RefreshOnStates();
       const panel = document.getElementById('cl5ResultPanel');
       if (panel) { panel.classList.remove('show'); panel.innerHTML = ''; }
     }
@@ -7410,8 +7692,9 @@
     function cl5RunStep() {
       if (!cl5GameRunning) return;
       if (cl5StepIndex >= worshipOrder.length) { cl5FinishGame(); return; }
-      cl5Channels.forEach(function (c) { c.on = false; }); // 매 순서마다 채널을 꺼진 상태로 초기화
-      document.querySelectorAll('.cl5-on-hotspot').forEach(function (btn) { btn.classList.add('off'); });
+      cl5Channels.forEach(function (c) { c.on = false; }); // 매 순서마다 채널을 꺼진 상태로 초기화 (DCA 상태는 유지)
+      Object.keys(cl5On).forEach(function (k) { if (!cl5IsDca(k)) delete cl5On[k]; });
+      cl5RefreshOnStates();
       cl5RenderLiveStage();
       cl5StartTimerBar(CL5_STEP_SECONDS);
       cl5StepStartedAt = Date.now();
@@ -7455,13 +7738,12 @@
       const onList = expected.on || [];
       const offList = expected.off || [];
       const wrong = [];
+      // 채점은 채널 주소(ch1~ch72)의 실제 출력 상태(자기 ON && DCA ON) 기준입니다.
       onList.forEach(function (id) {
-        const ch = cl5Channels.find(function (c) { return c.id === id; });
-        if (!ch || !ch.on) wrong.push(`${cl5LabelFor(id)} 가 꺼져 있었어요 (켜야 함)`);
+        if (!cl5Effective(id)) wrong.push(`${cl5NameFor(id) || id} 가 꺼져 있었어요 (켜야 함)` + (cl5OwnOn(id) && cl5DcaMutedBy(id).length ? ' — DCA ' + cl5DcaMutedBy(id).map(cl5NameFor).join(', ') + ' 가 꺼져 있음' : ''));
       });
       offList.forEach(function (id) {
-        const ch = cl5Channels.find(function (c) { return c.id === id; });
-        if (ch && ch.on) wrong.push(`${cl5LabelFor(id)} 가 켜져 있었어요 (꺼야 함)`);
+        if (cl5Effective(id)) wrong.push(`${cl5NameFor(id) || id} 가 켜져 있었어요 (꺼야 함)`);
       });
       cl5StepResults.push({ step: stepName, status: wrong.length === 0 ? 'pass' : 'fail', wrong: wrong });
     }
@@ -8185,6 +8467,104 @@
       if (prog.volQuizBestStreak !== undefined) renderBestTag('volQuizBestTag', '최고 연속 정답', prog.volQuizBestStreak + '회');
       if (prog.mixBestScore !== undefined) renderBestTag('mixBestTag', '최고 점수', prog.mixBestScore + '점');
     })();
+  </script>
+
+  <!-- 2026-10-15 추가: MG12XU 기능부 설명 (같은 기능부 테두리 묶음 + 말풍선) -->
+  <script>
+  (function () {
+    'use strict';
+    // 각 사진 기준 영역(px, 사진 원래 비율로 측정한 화면 캡처 기준) → %로 변환해 사용
+    var IMG = { console: { sel: '#mg12xuRealConsoleWrap', w: 645, h: 941 }, master: { sel: '#mg12xuMasterWrap', w: 241, h: 992 }, jack: { sel: '#mg12xuJackstripWrap', w: 885, h: 262 } };
+    var COLS = [55, 128, 199, 271, 343, 415, 493, 568, 642], CHN = ['1', '2', '3', '4', '5/6', '7/8', '9/10', '11/12'];
+    var Z = [];   // { sec, img, x0, y0, x1, y1, part }
+    function z(sec, img, x0, y0, x1, y1, part) { Z.push({ sec: sec, img: img, x0: x0, y0: y0, x1: x1, y1: y1, part: part }); }
+    function cols(from, to, fn) { for (var i = from; i <= to; i++) fn(i, COLS[i] + 2, COLS[i + 1] - 2, CHN[i]); }
+    var W = IMG.console.w;
+    function pctX(v) { return v / 100 * W; }
+    function px(obj, i) { var k = ['ch1', 'ch2', 'ch3', 'ch4', 'ch5_6', 'ch7_8', 'ch9_10', 'ch11_12'][i]; return obj && obj[k] !== undefined ? pctX(obj[k]) : null; }
+    // --- 채널 쪽 (console_strip.jpg)
+    cols(0, 5, function (i, a, b, n) { z('gain', 'console', a, 55, b, 107, 'CH' + n + ' GAIN'); });
+    cols(0, 3, function (i, a, b, n) { z('comp', 'console', a, 118, b, 187, 'CH' + n + ' COMP'); });
+    z('phantom', 'console', 353, 137, 480, 169, 'PHANTOM +48V 스위치');
+    z('padhpf', 'console', 349, 170, 480, 207, 'CH5/6·7/8 HPF 버튼');
+    z('input', 'console', 497, 52, 641, 205, 'CH9~12 RCA 입력 · USB/LINE 선택');
+    cols(0, 7, function (i, a, b, n) {
+      z('eq', 'console', a, 208, b, 370, 'CH' + n + ' EQ'); z('aux1', 'console', a, 370, b, 440, 'CH' + n + ' AUX1 · PRE'); z('fx', 'console', a, 440, b, 492, 'CH' + n + ' AUX2/FX');
+      z('pan', 'console', a, 492, b, 550, 'CH' + n + (i >= 4 ? ' PAN/BAL' : ' PAN')); z('on', 'console', a + 14, 553, b - 14, 595, 'CH' + n + ' ON');
+      var g = px(typeof MG12XU_G12_X_PCT !== 'undefined' ? MG12XU_G12_X_PCT : null, i) || (b - 22), pf = px(typeof MG12XU_PFL_X_PCT !== 'undefined' ? MG12XU_PFL_X_PCT : null, i) || (b - 22);
+      z('route', 'console', g - 18, 668, Math.min(b, g + 18), 748, 'CH' + n + ' 1-2 / ST');
+      z('pfl', 'console', pf - 17, 815, Math.min(b, pf + 17), 858, 'CH' + n + ' PFL');
+      z('fader', 'console', a, 645, g - 20, 905, 'CH' + n + ' 페이더');
+      if (i <= 5) { var pk = px(typeof MG12XU_PEAK_LED_X_PCT !== 'undefined' ? MG12XU_PEAK_LED_X_PCT : null, i) || (b - 22); z('gain', 'console', pk - 20, 628, Math.min(b, pk + 20), 662, 'CH' + n + ' PEAK 램프'); }
+    });
+    // --- 마스터 (master_section.jpg)
+    z('meter', 'master', 138, 85, 238, 335, '레벨 미터 · POWER');
+    z('fx', 'master', 4, 85, 137, 346, 'SPX 이펙터 (PROGRAM · PARAMETER)'); z('fx', 'master', 3, 350, 70, 988, 'FX RTN 채널'); z('fx', 'master', 71, 437, 142, 516, 'SEND MASTER AUX2');
+    z('aux1', 'master', 71, 352, 142, 437, 'SEND MASTER AUX1');
+    z('monitor', 'master', 143, 352, 238, 546, 'MONITOR LEVEL · PHONES · SOURCE');
+    z('group', 'master', 71, 548, 142, 988, 'GROUP 1-2 페이더 · ON · ST'); z('stereo', 'master', 143, 548, 238, 988, 'STEREO 페이더 · ON');
+    // --- 단자 (jack_strip.jpg)
+    z('input', 'jack', 44, 36, 480, 160, 'CH1~4 콤보 · CH5~8 MIC(XLR)'); z('input', 'jack', 335, 160, 480, 258, 'CH5~8 LINE'); z('input', 'jack', 482, 152, 624, 258, 'CH9~12 LINE');
+    z('padhpf', 'jack', 50, 170, 333, 240, 'CH1~4 PAD · HPF');
+    z('aux1', 'jack', 487, 66, 540, 150, 'AUX1 SEND 단자'); z('fx', 'jack', 540, 66, 591, 150, 'AUX2 SEND 단자');
+    z('group', 'jack', 592, 66, 692, 150, 'GROUP OUT 1·2 단자'); z('stereo', 'jack', 693, 66, 873, 205, 'STEREO OUT L·R (XLR·잭)');
+    z('monitor', 'jack', 625, 152, 690, 258, 'MONITOR OUT L·R'); z('monitor', 'jack', 765, 205, 873, 258, 'PHONES'); z('footsw', 'jack', 693, 205, 764, 258, 'FOOT SW');
+
+    var built = false, on = false, pinned = null, bubble = null, curSec = null, curZone = null;
+    function srcOf(sec) { return document.querySelector('.mg12xu-sec-src[data-sec="' + sec + '"]'); }
+    function build() {
+      document.querySelectorAll('.mg12xu-sec-layer').forEach(function (l) { l.remove(); });
+      Object.keys(IMG).forEach(function (k) {
+        var wrap = document.querySelector(IMG[k].sel); if (!wrap) return; var L = document.createElement('div'); L.className = 'mg12xu-sec-layer'; L.setAttribute('data-img', k);
+        Z.filter(function (q) { return q.img === k; }).forEach(function (q, i) { var d = document.createElement('div'); d.className = 'mg12xu-sec-zone'; d.setAttribute('data-sec', q.sec); d.setAttribute('data-part', q.part);
+          var I = IMG[k]; d.style.left = (q.x0 / I.w * 100).toFixed(3) + '%'; d.style.top = (q.y0 / I.h * 100).toFixed(3) + '%'; d.style.width = ((q.x1 - q.x0) / I.w * 100).toFixed(3) + '%'; d.style.height = ((q.y1 - q.y0) / I.h * 100).toFixed(3) + '%'; L.appendChild(d); });
+        wrap.appendChild(L);
+      });
+      if (!bubble) { bubble = document.createElement('div'); bubble.className = 'mg12xu-sec-bubble'; bubble.id = 'mg12xuSecBubble'; document.body.appendChild(bubble);
+        bubble.addEventListener('input', function (e) { var t = e.target, f = t.getAttribute && t.getAttribute('data-src'), src = curSec && srcOf(curSec); if (!src || !f) return; var el = src.querySelector('[data-field="tab6.sec.' + curSec + '.' + f + '"]'); if (el) el.textContent = t.textContent; });
+        bubble.addEventListener('click', function (e) { if (e.target.classList.contains('mg12xu-sec-close')) { pinned = null; hide(); } }); }
+      built = true;
+    }
+    function highlight(sec, zoneEl) { document.querySelectorAll('.mg12xu-sec-zone').forEach(function (d) { var m = d.getAttribute('data-sec') === sec; d.classList.toggle('hl', m); d.classList.toggle('main', m && d === zoneEl); }); }
+    function show(sec, zoneEl) {
+      var src = srcOf(sec); if (!src || !bubble) return; curSec = sec; curZone = zoneEl; highlight(sec, zoneEl);
+      var t = src.querySelector('b'), dsc = src.querySelector('div'), editing = typeof mg12xuContentEditing !== 'undefined' && mg12xuContentEditing.tab6, n = document.querySelectorAll('.mg12xu-sec-zone[data-sec="' + sec + '"]').length;
+      bubble.innerHTML = '<button type="button" class="mg12xu-sec-close" aria-label="닫기">×</button><b data-src="title"' + (editing ? ' contenteditable="true"' : '') + '></b><div data-src="desc"' + (editing ? ' contenteditable="true"' : '') + '></div>' +
+        '<div class="mg12xu-sec-part"></div>';
+      bubble.querySelector('b').textContent = t ? t.textContent : sec; bubble.querySelector('[data-src=desc]').textContent = dsc ? dsc.textContent : '';
+      bubble.querySelector('.mg12xu-sec-part').textContent = '지금 가리킨 곳: ' + (zoneEl ? zoneEl.getAttribute('data-part') : '-') + ' · 같은 기능 ' + n + '곳 표시 중' + (editing ? ' · 글을 눌러 고칠 수 있어요' : '');
+      bubble.style.display = 'block'; place();
+    }
+    function place() {
+      if (!bubble || bubble.style.display !== 'block' || !curZone) return;
+      var r = curZone.getBoundingClientRect(), bw = bubble.offsetWidth, bh = bubble.offsetHeight, vw = document.documentElement.clientWidth, vh = window.innerHeight;
+      var x = Math.max(8, Math.min(vw - bw - 8, r.left + r.width / 2 - bw / 2)), below = r.bottom + bh + 14 < vh || r.top - bh - 14 < 0, y = below ? r.bottom + 10 : r.top - bh - 10;
+      bubble.style.position = 'fixed'; bubble.style.left = x + 'px'; bubble.style.top = y + 'px';
+      bubble.classList.toggle('below', below); bubble.classList.toggle('above', !below);
+      bubble.style.setProperty('--tail-x', Math.max(10, Math.min(bw - 22, r.left + r.width / 2 - x - 6)) + 'px');
+    }
+    function hide() { if (pinned) return; curSec = null; curZone = null; if (bubble) bubble.style.display = 'none'; document.querySelectorAll('.mg12xu-sec-zone').forEach(function (d) { d.classList.remove('hl', 'main'); }); }
+    function setOn(v) {
+      if (!built) build(); on = !!v; var w = document.getElementById('mg12xuPatchbayWrap'); if (w) w.classList.toggle('mg12xu-sec-on', on);
+      var b = document.getElementById('mg12xuSecToggle'); if (b) { b.classList.toggle('on', on); b.textContent = on ? '🔍 기능부 설명 끄기 (조작으로 돌아가기)' : '🔍 기능부 설명 보기'; }
+      if (!on) { pinned = null; hide(); }
+    }
+    window.mg12xuSecToggle = function () { setOn(!on); };
+    window.mg12xuSec = { setOn: setOn, show: function (sec) { if (!on) setOn(true); var zEl = document.querySelector('.mg12xu-sec-zone[data-sec="' + sec + '"]'); pinned = sec; show(sec, zEl); return !!zEl; }, hide: function () { pinned = null; hide(); },
+      zones: function () { return Z.slice(); }, state: function () { return { on: on, pinned: pinned, sec: curSec }; } };
+    document.addEventListener('mouseover', function (e) { if (!on || pinned) return; var t = e.target.closest && e.target.closest('.mg12xu-sec-zone'); if (t) show(t.getAttribute('data-sec'), t); });
+    document.addEventListener('mouseout', function (e) { if (!on || pinned) return; var t = e.target.closest && e.target.closest('.mg12xu-sec-zone'), to = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.mg12xu-sec-zone, .mg12xu-sec-bubble'); if (t && !to) hide(); });
+    document.addEventListener('click', function (e) {
+      var t = e.target.closest && e.target.closest('.mg12xu-sec-zone');
+      if (on && t) { var sec = t.getAttribute('data-sec'); pinned = pinned === sec && curZone === t ? null : sec; if (pinned) show(sec, t); else hide(); e.stopPropagation(); return; }
+      var li = e.target.closest && e.target.closest('.mg12xu-sec-src');
+      if (li && !(typeof mg12xuContentEditing !== 'undefined' && mg12xuContentEditing.tab6)) { window.mg12xuSec.show(li.getAttribute('data-sec')); var zEl = curZone; if (zEl && zEl.scrollIntoView) zEl.scrollIntoView({ block: 'center', behavior: 'smooth' }); setTimeout(place, 450); return; }
+      if (on && pinned && !(e.target.closest && e.target.closest('.mg12xu-sec-bubble, #mg12xuSecToggle'))) { pinned = null; hide(); }
+    }, true);
+    window.addEventListener('scroll', place, { passive: true }); window.addEventListener('resize', place);
+    function init() { var old = document.getElementById('mg12xuSecBubble'); if (old) old.remove(); build(); setOn(false); }  // 편집 저장 파일에 남은 말풍선·표시 상태 정리
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  })();
   </script>
 </body>
 </html>
