@@ -187,13 +187,29 @@
       new THREE.LineBasicMaterial({ color: 0xf59e0b, depthTest: false, transparent: true, opacity: 0.95 }));
     outline.position.copy(lc); outline.visible = false; outline.renderOrder = 10;
     group.add(outline);
-    group.rotation.set((def.pitchDeg || 0) * DEG, (def.yawDeg || 0) * DEG, 0);
+    group.rotation.set((def.pitchDeg || 0) * DEG, (def.yawDeg || 0) * DEG, (def.rollDeg || 0) * DEG);
     group.position.fromArray(def.pos);
+    // 세부 모델이 무거운 장비(예: Rio 모델 약 29만 삼각형)는 멀리 있을 때 단순한 상자로 바꿔 그립니다.
+    var tris = 0, meshes = 0, firstColor = null;
     inner.traverse(function (c) {
       if (!c.isMesh) return;
-      c.castShadow = true; c.receiveShadow = true;
+      meshes++;
+      var gg = c.geometry; tris += (gg.index ? gg.index.count : gg.attributes.position.count) / 3;
+      if (!firstColor && c.material && c.material.color) firstColor = c.material.color.clone();
     });
-    return { def: def, group: group, outline: outline };
+    var heavy = tris > 20000 || meshes > 40;
+    var proxy = null;
+    if (heavy) {
+      proxy = new THREE.Mesh(new THREE.BoxGeometry(lsz.x - 0.04, lsz.y - 0.04, lsz.z - 0.04), stdMat(firstColor ? firstColor.getHex() : 0x55585e));
+      proxy.position.copy(lc); proxy.castShadow = true; proxy.receiveShadow = true;
+      group.add(proxy);
+      inner.visible = false;
+    }
+    inner.traverse(function (c) {
+      if (!c.isMesh) return;
+      c.castShadow = !heavy; c.receiveShadow = true; // 무거운 세부 모델은 그림자 계산에서 뺌
+    });
+    return { def: def, group: group, outline: outline, lod: heavy ? { inner: inner, proxy: proxy } : null };
   }
 
   function makeLabel(text, key, kind) {
@@ -559,7 +575,10 @@
     var mouse = new THREE.Vector2(((e.clientX - rect.left) / rect.width) * 2 - 1, -((e.clientY - rect.top) / rect.height) * 2 + 1);
     var rc = new THREE.Raycaster(); rc.setFromCamera(mouse, G.camera);
     var targets = Object.keys(T.devs).map(function (id) { return T.devs[id].group; });
-    var hits = rc.intersectObjects(targets.concat([G.modelRoot]), true);
+    var hits = rc.intersectObjects(targets.concat([G.modelRoot]), true).filter(function (h) {
+      for (var q = h.object; q; q = q.parent) if (!q.visible) return false; // 숨긴 세부/대체 모델은 무시
+      return true;
+    });
     if (!hits.length) return;
     var o = hits[0].object;
     while (o && !o.userData.tourId) o = o.parent;
@@ -606,12 +625,27 @@
     });
   }
 
+  /* ---------------------------------------------------------------- 세부 모델 전환 */
+  var LOD_NEAR = 6; // m
+  function updateLOD() {
+    var G = g3();
+    if (!T.built || T.mode !== 'tour' || !G || !G.camera) return;
+    var cam = G.camera.position, wp = new THREE.Vector3();
+    Object.keys(T.devs).forEach(function (id) {
+      var dv = T.devs[id]; if (!dv.lod) return;
+      dv.group.getWorldPosition(wp);
+      var near = wp.distanceTo(cam) < LOD_NEAR;
+      dv.lod.inner.visible = near; dv.lod.proxy.visible = !near;
+    });
+  }
+
   /* ---------------------------------------------------------------- 시작 */
   function start() {
     if (!DATA || !window.THREE) return;
     setupUI();
     setInterval(tryBuild, 250);
     setInterval(updateOcclusion, 350);
+    setInterval(updateLOD, 300);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 
@@ -622,6 +656,7 @@
   T.goLocation = goLocation;
   T.isBuilt = function () { return T.built; };
   T.devices = function () { return Object.keys(T.devs); };
+  T.updateLOD = updateLOD;
   T.setCamera = setCamera;
   T.getView = function () {
     var G = g3(); if (!G || !G.camera) return null;
