@@ -141,6 +141,19 @@
         });
         break;
       }
+      case 'podium': { // 지휘자 단상: 낮은 상자 + 윗판
+        var top2 = box(s[0], 0.025, s[2], stdMat(0x8a6f4d, { roughness: 0.7 })); top2.position.y = s[1] / 2 - 0.0125; g.add(top2);
+        var bodyP = box(s[0] - 0.02, s[1] - 0.025, s[2] - 0.02, body); bodyP.position.y = -0.0125; g.add(bodyP);
+        break;
+      }
+      case 'panel': { // 마이크 판넬: 금속판 + XLR 잭(앞면 그림)
+        var face = panelTexture(def);
+        var metal = stdMat(def.color != null ? def.color : 0xb8bcc2, { metalness: 0.6, roughness: 0.35 });
+        var front = new THREE.MeshStandardMaterial({ map: face, metalness: 0.5, roughness: 0.4 });
+        var plate = new THREE.Mesh(new THREE.BoxGeometry(s[0], s[1], s[2]), [metal, metal, metal, metal, front, metal]);
+        g.add(plate);
+        break;
+      }
       case 'rack': { // 앞이 열린 랙 캐비닛(앞 = +Z)
         var w4 = s[0], h4 = s[1], d4 = s[2], t = 0.02;
         var side = box(t, h4, d4, body); side.position.x = -w4 / 2 + t / 2; g.add(side);
@@ -156,6 +169,37 @@
         g.add(box(s[0], s[1], s[2], body));
     }
     return g;
+  }
+
+  // 판넬 앞면: 금속판에 XLR 잭(위아래 2줄)과 번호를 그린 캔버스 텍스처
+  function panelTexture(def) {
+    var s = def.size, n = def.channels || 8, rows = def.rows || 2, cols = Math.ceil(n / rows);
+    var W = 1024, H = Math.round(W * s[1] / s[0]);
+    var cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    var c = cv.getContext('2d');
+    var grd = c.createLinearGradient(0, 0, 0, H); grd.addColorStop(0, '#d7dade'); grd.addColorStop(1, '#a9aeb5');
+    c.fillStyle = grd; c.fillRect(0, 0, W, H);
+    c.strokeStyle = '#7d838b'; c.lineWidth = 6; c.strokeRect(3, 3, W - 6, H - 6);
+    [[24, 24], [W - 24, 24], [24, H - 24], [W - 24, H - 24]].forEach(function (p) { c.fillStyle = '#6b7178'; c.beginPath(); c.arc(p[0], p[1], 9, 0, Math.PI * 2); c.fill(); });
+    var titleH = H * 0.16;
+    c.fillStyle = '#1f2937'; c.font = 'bold ' + Math.round(titleH * 0.62) + 'px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText((def.label || '') + '  ·  ' + n + 'CH', W / 2, titleH * 0.7);
+    var areaTop = titleH * 1.25, cellW = (W - 60) / cols, cellH = (H - areaTop - 20) / rows;
+    var r = Math.min(cellW, cellH) * 0.3;
+    for (var i = 0; i < n; i++) {
+      var row = Math.floor(i / cols), col = i % cols;
+      var cx = 30 + cellW * (col + 0.5), cy = areaTop + cellH * row + cellH * 0.42;
+      c.fillStyle = '#2b2f35'; c.beginPath(); c.arc(cx, cy, r * 1.18, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#0b0c0e'; c.beginPath(); c.arc(cx, cy, r * 0.9, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#c9ccd1';
+      [[-0.38, -0.22], [0.38, -0.22], [0, 0.42]].forEach(function (q) { c.beginPath(); c.arc(cx + q[0] * r, cy + q[1] * r, r * 0.14, 0, Math.PI * 2); c.fill(); });
+      c.fillStyle = '#9aa0a8'; c.fillRect(cx - r * 0.2, cy - r * 1.18, r * 0.4, r * 0.16); // 잠금 버튼
+      c.fillStyle = '#111827'; c.font = 'bold ' + Math.round(r * 0.62) + 'px sans-serif';
+      c.fillText(String(i + 1), cx, cy + r * 1.62);
+    }
+    var tex = new THREE.CanvasTexture(cv);
+    tex.encoding = THREE.sRGBEncoding; tex.anisotropy = 4;
+    return tex;
   }
 
   function buildDevice(def) {
@@ -231,7 +275,7 @@
   }
 
   // 같은 장소에 모여 있는 장비(강대상·방송실·랙)는 장소 이름표 하나만 붙입니다.
-  var GROUP_LABEL_LOCS = { pulpit: 1, booth: 1, rack: 1 };
+  var GROUP_LABEL_LOCS = { pulpit: 1, booth: 1, rack: 1, conductor: 1 };
 
   function build() {
     var G = g3();
@@ -465,6 +509,8 @@
     if (ins.length) h += '<div class="g3t-sec">신호가 들어오는 곳</div><ul class="g3t-links">' + ins.map(function (l) { return linkLine(l, 'in'); }).join('') + '</ul>';
     else if (DATA.feedUnknown && DATA.feedUnknown.indexOf(def.id) >= 0) h += '<div class="g3t-sec">신호가 들어오는 곳</div><p class="g3t-meta"><span class="g3t-unk">미확인</span> 어느 앰프에서 신호를 받는지 아직 확인하지 못했습니다.</p>';
     if (outs.length) h += '<div class="g3t-sec">신호가 나가는 곳</div><ul class="g3t-links">' + outs.map(function (l) { return linkLine(l, 'out'); }).join('') + '</ul>';
+    else if (DATA.outUnknown && DATA.outUnknown[def.id]) h += '<div class="g3t-sec">신호가 나가는 곳</div><p class="g3t-meta"><span class="g3t-unk">미확인</span> ' + esc(DATA.outUnknown[def.id]) + '</p>';
+    if (def.channels) h += '<p class="g3t-meta">입력 ' + def.channels + '채널 (XLR, 위아래 ' + (def.rows || 2) + '줄)</p>';
     if (def.id === 'stagebox' && DATA.rackUnconfirmed && DATA.rackUnconfirmed.length) {
       h += '<div class="g3t-sec">같은 랙에 있는 다른 장비 (모델 확인 필요)</div><ul class="g3t-plain">' + DATA.rackUnconfirmed.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>';
     }

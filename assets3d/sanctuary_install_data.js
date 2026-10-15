@@ -13,6 +13,7 @@
      rollDeg: 앞면 방향을 축으로 옆으로 눕힌 각도(90 = 옆으로 눕힘).
    - 장비 위치: 현장 사진과 본당 모델로 처음 배치(2026-10-15) → 기완 님이 스케치업에서 고친 파일
      (3층 본당 .dae, 2026-10-15 16:47)을 읽어 반영하고, 좌우 한 쌍은 가운데 줄(Z −9.5) 기준으로 대칭을 맞췄습니다.
+     2026-10-16: 두 번째 수정 파일에서 지휘자 단상과 판넬 1·2·3 위치를 읽어 추가, G308 한 대를 지휘자 모니터로 옮김.
      기완 님 요청으로 화면에는 "추정" 표시를 하지 않습니다. 실제와 다르면 pos 만 고치면 됩니다.
    - 연결(links)의 verify:
        'confirmed'      확인된 연결(포트까지)
@@ -20,7 +21,7 @@
        'unknown'        연결 자체가 미확인
    ============================================================================= */
 window.SANCTUARY_INSTALL = {
-  version: 3,
+  version: 4,
   updated: '2026-10-15',
   units: 'm',
 
@@ -32,6 +33,7 @@ window.SANCTUARY_INSTALL = {
     { id: 'ceiling', name: '회중석 천장', view: { pos: [14.4, 1.9, -9.5], target: [25.8, 4.0, -9.5] } },
     { id: 'pillar', name: '기둥', view: { pos: [6.2, 1.9, -9.5], target: [12.7, 3.0, -9.5] } },
     { id: 'booth', name: '방송실', view: { pos: [0.95, 1.75, -10.95], target: [3.2, 0.95, -10.95] } },
+    { id: 'conductor', name: '지휘자 자리', view: { pos: [38.6, 1.75, -15.6], target: [36.0, 0.35, -20.3] } },
     { id: 'rack', name: '앰프 랙 (단상 옆 방)', view: { pos: [45.05, 1.6, -20.2], target: [43.55, 1.2, -20.6] } }
   ],
 
@@ -55,12 +57,25 @@ window.SANCTUARY_INSTALL = {
     { id: 'max2_R', name: '바닥 모니터 R', model: 'd&b MAX2', proc: 'wedge', size: [0.59, 0.35, 0.43], color: 0x2b2f36,
       location: 'stage', pos: [39.56, 0.225, -7.945], yawDeg: 90, pitchDeg: 0, mount: '단상 앞 회중석 바닥 (단상 쪽을 향함)',
       role: '바닥 모니터 L 과 한 쌍인 바닥 모니터입니다.' },
-    { id: 'g308_L', name: '단상 모니터 L', model: 'CODA Audio G308', proc: 'box', size: [0.26, 0.43, 0.27], color: 0xf1f1ee,
+    { id: 'g308_L', name: '단상 모니터', model: 'CODA Audio G308', proc: 'box', size: [0.26, 0.43, 0.27], color: 0xf1f1ee,
       location: 'stage', pos: [43.05, 0.79, -12.33], yawDeg: 90, pitchDeg: -23.7, rollDeg: 90, mount: '단상 왼쪽 바닥 (옆으로 눕혀 위로 향함)',
       role: '단상 왼쪽 바닥에 두고 단상 위에서 소리를 확인하는 모니터 스피커입니다. 단상 뒤쪽(의자 쪽)을 향해 비스듬히 위로 놓여 있습니다.' },
-    { id: 'g308_R', name: '단상 모니터 R', model: 'CODA Audio G308', proc: 'box', size: [0.26, 0.43, 0.27], color: 0xf1f1ee,
-      location: 'stage', pos: [43.05, 0.79, -6.67], yawDeg: 90, pitchDeg: -23.7, rollDeg: 90, mount: '단상 오른쪽 바닥 (옆으로 눕혀 위로 향함)',
-      role: '단상 오른쪽 바닥에 두는 모니터 스피커입니다.' },
+    { id: 'g308_R', name: '지휘자 모니터', model: 'CODA Audio G308', proc: 'box', size: [0.26, 0.43, 0.27], color: 0xf1f1ee,
+      location: 'conductor', pos: [36.75, 0.22, -18.98], yawDeg: -116.3, pitchDeg: -21, rollDeg: 90, mount: '지휘자 단상 옆 바닥 (옆으로 눕혀 지휘자 쪽을 향함)',
+      role: '지휘자 단상 옆 바닥에 두고 지휘자가 반주와 소리를 듣도록 하는 모니터 스피커입니다.' },
+
+    // ---- 지휘자 자리 (단상 왼쪽 앞, 계단 쪽) ----
+    { id: 'cond_podium', name: '지휘자 단상', proc: 'podium', size: [0.75, 0.31, 0.74], color: 0xcdbfa6, decor: true,
+      location: 'conductor', pos: [35.09, 0.205, -19.80], yawDeg: 0, pitchDeg: 0 },
+    { id: 'panel_1', name: '판넬 1', model: '마이크 판넬 16ch', proc: 'panel', channels: 16, rows: 2, label: 'PANEL 1', size: [0.6, 0.26, 0.03], color: 0xb8bcc2,
+      location: 'conductor', pos: [34.81, 0.18, -21.095], yawDeg: 0, pitchDeg: 0, mount: '계단 첫 단 앞면 (바닥 높이)',
+      role: '마이크 케이블을 꽂는 16채널 판넬입니다(위아래 2줄 × 8). 지휘자 단상 뒤 계단 앞면에 있습니다.' },
+    { id: 'panel_2', name: '판넬 2', model: '마이크 판넬 16ch', proc: 'panel', channels: 16, rows: 2, label: 'PANEL 2', size: [0.6, 0.26, 0.03], color: 0xb8bcc2,
+      location: 'conductor', pos: [35.425, 0.18, -21.095], yawDeg: 0, pitchDeg: 0, mount: '계단 첫 단 앞면 (바닥 높이)',
+      role: '판넬 1 옆에 있는 16채널 마이크 판넬입니다(위아래 2줄 × 8).' },
+    { id: 'panel_3', name: '판넬 3', model: '마이크 판넬 8ch', proc: 'panel', channels: 8, rows: 2, label: 'PANEL 3', size: [0.34, 0.28, 0.03], color: 0xb8bcc2,
+      location: 'conductor', pos: [40.13, 0.19, -21.095], yawDeg: 0, pitchDeg: 0, mount: '계단 첫 단 앞면 (바닥 높이)',
+      role: '8채널 마이크 판넬입니다(위아래 2줄 × 4).' },
 
     // ---- 강대상 ----
     { id: 'alea4_L', name: '설교자 모니터 L', model: 'Voice-Acoustic Alea-4', proc: 'small', size: [0.15, 0.15, 0.15], color: 0xf4f4f2,
@@ -156,5 +171,12 @@ window.SANCTUARY_INSTALL = {
   ],
 
   // 연결이 아직 확인되지 않은 장비 (정보 카드에 "어디서 신호를 받는지 미확인" 으로 표시)
-  feedUnknown: ['g308_L', 'g308_R', 'alea4_L', 'alea4_R', 'alea4_3']
+  feedUnknown: ['g308_L', 'g308_R', 'alea4_L', 'alea4_R', 'alea4_3'],
+
+  // 신호가 어디로 가는지 아직 모르는 장비 (판넬 → 어느 Rio 입력인지 미확인)
+  outUnknown: {
+    panel_1: '어느 Rio 입력(몇 번)으로 이어지는지 아직 확인하지 못했습니다.',
+    panel_2: '어느 Rio 입력(몇 번)으로 이어지는지 아직 확인하지 못했습니다.',
+    panel_3: '어느 Rio 입력(몇 번)으로 이어지는지 아직 확인하지 못했습니다.'
+  }
 };
