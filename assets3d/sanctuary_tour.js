@@ -146,7 +146,8 @@
         var bodyP = box(s[0] - 0.02, s[1] - 0.025, s[2] - 0.02, body); bodyP.position.y = -0.0125; g.add(bodyP);
         break;
       }
-      case 'panel': { // 마이크 판넬: 금속판 + XLR 잭(앞면 그림)
+      case 'rio':
+      case 'panel': { // 마이크 판넬(밝은 금속판) / Rio(검은 앞판): XLR 잭을 그린 앞면
         var face = panelTexture(def);
         var metal = stdMat(def.color != null ? def.color : 0xb8bcc2, { metalness: 0.6, roughness: 0.35 });
         var front = new THREE.MeshStandardMaterial({ map: face, metalness: 0.5, roughness: 0.4 });
@@ -177,12 +178,14 @@
     var W = 1024, H = Math.round(W * s[1] / s[0]);
     var cv = document.createElement('canvas'); cv.width = W; cv.height = H;
     var c = cv.getContext('2d');
-    var grd = c.createLinearGradient(0, 0, 0, H); grd.addColorStop(0, '#d7dade'); grd.addColorStop(1, '#a9aeb5');
+    var dark = def.proc === 'rio';
+    var grd = c.createLinearGradient(0, 0, 0, H);
+    if (dark) { grd.addColorStop(0, '#2a2d33'); grd.addColorStop(1, '#16181c'); } else { grd.addColorStop(0, '#d7dade'); grd.addColorStop(1, '#a9aeb5'); }
     c.fillStyle = grd; c.fillRect(0, 0, W, H);
     c.strokeStyle = '#7d838b'; c.lineWidth = 6; c.strokeRect(3, 3, W - 6, H - 6);
     [[24, 24], [W - 24, 24], [24, H - 24], [W - 24, H - 24]].forEach(function (p) { c.fillStyle = '#6b7178'; c.beginPath(); c.arc(p[0], p[1], 9, 0, Math.PI * 2); c.fill(); });
     var titleH = H * 0.16;
-    c.fillStyle = '#1f2937'; c.font = 'bold ' + Math.round(titleH * 0.62) + 'px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillStyle = dark ? '#e5e7eb' : '#1f2937'; c.font = 'bold ' + Math.round(titleH * 0.62) + 'px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
     c.fillText((def.label || '') + '  ·  ' + n + 'CH', W / 2, titleH * 0.7);
     var areaTop = titleH * 1.25, cellW = (W - 60) / cols, cellH = (H - areaTop - 20) / rows;
     var r = Math.min(cellW, cellH) * 0.3;
@@ -194,7 +197,7 @@
       c.fillStyle = '#c9ccd1';
       [[-0.38, -0.22], [0.38, -0.22], [0, 0.42]].forEach(function (q) { c.beginPath(); c.arc(cx + q[0] * r, cy + q[1] * r, r * 0.14, 0, Math.PI * 2); c.fill(); });
       c.fillStyle = '#9aa0a8'; c.fillRect(cx - r * 0.2, cy - r * 1.18, r * 0.4, r * 0.16); // 잠금 버튼
-      c.fillStyle = '#111827'; c.font = 'bold ' + Math.round(r * 0.62) + 'px sans-serif';
+      c.fillStyle = dark ? '#d1d5db' : '#111827'; c.font = 'bold ' + Math.round(r * 0.62) + 'px sans-serif';
       c.fillText(String(i + 1), cx, cy + r * 1.62);
     }
     var tex = new THREE.CanvasTexture(cv);
@@ -307,6 +310,7 @@
     });
     G.scene.add(root);
     T.root = root;
+    buildCables(root);
     T.built = true;
     applyMode(true);
     if (T.mode === 'tour') setCamera(locDef('overview').view.pos, locDef('overview').view.target);
@@ -380,6 +384,133 @@
     if (typeof gear3dOnResize === 'function') { try { gear3dOnResize(); } catch (e) { /* noop */ } }
   }
 
+  /* ---------------------------------------------------------------- 케이블 경로 */
+  // 데이터의 cableRoutes 를 종류별 색 선으로 그립니다. 같은 길을 지나는 케이블은 한 선으로 묶고,
+  // 종류(스피커·마이크·Dante)가 다르면 조금씩 비켜 그려서 나란히 보이게 합니다.
+  var CABLE_KIND = {
+    speaker: { name: '스피커 케이블', color: 0xea580c, css: '#ea580c', k: -1 },
+    mic: { name: '마이크 케이블', color: 0x16a34a, css: '#16a34a', k: 0 },
+    dante: { name: 'Dante 랜선', color: 0x2563eb, css: '#2563eb', k: 1 }
+  };
+  var CABLE_KEY = 'soundTrainerTab2Cables_v1';
+  function cableOffset(kind) {
+    var k = (CABLE_KIND[kind] || CABLE_KIND.speaker).k;
+    return new THREE.Vector3(0.035 * k, 0.025 * k, -0.035 * k);
+  }
+  function nodePos(id, kind) { return new THREE.Vector3().fromArray(DATA.cableNodes[id]).add(cableOffset(kind)); }
+  function segMesh(a, b, r, mat) {
+    var d = b.clone().sub(a), len = d.length();
+    var m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 8, 1, true), mat);
+    m.position.copy(a).add(b).multiplyScalar(0.5);
+    m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize());
+    return m;
+  }
+  function loadCablePref() { try { return localStorage.getItem(CABLE_KEY) !== 'off'; } catch (e) { return true; } }
+  function buildCables(root) {
+    if (!DATA.cableRoutes || !DATA.cableNodes) return;
+    var grp = new THREE.Group(); grp.name = 'tourCables';
+    T.cableMats = {};
+    Object.keys(CABLE_KIND).forEach(function (k) {
+      T.cableMats[k] = new THREE.MeshStandardMaterial({ color: CABLE_KIND[k].color, roughness: 0.55, metalness: 0.05, transparent: true, opacity: 1 });
+    });
+    var edges = {};
+    DATA.cableRoutes.forEach(function (rt) {
+      for (var i = 0; i + 1 < rt.path.length; i++) {
+        var a = rt.path[i], b = rt.path[i + 1];
+        var key = (a < b ? a + '|' + b : b + '|' + a) + '|' + rt.kind;
+        (edges[key] = edges[key] || { a: a, b: b, kind: rt.kind, n: 0 }).n++;
+      }
+    });
+    var joints = {};
+    Object.keys(edges).forEach(function (key) {
+      var e = edges[key];
+      var r = 0.016 + Math.min(0.014, 0.002 * (e.n - 1));
+      grp.add(segMesh(nodePos(e.a, e.kind), nodePos(e.b, e.kind), r, T.cableMats[e.kind]));
+      [e.a, e.b].forEach(function (nid) { var jk = nid + '|' + e.kind; joints[jk] = Math.max(joints[jk] || 0, r); });
+    });
+    Object.keys(joints).forEach(function (jk) {
+      var p = jk.split('|');
+      var sph = new THREE.Mesh(new THREE.SphereGeometry(joints[jk], 10, 8), T.cableMats[p[1]]);
+      sph.position.copy(nodePos(p[0], p[1])); grp.add(sph);
+    });
+    T.cableEdgeCount = Object.keys(edges).length;
+    T.cableRoot = grp;
+    T.showCables = loadCablePref();
+    grp.visible = T.showCables;
+    root.add(grp);
+    T.cableHi = new THREE.Group(); T.cableHi.name = 'tourCableHighlight'; root.add(T.cableHi);
+    updateCableBar();
+  }
+  function setCablesVisible(on) {
+    T.showCables = !!on;
+    try { localStorage.setItem(CABLE_KEY, on ? 'on' : 'off'); } catch (e) { /* 저장 안 돼도 됨 */ }
+    if (T.cableRoot) T.cableRoot.visible = T.showCables;
+    if (T.cableHi) T.cableHi.visible = T.showCables;
+    updateCableBar();
+  }
+  function routesFor(id) {
+    return (DATA.cableRoutes || []).filter(function (r) { return r.from === id || r.to === id; });
+  }
+  // 고른 경로만 굵고 진하게, 나머지 케이블은 흐리게
+  function highlightRoutes(list, radius) {
+    var hr = radius || 0.03;
+    if (!T.cableHi) return;
+    while (T.cableHi.children.length) { var c = T.cableHi.children.pop(); c.geometry.dispose(); }
+    var any = list && list.length;
+    Object.keys(T.cableMats || {}).forEach(function (k) { T.cableMats[k].opacity = any ? 0.2 : 1; T.cableMats[k].depthWrite = !any; });
+    if (!any) return;
+    list.forEach(function (rt) {
+      var mat = T.hiMats && T.hiMats[rt.kind];
+      if (!mat) {
+        T.hiMats = T.hiMats || {};
+        // 고른 경로는 벽·단상 바닥 속을 지나도 보이도록 깊이 검사 없이 맨 위에 그림
+        mat = T.hiMats[rt.kind] = new THREE.MeshBasicMaterial({ color: CABLE_KIND[rt.kind].color, depthTest: false, transparent: true, opacity: 0.95 });
+      }
+      for (var i = 0; i + 1 < rt.path.length; i++) { var sm = segMesh(nodePos(rt.path[i], rt.kind), nodePos(rt.path[i + 1], rt.kind), hr, mat); sm.renderOrder = 20; T.cableHi.add(sm); }
+      rt.path.forEach(function (nid) { var sp = new THREE.Mesh(new THREE.SphereGeometry(hr, 10, 8), mat); sp.renderOrder = 20; sp.position.copy(nodePos(nid, rt.kind)); T.cableHi.add(sp); });
+    });
+  }
+  function routeDef(rid) { return (DATA.cableRoutes || []).find(function (r) { return r.id === rid; }); }
+  function selectRoute(rid) {
+    var rt = routeDef(rid); if (!rt) return;
+    if (T.mode !== 'tour') setMode('tour');
+    clearSelection();
+    if (!T.showCables) setCablesVisible(true);
+    T.selRoute = rid;
+    var bb = new THREE.Box3(); rt.path.forEach(function (n) { bb.expandByPoint(new THREE.Vector3().fromArray(DATA.cableNodes[n])); });
+    var c = bb.getCenter(new THREE.Vector3()), sz = bb.getSize(new THREE.Vector3());
+    // 위에서 내려다보기: 지붕이 없는 모델이라 벽에 가리지 않음
+    var hgt = Math.max(9, Math.max(sz.x / 1.3, sz.z / 0.85) + 4);
+    highlightRoutes([rt], Math.max(0.03, hgt * 0.0025)); // 멀리서 봐도 보이는 굵기
+    flyTo([c.x, hgt, c.z + hgt * 0.18], [c.x, 0.5, c.z]);
+    showRouteCard(rt);
+  }
+  function showRouteCard(rt) {
+    var card = $('g3tCard'); if (!card) return;
+    var kind = CABLE_KIND[rt.kind] || CABLE_KIND.speaker;
+    var h = '<div class="g3t-card-head"><div><div class="g3t-card-title">' + esc(rt.name) + '</div>';
+    h += '<div class="g3t-card-sub"><span class="g3t-swatch" style="background:' + kind.css + '"></span>' + esc(kind.name) + (DATA.cableDraft ? ' · 예상 경로 (확인 전)' : '') + '</div></div>';
+    h += '<button type="button" class="g3t-close" aria-label="닫기">×</button></div>';
+    h += '<p class="g3t-role">' + esc(rt.desc || '') + '</p>';
+    h += '<div class="g3t-sec">양 끝</div><ul class="g3t-links">' + [rt.from, rt.to].map(function (id) {
+      return '<li><button type="button" class="g3t-link" data-go="' + esc(id) + '">' + esc(devName(id)) + '</button></li>';
+    }).join('') + '</ul>';
+    card.innerHTML = h; card.hidden = false;
+  }
+  function cableListHtml(list, title) {
+    if (!list.length) return '';
+    return '<div class="g3t-sec">' + title + (DATA.cableDraft ? ' <span class="g3t-draft">예상 · 확인 전</span>' : '') + '</div><ul class="g3t-links">' + list.map(function (rt) {
+      var kind = CABLE_KIND[rt.kind] || CABLE_KIND.speaker;
+      return '<li><span class="g3t-swatch" style="background:' + kind.css + '"></span><button type="button" class="g3t-link" data-route="' + esc(rt.id) + '">' + esc(rt.name) + '</button><span class="g3t-note">' + esc(rt.desc || '') + '</span></li>';
+    }).join('') + '</ul>';
+  }
+  function updateCableBar() {
+    var bar = $('g3tCableBar'); if (!bar) return;
+    var on = !!T.showCables;
+    var btn = bar.querySelector('.g3t-cable-toggle');
+    if (btn) { btn.setAttribute('aria-pressed', on ? 'true' : 'false'); btn.textContent = on ? '케이블 경로 숨기기' : '케이블 경로 보기'; }
+  }
+
   /* ---------------------------------------------------------------- 카메라 */
   function setCamera(pos, target) {
     var G = g3(); if (!G || !G.camera) return;
@@ -406,7 +537,7 @@
       var e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
       // 가운데쯤에서 살짝 위로 떠서 벽을 덜 통과하도록
       var lift = Math.sin(Math.PI * e) * Math.min(1.2, tw.p0.distanceTo(tw.p1) * 0.08);
-      G.camera.position.lerpVectors(tw.p0, tw.p1, e); G.camera.position.y = Math.min(4.95, G.camera.position.y + lift);
+      G.camera.position.lerpVectors(tw.p0, tw.p1, e); G.camera.position.y = Math.min(Math.max(4.95, tw.p0.y, tw.p1.y), G.camera.position.y + lift);
       G.controls.target.lerpVectors(tw.t0, tw.t1, e);
       G.controls.update();
       if (k < 1) requestAnimationFrame(step); else T.tween = null;
@@ -446,7 +577,8 @@
     if (T.selLoc) DATA.devices.forEach(function (d) { if (d.location === T.selLoc) highlight(d.id, false); });
     Object.keys(T.labelById).forEach(function (k) { T.labelById[k].classList.remove('sel'); });
     document.querySelectorAll('.g3t-chip.sel, .g3t-place.sel').forEach(function (b) { b.classList.remove('sel'); });
-    T.sel = null; T.selLoc = null;
+    T.sel = null; T.selLoc = null; T.selRoute = null;
+    highlightRoutes(null);
   }
 
   function select(id, opts) {
@@ -462,6 +594,7 @@
     var lb = T.labelById[id] || T.labelById['loc:' + def.location];
     if (lb) lb.classList.add('sel');
     occLast = '';
+    if (T.showCables) highlightRoutes(routesFor(id));
     var chip = document.querySelector('.g3t-chip[data-id="' + id + '"]'); if (chip) chip.classList.add('sel');
     showDeviceCard(def);
   }
@@ -474,6 +607,7 @@
     if (lid !== 'overview') DATA.devices.forEach(function (d) { if (d.location === lid && !d.decor) highlight(d.id, true, 'group'); });
     var lb = T.labelById['loc:' + lid]; if (lb) lb.classList.add('sel');
     var b = document.querySelector('.g3t-place[data-loc="' + lid + '"]'); if (b) b.classList.add('sel');
+    if (lid === 'cables') { if (!T.showCables) setCablesVisible(true); highlightRoutes(DATA.cableRoutes || [], 0.085); }
     flyTo(l.view.pos, l.view.target);
     if (lid === 'overview') closeCard(); else showLocationCard(l);
   }
@@ -511,6 +645,7 @@
     if (outs.length) h += '<div class="g3t-sec">신호가 나가는 곳</div><ul class="g3t-links">' + outs.map(function (l) { return linkLine(l, 'out'); }).join('') + '</ul>';
     else if (DATA.outUnknown && DATA.outUnknown[def.id]) h += '<div class="g3t-sec">신호가 나가는 곳</div><p class="g3t-meta"><span class="g3t-unk">미확인</span> ' + esc(DATA.outUnknown[def.id]) + '</p>';
     if (def.channels) h += '<p class="g3t-meta">입력 ' + def.channels + '채널 (XLR, 위아래 ' + (def.rows || 2) + '줄)</p>';
+    h += cableListHtml(routesFor(def.id), '케이블 길');
     if (def.id === 'stagebox' && DATA.rackUnconfirmed && DATA.rackUnconfirmed.length) {
       h += '<div class="g3t-sec">같은 랙에 있는 다른 장비 (모델 확인 필요)</div><ul class="g3t-plain">' + DATA.rackUnconfirmed.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>';
     }
@@ -520,6 +655,15 @@
 
   function showLocationCard(l) {
     var card = $('g3tCard'); if (!card) return;
+    if (l.id === 'cables') {
+      var hh = '<div class="g3t-card-head"><div><div class="g3t-card-title">' + esc(l.name) + '</div>';
+      hh += '<div class="g3t-card-sub">경로 ' + (DATA.cableRoutes || []).length + '개' + (DATA.cableDraft ? ' · Claude 가 예상해서 그린 경로 (확인 전)' : '') + '</div></div><button type="button" class="g3t-close" aria-label="닫기">×</button></div>';
+      ['dante', 'speaker', 'mic'].forEach(function (k) {
+        hh += cableListHtml((DATA.cableRoutes || []).filter(function (r) { return r.kind === k; }), CABLE_KIND[k].name).replace(/ <span class="g3t-draft">예상 · 확인 전<\/span>/, '');
+      });
+      card.innerHTML = hh; card.hidden = false;
+      return;
+    }
     var devs = DATA.devices.filter(function (d) { return d.location === l.id && !d.decor; });
     var h = '<div class="g3t-card-head"><div><div class="g3t-card-title">' + esc(l.name) + '</div>';
     h += '<div class="g3t-card-sub">장비 ' + devs.length + '개</div></div><button type="button" class="g3t-close" aria-label="닫기">×</button></div>';
@@ -575,11 +719,21 @@
     });
     card.addEventListener('click', function (e) {
       if (e.target.closest('.g3t-close')) { clearSelection(); closeCard(); return; }
+      var rtb = e.target.closest('[data-route]'); if (rtb) { selectRoute(rtb.dataset.route); return; }
       var go = e.target.closest('[data-go]'); if (go) select(go.dataset.go);
     });
     wrap.appendChild(card);
 
     var panel = $('g3tPanel');
+    if (panel && DATA.cableRoutes) {
+      var bar = document.createElement('div');
+      bar.id = 'g3tCableBar'; bar.className = 'g3t-cable-bar';
+      bar.innerHTML = '<button type="button" class="g3t-cable-toggle" aria-pressed="true">케이블 경로 숨기기</button>' +
+        Object.keys(CABLE_KIND).map(function (k) { return '<span class="g3t-legend"><span class="g3t-swatch" style="background:' + CABLE_KIND[k].css + '"></span>' + CABLE_KIND[k].name + '</span>'; }).join('') +
+        (DATA.cableDraft ? '<span class="g3t-draft">Claude 가 예상해서 그린 경로 · 확인 전</span>' : '');
+      panel.insertBefore(bar, panel.firstChild);
+      bar.querySelector('.g3t-cable-toggle').addEventListener('click', function () { setCablesVisible(!T.showCables); if (!T.showCables) highlightRoutes(null); });
+    }
     if (panel) {
       panel.addEventListener('click', function (e) {
         var p = e.target.closest('.g3t-place'); if (p) { goLocation(p.dataset.loc); return; }
@@ -703,6 +857,9 @@
   T.isBuilt = function () { return T.built; };
   T.devices = function () { return Object.keys(T.devs); };
   T.updateLOD = updateLOD;
+  T.selectRoute = selectRoute;
+  T.setCablesVisible = setCablesVisible;
+  T.routesFor = routesFor;
   T.setCamera = setCamera;
   T.getView = function () {
     var G = g3(); if (!G || !G.camera) return null;

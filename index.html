@@ -311,6 +311,12 @@
     .g3t-chip small { font-size: 0.66rem; font-weight: 500; color: var(--text-sub); }
     .g3t-chip:hover, .g3t-chip.sel { border-color: #d97706; background: #fffbeb; }
     .g3t-chip-unk { border-style: dashed; }
+    .g3t-cable-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
+    .g3t-cable-toggle { border: 1px solid var(--border-color); background: var(--inner-bg); color: var(--text-main); font-size: 0.78rem; font-weight: 700; padding: 6px 11px; border-radius: 8px; cursor: pointer; }
+    .g3t-cable-toggle[aria-pressed="true"] { background: #0f172a; color: #fff; border-color: #0f172a; }
+    .g3t-legend { display: inline-flex; align-items: center; gap: 5px; font-size: 0.74rem; color: var(--text-sub); }
+    .g3t-swatch { display: inline-block; width: 14px; height: 4px; border-radius: 2px; margin-right: 5px; vertical-align: middle; flex: none; }
+    .g3t-draft { display: inline-block; font-size: 0.68rem; font-weight: 700; color: #92400e; background: #fef3c7; border-radius: 4px; padding: 1px 6px; }
     @media (max-width: 600px) {
       .g3t-card { left: 8px; right: 8px; bottom: 8px; width: auto; max-height: 55%; }
     }
