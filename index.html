@@ -266,6 +266,55 @@
     .gear3d-tray .draggable-gear.armed { border-color: var(--accent-yellow); box-shadow: 0 0 15px rgba(245, 158, 11, 0.5); }
     .gear3d-tray-empty { font-size: 0.78rem; color: var(--text-sub); }
 
+    /* ===== 3층 음향 시스템: 모드 전환 + 교회 둘러보기 (assets3d/sanctuary_tour.js) ===== */
+    #tab2[data-g3mode="tour"] .g3-practice-only,
+    #tab2[data-g3mode="practice"] .g3-tour-only,
+    #tab2:not([data-g3mode]) .g3-tour-only { display: none !important; }
+    .g3-modebar { display: inline-flex; gap: 4px; padding: 4px; margin-bottom: 12px; background: var(--inner-bg); border: 1px solid var(--border-color); border-radius: 12px; max-width: 100%; flex-wrap: wrap; }
+    .g3-modebar button { border: none; background: transparent; color: var(--text-sub); font-size: 0.85rem; font-weight: 700; padding: 8px 14px; border-radius: 9px; cursor: pointer; }
+    .g3-modebar button.active { background: var(--card-bg); color: var(--text-main); box-shadow: 0 1px 3px rgba(15, 23, 42, 0.15); }
+    .g3-modebar button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .g3t-label { pointer-events: auto; border: 1px solid rgba(15, 23, 42, 0.18); background: rgba(255, 255, 255, 0.92); color: #0f172a; font-size: 11px; font-weight: 700; line-height: 1; padding: 4px 7px; border-radius: 999px; cursor: pointer; white-space: nowrap; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2); }
+    .g3t-label-loc { background: #0f172a; color: #fff; border-color: #0f172a; }
+    .g3t-label:hover, .g3t-label.sel { background: #f59e0b; border-color: #b45309; color: #1f1300; }
+    .g3t-label.occ { opacity: 0.25; pointer-events: none; }
+    .g3t-label.occ.sel { opacity: 0.6; }
+    .g3t-label.clut { opacity: 0; pointer-events: none; }
+    .g3t-card { position: absolute; left: 12px; bottom: 12px; z-index: 4; width: min(340px, calc(100% - 24px)); max-height: calc(100% - 24px); overflow: auto; background: rgba(255, 255, 255, 0.97); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 14px; box-shadow: 0 6px 20px rgba(15, 23, 42, 0.18); font-size: 0.8rem; color: var(--text-main); }
+    .g3t-card-head { display: flex; gap: 8px; align-items: flex-start; justify-content: space-between; margin-bottom: 6px; }
+    .g3t-card-title { font-size: 0.98rem; font-weight: 800; }
+    .g3t-card-sub { font-size: 0.72rem; color: var(--text-sub); margin-top: 2px; }
+    .g3t-close { border: none; background: var(--inner-bg); width: 28px; height: 28px; border-radius: 8px; font-size: 1.1rem; line-height: 1; cursor: pointer; color: var(--text-sub); flex: none; }
+    .g3t-role { line-height: 1.5; margin: 4px 0 6px; }
+    .g3t-meta { color: var(--text-sub); margin: 4px 0; line-height: 1.45; }
+    .g3t-warn { background: #fef3c7; color: #78350f; border-radius: 8px; padding: 6px 8px; margin: 4px 0; }
+    .g3t-sec { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.04em; color: var(--text-sub); margin: 10px 0 4px; }
+    .g3t-links, .g3t-plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+    .g3t-plain li { padding-left: 10px; position: relative; line-height: 1.4; }
+    .g3t-plain li::before { content: '·'; position: absolute; left: 2px; }
+    .g3t-links li { line-height: 1.4; }
+    .g3t-link { border: none; background: none; padding: 0; color: var(--accent-cyan); font-weight: 700; font-size: 0.8rem; cursor: pointer; text-align: left; }
+    .g3t-link:hover { text-decoration: underline; }
+    .g3t-medium { color: var(--text-sub); font-size: 0.74rem; }
+    .g3t-note { display: block; color: var(--text-sub); font-size: 0.7rem; }
+    .g3t-unk { display: inline-block; font-size: 0.66rem; font-weight: 800; color: #92400e; background: #fef3c7; border-radius: 4px; padding: 1px 5px; }
+    .g3t-panel { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 16px; display: grid; gap: 8px; }
+    .g3t-panel-label { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em; color: var(--text-sub); }
+    .g3t-places { display: flex; flex-wrap: wrap; gap: 6px; }
+    .g3t-place { border: 1px solid var(--border-color); background: var(--inner-bg); color: var(--text-main); font-size: 0.8rem; font-weight: 700; padding: 6px 11px; border-radius: 999px; cursor: pointer; }
+    .g3t-place.sel, .g3t-place:hover { background: #0f172a; color: #fff; border-color: #0f172a; }
+    .g3t-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 10px 14px; }
+    .g3t-group { min-width: 0; }
+    .g3t-group-name { font-size: 0.78rem; font-weight: 800; margin-bottom: 5px; }
+    .g3t-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+    .g3t-chip { border: 1px solid var(--border-color); background: #fff; color: var(--text-main); font-size: 0.78rem; font-weight: 700; padding: 5px 9px; border-radius: 8px; cursor: pointer; text-align: left; display: inline-flex; flex-direction: column; gap: 1px; }
+    .g3t-chip small { font-size: 0.66rem; font-weight: 500; color: var(--text-sub); }
+    .g3t-chip:hover, .g3t-chip.sel { border-color: #d97706; background: #fffbeb; }
+    .g3t-chip-unk { border-style: dashed; }
+    @media (max-width: 600px) {
+      .g3t-card { left: 8px; right: 8px; bottom: 8px; width: auto; max-height: 55%; }
+    }
+
     /* ===== CL5 콘솔 트레이닝 탭 =====
        확성 시스템의 기본(MG12XU) 탭과 같은 방식 — 실제 콘솔 사진 위에 보이지 않는 클릭
        버튼(.cl5-on-hotspot)을 정확한 위치에 겹쳐두고, 그 버튼을 누르면 켜짐/꺼짐이 바뀝니다. */
@@ -2257,16 +2306,22 @@
     <div id="tab2" class="tab-content">
       <div class="level-header">
         <div class="level-title">3층 음향 시스템 (3D)</div>
-        <div class="level-desc">실제 공간을 3D로 둘러보며 장비를 배치해보세요. 마우스로 드래그하면 공간을 회전, 휠로 확대/축소할 수 있습니다. 아래 보관함에서 장비를 클릭해 선택한 뒤(장비의 <b>ℹ️</b> 아이콘을 누르면 설명을 볼 수 있어요) 3D 공간을 클릭하면 그 자리에 배치됩니다. 배치 직후(또는 배치된 장비를 한 번 클릭하면)에는 키보드로 미세 조정할 수 있어요 — 화살표 키: 수평 이동, PageUp/PageDown: 높낮이, Q/E: 좌우로 도는 방향(90도씩), R/F: 스피커를 옆으로 눕히거나 세우기(90도씩, Shift를 누르면 15도씩 미세 조정), Esc: 조정 종료. 배치된 장비를 더블클릭하면 캔버스에서 빠져 다시 보관함으로 돌아갑니다. Ctrl+Z로 직전 작업을 되돌리고 Ctrl+Shift+Z로 다시 실행할 수 있어요. 배치된 장비를 순서대로 클릭하면 케이블이 연결돼요.</div>
-        <div id="layoutBestTag"></div>
+        <div class="level-desc g3-tour-only">실제 설치 위치에 놓인 음향 장비를 둘러보는 모드예요. 아래 목록이나 3D 화면의 이름표를 누르면 그 장비로 이동해서 역할과 연결(어디서 신호를 받고 어디로 보내는지)을 보여 줍니다. 장비를 직접 눌러도 돼요. 드래그하면 회전, 휠/핀치로 확대·축소, 오른쪽 드래그로 이동합니다. 좌/우는 회중석에서 단상을 바라본 기준이에요.</div>
+        <div class="level-desc g3-practice-only">실제 공간을 3D로 둘러보며 장비를 배치해보세요. 마우스로 드래그하면 공간을 회전, 휠로 확대/축소할 수 있습니다. 아래 보관함에서 장비를 클릭해 선택한 뒤(장비의 <b>ℹ️</b> 아이콘을 누르면 설명을 볼 수 있어요) 3D 공간을 클릭하면 그 자리에 배치됩니다. 배치 직후(또는 배치된 장비를 한 번 클릭하면)에는 키보드로 미세 조정할 수 있어요 — 화살표 키: 수평 이동, PageUp/PageDown: 높낮이, Q/E: 좌우로 도는 방향(90도씩), R/F: 스피커를 옆으로 눕히거나 세우기(90도씩, Shift를 누르면 15도씩 미세 조정), Esc: 조정 종료. 배치된 장비를 더블클릭하면 캔버스에서 빠져 다시 보관함으로 돌아갑니다. Ctrl+Z로 직전 작업을 되돌리고 Ctrl+Shift+Z로 다시 실행할 수 있어요. 배치된 장비를 순서대로 클릭하면 케이블이 연결돼요.</div>
+        <div id="layoutBestTag" class="g3-practice-only"></div>
       </div>
 
-      <div class="control-bar">
+      <div class="g3-modebar" role="tablist" aria-label="3층 음향 시스템 모드">
+        <button type="button" role="tab" data-mode="tour">🏛 교회 둘러보기</button>
+        <button type="button" role="tab" data-mode="practice">🔌 배선 실습</button>
+      </div>
+
+      <div class="control-bar g3-practice-only">
         <span>💡 안내: 3D 공간 안을 드래그하면 회전, 휠/핀치로 확대·축소됩니다.</span>
         <button style="padding:4px 10px; font-size:0.75rem; background:#cbd5e1; color:#0f172a; border:none; border-radius:6px; cursor:pointer;" onclick="reset3DPlacement()">배치 초기화</button>
       </div>
 
-      <div class="cable-instruction">
+      <div class="cable-instruction g3-practice-only">
         <span id="cableStatusText">🔌 케이블 모드: 첫 번째 장비를 클릭하세요 (예: 콘솔 ➔ 스테이지박스)</span>
         <button style="padding:4px 10px; font-size:0.75rem; background:#cbd5e1; color:#0f172a; border:none; border-radius:6px; cursor:pointer;" onclick="resetCables()">선 초기화</button>
       </div>
@@ -2275,14 +2330,21 @@
         <div class="gear3d-loading" id="gear3dLoading">🏛️ 3D 공간을 불러오는 중…</div>
       </div>
 
-      <div class="gear3d-tray-wrap">
+      <div class="g3t-panel g3-tour-only" id="g3tPanel">
+        <div class="g3t-panel-label">장소로 이동</div>
+        <div class="g3t-places" id="g3tPlaces"></div>
+        <div class="g3t-panel-label">장비</div>
+        <div class="g3t-list" id="g3tList"></div>
+      </div>
+
+      <div class="gear3d-tray-wrap g3-practice-only">
         <div class="gear3d-tray-label" id="gear3dTrayLabel">📦 배치할 장비 (클릭 후 위 3D 공간을 클릭해서 배치하세요)</div>
         <div class="gear3d-tray" id="gear3dTray"></div>
       </div>
 
-      <button class="btn" onclick="checkLayoutComplete()">🔍 시스템 배치 및 케이블링 검증하기</button>
+      <button class="btn g3-practice-only" onclick="checkLayoutComplete()">🔍 시스템 배치 및 케이블링 검증하기</button>
 
-      <div class="result-panel" id="layoutResultPanel"></div>
+      <div class="result-panel g3-practice-only" id="layoutResultPanel"></div>
     </div>
 
     <!-- TAB 5: CL5 콘솔 트레이닝 -->
@@ -2698,6 +2760,8 @@
   <script src="vendor/CSS2DRenderer.js"></script>
   <script src="assets3d/sanctuary_data.js"></script>
   <script src="assets3d/gear_models_data.js"></script>
+  <script src="assets3d/sanctuary_install_data.js"></script>
+  <script src="assets3d/sanctuary_tour.js"></script>
   <!-- 확성 시스템의 기본(MG12XU) 탭의 실제 음원 트랙(리드보컬/드럼/키보드/베이스/기타/백보컬 3명) —
        같은 이유(file:// CORS 제약)로 base64 data: URI로 내장합니다. 2026-10-11 수정: 처음엔 파일
        하나(mg12xu_audio_data.js, 약 28.6MB)에 전부 담았는데, 깃허브 웹 업로드가 파일당 25MB로
