@@ -518,10 +518,15 @@
     .cl5-name-label-lg:hover { border-color: rgba(250, 204, 21, 0.85); }
     .cl5-name-label-lg:focus { outline: none; border-color: rgba(45, 212, 191, 0.95); background: rgba(15, 23, 42, 0.98); }
     .cl5-name-label-lg.cl5-blank-slot { cursor: default; opacity: 0.35; }
-    /* 2026-10-15: 사용하지 않는 채널(이름 없음)은 주소만 흐리게, DCA 로 꺼진 채널은 노란 빗금 */
+    /* 2026-10-15: 사용하지 않는 채널(이름 없음)은 주소만 흐리게 */
     .cl5-name-label-lg.cl5-unused-ch, .cl5-name-label.cl5-unused-ch { opacity: 0.45; font-weight: 500; font-style: italic; }
-    .cl5-on-hotspot.dca-muted { border-color: rgba(250, 204, 21, 0.95) !important; background: repeating-linear-gradient(135deg, rgba(250,204,21,0.35) 0 3px, rgba(0,0,0,0.78) 3px 6px) !important; box-shadow: none !important; }
-    .cl5-name-label-lg.dca-muted { border: 2px dashed rgba(250, 204, 21, 0.95) !important; background: rgba(66, 32, 6, 0.92) !important; box-shadow: none !important; color: #fde68a; }
+    /* 2026-10-15: DCA 로 꺼진 채널 = 실제 CL5 처럼 ON 키가 깜박임 (채널 자기 ON 은 켜져 있지만 DCA 가 MUTE) */
+    @keyframes cl5DcaBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.15; } }
+    .cl5-on-hotspot.dca-muted { border-color: rgba(234, 88, 12, 0.95) !important; background: rgba(234, 88, 12, 0.35) !important; box-shadow: 0 0 9px 2px rgba(249, 115, 22, 0.6) !important; animation: cl5DcaBlink 0.8s steps(1, end) infinite; }
+    .cl5-name-label.dca-muted { animation: cl5DcaBlink 0.8s steps(1, end) infinite; color: #fdba74 !important; }
+    .cl5-dca-member.dca-off { background: rgba(234, 88, 12, 0.45); color: #fff7ed; animation: cl5DcaBlink 0.8s steps(1, end) infinite; }
+    @media (prefers-reduced-motion: reduce) { .cl5-on-hotspot.dca-muted, .cl5-name-label.dca-muted, .cl5-name-label-lg.dca-muted, .cl5-dca-member.dca-off { animation-duration: 1.6s; } }
+    .cl5-name-label-lg.dca-muted { border: 2px solid rgba(234, 88, 12, 0.95) !important; background: rgba(124, 45, 18, 0.92) !important; box-shadow: 0 0 9px 1px rgba(249, 115, 22, 0.5) !important; color: #fed7aa; animation: cl5DcaBlink 0.8s steps(1, end) infinite; }
     .cl5-name-label-lg.dca-muted::after { content: 'DCA OFF'; display: block; font-size: 0.6rem; color: #facc15; margin-left: 4px; }
     .cl5-dca-member.unused { opacity: 0.45; font-style: italic; }
     .cl5-on-hotspot.cl5-no-addr { opacity: 0.35; cursor: default; }
@@ -2306,7 +2311,7 @@
 
       <!-- 2026-10-15 추가: DCA 그룹 (끄면 묶인 채널이 함께 꺼짐) -->
       <div class="cl5-dca-section">
-        <div class="cl5-biglabel-title">🎛 DCA 그룹 — 버튼을 누르면 그 DCA 에 묶인 채널이 한꺼번에 꺼지고(MUTE) 다시 누르면 켜져요. 콘솔 오른쪽 8개 자리에서 <b>DCA 1-8</b> 레이어를 고르면 사진 위 ON 버튼으로도 조작할 수 있어요.</div>
+        <div class="cl5-biglabel-title">🎛 DCA 그룹 — DCA 를 끄면(MUTE) 묶인 채널이 한꺼번에 꺼지고, 실제 CL5 처럼 그 채널들의 ON 버튼이 <b>깜박</b>입니다. 다시 켜면 각 채널이 원래 상태로 돌아와요. 콘솔 오른쪽 8개 자리에서 <b>DCA 1-8</b> 레이어를 고르면 사진 위 ON 버튼으로도 DCA 를 끄고 켤 수 있어요.</div>
         <div id="cl5DcaPanel" class="cl5-dca-panel"></div>
       </div>
 
@@ -7368,6 +7373,8 @@
         if (slot !== undefined && slot !== '') {
           const big = document.querySelector(`.cl5-name-label-lg[data-slot="${slot}"]`);
           if (big) { big.classList.toggle('cl5-on', eff); big.classList.toggle('dca-muted', muted); }
+          const small = document.querySelector(`.cl5-name-label[data-slot="${slot}"]`);
+          if (small) small.classList.toggle('dca-muted', muted);
         }
       });
       cl5RenderDcaPanel();
@@ -7377,13 +7384,18 @@
       if (!panel) return;
       panel.innerHTML = Object.keys(CL5_DCA_ASSIGN).map(function (d) {
         const members = CL5_DCA_ASSIGN[d], on = cl5OwnOn(d), unused = cl5IsUnused(d) && !members.length;
-        const list = members.length ? members.map(function (c) { return '<span class="cl5-dca-member' + (cl5Effective(c) ? ' on' : '') + (cl5IsUnused(c) ? ' unused' : '') + '" title="' + c + '">' + (cl5NameFor(c) || c) + '</span>'; }).join('') : '<span class="cl5-dca-empty">배정된 채널 없음</span>';
+        const list = members.length ? members.map(function (c) { return '<span class="cl5-dca-member' + (cl5Effective(c) ? ' on' : '') + (cl5OwnOn(c) && !cl5Effective(c) ? ' dca-off' : '') + (cl5IsUnused(c) ? ' unused' : '') + '" title="' + c + '">' + (cl5NameFor(c) || c) + '</span>'; }).join('') : '<span class="cl5-dca-empty">배정된 채널 없음</span>';
         return '<div class="cl5-dca-card' + (on ? ' on' : ' muted') + (unused ? ' unused' : '') + '" data-dca="' + d + '"><button type="button" class="cl5-dca-btn" data-dca="' + d + '"' + (unused ? ' disabled' : '') + '>' +
           '<b>' + d.replace('DCA', 'DCA ') + '</b><span>' + (unused ? '없음' : cl5NameFor(d)) + '</span><i>' + (unused ? '—' : on ? 'ON' : 'MUTE') + '</i></button>' +
           '<div class="cl5-dca-members">' + (members.length ? 'ch' + members[0].slice(2) + '~' + members[members.length - 1].slice(2) + ' · ' : '') + list + '</div></div>';
       }).join('');
     }
     function cl5ToggleDca(d) { if (!CL5_DCA_ASSIGN[d]) return; cl5SetOn(d, !cl5OwnOn(d)); }
+    // 예배 중 기본 상태: 이름이 있는 입력 채널(1~72)은 ON, "없음" 채널은 OFF, DCA 는 모두 ON
+    function cl5ApplyServiceDefaults() {
+      Object.keys(cl5On).forEach(function (k) { delete cl5On[k]; });
+      for (let i = 1; i <= 72; i++) { const a = 'ch' + i; if (!cl5IsUnused(a)) cl5On[a] = true; }
+    }
 
     // 이 앱은 서버 없이 파일 하나로 동작하기 때문에, 내가 입력한 채널 이름은 내 브라우저
     // 안에만 저장되고 다른 사람에게 자동으로 전달되지 않습니다. 그래서 "내보내기"로
@@ -7607,6 +7619,7 @@
       cl5RenderIdleStage();
       if (cl5Inited) return;
       cl5Inited = true;
+      cl5ApplyServiceDefaults();
       const wrap = document.getElementById('cl5ImgInner');
       if (!wrap) return;
       CL5_METER_MASKS.forEach(function (m) {
@@ -7652,7 +7665,8 @@
 
     function cl5ResetChannels() {
       cl5Channels.forEach(function (c) { c.on = false; });
-      Object.keys(cl5On).forEach(function (k) { delete cl5On[k]; });   // 채널 모두 꺼짐, DCA 모두 켜짐(기본)
+      if (cl5GameRunning) Object.keys(cl5On).forEach(function (k) { delete cl5On[k]; });   // 게임 중: 채널 모두 꺼짐, DCA 모두 켜짐
+      else cl5ApplyServiceDefaults();                                                       // 평소: 예배 중 기본 상태 (이름 있는 채널 ON, DCA ON)
       cl5RefreshOnStates();
       const panel = document.getElementById('cl5ResultPanel');
       if (panel) { panel.classList.remove('show'); panel.innerHTML = ''; }
