@@ -15,7 +15,7 @@
      (3층 본당 .dae, 2026-10-15 16:47)을 읽어 반영하고, 좌우 한 쌍은 가운데 줄(Z −9.5) 기준으로 대칭을 맞췄습니다.
      2026-10-16: 두 번째 수정 파일에서 지휘자 단상과 판넬 1·2·3 위치를 읽어 추가, G308 한 대를 지휘자 모니터로 옮김.
      2026-10-18: 케이블 경로 수정 — 판넬은 바닥으로 랙까지(일자), 단상 쪽 스피커·마이크는 모두 바닥으로, 지휘자 모니터는 판넬에서 연결.
-       천장으로 가는 것은 회중석 천장 스피커·기둥 스피커·방송실 Dante 만 남음.
+       천장으로 가는 것: 메인 L/R, 회중석 천장 스피커, 기둥 스피커, 방송실 Dante.
      기완 님 요청으로 화면에는 "추정" 표시를 하지 않습니다. 실제와 다르면 pos 만 고치면 됩니다.
    - 연결(links)의 verify:
        'confirmed'      확인된 연결(포트까지)
@@ -23,7 +23,7 @@
        'unknown'        연결 자체가 미확인
    ============================================================================= */
 window.SANCTUARY_INSTALL = {
-  version: 7,
+  version: 8,
   updated: '2026-10-15',
   units: 'm',
 
@@ -189,11 +189,10 @@ window.SANCTUARY_INSTALL = {
     rack_ceil: [43.45, 5.0, -20.55],
     j_rack_n: [43.45, 5.0, -18.3],
     sfl: [40.29, 5.0, -18.3],
-    ml_floor: [40.29, 0.06, -14.6],
-    ml_up: [40.29, 3.85, -14.45],
-    mr_floor_a: [44.0, 0.06, -4.2],
-    mr_floor: [40.29, 0.06, -4.2],
-    mr_up: [40.29, 3.85, -4.55],
+    ml_top: [40.29, 5.0, -14.4],
+    ml_drop: [40.29, 4.6, -14.4],
+    mr_top: [40.29, 5.0, -4.6],
+    mr_drop: [40.29, 4.6, -4.6],
     dl: [25.8, 5.0, -18.3],
     y7l_top: [25.8, 5.0, -16.5],
     y7l_drop: [25.8, 4.8, -16.5],
@@ -256,11 +255,11 @@ window.SANCTUARY_INSTALL = {
   },
   cableRoutes: [
     { id: "C01", name: "40D CH1 → 메인 L", kind: "speaker", from: "amp_40d", to: "vi10p_L", links: ["L07"],
-      desc: "랙에서 바닥으로 → 단상 왼쪽 앞 바닥까지 → 메인 L 로 올라감",
-      path: ["rack_top", "rack_bottom", "f_rack", "f_in", "f_door", "sw_a", "sw_l", "ml_floor", "ml_up"] },
+      desc: "랙 위로 올라가 천장 → 단상 앞 왼쪽 → 메인 L 위에서 내려옴",
+      path: ["rack_top", "rack_ceil", "j_rack_n", "sfl", "ml_top", "ml_drop"] },
     { id: "C02", name: "40D CH2 → 메인 R", kind: "speaker", from: "amp_40d", to: "vi10p_R", links: ["L08"],
-      desc: "랙에서 바닥으로 → 단상 밑을 지나 오른쪽 → 단상 오른쪽 앞 바닥에서 메인 R 로 올라감",
-      path: ["rack_top", "rack_bottom", "f_rack", "f_in", "f_door", "sw_a", "sw_l", "sw_us1", "sw_us2", "sw_r", "mr_floor_a", "mr_floor", "mr_up"] },
+      desc: "단상 앞 천장을 가로질러 메인 R 위에서 내려옴",
+      path: ["rack_top", "rack_ceil", "j_rack_n", "sfl", "ml_top", "mr_top", "mr_drop"] },
     { id: "C03", name: "40D CH3 → 우퍼 L", kind: "speaker", from: "amp_40d", to: "woofer_L", links: ["L09"],
       desc: "랙 아래로 내려와 랙 방 문으로 나와서 바닥을 따라 우퍼 L",
       path: ["rack_top", "rack_bottom", "f_rack", "f_in", "f_door", "sw_a", "sw_l", "sub_l_back"] },
