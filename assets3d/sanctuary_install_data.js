@@ -23,7 +23,7 @@
        'unknown'        연결 자체가 미확인
    ============================================================================= */
 window.SANCTUARY_INSTALL = {
-  version: 8,
+  version: 9,
   updated: '2026-10-15',
   units: 'm',
 
@@ -161,6 +161,9 @@ window.SANCTUARY_INSTALL = {
     { id: 'L03', from: 'stagebox', to: 'cl5', medium: 'dante', label: 'Dante (랜선)', verify: 'confirmed-pair', note: '케이블은 천장으로 지나감' },
     { id: 'L18', from: 'stagebox2', to: 'cl5', medium: 'dante', label: 'Dante (랜선)', verify: 'unknown', note: '두 번째 Rio 도 Dante 로 CL5 에 연결된다고 보고 그림 (확인 필요)' },
     { id: 'L19', from: 'panel_2', to: 'g308_R', medium: 'speaker', label: '판넬 스피커 단자 → 스피커 케이블', verify: 'unknown', note: '지휘자 모니터는 판넬에서 연결 (몇 번 판넬인지는 확인 필요, 그림은 가장 가까운 판넬 2)' },
+    { id: 'L20', from: 'panel_1', to: 'stagebox', medium: 'analog', label: '판넬 → Rio 입력', verify: 'unknown', note: 'Rio 입력 번호 미확인 (두 번째 Rio 로 갈 수도 있음)' },
+    { id: 'L21', from: 'panel_2', to: 'stagebox', medium: 'analog', label: '판넬 → Rio 입력', verify: 'unknown', note: 'Rio 입력 번호 미확인 (두 번째 Rio 로 갈 수도 있음)' },
+    { id: 'L22', from: 'panel_3', to: 'stagebox', medium: 'analog', label: '판넬 → Rio 입력', verify: 'unknown', note: 'Rio 입력 번호 미확인 (두 번째 Rio 로 갈 수도 있음)' },
     { id: 'L04', from: 'ulxd', to: 'cl5', medium: 'dante', label: 'Dante (랜선)', verify: 'confirmed-pair' },
     { id: 'L05', from: 'stagebox', to: 'amp_40d', medium: 'aes', label: 'AES/EBU 출력', verify: 'confirmed-pair', note: 'Rio AES 출력 번호는 미확인' },
     { id: 'L06', from: 'stagebox', to: 'amp_10d', medium: 'aes', label: 'AES/EBU 출력', verify: 'confirmed-pair', note: 'Rio AES 출력 번호는 미확인' },
@@ -180,10 +183,10 @@ window.SANCTUARY_INSTALL = {
   // 연결이 아직 확인되지 않은 장비 (정보 카드에 "어디서 신호를 받는지 미확인" 으로 표시)
   feedUnknown: ['g308_L', 'g308_R', 'alea4_L', 'alea4_R', 'alea4_3'],
 
-  // ---- 케이블 경로 (Claude 가 예상해서 그린 것, 기완 님 확인 전) ----
+  // ---- 케이블 경로 (Claude 가 그리고 기완 님이 설명·확인, 2026-10-18) ----
   // cableNodes: 경로 꺾이는 점(미터). cableRoutes: 케이블 한 가닥(또는 한 묶음)이 지나는 점 순서.
   // kind: speaker(스피커 케이블) / mic(마이크 케이블) / dante(랜선). 천장 높이 Y 5.0, 단상 밑 Y 0.3.
-  cableDraft: true,
+  cableDraft: false,
   cableNodes: {
     rack_top: [43.45, 1.92, -20.55],
     rack_ceil: [43.45, 5.0, -20.55],
@@ -308,13 +311,13 @@ window.SANCTUARY_INSTALL = {
     { id: "C22", name: "강대상 마이크 R → Rio", kind: "mic", from: "mic_podium_R", to: "stagebox", links: ["L02"],
       desc: "강대상 안 → 단상 밑 → 바닥을 따라 랙",
       path: ["mic_r", "pulpit_top", "pulpit_floor", "us_pulpit", "us_max2l", "us_g308", "us1", "sw_l", "sw_a", "f_door", "f_in", "f_rack", "rack_bottom", "rack_top"] },
-    { id: "C23", name: "판넬 1 → Rio", kind: "mic", from: "panel_1", to: "stagebox", links: [],
+    { id: "C23", name: "판넬 1 → Rio", kind: "mic", from: "panel_1", to: "stagebox", links: ["L20"],
       desc: "판넬에서 바닥으로 → 일자로 랙까지 (Rio 입력 번호 미확인)",
       path: ["p1_back", "f_p1", "f_p2", "f_p3", "f_rackw", "rack_bottom", "rack_top"] },
-    { id: "C24", name: "판넬 2 → Rio", kind: "mic", from: "panel_2", to: "stagebox", links: [],
+    { id: "C24", name: "판넬 2 → Rio", kind: "mic", from: "panel_2", to: "stagebox", links: ["L21"],
       desc: "판넬에서 바닥으로 → 일자로 랙까지 (Rio 입력 번호 미확인)",
       path: ["p2_back", "f_p2", "f_p3", "f_rackw", "rack_bottom", "rack_top"] },
-    { id: "C25", name: "판넬 3 → Rio", kind: "mic", from: "panel_3", to: "stagebox", links: [],
+    { id: "C25", name: "판넬 3 → Rio", kind: "mic", from: "panel_3", to: "stagebox", links: ["L22"],
       desc: "판넬에서 바닥으로 → 일자로 랙까지 (Rio 입력 번호 미확인)",
       path: ["p3_back", "f_p3", "f_rackw", "rack_bottom", "rack_top"] },
     { id: "C31", name: "Rio3224-D ↔ CL5 (Dante)", kind: "dante", from: "stagebox", to: "cl5", links: ["L03"],

@@ -268,6 +268,11 @@
 
     /* ===== 3층 음향 시스템: 모드 전환 + 교회 둘러보기 (assets3d/sanctuary_tour.js) ===== */
     #tab2[data-g3mode="tour"] .g3-practice-only,
+    #tab2[data-g3mode="trace"] .g3-practice-only,
+    #tab2[data-g3mode="tour"] .g3-trace-only,
+    #tab2[data-g3mode="trace"] .g3-tour-desc,
+    #tab2[data-g3mode="practice"] .g3-trace-only,
+    #tab2:not([data-g3mode]) .g3-trace-only,
     #tab2[data-g3mode="practice"] .g3-tour-only,
     #tab2:not([data-g3mode]) .g3-tour-only { display: none !important; }
     .g3-modebar { display: inline-flex; gap: 4px; padding: 4px; margin-bottom: 12px; background: var(--inner-bg); border: 1px solid var(--border-color); border-radius: 12px; max-width: 100%; flex-wrap: wrap; }
@@ -316,6 +321,20 @@
     .g3t-cable-toggle[aria-pressed="true"] { background: #0f172a; color: #fff; border-color: #0f172a; }
     .g3t-legend { display: inline-flex; align-items: center; gap: 5px; font-size: 0.74rem; color: var(--text-sub); }
     .g3t-swatch { display: inline-block; width: 14px; height: 4px; border-radius: 2px; margin-right: 5px; vertical-align: middle; flex: none; }
+    .g3t-trace-btn { margin-top: 10px; width: 100%; border: 1px solid #0f172a; background: #0f172a; color: #fff; font-size: 0.8rem; font-weight: 700; padding: 8px 10px; border-radius: 8px; cursor: pointer; }
+    .g3t-flow { display: grid; gap: 0; margin-top: 4px; }
+    .g3t-flow-step { display: grid; grid-template-columns: 24px 1fr; gap: 8px; align-items: start; padding: 6px 6px; border-radius: 8px; }
+    .g3t-flow-step.on { background: #fffbeb; outline: 1px solid #f59e0b; }
+    .g3t-flow-num { width: 22px; height: 22px; border-radius: 50%; background: #0f172a; color: #fff; font-size: 0.72rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+    .g3t-flow-title { font-weight: 800; font-size: 0.82rem; margin: 2px 0 3px; }
+    .g3t-flow-body { min-width: 0; }
+    .g3t-flow-body .g3t-meta { margin: 2px 0; font-size: 0.74rem; }
+    .g3t-flow-wire { margin-left: 16px; padding-left: 13px; border-left: 2px dashed #94a3b8; font-size: 0.68rem; color: var(--text-sub); min-height: 16px; display: flex; align-items: center; }
+    .g3t-flow-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+    .g3t-flow-chip { border: 1px solid var(--border-color); background: #fff; font-size: 0.72rem; font-weight: 700; padding: 3px 7px; border-radius: 6px; cursor: pointer; color: var(--text-main); }
+    .g3t-flow-chip.sel { border-color: #d97706; background: #fef3c7; }
+    .g3t-flow-list { list-style: none; padding: 0; margin: 0; font-size: 0.74rem; display: grid; gap: 2px; }
+    .g3t-flow-hint { margin-top: 8px; }
     .g3t-draft { display: inline-block; font-size: 0.68rem; font-weight: 700; color: #92400e; background: #fef3c7; border-radius: 4px; padding: 1px 6px; }
     @media (max-width: 600px) {
       .g3t-card { left: 8px; right: 8px; bottom: 8px; width: auto; max-height: 55%; }
@@ -2312,13 +2331,15 @@
     <div id="tab2" class="tab-content">
       <div class="level-header">
         <div class="level-title">3층 음향 시스템 (3D)</div>
-        <div class="level-desc g3-tour-only">실제 설치 위치에 놓인 음향 장비를 둘러보는 모드예요. 아래 목록이나 3D 화면의 이름표를 누르면 그 장비로 이동해서 역할과 연결(어디서 신호를 받고 어디로 보내는지)을 보여 줍니다. 장비를 직접 눌러도 돼요. 드래그하면 회전, 휠/핀치로 확대·축소, 오른쪽 드래그로 이동합니다. 좌/우는 회중석에서 단상을 바라본 기준이에요.</div>
+        <div class="level-desc g3-trace-only">마이크·판넬·스피커·앰프·CL5 를 누르면 그 신호가 <b>입력 → Rio → CL5 → Rio → 앰프 → 스피커</b> 순서로 어디를 지나가는지 흐름도와 3D 케이블 길로 보여 줘요. 움직이는 점이 신호가 가는 방향이에요. 흐름도 안의 장비 이름을 누르면 그 장비의 흐름으로 바뀝니다.</div>
+        <div class="level-desc g3-tour-only g3-tour-desc">실제 설치 위치에 놓인 음향 장비를 둘러보는 모드예요. 아래 목록이나 3D 화면의 이름표를 누르면 그 장비로 이동해서 역할과 연결(어디서 신호를 받고 어디로 보내는지)을 보여 줍니다. 장비를 직접 눌러도 돼요. 드래그하면 회전, 휠/핀치로 확대·축소, 오른쪽 드래그로 이동합니다. 좌/우는 회중석에서 단상을 바라본 기준이에요.</div>
         <div class="level-desc g3-practice-only">실제 공간을 3D로 둘러보며 장비를 배치해보세요. 마우스로 드래그하면 공간을 회전, 휠로 확대/축소할 수 있습니다. 아래 보관함에서 장비를 클릭해 선택한 뒤(장비의 <b>ℹ️</b> 아이콘을 누르면 설명을 볼 수 있어요) 3D 공간을 클릭하면 그 자리에 배치됩니다. 배치 직후(또는 배치된 장비를 한 번 클릭하면)에는 키보드로 미세 조정할 수 있어요 — 화살표 키: 수평 이동, PageUp/PageDown: 높낮이, Q/E: 좌우로 도는 방향(90도씩), R/F: 스피커를 옆으로 눕히거나 세우기(90도씩, Shift를 누르면 15도씩 미세 조정), Esc: 조정 종료. 배치된 장비를 더블클릭하면 캔버스에서 빠져 다시 보관함으로 돌아갑니다. Ctrl+Z로 직전 작업을 되돌리고 Ctrl+Shift+Z로 다시 실행할 수 있어요. 배치된 장비를 순서대로 클릭하면 케이블이 연결돼요.</div>
         <div id="layoutBestTag" class="g3-practice-only"></div>
       </div>
 
       <div class="g3-modebar" role="tablist" aria-label="3층 음향 시스템 모드">
         <button type="button" role="tab" data-mode="tour">🏛 교회 둘러보기</button>
+        <button type="button" role="tab" data-mode="trace">🧭 신호 따라가기</button>
         <button type="button" role="tab" data-mode="practice">🔌 배선 실습</button>
       </div>
 

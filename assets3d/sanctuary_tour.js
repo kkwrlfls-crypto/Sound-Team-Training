@@ -30,13 +30,15 @@
   function g3() { return (typeof gear3d !== 'undefined') ? gear3d : null; }
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  // 둘러보기(tour)와 신호 따라가기(trace)는 같은 3D 장면·패널을 씁니다.
+  function tourLike() { return T.mode === 'tour' || T.mode === 'trace'; }
   function devDef(id) { return DATA.devices.find(function (d) { return d.id === id; }); }
   function locDef(id) { return DATA.locations.find(function (l) { return l.id === id; }); }
   function devName(id) { var d = devDef(id); return d ? d.name : id; }
 
   /* ---------------------------------------------------------------- 저장(편의) */
   function loadMode() {
-    try { var m = localStorage.getItem(MODE_KEY); return (m === 'practice' || m === 'tour') ? m : 'tour'; } catch (e) { return 'tour'; }
+    try { var m = localStorage.getItem(MODE_KEY); return (m === 'practice' || m === 'tour' || m === 'trace') ? m : 'tour'; } catch (e) { return 'tour'; }
   }
   function saveMode(m) { try { localStorage.setItem(MODE_KEY, m); } catch (e) { /* 저장 안 돼도 동작에는 문제 없음 */ } }
 
@@ -313,7 +315,8 @@
     buildCables(root);
     T.built = true;
     applyMode(true);
-    if (T.mode === 'tour') setCamera(locDef('overview').view.pos, locDef('overview').view.target);
+    if (tourLike()) setCamera(locDef('overview').view.pos, locDef('overview').view.target);
+    if (T.mode === 'trace') showTracePrompt();
     renderList();
     return true;
   }
@@ -357,7 +360,8 @@
       b.classList.toggle('active', on);
       b.setAttribute('aria-selected', on ? 'true' : 'false');
     });
-    var tour = T.mode === 'tour';
+    var tour = tourLike();
+    if (T.mode !== 'trace') stopTrace();
     if (T.root) T.root.visible = tour;
     T.labels.forEach(function (o) { o.visible = tour; });
     practiceObjects(function (o) { o.visible = !tour; });
@@ -373,13 +377,17 @@
   }
 
   function setMode(m) {
-    if (m !== 'tour' && m !== 'practice') return;
+    if (m !== 'tour' && m !== 'practice' && m !== 'trace') return;
     if (T.mode === m) { applyMode(); return; }
+    var prev = T.mode;
     T.mode = m;
     saveMode(m);
     applyMode();
-    if (m === 'tour' && T.built && !T.sel) {
-      var v = locDef('overview').view; flyTo(v.pos, v.target);
+    if (m === 'trace' && T.built) {
+      if (T.sel) traceSignal(T.sel); else showTracePrompt();
+    } else if (m === 'tour' && T.built) {
+      if (prev === 'trace' && T.sel) { var keep = T.sel; T.sel = null; select(keep); }
+      else if (!T.sel) { var v = locDef('overview').view; flyTo(v.pos, v.target); }
     }
     if (typeof gear3dOnResize === 'function') { try { gear3dOnResize(); } catch (e) { /* noop */ } }
   }
@@ -473,7 +481,7 @@
   function routeDef(rid) { return (DATA.cableRoutes || []).find(function (r) { return r.id === rid; }); }
   function selectRoute(rid) {
     var rt = routeDef(rid); if (!rt) return;
-    if (T.mode !== 'tour') setMode('tour');
+    if (!tourLike()) setMode('tour');
     clearSelection();
     if (!T.showCables) setCablesVisible(true);
     T.selRoute = rid;
@@ -509,6 +517,191 @@
     var on = !!T.showCables;
     var btn = bar.querySelector('.g3t-cable-toggle');
     if (btn) { btn.setAttribute('aria-pressed', on ? 'true' : 'false'); btn.textContent = on ? '케이블 경로 숨기기' : '케이블 경로 보기'; }
+  }
+
+  /* ---------------------------------------------------------------- 신호 따라가기 */
+  // 연결 데이터로 「입력 → Rio → CL5 → Rio → 앰프 → 스피커」 흐름을 만들고, 고른 장비가 포함된
+  // 흐름만 3D 경로·흐름도로 보여 줍니다. 신호 점이 실제 케이블 길을 따라 움직입니다.
+  var TRACE_SPEED = 15; // m/s (애니메이션용)
+  function linksTo(id) { return DATA.links.filter(function (l) { return l.to === id; }); }
+  function inputIds() {
+    var ids = {};
+    (DATA.cableRoutes || []).forEach(function (r) { if (r.kind === 'mic') ids[r.from] = 1; });
+    DATA.links.forEach(function (l) { if (l.to === 'cl5' && l.from !== 'stagebox' && l.from !== 'stagebox2') ids[l.from] = 1; });
+    return Object.keys(ids);
+  }
+  function speakerIds() {
+    var ids = {};
+    (DATA.cableRoutes || []).forEach(function (r) { if (r.kind === 'speaker') ids[r.to] = 1; });
+    return Object.keys(ids);
+  }
+  function inputRoute(id) { return (DATA.cableRoutes || []).find(function (r) { return r.from === id && (r.to === 'stagebox' || r.to === 'stagebox2' || r.to === 'cl5'); }); }
+  function speakerRoute(id) { return (DATA.cableRoutes || []).find(function (r) { return r.kind === 'speaker' && r.to === id; }); }
+  function ampOf(spk) {
+    var lk = linksTo(spk).find(function (l) { return l.from === 'amp_40d' || l.from === 'amp_10d'; });
+    return lk ? { amp: lk.from, port: lk.fromPort || null } : null;
+  }
+  function viaPanel(spk) { var lk = linksTo(spk).find(function (l) { return /^panel_/.test(l.from); }); return lk ? lk.from : null; }
+  function signalRole(id) {
+    if (inputIds().indexOf(id) >= 0) return 'input';
+    if (speakerIds().indexOf(id) >= 0) return 'speaker';
+    if (id === 'stagebox' || id === 'stagebox2') return 'rio';
+    if (id === 'cl5') return 'cl5';
+    if (id === 'amp_40d' || id === 'amp_10d') return 'amp';
+    return null;
+  }
+  function buildChain(id) {
+    var role = signalRole(id); if (!role) return null;
+    var ins = role === 'input' ? [id] : inputIds();
+    var spks = role === 'speaker' ? [id] : speakerIds();
+    if (role === 'amp') spks = spks.filter(function (s) { var a = ampOf(s); return a && a.amp === id; });
+    var viaRio = ins.filter(function (i) { var r = inputRoute(i); return r && r.to !== 'cl5'; });
+    var direct = ins.filter(function (i) { return viaRio.indexOf(i) < 0; });
+    var dante = routeDef('C31');
+    var stages = [
+      ins.map(function (i) { return { rt: inputRoute(i), rev: false }; }).filter(function (x) { return x.rt; }),
+      (viaRio.length && dante) ? [{ rt: dante, rev: false }] : [],
+      dante ? [{ rt: dante, rev: true }] : [],
+      spks.map(function (s) { return { rt: speakerRoute(s), rev: false }; }).filter(function (x) { return x.rt; })
+    ];
+    return { id: id, role: role, ins: ins, viaRio: viaRio, direct: direct, spks: spks, stages: stages };
+  }
+  function chipList(ids, selId) {
+    return '<div class="g3t-flow-chips">' + ids.map(function (d) {
+      return '<button type="button" class="g3t-flow-chip' + (d === selId ? ' sel' : '') + '" data-trace="' + esc(d) + '">' + esc(devName(d)) + '</button>';
+    }).join('') + '</div>';
+  }
+  function traceCardHtml(ch) {
+    var sel = ch.id;
+    var step = function (n, title, body, on, wire) {
+      return (wire ? '<div class="g3t-flow-wire"><span>' + esc(wire) + '</span></div>' : '') +
+        '<div class="g3t-flow-step' + (on ? ' on' : '') + '"><div class="g3t-flow-num">' + n + '</div><div class="g3t-flow-body"><div class="g3t-flow-title">' + title + '</div>' + body + '</div></div>';
+    };
+    var h = '<div class="g3t-card-head"><div><div class="g3t-card-title">신호 따라가기</div><div class="g3t-card-sub">' + esc(devName(sel)) + ' 의 신호가 지나가는 길</div></div><button type="button" class="g3t-close" aria-label="닫기">×</button></div>';
+    h += '<div class="g3t-flow">';
+    // 1 입력
+    var inBody = chipList(ch.ins, sel);
+    if (ch.role === 'input') {
+      var lk = DATA.links.find(function (l) { return l.from === sel; });
+      var dv = devDef(sel);
+      if (dv && dv.cl5Channel) inBody += '<p class="g3t-meta">' + esc(cl5ChannelText(dv.cl5Channel)) + '</p>';
+      if (lk && lk.verify === 'unknown') inBody += '<p class="g3t-meta"><span class="g3t-unk">미확인</span> ' + esc(lk.note || '') + '</p>';
+    } else inBody += '<p class="g3t-meta">CL5 로 들어오는 입력 ' + ch.ins.length + '개 (모두 섞여서 나갑니다)</p>';
+    h += step(1, '입력', inBody, ch.role === 'input');
+    // 2 Rio 입력
+    var rioBody = ch.viaRio.length ? '<p class="g3t-meta">마이크·판넬 신호를 디지털로 바꿔 Dante 로 보냅니다.</p>' : '';
+    if (ch.direct.length) rioBody += '<p class="g3t-meta">' + esc(ch.direct.map(devName).join(', ')) + ' 은(는) Rio 를 거치지 않고 Dante 로 바로 CL5 에 들어갑니다.</p>';
+    if (ch.ins.some(function (i) { return /^panel_/.test(i); })) rioBody += '<p class="g3t-meta"><span class="g3t-unk">미확인</span> 판넬은 두 번째 Rio 로 들어갈 수도 있습니다.</p>';
+    h += step(2, '<button type="button" class="g3t-link" data-trace="stagebox">Rio3224-D</button> (입력)', rioBody, ch.role === 'rio', ch.role === 'input' && ch.direct.length ? 'Dante 랜선' : '마이크 케이블');
+    // 3 CL5
+    h += step(3, '<button type="button" class="g3t-link" data-trace="cl5">CL5 콘솔</button> (방송실)', '<p class="g3t-meta">채널에서 소리를 다듬고(게인·EQ 등) 섞은 뒤 출력으로 보냅니다.</p>', ch.role === 'cl5', 'Dante 랜선 (천장 → 방송실)');
+    // 4 Rio 출력
+    h += step(4, '<button type="button" class="g3t-link" data-trace="stagebox">Rio3224-D</button> (출력)', '<p class="g3t-meta">CL5 의 출력을 AES/EBU 로 앰프에 보냅니다. <span class="g3t-unk">미확인</span> 출력 번호</p>', false, 'Dante 랜선 (방송실 → 랙)');
+    // 5 앰프
+    var ampLines = {};
+    ch.spks.forEach(function (s) {
+      var a = ampOf(s), p = viaPanel(s);
+      var key = a ? devName(a.amp) + (a.port ? ' ' + a.port : '') : '앰프 미확인' + (p ? ' → ' + devName(p) : '');
+      (ampLines[key] = ampLines[key] || []).push(s);
+    });
+    var ampBody = '<ul class="g3t-flow-list">' + Object.keys(ampLines).map(function (k) {
+      return '<li><b>' + esc(k) + '</b> → ' + esc(ampLines[k].map(devName).join(', ')) + '</li>';
+    }).join('') + '</ul>';
+    h += step(5, '앰프 (앰프 랙)', ampBody, ch.role === 'amp', 'AES/EBU (랙 안)');
+    // 6 스피커
+    h += step(6, '스피커', chipList(ch.spks, sel), ch.role === 'speaker', '스피커 케이블');
+    h += '</div>';
+    if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) h += '<p class="g3t-meta g3t-flow-hint">움직이는 점이 신호가 가는 방향입니다. 다른 장비를 누르면 그 장비의 흐름으로 바뀝니다.</p>';
+    return h;
+  }
+  function showTracePrompt() {
+    var card = $('g3tCard'); if (!card) return;
+    card.innerHTML = '<div class="g3t-card-head"><div><div class="g3t-card-title">신호 따라가기</div><div class="g3t-card-sub">장비를 하나 골라 보세요</div></div><button type="button" class="g3t-close" aria-label="닫기">×</button></div>' +
+      '<p class="g3t-role">마이크·판넬·스피커·앰프·CL5 를 누르면 신호가 어디서 와서 어디로 가는지 흐름도와 3D 케이블 길로 보여 줍니다.</p>' +
+      '<div class="g3t-sec">예시</div>' + chipList(['mic_podium_L', 'panel_1', 'ulxd', 'vi10p_L', 'y7p_L', 'g308_R'], null);
+    card.hidden = false;
+  }
+  function traceSignal(id) {
+    var ch = buildChain(id);
+    if (!ch) { select(id, { plain: true }); return; }
+    if (T.mode !== 'trace') setMode('trace');
+    clearSelection();
+    if (!T.showCables) setCablesVisible(true);
+    T.sel = id; T.trace = ch;
+    var ids = {}; ch.ins.concat(ch.spks).forEach(function (d) { ids[d] = 1; });
+    ['stagebox', 'cl5'].forEach(function (d) { ids[d] = 1; });
+    ch.spks.forEach(function (s) { var a = ampOf(s); if (a) ids[a.amp] = 1; });
+    T.traceIds = Object.keys(ids);
+    T.traceIds.forEach(function (d) { highlight(d, true, d === id ? null : 'group'); });
+    var all = []; ch.stages.forEach(function (st) { st.forEach(function (x) { if (all.indexOf(x.rt) < 0) all.push(x.rt); }); });
+    var bb = new THREE.Box3();
+    all.forEach(function (rt) { rt.path.forEach(function (n) { bb.expandByPoint(new THREE.Vector3().fromArray(DATA.cableNodes[n])); }); });
+    var c = bb.getCenter(new THREE.Vector3()), sz = bb.getSize(new THREE.Vector3());
+    var hgt = Math.max(9, Math.max(sz.x / 1.3, sz.z / 0.85) + 4);
+    highlightRoutes(all, Math.max(0.03, hgt * 0.0022));
+    flyTo([c.x, hgt, c.z + hgt * 0.18], [c.x, 0.5, c.z]);
+    var lb = T.labelById[id] || (devDef(id) && T.labelById['loc:' + devDef(id).location]); if (lb) lb.classList.add('sel');
+    occLast = '';
+    var card = $('g3tCard'); if (card) { card.innerHTML = traceCardHtml(ch); card.hidden = false; }
+    startPulses(ch, Math.max(0.06, hgt * 0.004));
+  }
+  // 신호 점 애니메이션
+  function polyOf(rt, rev) {
+    var pts = rt.path.map(function (n) { return nodePos(n, rt.kind); });
+    if (rev) pts.reverse();
+    var cum = [0];
+    for (var i = 1; i < pts.length; i++) cum.push(cum[i - 1] + pts[i].distanceTo(pts[i - 1]));
+    return { pts: pts, cum: cum, len: cum[cum.length - 1], kind: rt.kind };
+  }
+  function pointAt(poly, d) {
+    for (var i = 1; i < poly.pts.length; i++) {
+      if (d <= poly.cum[i]) { var seg = poly.cum[i] - poly.cum[i - 1] || 1; return poly.pts[i - 1].clone().lerp(poly.pts[i], (d - poly.cum[i - 1]) / seg); }
+    }
+    return poly.pts[poly.pts.length - 1].clone();
+  }
+  function stopTrace() {
+    T.trace = null;
+    if (T.pulseRaf) cancelAnimationFrame(T.pulseRaf);
+    T.pulseRaf = null;
+    if (T.pulseGroup) { while (T.pulseGroup.children.length) T.pulseGroup.remove(T.pulseGroup.children[0]); }
+    T.pulses = [];
+  }
+  function startPulses(ch, r) {
+    if (T.pulseRaf) cancelAnimationFrame(T.pulseRaf);
+    if (!T.pulseGroup && T.root) { T.pulseGroup = new THREE.Group(); T.pulseGroup.name = 'tracePulses'; T.root.add(T.pulseGroup); }
+    if (!T.pulseGroup) return;
+    while (T.pulseGroup.children.length) T.pulseGroup.remove(T.pulseGroup.children[0]);
+    T.pulses = [];
+    var t0 = 0;
+    ch.stages.forEach(function (st) {
+      var dur = 0;
+      st.forEach(function (x) {
+        var poly = polyOf(x.rt, x.rev);
+        dur = Math.max(dur, poly.len / TRACE_SPEED);
+        var m = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 10), new THREE.MeshBasicMaterial({ color: 0xffffff, depthTest: false }));
+        var ring = new THREE.Mesh(new THREE.SphereGeometry(r * 1.6, 12, 10), new THREE.MeshBasicMaterial({ color: CABLE_KIND[poly.kind].color, depthTest: false, transparent: true, opacity: 0.55 }));
+        m.renderOrder = 31; ring.renderOrder = 30; m.visible = ring.visible = false;
+        T.pulseGroup.add(ring); T.pulseGroup.add(m);
+        T.pulses.push({ poly: poly, start: t0, m: m, ring: ring });
+      });
+      t0 += Math.max(dur, st.length ? 0.4 : 0);
+    });
+    T.pulseLoop = t0 + 0.8;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return; // 움직임 줄이기: 경로 강조만
+    var start = performance.now();
+    function frame(now) {
+      if (!T.trace) return;
+      var t = ((now - start) / 1000) % T.pulseLoop;
+      T.pulses.forEach(function (p) {
+        var d = (t - p.start) * TRACE_SPEED;
+        var on = d >= 0 && d <= p.poly.len;
+        p.m.visible = p.ring.visible = on;
+        if (on) { var q = pointAt(p.poly, d); p.m.position.copy(q); p.ring.position.copy(q); }
+      });
+      T.pulseRaf = requestAnimationFrame(frame);
+    }
+    T.pulseRaf = requestAnimationFrame(frame);
   }
 
   /* ---------------------------------------------------------------- 카메라 */
@@ -577,13 +770,17 @@
     if (T.selLoc) DATA.devices.forEach(function (d) { if (d.location === T.selLoc) highlight(d.id, false); });
     Object.keys(T.labelById).forEach(function (k) { T.labelById[k].classList.remove('sel'); });
     document.querySelectorAll('.g3t-chip.sel, .g3t-place.sel').forEach(function (b) { b.classList.remove('sel'); });
+    if (T.traceIds) T.traceIds.forEach(function (d) { highlight(d, false); });
+    T.traceIds = null;
+    stopTrace();
     T.sel = null; T.selLoc = null; T.selRoute = null;
     highlightRoutes(null);
   }
 
   function select(id, opts) {
     var def = devDef(id); if (!def) return;
-    if (T.mode !== 'tour') setMode('tour');
+    if (!tourLike()) setMode('tour');
+    if (T.mode === 'trace' && !(opts && opts.plain)) { traceSignal(id); return; }
     clearSelection();
     T.sel = id;
     if (def.pos) {
@@ -601,7 +798,7 @@
 
   function goLocation(lid) {
     var l = locDef(lid); if (!l) return;
-    if (T.mode !== 'tour') setMode('tour');
+    if (!tourLike()) setMode('tour');
     clearSelection();
     T.selLoc = lid;
     if (lid !== 'overview') DATA.devices.forEach(function (d) { if (d.location === lid && !d.decor) highlight(d.id, true, 'group'); });
@@ -646,6 +843,7 @@
     else if (DATA.outUnknown && DATA.outUnknown[def.id]) h += '<div class="g3t-sec">신호가 나가는 곳</div><p class="g3t-meta"><span class="g3t-unk">미확인</span> ' + esc(DATA.outUnknown[def.id]) + '</p>';
     if (def.channels) h += '<p class="g3t-meta">입력 ' + def.channels + '채널 (XLR, 위아래 ' + (def.rows || 2) + '줄)</p>';
     h += cableListHtml(routesFor(def.id), '케이블 길');
+    if (def.pos && signalRole(def.id)) h += '<button type="button" class="g3t-trace-btn" data-trace="' + esc(def.id) + '">🧭 이 장비의 신호 따라가기</button>';
     if (def.id === 'stagebox' && DATA.rackUnconfirmed && DATA.rackUnconfirmed.length) {
       h += '<div class="g3t-sec">같은 랙에 있는 다른 장비 (모델 확인 필요)</div><ul class="g3t-plain">' + DATA.rackUnconfirmed.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>';
     }
@@ -719,6 +917,7 @@
     });
     card.addEventListener('click', function (e) {
       if (e.target.closest('.g3t-close')) { clearSelection(); closeCard(); return; }
+      var trb = e.target.closest('[data-trace]'); if (trb) { if (T.mode !== 'trace') setMode('trace'); traceSignal(trb.dataset.trace); return; }
       var rtb = e.target.closest('[data-route]'); if (rtb) { selectRoute(rtb.dataset.route); return; }
       var go = e.target.closest('[data-go]'); if (go) select(go.dataset.go);
     });
@@ -748,15 +947,15 @@
     var down = null;
     wrap.addEventListener('pointerdown', function (e) { down = { x: e.clientX, y: e.clientY }; }, true);
     wrap.addEventListener('click', function (e) {
-      if (T.mode !== 'tour') return;
+      if (!tourLike()) return;
       if (e.target.closest('.g3t-label') || e.target.closest('.g3t-card')) return; // 각자 처리
       e.stopPropagation();
       if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6) return; // 드래그(회전)였음
       onTourClick(e);
     }, true);
-    wrap.addEventListener('dblclick', function (e) { if (T.mode === 'tour') e.stopPropagation(); }, true);
+    wrap.addEventListener('dblclick', function (e) { if (tourLike()) e.stopPropagation(); }, true);
     window.addEventListener('keydown', function (e) {
-      if (T.mode !== 'tour') return;
+      if (!tourLike()) return;
       var t = $('tab2'); if (!t || !t.classList.contains('active')) return;
       var tag = (document.activeElement && document.activeElement.tagName) || '';
       if (tag === 'INPUT' || tag === 'TEXTAREA') return;
@@ -793,7 +992,7 @@
   var occRay = null;
   function updateOcclusion() {
     var G = g3();
-    if (!T.built || T.mode !== 'tour' || !G || !G.camera || !G.modelRoot) return;
+    if (!T.built || !tourLike() || !G || !G.camera || !G.modelRoot) return;
     var tab = $('tab2'); if (!tab || !tab.classList.contains('active')) return;
     var key = G.camera.position.toArray().map(function (v) { return v.toFixed(2); }).join(',') + '|' + G.controls.target.toArray().map(function (v) { return v.toFixed(2); }).join(',');
     if (key === occLast) return;
@@ -829,7 +1028,7 @@
   var LOD_NEAR = 6; // m
   function updateLOD() {
     var G = g3();
-    if (!T.built || T.mode !== 'tour' || !G || !G.camera) return;
+    if (!T.built || !tourLike() || !G || !G.camera) return;
     var cam = G.camera.position, wp = new THREE.Vector3();
     Object.keys(T.devs).forEach(function (id) {
       var dv = T.devs[id]; if (!dv.lod) return;
@@ -858,6 +1057,8 @@
   T.devices = function () { return Object.keys(T.devs); };
   T.updateLOD = updateLOD;
   T.selectRoute = selectRoute;
+  T.traceSignal = traceSignal;
+  T.buildChain = buildChain;
   T.setCablesVisible = setCablesVisible;
   T.routesFor = routesFor;
   T.setCamera = setCamera;
