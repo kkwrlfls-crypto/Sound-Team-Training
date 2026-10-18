@@ -2347,6 +2347,41 @@
     .curriculum-progress-bar-bg { height: 8px; background: #dde4ec; }
     .curriculum-progress-bar-fill { background: var(--sta-cyan); }
 
+
+    /* ---------- 2026-10-19 내용 정리 ---------- */
+    /* 비워 둔 설명은 자리 차지하지 않게(편집 중에는 보여서 다시 쓸 수 있음) */
+    .editable-text:empty:not([contenteditable="true"]) { display: none; }
+    .level-header:has(.level-desc:empty:not([contenteditable="true"])) .level-title { margin-bottom: 0; }
+    /* 탭1: 세 가지 경로 요약(누르면 아래 3D 실습으로 이동) */
+    .t1-paths { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+    .t1-paths .theory-card { margin: 0; padding: 12px 14px; cursor: pointer; transition: border-color 0.15s ease; }
+    .t1-paths .theory-card:hover { border-color: var(--sta-cyan); }
+    .t1-paths .theory-card h3 { margin: 0; font-size: 0.92rem; line-height: 1.45; word-break: keep-all; }
+    .pa3d-card:not([data-pa3d="s1"]) .pa3d-how { display: none; }   /* 세 실습에 똑같이 반복되던 조작법은 첫 카드에만 */
+    /* 탭4: 말씀 인용 */
+    .level-quote {
+      border-left: 3px solid var(--sta-cyan); padding: 2px 0 2px 14px;
+      color: var(--sta-ink); font-size: 0.92rem; line-height: 1.8; max-width: 72ch;
+    }
+    /* 탭6: 단계 목록, 기능부 설명 편집 */
+    .mg12xu-step-list { margin: 6px 0 0; padding-left: 20px; display: grid; gap: 4px; line-height: 1.6; }
+    .mg12xu-sec-editbar { margin: 4px 0 10px; }
+    .mg12xu-sec-actions { display: flex; gap: 6px; margin-top: 8px; }
+    .mg12xu-sec-actions button { border: 0; border-radius: 6px; padding: 5px 10px; font-size: 0.75rem; font-weight: 700; cursor: pointer; background: #334155; color: #f8fafc; }
+    .mg12xu-sec-actions .mg12xu-sec-edit, .mg12xu-sec-actions .mg12xu-sec-save { background: #22d3ee; color: #062033; }
+    .mg12xu-sec-bubble [contenteditable="true"] { outline: 1px dashed #67e8f9; outline-offset: 2px; border-radius: 3px; display: block; }
+    /* 탭2: 화면 조작 한 줄, 키보드 안내 접기 */
+    .g3-view-help { font-size: 0.78rem; color: var(--sta-ink-2); margin: 0 0 8px; }
+    .g3-keys { margin-top: 8px; font-size: 0.82rem; color: var(--sta-ink-2); }
+    .g3-keys summary { cursor: pointer; font-weight: 700; color: var(--sta-navy); }
+    .g3-keys ul { margin: 8px 0 4px; padding-left: 18px; display: grid; gap: 3px; }
+    .g3-keys p { margin: 4px 0 0; font-size: 0.78rem; }
+    kbd { display: inline-block; min-width: 1.6em; padding: 0 5px; border: 1px solid var(--sta-line); border-bottom-width: 2px; border-radius: 4px; background: var(--sta-surface); font: 700 0.74rem/1.5 var(--sta-font); text-align: center; color: var(--sta-ink); }
+    .control-bar.g3-practice-only > span:first-child { font-weight: 700; color: var(--sta-navy); }
+    @media (max-width: 640px) {
+      .t1-paths { grid-template-columns: 1fr; gap: 8px; }
+    }
+
     /* ---------- 휴대폰 ---------- */
     @media (max-width: 640px) {
       .site-header__bar { padding: 12px 0 8px; }
@@ -2401,15 +2436,17 @@
       margin: auto;
       width: 100%; max-width: 760px;
       display: flex; flex-direction: column; gap: 30px;
+      text-align: center;   /* 2026-10-19: 문구 가운데 정렬(기완 님 요청) */
     }
     .intro__brand {
-      display: flex; align-items: center; gap: 12px;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
       font-family: "STA Intro Serif", "Noto Serif KR", "Nanum Myeongjo", "AppleMyungjo", Batang, serif;
       font-size: 0.86rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
       color: #67e8f9;
       opacity: 0; animation: introFade 1.2s ease 0.1s forwards;
     }
-    .intro__brand::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(103, 232, 249, 0.45), rgba(103, 232, 249, 0)); }
+    .intro__brand::before, .intro__brand::after { content: ""; flex: 0 1 72px; height: 1px; background: linear-gradient(90deg, rgba(103, 232, 249, 0), rgba(103, 232, 249, 0.5)); }
+    .intro__brand::after { background: linear-gradient(90deg, rgba(103, 232, 249, 0.5), rgba(103, 232, 249, 0)); }
 
     .intro__text { display: flex; flex-direction: column; gap: 14px; }
     .intro__line {
@@ -2426,10 +2463,9 @@
     }
     .intro__line--last { font-weight: 600; color: #ffffff; }
 
-    .intro__foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; min-height: 56px; }
-    .intro__hint { font-size: 0.78rem; color: #8aa0bb; animation: introFadeOut 0.6s ease 10.2s forwards; }
+    .intro__foot { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 56px; }
+    .intro__hint { order: 2; font-size: 0.78rem; color: #8aa0bb; animation: introFadeOut 0.6s ease 10.2s forwards; }
     .intro__go {
-      margin-left: auto;
       min-width: 168px; height: 54px; padding: 0 30px;
       border: 0; border-radius: 999px;
       background: #22d3ee; color: #062033;
@@ -2471,8 +2507,9 @@
       .intro__inner { gap: 22px; }
       .intro__text { gap: 10px; }
       .intro__line { line-height: 1.8; }
-      .intro__go { width: 100%; margin-left: 0; }
+      .intro__go { width: 100%; }
       .intro__brand { font-size: 0.74rem; letter-spacing: 0.12em; }
+      .intro__brand::before, .intro__brand::after { display: none; }
       /* 휴대폰에서는 문구가 화면보다 길어서 GO! 가 아래에 숨지 않도록 하단에 붙여 둠 */
       .intro__foot {
         position: sticky; bottom: -28px;
@@ -2590,6 +2627,15 @@
     </div>
   </header>
   <script>
+    /* 2026-10-19: 탭1 경로 요약 카드를 누르면 해당 3D 실습 카드로 이동 (편집 중에는 동작하지 않음) */
+    document.addEventListener('click', function (e) {
+      var c = e.target.closest && e.target.closest('.t1-path');
+      if (!c || (typeof mg12xuContentEditing !== 'undefined' && mg12xuContentEditing.tab1)) return;
+      var t = document.querySelector('.pa3d-card[data-pa3d="' + c.getAttribute('data-goto') + '"]');
+      if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  </script>
+  <script>
     /* 휴대폰에서 탭 메뉴가 옆으로 밀리는 한 줄일 때, 선택된 탭이 화면 안에 보이도록 탭 줄만 가로로 스크롤 (switchTab 은 건드리지 않음) */
     (function () {
       var nav = document.querySelector('.site-header .tab-nav');
@@ -2610,30 +2656,32 @@
     <!-- TAB 1: 확성 시스템의 기본 -->
     <div id="tab1" class="tab-content">
       <div class="level-header">
-        <div class="level-title editable-text" data-field="tab1.title">확성 시스템의 기본 구조 학습</div>
-        <div class="level-desc editable-text" data-field="tab1.desc">음향 신호가 전달되는 대표적인 3가지 기본 경로를 이해하고 습득할 수 있습니다.</div>
+        <div class="level-title editable-text" data-field="tab1.title">확성 시스템의 기본</div>
+        <div class="level-desc editable-text" data-field="tab1.desc"></div>
       </div>
 
       <div class="content-edit-bar" id="tab1EditBar">
         <button type="button" class="content-edit-btn" id="tab1EditBtn" onclick="toggleContentEdit('tab1')">✏️ 설명 내용 편집</button>
         <button type="button" class="content-edit-btn save" onclick="saveEditedContent('tab1')">💾 저장 (새 index.html 다운로드)</button>
         <button type="button" class="content-edit-btn cancel" onclick="cancelContentEdit('tab1')">편집 취소</button>
-        <span class="content-edit-hint">텍스트를 직접 클릭해서 수정한 뒤 저장하면, 수정 내용이 담긴 새 index.html 파일이 다운로드됩니다. 그 파일로 기존 파일을 교체하면 수정이 반영됩니다.</span>
+        <span class="content-edit-hint">글을 눌러 고친 뒤 저장하면, 고친 내용이 담긴 index.html 파일이 내려받아져요.</span>
       </div>
 
-      <div class="theory-card">
-        <h3 class="editable-text" data-field="tab1.card1.title">1) 마이크 ➔ 스피커</h3>
-        <p class="editable-text" data-field="tab1.card1.desc">믹서나 앰프를 거치지 않고 마이크 신호가 직접 스피커(또는 액티브 스피커)로 입력되는 소규모 시스템 구조입니다.</p>
-      </div>
-
-      <div class="theory-card">
-        <h3 class="editable-text" data-field="tab1.card2.title">2) 마이크 ➔ 콘솔 ➔ 앰프 ➔ 스피커</h3>
-        <p class="editable-text" data-field="tab1.card2.desc">마이크 입력이 콘솔(믹서)에서 믹싱 및 프로세싱을 거친 후, 파워 앰프를 통해 증폭되어 패시브 스피커로 출력되는 가장 일반적인 교회 본당 음향 구조입니다.</p>
-      </div>
-
-      <div class="theory-card">
-        <h3 class="editable-text" data-field="tab1.card3.title">3) 마이크 ➔ 콘솔 ➔ 스피커</h3>
-        <p class="editable-text" data-field="tab1.card3.desc">콘솔에서 출력된 신호가 내장 앰프가 포함된 액티브(Powered) 스피커로 바로 전달되는 구조입니다.</p>
+      <!-- 2026-10-19: 기완 님 편집 반영 — 설명은 비우고 경로 이름만 남김(설명은 아래 3D 실습 카드에 있음).
+           세 경로를 한 줄 요약으로 보여 주고, 누르면 해당 3D 실습 카드로 이동 -->
+      <div class="t1-paths">
+        <div class="theory-card t1-path" data-goto="s1">
+          <h3 class="editable-text" data-field="tab1.card1.title">1) 마이크 ➔ 스피커</h3>
+          <p class="editable-text" data-field="tab1.card1.desc"></p>
+        </div>
+        <div class="theory-card t1-path" data-goto="s2">
+          <h3 class="editable-text" data-field="tab1.card2.title">2) 마이크 ➔ 콘솔 ➔ 스피커</h3>
+          <p class="editable-text" data-field="tab1.card2.desc"></p>
+        </div>
+        <div class="theory-card t1-path" data-goto="s3">
+          <h3 class="editable-text" data-field="tab1.card3.title">3) 마이크 ➔ 콘솔 ➔ 앰프 ➔ 스피커</h3>
+          <p class="editable-text" data-field="tab1.card3.desc"></p>
+        </div>
       </div>
 
       <!-- 2026-10-14 추가 / 10-15 세분화: 3D 장비 연결·조작 실습 3개 (각 카드가 자기 캔버스를 가짐, 내용은 assets3d/pa_practice_3d.js 가 그림) -->
@@ -2660,21 +2708,31 @@
       </div>
 
       <div class="theory-card mg12xu-game-card">
-        <h3>🎚 실습 게임: MG12XU 콘솔로 음향 시스템 구축해보기</h3>
-        <p>실제 페이더·EQ 조작은 현장에서 배우지만, "무엇을 어디에 연결해야 하는지"는 미리 게임으로 연습할 수 있습니다.</p>
+        <h3>실습 게임 · MG12XU 콘솔로 음향 시스템 구축해보기</h3>
 
         <div class="mg12xu-step">
-          <div class="mg12xu-step-title">무대 위 소스를 실제 MG12XU 콘솔 채널에 연결하기</div>
-          <div class="mg12xu-step-desc">무대 위 아이콘의 <b>노란 점(케이블 단자)</b>을 눌러서 그대로 아래 입력 단자까지 드래그하면 실제 케이블처럼 연결됩니다 (아이콘을 먼저 누르고 채널 헤더를 눌러 연결해도 됩니다). 오른쪽 <b>스피커</b>도 STEREO/GROUP OUT 단자에서 드래그해 연결해야 소리가 납니다. 연결 후에는 <b>GAIN·HIGH·MID·LOW·PAN·AUX1·AUX2 노브</b>를 돌리고 <b>페이더</b>를 드래그하고, <b>ON</b>으로 뮤트, <b>1-2/ST</b>로 버스 전송을 조절할 수 있어요. GAIN을 너무 올리면 <b>PEAK</b> 램프가 켜지고, 오른쪽 <b>GROUP 1-2 / STEREO 마스터 페이더</b>와 <b>ON/OFF 버튼</b>, 레벨 미터로 전체 출력을 관리합니다.</div>
+          <div class="mg12xu-step-title">이렇게 해 보세요</div>
+          <ol class="mg12xu-step-desc mg12xu-step-list">
+            <li><b>연결</b> — 무대 아이콘의 <b>노란 점</b>을 아래 입력 단자까지 끌어다 놓으면 케이블이 연결돼요. (아이콘 → 채널 머리 순서로 눌러도 돼요)</li>
+            <li><b>스피커</b> — 오른쪽 스피커도 <b>STEREO / GROUP OUT</b> 단자에서 끌어 연결해야 소리가 나요.</li>
+            <li><b>소리 만들기</b> — 노브(GAIN·EQ·PAN·AUX)를 돌리고 <b>페이더</b>를 올려요. <b>ON</b> 은 켜기/끄기, <b>1-2 / ST</b> 는 보낼 곳이에요.</li>
+            <li><b>확인</b> — GAIN 이 너무 높으면 <b>PEAK</b> 램프가 켜져요. 전체 출력은 오른쪽 <b>STEREO 마스터 페이더</b>와 레벨 미터로 봐요.</li>
+          </ol>
           <div class="mg12xu-audio-toggle-row">
-            <button class="btn" id="mg12xuAudioToggleBtn" onclick="toggleMg12xuAudio()">🔊 오디오 테스트 켜기 (채널 조작 시 실제 소리 변화)</button>
-            <span class="mg12xu-audio-hint" id="mg12xuAudioHint">꺼짐 — 켜면 각 소스마다 테스트 톤이 재생되고, 페이더·GAIN·EQ·ON·라우팅 조작이 실시간으로 소리에 반영됩니다.</span>
+            <button class="btn" id="mg12xuAudioToggleBtn" onclick="toggleMg12xuAudio()">🔊 오디오 테스트 켜기</button>
+            <span class="mg12xu-audio-hint" id="mg12xuAudioHint">켜면 연결한 소스마다 소리가 나고, 조작한 대로 바로 바뀌어요.</span>
           </div>
 
           <!-- 2026-10-15 추가: 기능부 설명 (같은 기능부를 테두리로 묶어 표시 + 말풍선 설명, 설명 문구는 편집 후 저장 가능) -->
           <div class="mg12xu-sec-bar">
             <button type="button" class="btn" id="mg12xuSecToggle" onclick="mg12xuSecToggle()">🔍 기능부 설명 보기</button>
-            <span class="mg12xu-sec-hint" id="mg12xuSecHint">켜면 콘솔·단자 사진 위에 마우스를 올렸을 때(휴대폰은 누르면) 같은 기능을 하는 부분이 모두 테두리로 묶여 보이고 설명 말풍선이 나타납니다. 설명 모드에서는 노브·페이더 조작과 케이블 연결이 잠시 멈춥니다.</span>
+            <span class="mg12xu-sec-hint" id="mg12xuSecHint">켜고 사진 위에 마우스를 올리면(휴대폰은 누르면) 같은 기능끼리 테두리로 묶이고 설명이 나와요. 설명을 보는 동안은 조작이 잠시 멈춰요.</span>
+          </div>
+          <div class="content-edit-bar mg12xu-sec-editbar" id="tab6EditBar">
+            <button type="button" class="content-edit-btn" id="tab6EditBtn" onclick="toggleContentEdit('tab6')">✏️ 기능부 설명 편집</button>
+            <button type="button" class="content-edit-btn save" onclick="saveEditedContent('tab6')">💾 저장 (새 index.html 다운로드)</button>
+            <button type="button" class="content-edit-btn cancel" onclick="cancelContentEdit('tab6')">편집 취소</button>
+            <span class="content-edit-hint">말풍선이나 「기능부 설명 전체 보기」 목록의 글을 눌러 고친 뒤 저장하면, 고친 내용이 담긴 index.html 파일이 내려받아져요.</span>
           </div>
           <div class="mg12xu-patchbay-wrap" id="mg12xuPatchbayWrap">
             <svg class="mg12xu-patchbay-svg" id="mg12xuConnectSvg"></svg>
@@ -2738,13 +2796,7 @@
           <button class="btn" style="margin-top:10px;" onclick="checkMg12xuStep1()">✅ 채널 배정 확인하기</button>
           <div class="result-panel" id="mg12xuStep1Result"></div>
           <details class="mg12xu-sec-list" id="mg12xuSecList">
-            <summary>📖 기능부 설명 전체 보기 / 편집</summary>
-            <div class="content-edit-bar" id="tab6EditBar">
-              <button type="button" class="content-edit-btn" id="tab6EditBtn" onclick="toggleContentEdit('tab6')">✏️ 기능부 설명 편집</button>
-              <button type="button" class="content-edit-btn save" onclick="saveEditedContent('tab6')">💾 저장 (새 index.html 다운로드)</button>
-              <button type="button" class="content-edit-btn cancel" onclick="cancelContentEdit('tab6')">편집 취소</button>
-              <span class="content-edit-hint">아래 목록이나 말풍선 안의 글을 직접 고친 뒤 저장하면 수정 내용이 담긴 새 index.html 이 다운로드됩니다. 그 파일로 기존 파일을 바꾸면 반영됩니다.</span>
-            </div>
+            <summary>📖 기능부 설명 전체 보기</summary>
             <ul class="mg12xu-sec-texts"><li class="mg12xu-sec-src" data-sec="input"><b class="editable-text" data-field="tab6.sec.input.title">입력 단자 (MIC / LINE)</b><div class="editable-text" data-field="tab6.sec.input.desc">마이크나 악기를 꽂는 곳입니다. 1~4번은 XLR과 잭을 함께 쓰는 콤보 단자(MIC/LINE), 5~8번은 MIC(XLR)와 LINE(잭)이 따로 있고, 9~12번은 스테레오 라인 입력(잭·RCA)과 USB 오디오 입력입니다.</div></li><li class="mg12xu-sec-src" data-sec="padhpf"><b class="editable-text" data-field="tab6.sec.padhpf.title">PAD · HPF</b><div class="editable-text" data-field="tab6.sec.padhpf.desc">PAD는 입력 신호를 26dB 줄여 큰 소리(라인 기기, 드럼 등)가 찌그러지지 않게 합니다. HPF는 80Hz 아래 저음(무대 울림, 핸들링 소음, 바람 소리)을 잘라냅니다. 보컬·말 마이크는 HPF를 켜 두는 경우가 많습니다.</div></li><li class="mg12xu-sec-src" data-sec="phantom"><b class="editable-text" data-field="tab6.sec.phantom.title">팬텀 전원 (+48V)</b><div class="editable-text" data-field="tab6.sec.phantom.desc">콘덴서 마이크에 필요한 +48V 전원으로, CH1~7/8 MIC 입력에 한꺼번에 걸립니다. SM58 같은 다이내믹 마이크에는 필요 없고, 마이크를 꽂거나 뺄 때는 꺼 두는 것이 안전합니다.</div></li><li class="mg12xu-sec-src" data-sec="gain"><b class="editable-text" data-field="tab6.sec.gain.title">GAIN · PEAK</b><div class="editable-text" data-field="tab6.sec.gain.desc">입력 신호를 알맞은 크기로 키우는 첫 단계입니다. 실제로 말하거나 노래하게 하면서 GAIN을 올리고, PEAK 램프가 가끔 깜빡이면 조금 내립니다. 음량은 GAIN이 아니라 페이더로 맞춥니다.</div></li><li class="mg12xu-sec-src" data-sec="comp"><b class="editable-text" data-field="tab6.sec.comp.title">COMP (컴프레서)</b><div class="editable-text" data-field="tab6.sec.comp.desc">1~4번 채널의 원 노브 컴프레서입니다. 오른쪽으로 돌릴수록 큰 소리를 눌러 작은 소리와의 차이를 줄입니다. 말소리·보컬을 고르게 할 때 조금만 사용합니다.</div></li><li class="mg12xu-sec-src" data-sec="eq"><b class="editable-text" data-field="tab6.sec.eq.title">EQ (HIGH · MID · LOW)</b><div class="editable-text" data-field="tab6.sec.eq.desc">3밴드 이퀄라이저입니다. HIGH 10kHz, MID 2.5kHz, LOW 100Hz를 ±15dB 조절합니다(9~12번은 HIGH·LOW만). 가운데(0)가 기본이고, 거슬리는 대역을 조금 깎는 쪽으로 쓰는 것이 좋습니다.</div></li><li class="mg12xu-sec-src" data-sec="aux1"><b class="editable-text" data-field="tab6.sec.aux1.title">AUX1 (모니터 보내기)</b><div class="editable-text" data-field="tab6.sec.aux1.desc">무대 모니터 스피커(연주자·싱어가 듣는 소리)로 보내는 양입니다. 채널마다 AUX1 노브로 보내고, SEND MASTER의 AUX1로 전체 양을 정하면 AUX1 SEND 단자로 나갑니다. PRE 버튼을 누르면 페이더와 상관없이 보냅니다.</div></li><li class="mg12xu-sec-src" data-sec="fx"><b class="editable-text" data-field="tab6.sec.fx.title">AUX2/FX · SPX 이펙터 · FX RTN</b><div class="editable-text" data-field="tab6.sec.fx.desc">내장 SPX 이펙터(리버브·딜레이)로 보내는 경로입니다. 채널 AUX2/FX 노브 → SEND MASTER AUX2 → SPX(PROGRAM으로 효과 선택, PARAMETER로 길이 조절) → FX RTN 페이더로 메인에 섞입니다. AUX2 SEND 단자로 외부 장비에 보낼 수도 있습니다.</div></li><li class="mg12xu-sec-src" data-sec="pan"><b class="editable-text" data-field="tab6.sec.pan.title">PAN / BAL</b><div class="editable-text" data-field="tab6.sec.pan.desc">소리를 왼쪽(L)·오른쪽(R) 어디에 둘지 정합니다. 스테레오 채널(5/6 이후)은 BAL로 좌우 균형을 맞춥니다.</div></li><li class="mg12xu-sec-src" data-sec="on"><b class="editable-text" data-field="tab6.sec.on.title">ON (채널 켜기)</b><div class="editable-text" data-field="tab6.sec.on.desc">채널을 켜고 끄는 버튼입니다(켜지면 불이 들어옴). 꺼지면 메인·그룹·FX와 페이더 뒤(POST) AUX로 나가는 소리가 모두 꺼집니다.</div></li><li class="mg12xu-sec-src" data-sec="route"><b class="editable-text" data-field="tab6.sec.route.title">버스 할당 (1-2 / ST)</b><div class="editable-text" data-field="tab6.sec.route.desc">채널 소리를 어디로 보낼지 고릅니다. ST는 STEREO(메인) 버스, 1-2는 GROUP 1-2 버스입니다. 보통 ST를 켜 둡니다.</div></li><li class="mg12xu-sec-src" data-sec="fader"><b class="editable-text" data-field="tab6.sec.fader.title">채널 페이더</b><div class="editable-text" data-field="tab6.sec.fader.desc">채널의 최종 음량입니다. 0 표시(유니티) 근처에서 쓰는 것이 기본이고, 페이더를 많이 올려야 한다면 GAIN이 낮은 것은 아닌지 먼저 확인합니다.</div></li><li class="mg12xu-sec-src" data-sec="pfl"><b class="editable-text" data-field="tab6.sec.pfl.title">PFL (사전 청취)</b><div class="editable-text" data-field="tab6.sec.pfl.desc">PFL을 누르면 페이더 앞 신호를 헤드폰(PHONES)과 레벨 미터로 따로 들어볼 수 있습니다. 메인 소리를 건드리지 않고 GAIN을 맞추거나 문제 채널을 찾을 때 씁니다.</div></li><li class="mg12xu-sec-src" data-sec="group"><b class="editable-text" data-field="tab6.sec.group.title">GROUP 1-2</b><div class="editable-text" data-field="tab6.sec.group.desc">GROUP 1-2 버스의 마스터입니다. 여러 채널을 묶어 한 번에 조절하거나 GROUP OUT 단자로 따로 내보냅니다. ST 버튼을 누르면 STEREO 메인에도 섞입니다.</div></li><li class="mg12xu-sec-src" data-sec="stereo"><b class="editable-text" data-field="tab6.sec.stereo.title">STEREO 마스터 (메인 출력)</b><div class="editable-text" data-field="tab6.sec.stereo.desc">메인 출력(L/R)의 마스터 페이더입니다. 여기 신호가 STEREO OUT(XLR·잭) 단자로 나가 메인 스피커나 파워앰프로 갑니다.</div></li><li class="mg12xu-sec-src" data-sec="meter"><b class="editable-text" data-field="tab6.sec.meter.title">레벨 미터 · POWER</b><div class="editable-text" data-field="tab6.sec.meter.desc">STEREO 출력(PFL을 누르면 그 채널)의 레벨을 보여 줍니다. 0 근처에서 가끔 노란색까지 오르는 정도가 알맞고, 빨간색(+10)이 자주 켜지면 줄입니다. POWER 램프는 전원 표시입니다.</div></li><li class="mg12xu-sec-src" data-sec="monitor"><b class="editable-text" data-field="tab6.sec.monitor.title">모니터 · 헤드폰</b><div class="editable-text" data-field="tab6.sec.monitor.desc">엔지니어가 듣는 모니터입니다. MONITOR LEVEL은 MONITOR OUT 단자(컨트롤룸 모니터 스피커), PHONES는 헤드폰 음량이고, SOURCE 스위치로 STEREO와 GROUP 중 들을 소스를 고릅니다.</div></li><li class="mg12xu-sec-src" data-sec="footsw"><b class="editable-text" data-field="tab6.sec.footsw.title">FOOT SW (풋 스위치)</b><div class="editable-text" data-field="tab6.sec.footsw.desc">발로 밟는 스위치를 꽂아 내장 이펙터(FX)를 켜고 끕니다.</div></li></ul>
           </details>
         </div>
@@ -2759,10 +2811,23 @@
     <!-- TAB 2: 3층 음향 시스템 (3D) -->
     <div id="tab2" class="tab-content">
       <div class="level-header">
-        <div class="level-title">3층 음향 시스템 (3D)</div>
-        <div class="level-desc g3-trace-only">마이크·판넬·스피커·앰프·CL5 를 누르면 그 신호가 <b>입력 → Rio → CL5 → Rio → 앰프 → 스피커</b> 순서로 어디를 지나가는지 흐름도와 3D 케이블 길로 보여 줘요. 움직이는 점이 신호가 가는 방향이에요. 흐름도 안의 장비 이름을 누르면 그 장비의 흐름으로 바뀝니다.</div>
-        <div class="level-desc g3-tour-only g3-tour-desc">실제 설치 위치에 놓인 음향 장비를 둘러보는 모드예요. 아래 목록이나 3D 화면의 이름표를 누르면 그 장비로 이동해서 역할과 연결(어디서 신호를 받고 어디로 보내는지)을 보여 줍니다. 장비를 직접 눌러도 돼요. 드래그하면 회전, 휠/핀치로 확대·축소, 오른쪽 드래그로 이동합니다. 좌/우는 회중석에서 단상을 바라본 기준이에요.</div>
-        <div class="level-desc g3-practice-only">실제 공간을 3D로 둘러보며 장비를 배치해보세요. 마우스로 드래그하면 공간을 회전, 휠로 확대/축소할 수 있습니다. 아래 보관함에서 장비를 클릭해 선택한 뒤(장비의 <b>ℹ️</b> 아이콘을 누르면 설명을 볼 수 있어요) 3D 공간을 클릭하면 그 자리에 배치됩니다. 배치 직후(또는 배치된 장비를 한 번 클릭하면)에는 키보드로 미세 조정할 수 있어요 — 화살표 키: 수평 이동, PageUp/PageDown: 높낮이, Q/E: 좌우로 도는 방향(90도씩), R/F: 스피커를 옆으로 눕히거나 세우기(90도씩, Shift를 누르면 15도씩 미세 조정), Esc: 조정 종료. 배치된 장비를 더블클릭하면 캔버스에서 빠져 다시 보관함으로 돌아갑니다. Ctrl+Z로 직전 작업을 되돌리고 Ctrl+Shift+Z로 다시 실행할 수 있어요. 배치된 장비를 순서대로 클릭하면 케이블이 연결돼요.</div>
+        <div class="level-title">3층 음향 시스템</div>
+        <div class="level-desc g3-trace-only">장비를 누르면 신호가 <b>입력 → Rio → CL5 → Rio → 앰프 → 스피커</b>로 지나가는 길을 흐름도와 3D 케이블로 보여 줘요. 움직이는 점이 신호 방향이고, 흐름도 속 장비 이름을 누르면 그 장비 기준으로 바뀌어요.</div>
+        <div class="level-desc g3-tour-only g3-tour-desc">실제 설치 위치의 장비를 둘러봐요. 목록·이름표·장비를 누르면 그 장비로 이동해서 역할과 연결(어디서 받고 어디로 보내는지)을 보여 줘요. 좌/우는 회중석에서 단상을 바라본 기준이에요.</div>
+        <div class="level-desc g3-practice-only">아래 보관함에서 장비를 고른 뒤 3D 공간을 누르면 그 자리에 놓여요. 놓인 장비를 차례로 누르면 케이블이 연결돼요. 장비의 <b>ℹ️</b> 를 누르면 설명이 나와요.</div>
+        <details class="g3-keys g3-practice-only">
+          <summary>⌨️ 키보드로 미세 조정하기</summary>
+          <ul>
+            <li><kbd>←↑↓→</kbd> 수평 이동</li>
+            <li><kbd>PageUp</kbd> <kbd>PageDown</kbd> 높낮이</li>
+            <li><kbd>Q</kbd> <kbd>E</kbd> 도는 방향 (90°씩)</li>
+            <li><kbd>R</kbd> <kbd>F</kbd> 스피커 눕히기·세우기 (90°씩, <kbd>Shift</kbd> 를 누르면 15°씩)</li>
+            <li><kbd>Esc</kbd> 조정 끝내기</li>
+            <li>더블클릭: 보관함으로 되돌리기</li>
+            <li><kbd>Ctrl</kbd>+<kbd>Z</kbd> 되돌리기 · <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd> 다시 하기</li>
+          </ul>
+          <p>배치 직후나 놓인 장비를 한 번 누른 뒤에 쓸 수 있어요.</p>
+        </details>
         <div id="layoutBestTag" class="g3-practice-only"></div>
       </div>
 
@@ -2772,8 +2837,10 @@
         <button type="button" role="tab" data-mode="practice">🔌 배선 실습</button>
       </div>
 
+      <div class="g3-view-help">화면 조작: 드래그 회전 · 휠/핀치 확대·축소 · 오른쪽 드래그 이동</div>
+
       <div class="control-bar g3-practice-only">
-        <span>💡 안내: 3D 공간 안을 드래그하면 회전, 휠/핀치로 확대·축소됩니다.</span>
+        <span>장비 배치</span>
         <button style="padding:4px 10px; font-size:0.75rem; background:#cbd5e1; color:#0f172a; border:none; border-radius:6px; cursor:pointer;" onclick="reset3DPlacement()">배치 초기화</button>
       </div>
 
@@ -2794,7 +2861,7 @@
       </div>
 
       <div class="gear3d-tray-wrap g3-practice-only">
-        <div class="gear3d-tray-label" id="gear3dTrayLabel">📦 배치할 장비 (클릭 후 위 3D 공간을 클릭해서 배치하세요)</div>
+        <div class="gear3d-tray-label" id="gear3dTrayLabel">📦 배치할 장비 — 고른 뒤 3D 공간을 누르세요</div>
         <div class="gear3d-tray" id="gear3dTray"></div>
       </div>
 
@@ -2806,8 +2873,8 @@
     <!-- TAB 5: CL5 콘솔 트레이닝 -->
     <div id="tab5" class="tab-content">
       <div class="level-header">
-        <div class="level-title">🎚 CL5 콘솔 트레이닝</div>
-        <div class="level-desc">시작 버튼을 누르면 예배 식순이 하나씩 화면에 나타나요. 식순이 바뀔 때마다 <b>5초 안에</b> 아래 콘솔 사진에서 그 순서에 맞는 채널의 <b>ON 버튼</b>을 정확히 눌러야 통과합니다. ON 버튼을 누르면 켜짐/꺼짐이 토글돼요.</div>
+        <div class="level-title">CL5 콘솔 트레이닝</div>
+        <div class="level-desc">시작을 누르면 예배 식순이 하나씩 나와요. 식순이 바뀌면 <b>5초 안에</b> 콘솔 사진에서 그 순서에 맞는 채널의 <b>ON 버튼</b>을 누르세요.</div>
       </div>
 
       <div class="cl5-order-stage" id="cl5OrderStage">
@@ -2824,17 +2891,17 @@
         <button class="cl5-step-btn" onclick="cl5ExportNames()">📤 채널 이름표 내보내기</button>
         <button class="cl5-step-btn" onclick="document.getElementById('cl5ImportFileInput').click()">📥 채널 이름표 불러오기</button>
         <input type="file" id="cl5ImportFileInput" accept="application/json,.json" style="display:none" onchange="cl5ImportNamesFile(this)">
-        <span class="cl5-name-sync-hint">내가 입력한 이름은 이 브라우저에만 저장돼요. 다른 사람과 같은 이름을 보려면, 이름을 다 입력한 뒤 <b>내보내기</b>로 파일을 만들어 공유하고, 상대방은 그 파일을 <b>불러오기</b>로 열면 돼요.</span>
+        <span class="cl5-name-sync-hint">이름은 이 브라우저에만 저장돼요. 함께 쓰려면 <b>내보내기</b>로 만든 파일을 다른 사람이 <b>불러오기</b>로 열면 돼요.</span>
       </div>
 
       <!-- 2026-10-15 추가: DCA 그룹 (끄면 묶인 채널이 함께 꺼짐) -->
       <div class="cl5-dca-section">
-        <div class="cl5-biglabel-title">🎛 DCA 그룹 — DCA 를 끄면(MUTE) 묶인 채널이 한꺼번에 꺼지고, 실제 CL5 처럼 그 채널들의 ON 버튼이 <b>깜박</b>입니다. 다시 켜면 각 채널이 원래 상태로 돌아와요. 콘솔 오른쪽 8개 자리에서 <b>DCA 1-8</b> 레이어를 고르면 사진 위 ON 버튼으로도 DCA 를 끄고 켤 수 있어요.</div>
+        <div class="cl5-biglabel-title">🎛 DCA 그룹 — DCA 를 끄면 묶인 채널이 한꺼번에 꺼지고 ON 버튼이 <b>깜박</b>여요(다시 켜면 원래대로). 콘솔 오른쪽에서 <b>DCA 1-8</b> 레이어를 고르면 사진 위 ON 버튼으로도 켜고 끌 수 있어요.</div>
         <div id="cl5DcaPanel" class="cl5-dca-panel"></div>
       </div>
 
       <div class="cl5-biglabel-section">
-        <div class="cl5-biglabel-title">🔎 채널 이름 크게 보기 (아래 콘솔 사진 속 이름표와 똑같이 연동돼요 — 여기서 눌러서 바로 수정 가능)</div>
+        <div class="cl5-biglabel-title">🔎 채널 이름 크게 보기 — 콘솔 사진 이름표와 연동, 눌러서 바로 고칠 수 있어요</div>
         <div id="cl5BigLabelPanel"></div>
       </div>
 
@@ -2850,8 +2917,8 @@
     <!-- TAB 3: Ear Training -->
     <div id="tab3" class="tab-content">
       <div class="level-header">
-        <div class="level-title">🎧 Ear Training (청음 및 밸런스 훈련)</div>
-        <div class="level-desc">핑크 노이즈 볼륨 트레이닝, 대역별 샘플 비교, 그리고 멀티트랙 멀티믹스 밸런스 채점 훈련을 진행할 수 있습니다.</div>
+        <div class="level-title">Ear Training · 청음과 밸런스</div>
+        <div class="level-desc">볼륨 변화 맞히기, 대역별 소리 비교, 멀티트랙 밸런스 맞추기로 귀를 훈련해요.</div>
       </div>
 
       <!-- 1. 볼륨 변화 트레이닝 패널 -->
@@ -2876,7 +2943,7 @@
 
         <!-- 퀴즈 모드: 기준음과 변화음을 직접 비교해서 맞혀보는 모드 -->
         <div class="quiz-mode-box" id="volQuizBox">
-          <div style="font-size: 0.8rem; color: var(--text-sub); text-align:center;">먼저 <b>🔵 기준(원본)</b>을 듣고, <b>🟠 변화된 소리</b>를 번갈아 들으며 비교한 뒤 몇 dB가 바뀌었는지 맞혀보세요!</div>
+          <div style="font-size: 0.8rem; color: var(--text-sub); text-align:center;"><b>🔵 기준</b>과 <b>🟠 변화된 소리</b>를 번갈아 듣고, 몇 dB 바뀌었는지 맞혀 보세요.</div>
           <button class="btn" onclick="startVolQuiz()" style="max-width: 220px;">🎲 새 문제 내기</button>
 
           <div class="ab-compare-group" id="abCompareGroup" style="display:none;">
@@ -2910,7 +2977,7 @@
           <div style="font-size: 0.95rem; font-weight: 800; color: var(--accent-cyan);">🗣 대역별 오디오 샘플 비교 청취</div>
           <button style="padding:6px 12px; font-size:0.75rem; background:var(--accent-red); color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="stopAllAudioFiles()">전체 정지</button>
         </div>
-        <div style="font-size: 0.8rem; color: var(--text-sub); margin-top: 4px;">1번부터 7번까지의 대역별 샘플 파일을 클릭하여 직접 비교 청취할 수 있습니다.</div>
+        <div style="font-size: 0.8rem; color: var(--text-sub); margin-top: 4px;">1~7번 샘플을 눌러 대역별 소리를 비교해 보세요.</div>
 
         <div class="voice-grid">
           <button class="voice-btn" id="btn_1" onclick="playSingleTrack('1.mp3', 'btn_1')">🎵 1. 원본</button>
@@ -3170,15 +3237,16 @@
     <!-- TAB 4: 사운드팀 신입 스텝 10주 커리큘럼 -->
     <div id="tab4" class="tab-content active">
       <div class="level-header">
-        <div class="level-title editable-text" data-field="tab4.title">📅 사운드팀 신입 스텝 10주 커리큘럼</div>
-        <div class="level-desc editable-text" data-field="tab4.desc">오리엔테이션 1주 + 모니터 스텝 4주 + 단상 스텝 2주 + 오퍼레이팅 교육 3주, 총 10주 과정입니다. 각 주차를 마치면 체크해서 진행 상황을 기록하세요. "이동" 버튼을 누르면 그 주차와 연계된 학습툴 탭으로 바로 이동합니다.</div>
+        <!-- 2026-10-19: 설명 자리는 기완 님이 넣은 말씀 인용(원문 그대로). 제목은 "(아이디어 필요)" 자리에 Claude 가 제안해 채움 -->
+        <div class="level-title editable-text" data-field="tab4.title">세계 최고를 향한 10주 — 신입 스텝 과정</div>
+        <div class="level-desc level-quote editable-text" data-field="tab4.desc">■ 우리가 하나님의 영광을 드러내기 위한 것이다. 얼마든지 잘할 수 있다. 문화부에서 창설해 나가야 한다. 세계에서 최고 가는 것 말이다. 여러분들이 잠들어 있어서는 안된다. ‘문화부가 일어서기 전에는 발전이 있겠는가’ 이런 생각을 하고 분발하기 바란다.</div>
       </div>
 
       <div class="content-edit-bar" id="tab4EditBar">
         <button type="button" class="content-edit-btn" id="tab4EditBtn" onclick="toggleContentEdit('tab4')">✏️ 커리큘럼 내용 편집</button>
         <button type="button" class="content-edit-btn save" onclick="saveEditedContent('tab4')">💾 저장 (새 index.html 다운로드)</button>
         <button type="button" class="content-edit-btn cancel" onclick="cancelContentEdit('tab4')">편집 취소</button>
-        <span class="content-edit-hint">각 주차의 제목·목표·실습 내용·도구 안내를 직접 클릭해서 수정한 뒤 저장하면, 수정 내용이 담긴 새 index.html 파일이 다운로드됩니다. 그 파일로 기존 파일을 교체하면 수정이 반영됩니다.</span>
+        <span class="content-edit-hint">각 주차의 글을 눌러 고친 뒤 저장하면, 고친 내용이 담긴 index.html 파일이 내려받아져요.</span>
       </div>
 
       <div class="curriculum-progress-wrap">
@@ -4388,7 +4456,7 @@
         MG12XU_HPF_CHANNELS.forEach(ch => { if (mg12xuHpfNode[ch]) mg12xuHpfNode[ch].frequency.value = mg12xuHpfOn[ch] ? 80 : 20; });
         mg12xuApplyPflAudio();
         if (btn) { btn.classList.add('on'); btn.textContent = '🔇 오디오 테스트 끄기'; }
-        if (hint) hint.textContent = '켜짐 — 채널에 배정된 소스마다 테스트 톤이 흐릅니다. 페이더·GAIN·EQ·ON·1-2/ST 버튼과 마스터 페이더를 조작하면 소리가 바로 바뀝니다.';
+        if (hint) hint.textContent = '켜짐 — 노브·페이더·버튼을 움직이면 소리가 바로 바뀌어요.';
       } else {
         mg12xuAudioOn = false;
         if (mg12xuAudioCtx) { try { mg12xuAudioCtx.suspend(); } catch (err) {} }
@@ -4397,8 +4465,8 @@
         Object.values(mg12xuSourceNodes).forEach(n => {
           if (n && n.usingRealAudio && n.audioEl) { try { n.audioEl.pause(); } catch (err) {} }
         });
-        if (btn) { btn.classList.remove('on'); btn.textContent = '🔊 오디오 테스트 켜기 (채널 조작 시 실제 소리 변화)'; }
-        if (hint) hint.textContent = '꺼짐 — 켜면 각 소스마다 테스트 톤이 재생되고, 페이더·GAIN·EQ·ON·라우팅 조작이 실시간으로 소리에 반영됩니다.';
+        if (btn) { btn.classList.remove('on'); btn.textContent = '🔊 오디오 테스트 켜기'; }
+        if (hint) hint.textContent = '켜면 연결한 소스마다 소리가 나고, 조작한 대로 바로 바뀌어요.';
       }
     }
 
@@ -5789,61 +5857,61 @@
         title: '1주차',
         goal: '교회 음향 시스템과 스텝 기본 예절 이해',
         practice: '스텝 예절(복장·태도·무전기 사용법), 강동교회 음향 시스템 설명, MG12XU 콘솔로 음향 시스템 구축해보기',
-        tool: '"🎛 MG12XU 실습" 탭의 "MG12XU 콘솔로 음향 시스템 구축해보기" 게임으로 먼저 연습한 뒤, 탭2 "3층 음향 시스템"으로 실제 장비 배치와 신호 경로(스테이지박스→콘솔→앰프→스피커)를 예습해보세요.',
+        tool: '「MG12XU 실습」 게임으로 연결 순서를 익힌 뒤, 「3층 음향 시스템」에서 실제 장비 위치와 신호 흐름(Rio → CL5 → 앰프 → 스피커)을 예습해보세요.',
         tab: 'tab2' },
       { week: 2, phase: '모니터 스텝 1주', phaseColor: 'blue',
         title: '2주차',
         goal: '소리의 다름을 인지하고 좋은/나쁜 소리를 구분',
         practice: '스피커 비교 청음, 예배 녹음 파일로 소리 비교, 대성전 모니터링 교육',
-        tool: '탭3 "대역별 오디오 샘플 비교 청취"로 저음·중음·고음 강약을 먼저 구분해보세요.',
+        tool: '「Ear Training」의 대역별 샘플 비교로 저음·중음·고음을 구분해보세요.',
         tab: 'tab3' },
       { week: 3, phase: '모니터 스텝 2주', phaseColor: 'blue',
         title: '3주차',
         goal: '관현악 마이크 세팅 및 모니터링 피드백 습득',
         practice: '관현악 마이크 세팅 교육, 대성전 모니터링/볼륨 조절 교육',
-        tool: '탭3 "볼륨 변화 트레이닝" 퀴즈 모드로 dB 변화를 귀로 감지하는 연습을 해보세요.',
+        tool: '「Ear Training」의 볼륨 변화 퀴즈로 dB 차이를 귀로 맞혀보세요.',
         tab: 'tab3' },
       { week: 4, phase: '모니터 스텝 3주', phaseColor: 'blue',
         title: '4주차',
         goal: '대성전·소성전 소리 크기와 밸런스 피드백',
         practice: '관현악 마이크 세팅 반복, 대성전 모니터링/피드백 교육',
-        tool: '탭3 "멀티트랙 믹스 밸런스" 채점으로 악기별 밸런스 감각을 훈련해보세요.',
+        tool: '「Ear Training」의 멀티트랙 밸런스 채점으로 악기 밸런스 감각을 익혀보세요.',
         tab: 'tab3' },
       { week: 5, phase: '모니터 스텝 4주', phaseColor: 'blue',
         title: '5주차',
         goal: '3주간 교육 내용 이해·습득 점검',
         practice: '관현악 마이크 세팅 실전, 소/대성전 모니터링 실전',
-        tool: '실전 투입 전 탭3 퀴즈 연속 정답·믹스 채점 점수로 자가 점검해보세요.',
+        tool: '「Ear Training」 퀴즈와 밸런스 채점 점수로 스스로 점검해보세요.',
         tab: 'tab3' },
       { week: 6, phase: '단상 스텝 1주', phaseColor: 'yellow',
         title: '6주차',
         goal: '싱어·지휘자 모니터 스피커 운영 방법 습득',
         practice: '모니터 스피커 특성·볼륨 조절 교육/실습, 이동식 단상 교육/실습',
-        tool: '탭3 "볼륨 변화 트레이닝"으로 모니터 스피커 볼륨 조절 감각을 반복 연습해보세요. (이동식 단상 실습은 현장에서만 가능)',
+        tool: '「Ear Training」의 볼륨 변화 트레이닝으로 볼륨 감각을 반복 연습해보세요. (이동식 단상 실습은 현장에서)',
         tab: 'tab3' },
       { week: 7, phase: '단상 스텝 2주', phaseColor: 'yellow',
         title: '7주차',
         goal: '올바른 단상 마이크 운영 방법 습득',
         practice: '단상 마이크 세팅(위치 조정: 설교자 키, 카메라 중앙 등), 단상 모니터링(메인, 설교자, 전자칠판, 좌식(독경), 사회자)',
-        tool: '탭2의 \'단상\' 구역 배치 개념과 느슨하게 연결되지만, 채널별 세부 모니터링 구분은 아직 다루지 않습니다.',
+        tool: '「3층 음향 시스템」의 교회 둘러보기에서 강대상 마이크와 단상·설교자 모니터 위치를 확인해보세요.',
         tab: 'tab2' },
       { week: 8, phase: '오퍼레이팅 1주', phaseColor: 'green',
         title: '8주차',
         goal: '콘솔과 예배 음향 시스템의 기초 이해',
         practice: '콘솔 기본 구조 및 예배 시스템 흐름 교육',
-        tool: '탭1 "확성 시스템의 기본"으로 신호 흐름과 기초 이론을 예습해보세요.',
+        tool: '「확성 시스템의 기본」에서 신호 흐름을 예습해보세요.',
         tab: 'tab1' },
       { week: 9, phase: '오퍼레이팅 2주', phaseColor: 'green',
         title: '9주차',
         goal: '실제 예배 중 콘솔 운영 관찰',
         practice: '콘솔 운영 참관 (오퍼레이터 옆에서 실제 예배 운영을 관찰)',
-        tool: '탭2 "3층 음향 시스템"으로 참관 전 장비 배치·신호 경로를 재확인해보세요.',
+        tool: '참관 전 「3층 음향 시스템」의 신호 따라가기로 장비와 신호 경로를 다시 확인해보세요.',
         tab: 'tab2' },
       { week: 10, phase: '오퍼레이팅 3주', phaseColor: 'green',
         title: '10주차',
         goal: '콘솔 운영 실전 투입 준비',
         practice: '콘솔 운영 실전 (직접 운영해보기)',
-        tool: '탭1·탭2·탭3 전체를 복습하고, 탭3 자가진단 점수로 실전 투입 전 최종 점검을 해보세요.',
+        tool: '모든 탭을 복습하고, 「Ear Training」 점수로 실전 전 최종 점검을 해보세요.',
         tab: null }
     ];
 
@@ -6000,7 +6068,7 @@
         mg12xuApplyEditableState(id, false);
       });
       mg12xuDownloadEditedHtml();
-      showModal('저장 완료', '<p>수정 내용이 담긴 새 <b>index.html</b> 파일이 다운로드되었습니다. 다운로드된 파일로 기존 index.html을 교체하면 수정 내용이 반영됩니다.</p>');
+      showModal('저장 완료', '<p>고친 내용이 담긴 <b>index.html</b> 파일을 내려받았어요. 이 파일을 사이트 관리자에게 보내 주면 사이트에 반영돼요.</p>');
     }
 
     const gearItems = [
@@ -6770,7 +6838,7 @@
         if (label) label.textContent = '📦 배치할 장비 (모두 배치 완료)';
         return;
       }
-      if (label) label.textContent = '📦 배치할 장비 (클릭 후 위 3D 공간을 클릭해서 배치하세요)';
+      if (label) label.textContent = '📦 배치할 장비 — 고른 뒤 3D 공간을 누르세요';
       remaining.forEach(item => {
         const div = document.createElement('div');
         div.className = 'draggable-gear';
@@ -9056,7 +9124,13 @@
       });
       if (!bubble) { bubble = document.createElement('div'); bubble.className = 'mg12xu-sec-bubble'; bubble.id = 'mg12xuSecBubble'; document.body.appendChild(bubble);
         bubble.addEventListener('input', function (e) { var t = e.target, f = t.getAttribute && t.getAttribute('data-src'), src = curSec && srcOf(curSec); if (!src || !f) return; var el = src.querySelector('[data-field="tab6.sec.' + curSec + '.' + f + '"]'); if (el) el.textContent = t.textContent; });
-        bubble.addEventListener('click', function (e) { if (e.target.classList.contains('mg12xu-sec-close')) { pinned = null; hide(); } }); }
+        bubble.addEventListener('click', function (e) {
+          var c = e.target.classList;
+          if (c.contains('mg12xu-sec-close')) { pinned = null; hide(); return; }
+          if (c.contains('mg12xu-sec-edit') && curSec) { if (typeof toggleContentEdit === 'function') toggleContentEdit('tab6'); pinned = curSec; show(curSec, curZone); var d = bubble.querySelector('[data-src=desc]'); if (d) d.focus(); return; }
+          if (c.contains('mg12xu-sec-save')) { if (typeof saveEditedContent === 'function') saveEditedContent('tab6'); if (curSec) show(curSec, curZone); return; }
+          if (c.contains('mg12xu-sec-cancel')) { if (typeof cancelContentEdit === 'function') cancelContentEdit('tab6'); if (curSec) show(curSec, curZone); return; }
+        }); }
       built = true;
     }
     function highlight(sec, zoneEl) { document.querySelectorAll('.mg12xu-sec-zone').forEach(function (d) { var m = d.getAttribute('data-sec') === sec; d.classList.toggle('hl', m); d.classList.toggle('main', m && d === zoneEl); }); }
@@ -9064,7 +9138,10 @@
       var src = srcOf(sec); if (!src || !bubble) return; curSec = sec; curZone = zoneEl; highlight(sec, zoneEl);
       var t = src.querySelector('b'), dsc = src.querySelector('div'), editing = typeof mg12xuContentEditing !== 'undefined' && mg12xuContentEditing.tab6, n = document.querySelectorAll('.mg12xu-sec-zone[data-sec="' + sec + '"]').length;
       bubble.innerHTML = '<button type="button" class="mg12xu-sec-close" aria-label="닫기">×</button><b data-src="title"' + (editing ? ' contenteditable="true"' : '') + '></b><div data-src="desc"' + (editing ? ' contenteditable="true"' : '') + '></div>' +
-        '<div class="mg12xu-sec-part"></div>';
+        '<div class="mg12xu-sec-part"></div>' +
+        /* 2026-10-19: 말풍선에서 바로 설명 고치기 / 고친 뒤 저장 */
+        (editing ? '<div class="mg12xu-sec-actions"><button type="button" class="mg12xu-sec-save">💾 저장</button><button type="button" class="mg12xu-sec-cancel">편집 취소</button></div>'
+                 : '<div class="mg12xu-sec-actions"><button type="button" class="mg12xu-sec-edit">✏️ 이 설명 고치기</button></div>');
       bubble.querySelector('b').textContent = t ? t.textContent : sec; bubble.querySelector('[data-src=desc]').textContent = dsc ? dsc.textContent : '';
       bubble.querySelector('.mg12xu-sec-part').textContent = '지금 가리킨 곳: ' + (zoneEl ? zoneEl.getAttribute('data-part') : '-') + ' · 같은 기능 ' + n + '곳 표시 중' + (editing ? ' · 글을 눌러 고칠 수 있어요' : '');
       bubble.style.display = 'block'; place();
@@ -9096,7 +9173,10 @@
       if (on && pinned && !(e.target.closest && e.target.closest('.mg12xu-sec-bubble, #mg12xuSecToggle'))) { pinned = null; hide(); }
     }, true);
     window.addEventListener('scroll', place, { passive: true }); window.addEventListener('resize', place);
-    function init() { var old = document.getElementById('mg12xuSecBubble'); if (old) old.remove(); build(); setOn(false); }  // 편집 저장 파일에 남은 말풍선·표시 상태 정리
+    function init() { var old = document.getElementById('mg12xuSecBubble'); if (old) old.remove(); build(); setOn(false);
+      /* 2026-10-19: 「기능부 설명 편집」을 누르면 설명 보기도 함께 켜서, 사진 위 말풍선에서 바로 고칠 수 있게 */
+      var eb = document.getElementById('tab6EditBtn'); if (eb) eb.addEventListener('click', function () { setOn(true); });
+    }  // 편집 저장 파일에 남은 말풍선·표시 상태 정리
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
   })();
   </script>

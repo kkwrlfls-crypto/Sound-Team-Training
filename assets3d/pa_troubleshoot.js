@@ -18,7 +18,7 @@
   // 화면 골격
   function renderShell() {
     root.innerHTML =
-      '<div class="ts-note">이 탭은 <b>교육용 가상 시뮬레이션</b>입니다. 소리·전기를 실제로 처리하지 않고, 정의된 장비 상태로 계산한 결과를 보여 줍니다. 전원 조작도 가상 상태이며 실제 전기 설비를 다루는 방법이 아닙니다.</div>' +
+      '<div class="ts-note"><b>교육용 가상 시뮬레이션</b>이에요. 실제 소리·전기를 다루지 않고 장비 상태로 계산한 결과를 보여 줘요. 전원 조작도 가상이에요.</div>' +
       '<section class="ts-missions" data-role="missions"></section>' +
       '<section class="ts-play" data-role="play" hidden>' +
         '<div class="ts-head"><div><div class="ts-mtitle" data-role="mtitle"></div><div class="ts-chain" data-role="chain"></div></div>' +
@@ -47,7 +47,7 @@
         '<div class="ts-symptom-s">' + esc(m.symptom) + '</div><div class="ts-scen">' + m.scenarios.map(function (sc, i) {
           var b = best[sc.id]; return '<button type="button" class="ts-btn" data-act="start" data-m="' + m.id + '" data-s="' + sc.id + '">시나리오 ' + (i + 1) + (b !== undefined ? ' <small>최고 ' + b + '점</small>' : '') + '</button>'; }).join('') +
         '<button type="button" class="ts-btn" data-act="start" data-m="' + m.id + '" data-s="random">무작위</button></div></div>'; }).join('') + '</div>' +
-      '<p class="ts-small">같은 증상이라도 시나리오마다 고장 원인이 다릅니다. 시나리오 번호만으로는 원인을 알 수 없게 되어 있어요. 점수: 100점에서 힌트 1단계마다 −10, 불필요한 조작 −5(최대 −30), 최종 검증 실패 −10, 원인 증거를 찾기 전에 고치면 −20.</p>';
+      '<p class="ts-small">같은 증상이라도 시나리오마다 원인이 달라요.<br>점수: 100점에서 힌트 단계마다 −10 · 불필요한 조작 −5(최대 −30) · 최종 검증 실패 −10 · 원인 확인 전에 고치면 −20</p>';
   }
 
   // ---------------------------------------------------------------------------
