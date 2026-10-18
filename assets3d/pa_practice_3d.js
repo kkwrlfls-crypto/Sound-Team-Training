@@ -104,7 +104,7 @@
     card.innerHTML =
       '<h3>🔌 3D 실습 ' + esc(sc.title) + '</h3>' +
       '<p class="pa3d-intro"><b>' + esc(sc.gear) + '</b> — ' + esc(sc.desc) + '</p>' +
-      '<p class="pa3d-intro pa3d-how">케이블 종류를 고르고 단자 두 곳을 누르면 연결됩니다. 장비의 <b>스위치는 클릭</b>, <b>노브·페이더는 위아래로 끌어서</b> 조작합니다(아래 "장비 조작" 패널로도 됩니다). 빈 곳을 끌면 화면이 돌아가고, 휠(두 손가락)로 확대합니다.</p>' +
+      '<p class="pa3d-intro pa3d-how"><b>조작법(세 실습 공통)</b> — 케이블 종류를 고르고 단자 두 곳을 누르면 연결돼요. <b>스위치는 클릭</b>, <b>노브·페이더는 위아래로 끌기</b>(아래 「장비 조작」 패널로도 돼요). 빈 곳을 끌면 회전, 휠(두 손가락)로 확대.</p>' +
       '<div class="pa3d-row"><span class="pa3d-label">케이블</span>' + sc.cables.map(function (c) { return '<button type="button" class="pa3d-btn pa3d-cable-btn" data-cable="' + c + '">' + CABLE_INFO[c].label + '</button>'; }).join('') + '</div>' +
       '<div class="pa3d-viewport" data-role="viewport"><div class="pa3d-start" data-role="start"><div>' + esc(sc.gear) + ' 3D 모델을 불러옵니다 (휴대폰에서는 몇 초 걸릴 수 있어요).</div>' +
       '<button type="button" class="btn" onclick="pa3dStart(\'' + sid + '\')">▶ 실습 시작</button></div><div class="pa3d-tip" data-role="tip"></div><div class="pa3d-busy" data-role="busy">케이블을 놓는 중…</div></div>' +
