@@ -103,8 +103,7 @@
     var sc = SCENARIOS[sid];
     card.innerHTML =
       '<h3>🔌 3D 실습 ' + esc(sc.title) + '</h3>' +
-      '<p class="pa3d-intro"><b>' + esc(sc.gear) + '</b> — ' + esc(sc.desc) + '</p>' +
-      '<p class="pa3d-intro pa3d-how"><b>조작법(세 실습 공통)</b> — 케이블 종류를 고르고 단자 두 곳을 누르면 연결돼요. <b>스위치는 클릭</b>, <b>노브·페이더는 위아래로 끌기</b>(아래 「장비 조작」 패널로도 돼요). 빈 곳을 끌면 회전, 휠(두 손가락)로 확대.</p>' +
+      '<p class="pa3d-intro"><b>' + esc(sc.gear) + '</b></p>' +   /* 2026-10-19: 설명·조작법 문단은 빼 달라는 요청으로 삭제 */
       '<div class="pa3d-row"><span class="pa3d-label">케이블</span>' + sc.cables.map(function (c) { return '<button type="button" class="pa3d-btn pa3d-cable-btn" data-cable="' + c + '">' + CABLE_INFO[c].label + '</button>'; }).join('') + '</div>' +
       '<div class="pa3d-viewport" data-role="viewport"><div class="pa3d-start" data-role="start"><div>' + esc(sc.gear) + ' 3D 모델을 불러옵니다 (휴대폰에서는 몇 초 걸릴 수 있어요).</div>' +
       '<button type="button" class="btn" onclick="pa3dStart(\'' + sid + '\')">▶ 실습 시작</button></div><div class="pa3d-tip" data-role="tip"></div><div class="pa3d-busy" data-role="busy">케이블을 놓는 중…</div></div>' +
@@ -579,10 +578,31 @@
     get: function (sid) { return instances[sid] || null; }, instances: instances,
     levels: { mgGainDb: mgGainDb, faderDb: faderDb, attDb: attDb, zxMicGainDb: zxMicGainDb, grade: grade, SRC_DBU: SRC_DBU, SENS: SENS }
   };
+  /* 2026-10-19: 인터넷이 느리거나 끊겨서 3D 모델 파일 하나가 안 들어온 경우(실제 사이트에서 ShureSM58 로 한 번 발생),
+     실패로 끝내지 않고 빠진 파일만 다시 받아 온 뒤 실습을 시작합니다. */
+  var MODEL_FILES = { ShureSM58: 'shure_sm58_model.js', KoreanOutlet: 'korean_outlet_model.js', XlrCable: 'xlr_cable_model.js', AcPowerCable: 'ac_power_cable_model.js',
+    MicStand: 'mic_stand_model.js', SpeakerStand: 'speaker_stand_model.js', YamahaMG12XU: 'yamaha_mg12xu_model.js', EvZXA1: 'ev_zxa1_model.js',
+    CrownXLi1500: 'crown_xli1500_model.js', SpeakonCable: 'speakon_cable_model.js', EvZX1: 'ev_zx1_model.js' };
+  function reloadMissingModels(done) {
+    var miss = Object.keys(MODEL_FILES).filter(function (n) { return !window[n]; });
+    if (!miss.length) { done(0); return; }
+    var left = miss.length, stamp = Date.now();
+    miss.forEach(function (n) {
+      var sc = document.createElement('script');
+      sc.src = 'assets3d/' + MODEL_FILES[n] + '?retry=' + stamp;
+      sc.onload = sc.onerror = function () { if (--left === 0) done(miss.length); };
+      document.body.appendChild(sc);
+    });
+  }
+  window.pa3dReloadMissingModels = reloadMissingModels;
   window.pa3dStart = function (sid) {
     var inst = instances[sid || 's1']; if (!inst) return;
     var card = document.querySelector('[data-pa3d="' + (sid || 's1') + '"]'), st = card && card.querySelector('[data-role="start"]'); if (st) st.style.display = 'none';
-    setTimeout(function () { var r = inst.init(); if (!r && st) st.style.display = ''; }, 20);
+    var msg = card && card.querySelector('[data-role="msg"]');
+    reloadMissingModels(function (n) {
+      if (n && msg) { msg.textContent = '3D 모델 파일 ' + n + '개를 다시 받아 왔어요.'; msg.className = 'pa3d-msg'; }
+      setTimeout(function () { var r = inst.init(); if (!r && st) st.style.display = ''; }, 20);
+    });
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup); else setup();
 })();

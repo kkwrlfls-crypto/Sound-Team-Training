@@ -474,6 +474,7 @@
         // 고른 경로는 벽·단상 바닥 속을 지나도 보이도록 깊이 검사 없이 맨 위에 그림
         mat = T.hiMats[rt.kind] = new THREE.MeshBasicMaterial({ color: CABLE_KIND[rt.kind].color, depthTest: false, transparent: true, opacity: 0.95 });
       }
+      mat.opacity = T.trace ? 0.7 : 0.95;   // 신호 따라가기 중에는 길을 조금 흐리게 해서 움직이는 신호 점이 더 잘 보이게
       for (var i = 0; i + 1 < rt.path.length; i++) { var sm = segMesh(nodePos(rt.path[i], rt.kind), nodePos(rt.path[i + 1], rt.kind), hr, mat); sm.renderOrder = 20; T.cableHi.add(sm); }
       rt.path.forEach(function (nid) { var sp = new THREE.Mesh(new THREE.SphereGeometry(hr, 10, 8), mat); sp.renderOrder = 20; sp.position.copy(nodePos(nid, rt.kind)); T.cableHi.add(sp); });
     });
@@ -666,38 +667,60 @@
     if (T.pulseGroup) { while (T.pulseGroup.children.length) T.pulseGroup.remove(T.pulseGroup.children[0]); }
     T.pulses = [];
   }
+  /* 2026-10-19: 신호 점을 더 눈에 띄게 — 밝은 머리 + 빛나는 테 + 꼬리(잔상) + 도착 지점에서 퍼지는 빛 */
+  var TRAIL_N = 8;
   function startPulses(ch, r) {
     if (T.pulseRaf) cancelAnimationFrame(T.pulseRaf);
     if (!T.pulseGroup && T.root) { T.pulseGroup = new THREE.Group(); T.pulseGroup.name = 'tracePulses'; T.root.add(T.pulseGroup); }
     if (!T.pulseGroup) return;
     while (T.pulseGroup.children.length) T.pulseGroup.remove(T.pulseGroup.children[0]);
     T.pulses = [];
+    var R = r * 2.6, sphere = new THREE.SphereGeometry(1, 14, 10);
+    function ball(color, op, ro, add) {
+      var mm = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: color, depthTest: false, depthWrite: false, transparent: true, opacity: op }));
+      mm.renderOrder = ro; mm.visible = false; T.pulseGroup.add(mm); return mm;
+    }
     var t0 = 0;
     ch.stages.forEach(function (st) {
       var dur = 0;
       st.forEach(function (x) {
-        var poly = polyOf(x.rt, x.rev);
+        var poly = polyOf(x.rt, x.rev), col = CABLE_KIND[poly.kind].color;
         dur = Math.max(dur, poly.len / TRACE_SPEED);
-        var m = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 10), new THREE.MeshBasicMaterial({ color: 0xffffff, depthTest: false }));
-        var ring = new THREE.Mesh(new THREE.SphereGeometry(r * 1.6, 12, 10), new THREE.MeshBasicMaterial({ color: CABLE_KIND[poly.kind].color, depthTest: false, transparent: true, opacity: 0.55 }));
-        m.renderOrder = 31; ring.renderOrder = 30; m.visible = ring.visible = false;
-        T.pulseGroup.add(ring); T.pulseGroup.add(m);
-        T.pulses.push({ poly: poly, start: t0, m: m, ring: ring });
+        // 밝은 바닥에서도 보이도록: 진한 테두리(남색) 위에 케이블 색 머리, 가운데 흰 점
+        var m = ball(col, 1, 34), core = ball(0xffffff, 1, 35), edge = ball(0x0f2747, 0.9, 33), ring = ball(col, 0.45, 32), halo = ball(col, 0.18, 31), flash = ball(col, 0.5, 30);
+        m.scale.setScalar(R); core.scale.setScalar(R * 0.45); edge.scale.setScalar(R * 1.3); ring.scale.setScalar(R * 1.9); halo.scale.setScalar(R * 3.2);
+        var trail = [];
+        for (var k = 1; k <= TRAIL_N; k++) { var tr = ball(col, 0.75 * (1 - k / (TRAIL_N + 1)), 29); tr.scale.setScalar(R * (1 - k / (TRAIL_N + 3))); trail.push(tr); }
+        T.pulses.push({ poly: poly, start: t0, m: m, core: core, edge: edge, ring: ring, halo: halo, flash: flash, trail: trail });
       });
       t0 += Math.max(dur, st.length ? 0.4 : 0);
     });
     T.pulseLoop = t0 + 0.8;
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce) return; // 움직임 줄이기: 경로 강조만
-    var start = performance.now();
+    var gap = R * 1.6, start = performance.now();
     function frame(now) {
       if (!T.trace) return;
-      var t = ((now - start) / 1000) % T.pulseLoop;
+      var t = ((now - start) / 1000) % T.pulseLoop, beat = 1 + 0.25 * Math.sin(now / 90);
       T.pulses.forEach(function (p) {
-        var d = (t - p.start) * TRACE_SPEED;
-        var on = d >= 0 && d <= p.poly.len;
-        p.m.visible = p.ring.visible = on;
-        if (on) { var q = pointAt(p.poly, d); p.m.position.copy(q); p.ring.position.copy(q); }
+        var d = (t - p.start) * TRACE_SPEED, len = p.poly.len;
+        var on = d >= 0 && d <= len;
+        p.m.visible = p.core.visible = p.edge.visible = p.ring.visible = p.halo.visible = on;
+        if (on) {
+          var q = pointAt(p.poly, d);
+          [p.m, p.core, p.edge, p.ring, p.halo].forEach(function (o) { o.position.copy(q); });
+          p.ring.scale.setScalar(R * 1.9 * beat); p.halo.scale.setScalar(R * 3.2 * beat);
+        }
+        p.trail.forEach(function (tr, i) {
+          var dd = Math.min(d, len) - (i + 1) * gap, vis = d >= 0 && dd >= 0 && d <= len + (i + 1) * gap;
+          tr.visible = vis; if (vis) tr.position.copy(pointAt(p.poly, dd));
+        });
+        // 도착: 끝 장비에서 빛이 퍼짐(0.6초)
+        var after = (d - len) / TRACE_SPEED;
+        if (after >= 0 && after < 0.6) {
+          var k2 = after / 0.6; p.flash.visible = true; p.flash.position.copy(p.poly.pts[p.poly.pts.length - 1]);
+          p.flash.scale.setScalar(R * (2 + 6 * k2)); p.flash.material.opacity = 0.5 * (1 - k2);
+        } else p.flash.visible = false;
       });
       T.pulseRaf = requestAnimationFrame(frame);
     }
@@ -853,15 +876,8 @@
 
   function showLocationCard(l) {
     var card = $('g3tCard'); if (!card) return;
-    if (l.id === 'cables') {
-      var hh = '<div class="g3t-card-head"><div><div class="g3t-card-title">' + esc(l.name) + '</div>';
-      hh += '<div class="g3t-card-sub">경로 ' + (DATA.cableRoutes || []).length + '개' + (DATA.cableDraft ? ' · Claude 가 예상해서 그린 경로 (확인 전)' : '') + '</div></div><button type="button" class="g3t-close" aria-label="닫기">×</button></div>';
-      ['dante', 'speaker', 'mic'].forEach(function (k) {
-        hh += cableListHtml((DATA.cableRoutes || []).filter(function (r) { return r.kind === k; }), CABLE_KIND[k].name).replace(/ <span class="g3t-draft">예상 · 확인 전<\/span>/, '');
-      });
-      card.innerHTML = hh; card.hidden = false;
-      return;
-    }
+    // 2026-10-19: 「케이블 길 한눈에」는 3D 화면만 보여 주고 경로 목록 카드는 띄우지 않음(기완 님 요청)
+    if (l.id === 'cables') { card.hidden = true; return; }
     var devs = DATA.devices.filter(function (d) { return d.location === l.id && !d.decor; });
     var h = '<div class="g3t-card-head"><div><div class="g3t-card-title">' + esc(l.name) + '</div>';
     h += '<div class="g3t-card-sub">장비 ' + devs.length + '개</div></div><button type="button" class="g3t-close" aria-label="닫기">×</button></div>';

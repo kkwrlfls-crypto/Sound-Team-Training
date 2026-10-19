@@ -2382,6 +2382,33 @@
       .t1-paths { grid-template-columns: 1fr; gap: 8px; }
     }
 
+
+    /* ---------- 2026-10-19 CL5 DCA 그룹을 눈에 잘 띄게 ---------- */
+    .mg12xu-audio-hint:empty { display: none; }
+    .cl5-dca-section { margin: 16px 0 18px; padding: 16px; border-radius: var(--sta-r); background: #0b1526; border: 1px solid #1e3352; }
+    .cl5-dca-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .cl5-dca-h { margin: 0; font-size: 1.15rem; font-weight: 800; color: #fff; letter-spacing: -0.01em; }
+    .cl5-dca-sub { margin: 0; font-size: 0.82rem; color: #9fb2c9; line-height: 1.5; }
+    .cl5-dca-sub b { color: #fca5a5; }
+    .cl5-dca-panel { gap: 10px; }
+    .cl5-dca-card { padding: 10px; border-radius: 10px; border: 1px solid #23406a; background: #11203a; transition: background-color .15s ease, border-color .15s ease; }
+    .cl5-dca-btn { grid-template-columns: auto 1fr auto; padding: 10px 12px; border-radius: 8px; min-height: 52px; }
+    .cl5-dca-btn b { font-size: 0.74rem; letter-spacing: .04em; }
+    .cl5-dca-btn span { font-size: 1.15rem; }
+    .cl5-dca-btn i { font-size: 0.78rem; padding: 3px 9px; border-radius: 999px; letter-spacing: .05em; }
+    .cl5-dca-card.on .cl5-dca-btn i { background: #f97316; color: #1c0a00; }
+    .cl5-dca-card.muted { background: #2a1015; border-color: #7f1d1d; }
+    .cl5-dca-card.muted .cl5-dca-btn { border-color: #dc2626; background: rgba(220, 38, 38, 0.18); box-shadow: none; }
+    .cl5-dca-card.muted .cl5-dca-btn span { color: #fecaca; }
+    .cl5-dca-card.muted .cl5-dca-btn i { background: #dc2626; color: #fff; }
+    .cl5-dca-card.unused { opacity: 0.4; background: #11203a; border-color: #23406a; }
+    .cl5-dca-card.unused .cl5-dca-btn { border-color: #334155; background: rgba(0,0,0,0.25); box-shadow: none; }
+    .cl5-dca-card.unused .cl5-dca-btn i { background: #334155; color: #cbd5e1; }
+    .cl5-dca-btn:not(:disabled):hover { filter: brightness(1.12); }
+    .cl5-dca-btn:focus-visible { outline: 2px solid var(--sta-cyan-bright); outline-offset: 2px; }
+    .cl5-dca-members { font-size: 0.74rem; margin-top: 8px; }
+    .cl5-dca-member { padding: 1px 6px; }
+
     /* ---------- 휴대폰 ---------- */
     @media (max-width: 640px) {
       .site-header__bar { padding: 12px 0 8px; }
@@ -2420,7 +2447,7 @@
       position: fixed; inset: 0; z-index: 10000;
       display: flex;
       overflow-y: auto;
-      padding: 40px 20px;
+      padding: clamp(18px, 3.5vh, 40px) 20px;
       background: #071629;
       color: #e7eef7;
       opacity: 1; visibility: visible;
@@ -2435,7 +2462,7 @@
       position: relative;
       margin: auto;
       width: 100%; max-width: 760px;
-      display: flex; flex-direction: column; gap: 30px;
+      display: flex; flex-direction: column; gap: clamp(14px, 2.4vh, 30px);
       text-align: center;   /* 2026-10-19: 문구 가운데 정렬(기완 님 요청) */
     }
     .intro__brand {
@@ -2448,12 +2475,12 @@
     .intro__brand::before, .intro__brand::after { content: ""; flex: 0 1 72px; height: 1px; background: linear-gradient(90deg, rgba(103, 232, 249, 0), rgba(103, 232, 249, 0.5)); }
     .intro__brand::after { background: linear-gradient(90deg, rgba(103, 232, 249, 0.5), rgba(103, 232, 249, 0)); }
 
-    .intro__text { display: flex; flex-direction: column; gap: 14px; }
+    .intro__text { display: flex; flex-direction: column; gap: clamp(10px, 1.6vh, 20px); }
     .intro__line {
       font-family: "STA Intro Serif", "Noto Serif KR", "Nanum Myeongjo", "AppleMyungjo", Batang, serif;
       font-weight: 400;
-      font-size: clamp(1rem, 0.88rem + 0.55vw, 1.24rem);
-      line-height: 1.9;
+      font-size: clamp(0.95rem, 1.75vh, 1.15rem);   /* 화면 높이에 맞춰 한 화면에 들어오게 */
+      line-height: 1.6;
       color: #dfe8f3;
       word-break: keep-all;
       overflow-wrap: break-word;
@@ -2462,8 +2489,13 @@
       animation-delay: calc(0.7s + var(--i) * 1.25s);
     }
     .intro__line--last { font-weight: 600; color: #ffffff; }
+    .intro__seg { display: block; font-family: inherit; }   /* 2026-10-19: 기완 님이 보내 준 줄맞춤대로 구절마다 줄바꿈 */
 
-    .intro__foot { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 56px; }
+    .intro__foot {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 56px;
+      position: sticky; bottom: -40px; margin: 0 -20px -40px; padding: 22px 20px 30px;
+      background: linear-gradient(180deg, rgba(6, 19, 37, 0) 0, rgba(6, 19, 37, 0.9) 35%, #061325 100%);
+    }
     .intro__hint { order: 2; font-size: 0.78rem; color: #8aa0bb; animation: introFadeOut 0.6s ease 10.2s forwards; }
     .intro__go {
       min-width: 168px; height: 54px; padding: 0 30px;
@@ -2505,8 +2537,8 @@
     @media (max-width: 640px) {
       .intro { padding: 28px 18px; }
       .intro__inner { gap: 22px; }
-      .intro__text { gap: 10px; }
-      .intro__line { line-height: 1.8; }
+      .intro__text { gap: 16px; }
+      .intro__line { line-height: 1.7; font-size: 0.95rem; }
       .intro__go { width: 100%; }
       .intro__brand { font-size: 0.74rem; letter-spacing: 0.12em; }
       .intro__brand::before, .intro__brand::after { display: none; }
@@ -2548,14 +2580,14 @@
     <div class="intro__inner">
       <div class="intro__brand" id="introBrand">Sound Team Academy · Live Sound Lab</div>
       <div class="intro__text" id="introText">
-        <p class="intro__line" style="--i:0">신천지의 사명자는 자기 사명을 충실히 다하기 위해 자나 깨나 밥을 먹을 때도 길을 갈 때도 오직 자기가 맡은 일에 대해 생각하고 또 생각하고, 앉으나 서나 일에 대한 시나리오를 그려본다.</p>
-        <p class="intro__line" style="--i:1">세상의 만물을 볼 때도 세상만사를 볼 때도 천지만상을 볼 때도 TV영상을 볼 때도 내가 맡은 일에 대해 지혜를 얻어야 한다.</p>
-        <p class="intro__line" style="--i:2">보다 더, 보다 더 낫게, 새롭게 빛나게 하는 이것이 믿는 것이며, 하나님의 은혜에 만분의 일이라도 보답하는 것이며, 영광을 올려드리는 것이다.</p>
-        <p class="intro__line" style="--i:3">천번 만번이라도 잘못되었으면 고쳐야 한다.</p>
-        <p class="intro__line" style="--i:4">내가 맡은 일(사명)을 보다 더 잘하기 위해서 도움이 될 만한 것이 있으면 가봐야 하며, 만물에게도 배워야 한다. 이는 하나님의 명철로 창조된 것이기 때문이다.</p>
-        <p class="intro__line" style="--i:5">내가 맡은 사명의 일이 부실하면 하나님의 빛이 어두워지는 것이다.</p>
-        <p class="intro__line" style="--i:6">내가 맡은 사명은 누구보다도 어느 것보다도 최고의 최고로 하나님이 기뻐하실 것으로 창조 되어야 한다.</p>
-        <p class="intro__line intro__line--last" style="--i:7">이는 나의 생명이다. 내 생명보다도 귀하게 해야 한다. 귀가 있고 마음이 있으면 이대로 할 것이다.</p>
+        <p class="intro__line" style="--i:0"><span class="intro__seg">신천지의 사명자는 자기 사명을 충실히 다하기 위해</span> <span class="intro__seg">자나 깨나 밥을 먹을 때도 길을 갈 때도</span> <span class="intro__seg">오직 자기가 맡은 일에 대해 생각하고 또 생각하고,</span> <span class="intro__seg">앉으나 서나 일에 대한 시나리오를 그려본다.</span></p>
+        <p class="intro__line" style="--i:1"><span class="intro__seg">세상의 만물을 볼 때도 세상만사를 볼 때도</span> <span class="intro__seg">천지만상을 볼 때도 TV영상을 볼 때도</span> <span class="intro__seg">내가 맡은 일에 대해 지혜를 얻어야 한다.</span></p>
+        <p class="intro__line" style="--i:2"><span class="intro__seg">보다 더, 보다 더 낫게,</span> <span class="intro__seg">새롭게 빛나게 하는 이것이 믿는 것이며,</span> <span class="intro__seg">하나님의 은혜에 만분의 일이라도 보답하는 것이며,</span> <span class="intro__seg">영광을 올려드리는 것이다.</span></p>
+        <p class="intro__line" style="--i:3"><span class="intro__seg">천번 만번이라도 잘못되었으면 고쳐야 한다.</span></p>
+        <p class="intro__line" style="--i:4"><span class="intro__seg">내가 맡은 일(사명)을 보다 더 잘하기 위해서</span> <span class="intro__seg">도움이 될 만한 것이 있으면 가봐야 하며,</span> <span class="intro__seg">만물에게도 배워야 한다.</span> <span class="intro__seg">이는 하나님의 명철로 창조된 것이기 때문이다.</span></p>
+        <p class="intro__line" style="--i:5"><span class="intro__seg">내가 맡은 사명의 일이 부실하면</span> <span class="intro__seg">하나님의 빛이 어두워지는 것이다.</span></p>
+        <p class="intro__line" style="--i:6"><span class="intro__seg">내가 맡은 사명은 누구보다도</span> <span class="intro__seg">어느 것보다도 최고의 최고로</span> <span class="intro__seg">하나님이 기뻐하실 것으로 창조 되어야 한다.</span></p>
+        <p class="intro__line intro__line--last" style="--i:7"><span class="intro__seg">이는 나의 생명이다. 내 생명보다도 귀하게 해야 한다.</span> <span class="intro__seg">귀가 있고 마음이 있으면 이대로 할 것이다.</span></p>
       </div>
       <div class="intro__foot">
         <span class="intro__hint">화면을 누르면 문구가 바로 모두 나타나요</span>
@@ -2613,7 +2645,6 @@
           <span class="brand__mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 12h2M7 8v8M11 5v14M15 9v6M19 11v2M21 12h0"/></svg></span>
           <span class="brand__text"><span class="brand__name">Sound Team Academy</span><span class="brand__sub">Live Sound Lab</span></span>
         </div>
-        <div class="site-header__meta">사운드팀 신입 스텝 트레이닝</div>
       </div>
   <div class="tab-nav">
       <button class="tab-btn active" data-tab="tab4" onclick="switchTab('tab4')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4M8 14l2 2 4-4"/></svg><span>10주 커리큘럼</span></button>
@@ -2704,29 +2735,20 @@
     <div id="tab6" class="tab-content">
       <div class="level-header">
         <div class="level-title">MG12XU 콘솔 실습</div>
-        <div class="level-desc">무대 위 소스를 실제 MG12XU 콘솔 채널에 연결하고, 노브·페이더·라우팅으로 소리를 만들어 봅니다.</div>
       </div>
 
       <div class="theory-card mg12xu-game-card">
         <h3>실습 게임 · MG12XU 콘솔로 음향 시스템 구축해보기</h3>
 
         <div class="mg12xu-step">
-          <div class="mg12xu-step-title">이렇게 해 보세요</div>
-          <ol class="mg12xu-step-desc mg12xu-step-list">
-            <li><b>연결</b> — 무대 아이콘의 <b>노란 점</b>을 아래 입력 단자까지 끌어다 놓으면 케이블이 연결돼요. (아이콘 → 채널 머리 순서로 눌러도 돼요)</li>
-            <li><b>스피커</b> — 오른쪽 스피커도 <b>STEREO / GROUP OUT</b> 단자에서 끌어 연결해야 소리가 나요.</li>
-            <li><b>소리 만들기</b> — 노브(GAIN·EQ·PAN·AUX)를 돌리고 <b>페이더</b>를 올려요. <b>ON</b> 은 켜기/끄기, <b>1-2 / ST</b> 는 보낼 곳이에요.</li>
-            <li><b>확인</b> — GAIN 이 너무 높으면 <b>PEAK</b> 램프가 켜져요. 전체 출력은 오른쪽 <b>STEREO 마스터 페이더</b>와 레벨 미터로 봐요.</li>
-          </ol>
           <div class="mg12xu-audio-toggle-row">
             <button class="btn" id="mg12xuAudioToggleBtn" onclick="toggleMg12xuAudio()">🔊 오디오 테스트 켜기</button>
-            <span class="mg12xu-audio-hint" id="mg12xuAudioHint">켜면 연결한 소스마다 소리가 나고, 조작한 대로 바로 바뀌어요.</span>
+            <span class="mg12xu-audio-hint" id="mg12xuAudioHint"></span>
           </div>
 
           <!-- 2026-10-15 추가: 기능부 설명 (같은 기능부를 테두리로 묶어 표시 + 말풍선 설명, 설명 문구는 편집 후 저장 가능) -->
           <div class="mg12xu-sec-bar">
             <button type="button" class="btn" id="mg12xuSecToggle" onclick="mg12xuSecToggle()">🔍 기능부 설명 보기</button>
-            <span class="mg12xu-sec-hint" id="mg12xuSecHint">켜고 사진 위에 마우스를 올리면(휴대폰은 누르면) 같은 기능끼리 테두리로 묶이고 설명이 나와요. 설명을 보는 동안은 조작이 잠시 멈춰요.</span>
           </div>
           <div class="content-edit-bar mg12xu-sec-editbar" id="tab6EditBar">
             <button type="button" class="content-edit-btn" id="tab6EditBtn" onclick="toggleContentEdit('tab6')">✏️ 기능부 설명 편집</button>
@@ -2896,14 +2918,13 @@
 
       <!-- 2026-10-15 추가: DCA 그룹 (끄면 묶인 채널이 함께 꺼짐) -->
       <div class="cl5-dca-section">
-        <div class="cl5-biglabel-title">🎛 DCA 그룹 — DCA 를 끄면 묶인 채널이 한꺼번에 꺼지고 ON 버튼이 <b>깜박</b>여요(다시 켜면 원래대로). 콘솔 오른쪽에서 <b>DCA 1-8</b> 레이어를 고르면 사진 위 ON 버튼으로도 켜고 끌 수 있어요.</div>
+        <div class="cl5-dca-head">
+          <h3 class="cl5-dca-h">DCA 그룹</h3>
+          <p class="cl5-dca-sub">카드를 누르면 묶인 채널이 한꺼번에 <b>꺼지고(MUTE)</b> 다시 누르면 원래대로 켜져요. 꺼진 채널은 콘솔 사진의 ON 버튼이 깜박여요.</p>
+        </div>
         <div id="cl5DcaPanel" class="cl5-dca-panel"></div>
       </div>
 
-      <div class="cl5-biglabel-section">
-        <div class="cl5-biglabel-title">🔎 채널 이름 크게 보기 — 콘솔 사진 이름표와 연동, 눌러서 바로 고칠 수 있어요</div>
-        <div id="cl5BigLabelPanel"></div>
-      </div>
 
       <div class="cl5-img-wrap" id="cl5ImgWrap">
         <div class="cl5-img-inner" id="cl5ImgInner">
@@ -4456,7 +4477,7 @@
         MG12XU_HPF_CHANNELS.forEach(ch => { if (mg12xuHpfNode[ch]) mg12xuHpfNode[ch].frequency.value = mg12xuHpfOn[ch] ? 80 : 20; });
         mg12xuApplyPflAudio();
         if (btn) { btn.classList.add('on'); btn.textContent = '🔇 오디오 테스트 끄기'; }
-        if (hint) hint.textContent = '켜짐 — 노브·페이더·버튼을 움직이면 소리가 바로 바뀌어요.';
+        if (hint) hint.textContent = '';
       } else {
         mg12xuAudioOn = false;
         if (mg12xuAudioCtx) { try { mg12xuAudioCtx.suspend(); } catch (err) {} }
@@ -4466,7 +4487,7 @@
           if (n && n.usingRealAudio && n.audioEl) { try { n.audioEl.pause(); } catch (err) {} }
         });
         if (btn) { btn.classList.remove('on'); btn.textContent = '🔊 오디오 테스트 켜기'; }
-        if (hint) hint.textContent = '켜면 연결한 소스마다 소리가 나고, 조작한 대로 바로 바뀌어요.';
+        if (hint) hint.textContent = '';
       }
     }
 
