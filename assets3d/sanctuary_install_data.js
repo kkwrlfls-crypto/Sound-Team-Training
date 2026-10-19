@@ -23,7 +23,7 @@
        'unknown'        연결 자체가 미확인
    ============================================================================= */
 window.SANCTUARY_INSTALL = {
-  version: 9,
+  version: 10,
   updated: '2026-10-15',
   units: 'm',
 
@@ -89,7 +89,7 @@ window.SANCTUARY_INSTALL = {
       role: '설교자 모니터 L 과 한 쌍입니다.' },
     { id: 'mic_podium_L', name: '강대상 마이크 L', model: '구즈넥 마이크', proc: 'gooseneck', color: 0x1c1d20,
       location: 'pulpit', pos: [42.66, 1.64, -9.74], yawDeg: 90, pitchDeg: 0, mount: '강대상 위',
-      cl5Channel: 1, role: '설교자 목소리를 받는 강대상 마이크입니다. CL5 의 1번 채널 이름이 Podium L 입니다.' },
+      cl5Channel: 1, role: '설교자 목소리를 받는 강대상 마이크입니다. 마이크 케이블로 방송실 CL5 에 바로 들어갑니다. CL5 의 1번 채널 이름이 Podium L 입니다.' },
     { id: 'mic_podium_R', name: '강대상 마이크 R', model: '구즈넥 마이크', proc: 'gooseneck', color: 0x1c1d20,
       location: 'pulpit', pos: [42.66, 1.64, -9.26], yawDeg: 90, pitchDeg: 0, mount: '강대상 위',
       cl5Channel: 2, role: '강대상 마이크 L 과 한 쌍입니다. CL5 의 2번 채널 이름이 Podium R 입니다.' },
@@ -119,7 +119,7 @@ window.SANCTUARY_INSTALL = {
     { id: 'cl5', name: 'CL5 콘솔', model: 'Yamaha CL5', proc: 'console', size: [1.053, 0.3, 0.667], color: 0x24272c,
       location: 'booth', pos: [3.05, 0.9, -11.2], yawDeg: -90, pitchDeg: 0, mount: '방송실 책상',
       img: 'console.jpg',
-      role: '모든 입력을 받아 소리를 섞는 디지털 콘솔입니다. Rio 와 무선 수신기의 신호가 Dante(랜선)로 들어옵니다.' },
+      role: '모든 입력을 받아 소리를 섞는 디지털 콘솔입니다. Rio 와 무선 수신기의 신호는 Dante(랜선)로, 강대상 마이크는 마이크 케이블로 바로 들어옵니다.' },
     { id: 'ulxd', name: '무선 마이크 수신기 ×3', model: 'Shure ULX-D4Q ×3', proc: 'rackstack', units: 3, size: [0.483, 0.044, 0.36], color: 0x1f2125,
       location: 'booth', pos: [3.1, 0.82, -10.2], yawDeg: -90, pitchDeg: 0, mount: '방송실 책상',
       role: '무선 마이크(핸드·핀) 신호를 받는 4채널 수신기 3대입니다. Dante 로 CL5 에 연결되어 있습니다.' },
@@ -129,7 +129,7 @@ window.SANCTUARY_INSTALL = {
       location: 'rack', pos: [43.45, 0.95, -20.55], yawDeg: 90, pitchDeg: 0 },
     { id: 'stagebox', name: '스테이지 박스 Rio3224-D', model: 'Yamaha Rio3224-D', modelKey: 'rio3224d', location: 'rack',
       pos: [43.62, 1.63, -20.55], yawDeg: 90, pitchDeg: 0, mount: '앰프 랙 맨 위', img: 'rio3224D2.jpg',
-      role: '단상 쪽 마이크·악기 신호를 받아 Dante 로 CL5 에 보내고, CL5 의 출력을 AES/EBU 로 앰프에 보내는 입출력 장치입니다.' },
+      role: '판넬의 마이크·악기 신호를 받아 Dante 로 CL5 에 보내고, CL5 의 출력을 AES/EBU 로 앰프에 보내는 입출력 장치입니다.' },
     { id: 'stagebox2', name: '두 번째 Rio', model: 'Yamaha Rio (모델 확인 필요)', proc: 'rio', channels: 16, rows: 2, label: 'Rio #2', size: [0.48, 0.133, 0.36], color: 0x1d1f23,
       location: 'rack', pos: [43.65, 1.38, -20.55], yawDeg: 90, pitchDeg: 0, mount: '앰프 랙 (Rio3224-D 바로 아래)',
       role: '앰프 랙에 있는 두 번째 Rio 입출력 장치입니다. 모델과 입력 수, 어떤 판넬·마이크가 여기로 들어오는지는 아직 확인하지 못했습니다.' },
@@ -154,10 +154,10 @@ window.SANCTUARY_INSTALL = {
 
   // 논리 신호 연결. port/channel 이 null 이면 아직 모르는 값입니다.
   links: [
-    { id: 'L01', from: 'mic_podium_L', to: 'stagebox', medium: 'analog', label: '마이크 케이블 (XLR)', toPort: null,
-      verify: 'unknown', note: 'Rio 입력 번호 ↔ CL5 채널은 나중에 알려 주시기로 함' },
-    { id: 'L02', from: 'mic_podium_R', to: 'stagebox', medium: 'analog', label: '마이크 케이블 (XLR)', toPort: null,
-      verify: 'unknown', note: 'Rio 입력 번호 ↔ CL5 채널은 나중에 알려 주시기로 함' },
+    { id: 'L01', from: 'mic_podium_L', to: 'cl5', medium: 'analog', label: '마이크 케이블 (XLR) → 방송실 CL5', toPort: null,
+      verify: 'unknown', note: '방송실 CL5 로 바로 들어감(2026-10-19 기완 님). CL5 입력 번호는 나중에 알려 주시기로 함' },
+    { id: 'L02', from: 'mic_podium_R', to: 'cl5', medium: 'analog', label: '마이크 케이블 (XLR) → 방송실 CL5', toPort: null,
+      verify: 'unknown', note: '방송실 CL5 로 바로 들어감(2026-10-19 기완 님). CL5 입력 번호는 나중에 알려 주시기로 함' },
     { id: 'L03', from: 'stagebox', to: 'cl5', medium: 'dante', label: 'Dante (랜선)', verify: 'confirmed-pair', note: '케이블은 천장으로 지나감' },
     { id: 'L18', from: 'stagebox2', to: 'cl5', medium: 'dante', label: 'Dante (랜선)', verify: 'unknown', note: '두 번째 Rio 도 Dante 로 CL5 에 연결된다고 보고 그림 (확인 필요)' },
     { id: 'L19', from: 'panel_2', to: 'g308_R', medium: 'speaker', label: '판넬 스피커 단자 → 스피커 케이블', verify: 'unknown', note: '지휘자 모니터는 판넬에서 연결 (몇 번 판넬인지는 확인 필요, 그림은 가장 가까운 판넬 2)' },
@@ -183,7 +183,7 @@ window.SANCTUARY_INSTALL = {
   // 연결이 아직 확인되지 않은 장비 (정보 카드에 "어디서 신호를 받는지 미확인" 으로 표시)
   feedUnknown: ['g308_L', 'g308_R', 'alea4_L', 'alea4_R', 'alea4_3'],
 
-  // ---- 케이블 경로 (Claude 가 그리고 기완 님이 설명·확인, 2026-10-18) ----
+  // ---- 케이블 경로 (Claude 가 그리고 기완 님이 설명·확인, 2026-10-18 / 강대상 마이크 2026-10-19) ----
   // cableNodes: 경로 꺾이는 점(미터). cableRoutes: 케이블 한 가닥(또는 한 묶음)이 지나는 점 순서.
   // kind: speaker(스피커 케이블) / mic(마이크 케이블) / dante(랜선). 천장 높이 Y 5.0, 단상 밑 Y 0.3.
   cableDraft: false,
@@ -227,6 +227,11 @@ window.SANCTUARY_INSTALL = {
     mic_r: [42.66, 1.66, -9.26],
     alea_l: [42.6, 1.68, -9.935],
     alea_r: [42.6, 1.68, -9.065],
+    us_front_c: [40.6, 0.3, -9.5],
+    aud_front_c: [40.2, 0.06, -9.5],
+    aisle_back: [4.7, 0.06, -9.5],
+    booth_floor_in: [4.7, 0.06, -11.2],
+    booth_floor: [3.4, 0.06, -11.2],
     max2l_a: [40.35, 0.3, -11.055],
     max2l_b: [40.22, 0.07, -11.4],
     max2l_c: [39.56, 0.07, -11.4],
@@ -305,12 +310,12 @@ window.SANCTUARY_INSTALL = {
     { id: "C16", name: "앰프(미확인) → 판넬 → 지휘자 모니터", kind: "speaker", from: "rack_cab", to: "g308_R", links: ["L19"],
       desc: "랙에서 바닥을 따라 판넬까지 → 판넬의 스피커 단자에서 지휘자 모니터로 (몇 번 판넬·어느 앰프인지 미확인)",
       path: ["rack_top", "rack_bottom", "f_rackw", "f_p3", "f_p2", "p2_back", "f_p2", "cm_b", "cm_c"] },
-    { id: "C21", name: "강대상 마이크 L → Rio", kind: "mic", from: "mic_podium_L", to: "stagebox", links: ["L01"],
-      desc: "강대상 안 → 단상 밑 → 바닥을 따라 랙",
-      path: ["mic_l", "pulpit_top", "pulpit_floor", "us_pulpit", "us_max2l", "us_g308", "us1", "sw_l", "sw_a", "f_door", "f_in", "f_rack", "rack_bottom", "rack_top"] },
-    { id: "C22", name: "강대상 마이크 R → Rio", kind: "mic", from: "mic_podium_R", to: "stagebox", links: ["L02"],
-      desc: "강대상 안 → 단상 밑 → 바닥을 따라 랙",
-      path: ["mic_r", "pulpit_top", "pulpit_floor", "us_pulpit", "us_max2l", "us_g308", "us1", "sw_l", "sw_a", "f_door", "f_in", "f_rack", "rack_bottom", "rack_top"] },
+    { id: "C21", name: "강대상 마이크 L → CL5", kind: "mic", from: "mic_podium_L", to: "cl5", links: ["L01"],
+      desc: "강대상 안 → 단상 밑 → 단상 앞 바닥 → 회중석 가운데 바닥을 따라 뒤쪽 → 방송실 CL5 (2026-10-19 기완 님: 판넬·랙이 아니라 방송실 CL5 로 연결. 지나가는 길은 예상)",
+      path: ["mic_l", "pulpit_top", "pulpit_floor", "us_front_c", "aud_front_c", "aisle_back", "booth_floor_in", "booth_floor", "cl5_back"] },
+    { id: "C22", name: "강대상 마이크 R → CL5", kind: "mic", from: "mic_podium_R", to: "cl5", links: ["L02"],
+      desc: "강대상 안 → 단상 밑 → 단상 앞 바닥 → 회중석 가운데 바닥을 따라 뒤쪽 → 방송실 CL5 (2026-10-19 기완 님: 판넬·랙이 아니라 방송실 CL5 로 연결. 지나가는 길은 예상)",
+      path: ["mic_r", "pulpit_top", "pulpit_floor", "us_front_c", "aud_front_c", "aisle_back", "booth_floor_in", "booth_floor", "cl5_back"] },
     { id: "C23", name: "판넬 1 → Rio", kind: "mic", from: "panel_1", to: "stagebox", links: ["L20"],
       desc: "판넬에서 바닥으로 → 일자로 랙까지 (Rio 입력 번호 미확인)",
       path: ["p1_back", "f_p1", "f_p2", "f_p3", "f_rackw", "rack_bottom", "rack_top"] },
@@ -330,7 +335,6 @@ window.SANCTUARY_INSTALL = {
       desc: "방송실 책상 위 짧은 연결",
       path: ["ulxd_back", "ulxd_mid", "cl5_back"] }
   ],
-
   // 신호가 어디로 가는지 아직 모르는 장비 (판넬 → 어느 Rio 입력인지 미확인)
   outUnknown: {
     panel_1: '어느 Rio 입력(몇 번)으로 이어지는지 아직 확인하지 못했습니다.',

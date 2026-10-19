@@ -362,6 +362,7 @@
     });
     var tour = tourLike();
     if (T.mode !== 'trace') stopTrace();
+    if (T.cableRoot) T.cableRoot.visible = !!T.showCables && T.mode !== 'trace';
     if (T.root) T.root.visible = tour;
     T.labels.forEach(function (o) { o.visible = tour; });
     practiceObjects(function (o) { o.visible = !tour; });
@@ -452,8 +453,8 @@
   function setCablesVisible(on) {
     T.showCables = !!on;
     try { localStorage.setItem(CABLE_KEY, on ? 'on' : 'off'); } catch (e) { /* 저장 안 돼도 됨 */ }
-    if (T.cableRoot) T.cableRoot.visible = T.showCables;
-    if (T.cableHi) T.cableHi.visible = T.showCables;
+    if (T.cableRoot) T.cableRoot.visible = T.showCables && T.mode !== 'trace';
+    if (T.cableHi) T.cableHi.visible = T.showCables || T.mode === 'trace';
     updateCableBar();
   }
   function routesFor(id) {
@@ -551,100 +552,66 @@
     if (id === 'amp_40d' || id === 'amp_10d') return 'amp';
     return null;
   }
+  // 2026-10-19: 고른 장비의 신호가 실제로 지나가는 길만 (다른 장비의 길은 그리지 않음)
+  //  - 입력(마이크·판넬·무선): 입력 → (Rio → Dante) → CL5 까지
+  //  - 스피커: CL5 → Dante → 랙(Rio·앰프) → 그 스피커까지
+  //  - Rio: 들어오는 판넬 → Dante → CL5 / 앰프: CL5 → Dante → 랙 → 그 앰프의 스피커들 / CL5: CL5 에 바로 닿는 선들
+  function danteOf(rio) { return routeDef(rio === 'stagebox2' ? 'C32' : 'C31'); }
   function buildChain(id) {
     var role = signalRole(id); if (!role) return null;
-    var ins = role === 'input' ? [id] : inputIds();
-    var spks = role === 'speaker' ? [id] : speakerIds();
-    if (role === 'amp') spks = spks.filter(function (s) { var a = ampOf(s); return a && a.amp === id; });
-    var viaRio = ins.filter(function (i) { var r = inputRoute(i); return r && r.to !== 'cl5'; });
-    var direct = ins.filter(function (i) { return viaRio.indexOf(i) < 0; });
-    var dante = routeDef('C31');
-    var stages = [
-      ins.map(function (i) { return { rt: inputRoute(i), rev: false }; }).filter(function (x) { return x.rt; }),
-      (viaRio.length && dante) ? [{ rt: dante, rev: false }] : [],
-      dante ? [{ rt: dante, rev: true }] : [],
-      spks.map(function (s) { return { rt: speakerRoute(s), rev: false }; }).filter(function (x) { return x.rt; })
-    ];
-    return { id: id, role: role, ins: ins, viaRio: viaRio, direct: direct, spks: spks, stages: stages };
+    var R = DATA.cableRoutes || [], stages = [], one = function (rt, rev) { return rt ? [{ rt: rt, rev: !!rev }] : []; };
+    var spks = [], ins = [];
+    if (role === 'input') {
+      var r = inputRoute(id); ins = [id];
+      stages.push(one(r));
+      if (r && r.to !== 'cl5') stages.push(one(danteOf(r.to)));
+    } else if (role === 'speaker') {
+      spks = [id];
+      stages.push(one(routeDef('C31'), true));
+      stages.push(one(speakerRoute(id)));
+    } else if (role === 'rio') {
+      var feeds = R.filter(function (x) { return x.kind === 'mic' && x.to === id; });
+      ins = feeds.map(function (x) { return x.from; });
+      if (feeds.length) stages.push(feeds.map(function (x) { return { rt: x, rev: false }; }));
+      stages.push(one(danteOf(id)));
+    } else if (role === 'amp') {
+      spks = speakerIds().filter(function (s2) { var a2 = ampOf(s2); return a2 && a2.amp === id; });
+      stages.push(one(routeDef('C31'), true));
+      stages.push(spks.map(function (s2) { return { rt: speakerRoute(s2), rev: false }; }).filter(function (x) { return x.rt; }));
+    } else if (role === 'cl5') {
+      var into = R.filter(function (x) { return x.to === 'cl5'; });
+      ins = into.map(function (x) { return x.from; });
+      stages.push(into.map(function (x) { return { rt: x, rev: false }; }));
+    }
+    stages = stages.filter(function (st) { return st.length; });
+    var touched = {}; touched[id] = 1;
+    stages.forEach(function (st) { st.forEach(function (x) { touched[x.rt.from] = 1; touched[x.rt.to] = 1; }); });
+    spks.forEach(function (s2) { var a2 = ampOf(s2); if (a2) touched[a2.amp] = 1; });
+    if (touched.rack_cab) delete touched.rack_cab;
+    return { id: id, role: role, ins: ins, spks: spks, stages: stages, devices: Object.keys(touched) };
   }
-  function chipList(ids, selId) {
-    return '<div class="g3t-flow-chips">' + ids.map(function (d) {
-      return '<button type="button" class="g3t-flow-chip' + (d === selId ? ' sel' : '') + '" data-trace="' + esc(d) + '">' + esc(devName(d)) + '</button>';
-    }).join('') + '</div>';
-  }
-  function traceCardHtml(ch) {
-    var sel = ch.id;
-    var step = function (n, title, body, on, wire) {
-      return (wire ? '<div class="g3t-flow-wire"><span>' + esc(wire) + '</span></div>' : '') +
-        '<div class="g3t-flow-step' + (on ? ' on' : '') + '"><div class="g3t-flow-num">' + n + '</div><div class="g3t-flow-body"><div class="g3t-flow-title">' + title + '</div>' + body + '</div></div>';
-    };
-    var h = '<div class="g3t-card-head"><div><div class="g3t-card-title">신호 따라가기</div><div class="g3t-card-sub">' + esc(devName(sel)) + ' 의 신호가 지나가는 길</div></div><button type="button" class="g3t-close" aria-label="닫기">×</button></div>';
-    h += '<div class="g3t-flow">';
-    // 1 입력
-    var inBody = chipList(ch.ins, sel);
-    if (ch.role === 'input') {
-      var lk = DATA.links.find(function (l) { return l.from === sel; });
-      var dv = devDef(sel);
-      if (dv && dv.cl5Channel) inBody += '<p class="g3t-meta">' + esc(cl5ChannelText(dv.cl5Channel)) + '</p>';
-      if (lk && lk.verify === 'unknown') inBody += '<p class="g3t-meta"><span class="g3t-unk">미확인</span> ' + esc(lk.note || '') + '</p>';
-    } else inBody += '<p class="g3t-meta">CL5 로 들어오는 입력 ' + ch.ins.length + '개 (모두 섞여서 나갑니다)</p>';
-    h += step(1, '입력', inBody, ch.role === 'input');
-    // 2 Rio 입력
-    var rioBody = ch.viaRio.length ? '<p class="g3t-meta">마이크·판넬 신호를 디지털로 바꿔 Dante 로 보냅니다.</p>' : '';
-    if (ch.direct.length) rioBody += '<p class="g3t-meta">' + esc(ch.direct.map(devName).join(', ')) + ' 은(는) Rio 를 거치지 않고 Dante 로 바로 CL5 에 들어갑니다.</p>';
-    if (ch.ins.some(function (i) { return /^panel_/.test(i); })) rioBody += '<p class="g3t-meta"><span class="g3t-unk">미확인</span> 판넬은 두 번째 Rio 로 들어갈 수도 있습니다.</p>';
-    h += step(2, '<button type="button" class="g3t-link" data-trace="stagebox">Rio3224-D</button> (입력)', rioBody, ch.role === 'rio', ch.role === 'input' && ch.direct.length ? 'Dante 랜선' : '마이크 케이블');
-    // 3 CL5
-    h += step(3, '<button type="button" class="g3t-link" data-trace="cl5">CL5 콘솔</button> (방송실)', '<p class="g3t-meta">채널에서 소리를 다듬고(게인·EQ 등) 섞은 뒤 출력으로 보냅니다.</p>', ch.role === 'cl5', 'Dante 랜선 (천장 → 방송실)');
-    // 4 Rio 출력
-    h += step(4, '<button type="button" class="g3t-link" data-trace="stagebox">Rio3224-D</button> (출력)', '<p class="g3t-meta">CL5 의 출력을 AES/EBU 로 앰프에 보냅니다. <span class="g3t-unk">미확인</span> 출력 번호</p>', false, 'Dante 랜선 (방송실 → 랙)');
-    // 5 앰프
-    var ampLines = {};
-    ch.spks.forEach(function (s) {
-      var a = ampOf(s), p = viaPanel(s);
-      var key = a ? devName(a.amp) + (a.port ? ' ' + a.port : '') : '앰프 미확인' + (p ? ' → ' + devName(p) : '');
-      (ampLines[key] = ampLines[key] || []).push(s);
-    });
-    var ampBody = '<ul class="g3t-flow-list">' + Object.keys(ampLines).map(function (k) {
-      return '<li><b>' + esc(k) + '</b> → ' + esc(ampLines[k].map(devName).join(', ')) + '</li>';
-    }).join('') + '</ul>';
-    h += step(5, '앰프 (앰프 랙)', ampBody, ch.role === 'amp', 'AES/EBU (랙 안)');
-    // 6 스피커
-    h += step(6, '스피커', chipList(ch.spks, sel), ch.role === 'speaker', '스피커 케이블');
-    h += '</div>';
-    if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) h += '<p class="g3t-meta g3t-flow-hint">움직이는 점이 신호가 가는 방향입니다. 다른 장비를 누르면 그 장비의 흐름으로 바뀝니다.</p>';
-    return h;
-  }
-  function showTracePrompt() {
-    var card = $('g3tCard'); if (!card) return;
-    card.innerHTML = '<div class="g3t-card-head"><div><div class="g3t-card-title">신호 따라가기</div><div class="g3t-card-sub">장비를 하나 골라 보세요</div></div><button type="button" class="g3t-close" aria-label="닫기">×</button></div>' +
-      '<p class="g3t-role">마이크·판넬·스피커·앰프·CL5 를 누르면 신호가 어디서 와서 어디로 가는지 흐름도와 3D 케이블 길로 보여 줍니다.</p>' +
-      '<div class="g3t-sec">예시</div>' + chipList(['mic_podium_L', 'panel_1', 'ulxd', 'vi10p_L', 'y7p_L', 'g308_R'], null);
-    card.hidden = false;
-  }
+  // 2026-10-19: 신호 따라가기에서는 왼쪽 설명 카드를 띄우지 않음(기완 님 요청)
+  function showTracePrompt() { var card = $('g3tCard'); if (card) card.hidden = true; }
   function traceSignal(id) {
     var ch = buildChain(id);
     if (!ch) { select(id, { plain: true }); return; }
     if (T.mode !== 'trace') setMode('trace');
     clearSelection();
-    if (!T.showCables) setCablesVisible(true);
     T.sel = id; T.trace = ch;
-    var ids = {}; ch.ins.concat(ch.spks).forEach(function (d) { ids[d] = 1; });
-    ['stagebox', 'cl5'].forEach(function (d) { ids[d] = 1; });
-    ch.spks.forEach(function (s) { var a = ampOf(s); if (a) ids[a.amp] = 1; });
-    T.traceIds = Object.keys(ids);
+    if (T.cableRoot) T.cableRoot.visible = false;   // 다른 케이블 길은 감춤 — 고른 장비의 길만 그려짐
+    if (T.cableHi) T.cableHi.visible = true;
+    T.traceIds = ch.devices.slice();
     T.traceIds.forEach(function (d) { highlight(d, true, d === id ? null : 'group'); });
     var all = []; ch.stages.forEach(function (st) { st.forEach(function (x) { if (all.indexOf(x.rt) < 0) all.push(x.rt); }); });
     var bb = new THREE.Box3();
     all.forEach(function (rt) { rt.path.forEach(function (n) { bb.expandByPoint(new THREE.Vector3().fromArray(DATA.cableNodes[n])); }); });
     var c = bb.getCenter(new THREE.Vector3()), sz = bb.getSize(new THREE.Vector3());
     var hgt = Math.max(9, Math.max(sz.x / 1.3, sz.z / 0.85) + 4);
-    highlightRoutes(all, Math.max(0.03, hgt * 0.0022));
     flyTo([c.x, hgt, c.z + hgt * 0.18], [c.x, 0.5, c.z]);
     var lb = T.labelById[id] || (devDef(id) && T.labelById['loc:' + devDef(id).location]); if (lb) lb.classList.add('sel');
     occLast = '';
-    var card = $('g3tCard'); if (card) { card.innerHTML = traceCardHtml(ch); card.hidden = false; }
-    startPulses(ch, Math.max(0.06, hgt * 0.004));
+    showTracePrompt();
+    startPulses(ch, Math.max(0.06, hgt * 0.004), Math.max(0.05, hgt * 0.0045));
   }
   // 신호 점 애니메이션
   function polyOf(rt, rev) {
@@ -662,6 +629,7 @@
   }
   function stopTrace() {
     T.trace = null;
+    if (T.cableRoot) T.cableRoot.visible = !!T.showCables && T.mode !== 'trace';
     if (T.pulseRaf) cancelAnimationFrame(T.pulseRaf);
     T.pulseRaf = null;
     if (T.pulseGroup) { while (T.pulseGroup.children.length) T.pulseGroup.remove(T.pulseGroup.children[0]); }
@@ -669,7 +637,7 @@
   }
   /* 2026-10-19: 신호 점을 더 눈에 띄게 — 밝은 머리 + 빛나는 테 + 꼬리(잔상) + 도착 지점에서 퍼지는 빛 */
   var TRAIL_N = 8;
-  function startPulses(ch, r) {
+  function startPulses(ch, r, lineR) {
     if (T.pulseRaf) cancelAnimationFrame(T.pulseRaf);
     if (!T.pulseGroup && T.root) { T.pulseGroup = new THREE.Group(); T.pulseGroup.name = 'tracePulses'; T.root.add(T.pulseGroup); }
     if (!T.pulseGroup) return;
@@ -691,13 +659,34 @@
         m.scale.setScalar(R); core.scale.setScalar(R * 0.45); edge.scale.setScalar(R * 1.3); ring.scale.setScalar(R * 1.9); halo.scale.setScalar(R * 3.2);
         var trail = [];
         for (var k = 1; k <= TRAIL_N; k++) { var tr = ball(col, 0.75 * (1 - k / (TRAIL_N + 1)), 29); tr.scale.setScalar(R * (1 - k / (TRAIL_N + 3))); trail.push(tr); }
-        T.pulses.push({ poly: poly, start: t0, m: m, core: core, edge: edge, ring: ring, halo: halo, flash: flash, trail: trail });
+        // 그려지는 선: 구간마다 원기둥(처음엔 숨김) + 꺾이는 점
+        var lm = new THREE.MeshBasicMaterial({ color: col, depthTest: false, depthWrite: false, transparent: true, opacity: 0.95 }), segs = [];
+        for (var si = 1; si < poly.pts.length; si++) {
+          var A = poly.pts[si - 1], B = poly.pts[si], dir = B.clone().sub(A), L = dir.length() || 0.001;
+          var cy = new THREE.Mesh(new THREE.CylinderGeometry(lineR || r * 0.7, lineR || r * 0.7, 1, 8, 1, true), lm);
+          cy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize()); cy.renderOrder = 22; cy.visible = false;
+          var jt = new THREE.Mesh(sphere, lm); jt.scale.setScalar(lineR || r * 0.7); jt.position.copy(B); jt.renderOrder = 22; jt.visible = false;
+          T.pulseGroup.add(cy); T.pulseGroup.add(jt);
+          segs.push({ a: A, dir: dir.clone().normalize(), L: L, c0: poly.cum[si - 1], mesh: cy, joint: jt });
+        }
+        var j0 = new THREE.Mesh(sphere, lm); j0.scale.setScalar(lineR || r * 0.7); j0.position.copy(poly.pts[0]); j0.renderOrder = 22; j0.visible = false; T.pulseGroup.add(j0);
+        T.pulses.push({ poly: poly, start: t0, m: m, core: core, edge: edge, ring: ring, halo: halo, flash: flash, trail: trail, segs: segs, j0: j0, drawn: -1 });
       });
       t0 += Math.max(dur, st.length ? 0.4 : 0);
     });
     T.pulseLoop = t0 + 0.8;
+    function drawTo(p, D) {   // 경로를 처음부터 D(미터)까지 그림
+      if (D <= p.drawn) return; p.drawn = D;
+      p.j0.visible = D >= 0;
+      p.segs.forEach(function (sg) {
+        var f = Math.max(0, Math.min(1, (D - sg.c0) / sg.L));
+        sg.mesh.visible = f > 0; sg.joint.visible = f >= 1;
+        if (f > 0) { sg.mesh.scale.set(1, sg.L * f, 1); sg.mesh.position.copy(sg.a).addScaledVector(sg.dir, sg.L * f / 2); }
+      });
+    }
+    T.drawTo = drawTo;
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) return; // 움직임 줄이기: 경로 강조만
+    if (reduce) { T.pulses.forEach(function (p) { drawTo(p, p.poly.len); }); return; } // 움직임 줄이기: 길만 한 번에 그림
     var gap = R * 1.6, start = performance.now();
     function frame(now) {
       if (!T.trace) return;
@@ -705,6 +694,7 @@
       T.pulses.forEach(function (p) {
         var d = (t - p.start) * TRACE_SPEED, len = p.poly.len;
         var on = d >= 0 && d <= len;
+        if (d >= 0) drawTo(p, Math.min(d, len));
         p.m.visible = p.core.visible = p.edge.visible = p.ring.visible = p.halo.visible = on;
         if (on) {
           var q = pointAt(p.poly, d);
