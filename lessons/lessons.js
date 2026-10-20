@@ -136,6 +136,7 @@
       '<h1>교회 음향팀을 위한<br>실습 중심 교육 플랫폼</h1><p>장비를 배우고, 직접 조작하고, 소리를 들어<br>실제 현장에서 바로 사용할 수 있는 음향 교육을 경험하세요.</p>' +
       '<div class="home-hero__stats"><span class="home-hero__stat">이론 레슨 <b>' + doneN + '</b> / ' + ready.length + ' 완료</span><span class="home-hero__stat">10주 과정 <b>' + weeksDone + '</b> / 10 주차</span></div></div>' +
       '<div class="home-hero__script" aria-hidden="true">Better Sound<br>Better Ministry</div></section>' +
+      (window.STAModules ? STAModules.homeHtml() : '') +   /* 2026-10-20: 전체 학습 과정(하드웨어 이해·믹싱 스킬·통합 실전 훈련) */
       '<div class="home-filters" role="tablist" aria-label="학습 과정 보기">' + filters.map(function (f) {
         var on = homeFilter === f[0] || (f[0] === 'all' && homeFilter === 'all-more');
         return '<button type="button" role="tab" class="home-filter" data-filter="' + f[0] + '" aria-selected="' + (on ? 'true' : 'false') + '">' + f[1] + '</button>';
@@ -272,6 +273,7 @@
   }
 
   /* ------------------------------------------------------------- 실습 화면·커리큘럼에 이론 연결 */
+  var TAB_MODULES = { tab1: ['mic'], tab6: ['gain-structure'], tab5: ['gain-structure'], tab7: ['mic'] };   // 2026-10-20: 학습 모듈 연결
   var TAB_LESSONS = { tab1: ['signal-flow'], tab2: ['signal-flow'], tab7: ['signal-flow'], tab6: ['gain-fader', 'hpf-eq', 'aux-monitor'], tab5: ['gain-fader'] };
   function theoryLinks(ids) {
     return ids.map(function (id) {
@@ -285,7 +287,7 @@
       var head = document.querySelector('#' + tab + ' > .level-header'); if (!head) return;
       var old = head.querySelector('.lsn-theory-links'); if (old) old.remove();   // 편집 저장 파일에 남은 것 정리
       var d = document.createElement('div'); d.className = 'lsn-theory-links'; d.setAttribute('aria-label', '관련 이론');
-      d.innerHTML = theoryLinks(TAB_LESSONS[tab]); head.appendChild(d);
+      d.innerHTML = theoryLinks(TAB_LESSONS[tab]) + (TAB_MODULES[tab] || []).map(function (id) { var mm = (window.STA_MODULES || {})[id]; return mm ? '<button type="button" class="lsn-theory-link mod-weeklink" data-module="' + id + '">🧭 ' + esc(mm.title) + ' 모듈</button>' : ''; }).join(''); head.appendChild(d);
     });
   }
   function addWeekTheory() {
@@ -296,7 +298,7 @@
       var info = WEEK[m[1]]; var old = card.querySelector('.week-theory'); if (old) old.remove();
       if (!info) return;
       var d = document.createElement('div'); d.className = 'week-theory';
-      d.innerHTML = '<div class="week-theory-row"><b>📘 먼저 볼 이론</b>' + theoryLinks(info.lessons) + '</div>' +
+      d.innerHTML = '<div class="week-theory-row"><b>📘 먼저 볼 이론</b>' + theoryLinks(info.lessons) + (window.STAModules ? STAModules.weekLinks(m[1]) : '') + '</div>' +
         (info.check ? '<div class="week-theory-row"><b>✔ 실습 후 확인</b><span>' + esc(info.check) + '</span></div>' : '');
       var body = card.querySelector('.week-body'); if (body) body.appendChild(d);
     });
