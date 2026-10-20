@@ -316,7 +316,50 @@
         if (d.type === 'crown') { var cu = r.userData.crownXli1500; cu.setGain(1, d.att[1]); cu.setGain(2, d.att[2]); var a = ev.amp[id];
           [1, 2].forEach(function (n) { cu.setLed(n, 'signal', !!ev.power[id] && a.in[n] !== E.NEG && a.in[n] - 5.1 > -40); cu.setLed(n, 'clip', a.out[n] > 3); }); cu.setPower(!!ev.power[id]); var cap = cu.parts.powerSwitch.userData.cap; if (cap) cap.position.z = (0.4 + (d.power ? 0 : 0.9)) * 0.001; } });
     }
-    syncCables(); syncDevices();
+    // 2026-10-20: 표시등 강조 — 모델 파일은 그대로 두고, 이 화면에서만 켜진 LED·ON 버튼 위에 빛 번짐을 더하고
+    //  장비를 고르거나 가까이 보면 「POWER 켜짐/꺼짐」「CH1 ON 켜짐/꺼짐」 이름표를 붙여, 켜짐/꺼짐을 헷갈리지 않게 함
+    var glowTex = (function () { var c = document.createElement('canvas'); c.width = c.height = 64; var x = c.getContext('2d'), gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+      gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.22, 'rgba(255,255,255,0.9)'); gr.addColorStop(0.55, 'rgba(255,255,255,0.25)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = gr; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+    var IND = [], indRay = new THREE.Raycaster();
+    function ind(dev, name, label, color, onFn, size) {
+      var o = devs[dev] && devs[dev].root.getObjectByName(name); if (!o) return;
+      var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: color, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+      sp.scale.setScalar(size || 0.04); sp.renderOrder = 5; sp.visible = false; scene.add(sp);
+      var el = document.createElement('div'); el.className = 'ts-ind'; el.style.display = 'none'; vp.appendChild(el);
+      IND.push({ dev: dev, obj: o, label: label, color: '#' + new THREE.Color(color).getHexString(), on: onFn, sp: sp, el: el, state: null });
+    }
+    (function () {
+      var ch = E.inputChannel(m, st);
+      Object.keys(devs).forEach(function (id) { var t = st.devices[id].type;
+        if (t === 'mg12xu') { ind(id, 'yamahaMg12xu.led.power', 'POWER', 0xffffff, function (ev) { return !!ev.power[id]; }, 0.035);
+          ind(id, 'yamahaMg12xu.btn.' + ch + '.on', E.CH_LABEL[ch] + ' ON', 0xff9a00, function (ev, d) { return !!ev.power[id] && !!d.ch[ch].on; }, 0.06); }
+        if (t === 'zxa1') ind(id, 'evZxa1.powerLed', 'POWER', 0x22e05a, function (ev) { return !!ev.power[id]; }, 0.05);
+        if (t === 'crown') { ind(id, 'crownXli1500.powerLed', 'POWER', 0x3fa9ff, function (ev) { return !!ev.power[id]; }, 0.04);
+          [1, 2].forEach(function (n) { ind(id, 'crownXli1500.signalLedCh' + n, 'CH' + n + ' SIGNAL', 0x22e05a, function (ev) { var a = ev.amp[id]; return !!ev.power[id] && a.in[n] !== E.NEG && a.in[n] - 5.1 > -40; }, 0.03); }); }
+      });
+    })();
+    function syncIndicators() { var ev = E.evaluate(m, S.state); IND.forEach(function (q) { q.state = !!q.on(ev, S.state.devices[q.dev]); q.sp.visible = q.state;
+      q.el.className = 'ts-ind ' + (q.state ? 'on' : 'off'); q.el.innerHTML = '<i style="' + (q.state ? 'background:' + q.color + ';box-shadow:0 0 6px ' + q.color : '') + '"></i>' + q.label + ' <b>' + (q.state ? '켜짐' : '꺼짐') + '</b>'; }); }
+    var wp = new THREE.Vector3(), tmpV = new THREE.Vector3();
+    function placeIndicators() {
+      var r = renderer.domElement, Wd = r.clientWidth, Hd = r.clientHeight, occ = Object.keys(devs).map(function (k) { return devs[k].root; }).concat(stands);
+      IND.forEach(function (q) {
+        q.obj.getWorldPosition(wp);
+        tmpV.copy(camera.position).sub(wp); var dist = tmpV.length(); tmpV.normalize();
+        q.sp.position.copy(wp).addScaledVector(tmpV, 0.012);
+        var showLabel = (sel === q.dev || dist < 1.3);
+        var v = wp.clone().project(camera); if (v.z > 1 || Math.abs(v.x) > 1 || Math.abs(v.y) > 1) showLabel = false;
+        if (showLabel) { indRay.set(camera.position, tmpV.clone().negate()); indRay.camera = camera; indRay.far = dist - 0.02; var h = indRay.intersectObjects(occ, true).filter(function (x) { return x.object.visible && x.object.isMesh && x.distance < dist - 0.03; });
+          if (h.length) { var o = h[0].object, own = false; while (o) { if (o === q.obj) { own = true; break; } o = o.parent; } if (!own) showLabel = false; } }
+        q.el.style.display = showLabel ? '' : 'none';
+        if (showLabel) { q.el.style.left = ((v.x + 1) / 2 * Wd) + 'px'; q.el.style.top = ((1 - v.y) / 2 * Hd - 10) + 'px'; }
+      });
+      // 같은 장비 이름표끼리 겹치면 위로 비켜 놓기
+      var shown = IND.filter(function (q) { return q.el.style.display !== 'none'; }).sort(function (a, b) { return parseFloat(b.el.style.top) - parseFloat(a.el.style.top); });
+      for (var i = 1; i < shown.length; i++) for (var j = 0; j < i; j++) { var A = shown[i], B = shown[j];
+        if (Math.abs(parseFloat(A.el.style.left) - parseFloat(B.el.style.left)) < 110 && Math.abs(parseFloat(A.el.style.top) - parseFloat(B.el.style.top)) < 24) A.el.style.top = (parseFloat(B.el.style.top) - 24) + 'px'; }
+    }
+    syncCables(); syncDevices(); syncIndicators();
     // 선택 표시: 장비 둘레 상자
     var selBox = new THREE.Box3Helper(new THREE.Box3(), 0xf59e0b); selBox.visible = false; selBox.material.depthTest = false; selBox.renderOrder = 999; scene.add(selBox);
     var tween = null, needs = true, paused = false, ray = new THREE.Raycaster(), alive = true;
@@ -327,6 +370,8 @@
       var b = new THREE.Box3().setFromObject(obj); selBox.box.copy(b); selBox.visible = true; var c = b.getCenter(new V3()), sz = b.getSize(new V3()).length();
       var dir = camera.position.clone().sub(controls.target).normalize(), dist = Math.max(0.7, Math.min(3.4, sz * 2.3));
       if (id === 'spk' || id === 'spkL' || id === 'spkR' || id === 'pas') dir = new V3(0.25, 0.35, -1).normalize();   // 스피커는 뒷면(전원·입력 단자)이 보이게
+      else if (id === 'mg') dir = new V3(0.1, 1.15, 0.85).normalize();   // 믹서는 앞 위에서(ON 버튼·POWER 표시등이 보이게)
+      else if (id === 'amp') dir = new V3(0.15, 0.35, 1).normalize();    // 앰프는 앞면(POWER·SIGNAL 표시등)
       tween = { t: 0, p0: camera.position.clone(), t0: controls.target.clone(), p1: c.clone().addScaledVector(dir, dist), t1: c }; needs = true;
     }
     function pick(ev2) { var r = renderer.domElement.getBoundingClientRect(), v = new THREE.Vector2(((ev2.clientX - r.left) / r.width) * 2 - 1, -((ev2.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(v, camera);
@@ -345,15 +390,15 @@
     function visible() { var t = root.closest('.tab-content'); return !t || t.classList.contains('active'); }
     (function loop() { if (!alive) return; requestAnimationFrame(loop); if (paused || !visible()) return;
       if (tween) { tween.t = Math.min(1, tween.t + 0.06); var k = tween.t * tween.t * (3 - 2 * tween.t); camera.position.lerpVectors(tween.p0, tween.p1, k); controls.target.lerpVectors(tween.t0, tween.t1, k); if (tween.t >= 1) tween = null; needs = true; }
-      if (controls.update() || needs) { renderer.render(scene, camera); needs = false; } })();
+      if (controls.update() || needs) { renderer.render(scene, camera); placeIndicators(); needs = false; } })();
     $('[data-role=loading]').style.display = 'none';
     if (sel) focus(sel);
     return {
       scene: scene, camera: camera, renderer: renderer, controls: controls, devs: devs, cables: cables,
-      sync: function () { syncCables(); syncDevices(); if (sel) focus(sel); needs = true; }, focus: focus, pause: function (v) { paused = !!v; },
+      sync: function () { syncCables(); syncDevices(); syncIndicators(); if (sel) focus(sel); needs = true; }, focus: focus, pause: function (v) { paused = !!v; }, indicators: function () { return IND.map(function (q) { return { dev: q.dev, label: q.label, on: q.state, shown: q.el.style.display !== 'none', glow: q.sp.visible, text: q.el.textContent }; }); }, refresh: function () { needs = true; },
       setCamera: function (pos, target) { tween = null; camera.position.fromArray(pos); controls.target.fromArray(target); controls.update(); needs = true; },
-      renderNow: function () { if (tween) { camera.position.copy(tween.p1); controls.target.copy(tween.t1); tween = null; } controls.update(); renderer.render(scene, camera); },
-      dispose: function () { alive = false; window.removeEventListener('resize', resize); scene.traverse(function (o) { if (o.geometry) o.geometry.dispose(); }); renderer.dispose(); if (renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement); }
+      renderNow: function () { if (tween) { camera.position.copy(tween.p1); controls.target.copy(tween.t1); tween = null; } controls.update(); renderer.render(scene, camera); placeIndicators(); },
+      dispose: function () { alive = false; IND.forEach(function (q) { if (q.el.parentNode) q.el.parentNode.removeChild(q.el); }); window.removeEventListener('resize', resize); scene.traverse(function (o) { if (o.geometry) o.geometry.dispose(); }); renderer.dispose(); if (renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement); }
     };
   }
 
