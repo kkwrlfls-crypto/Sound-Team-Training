@@ -130,13 +130,12 @@
     else if (homeFilter === 'adv') { items = ADV.map(cardAdv).join(''); title = '심화 학습 (준비 중)'; }
     else if (homeFilter === 'all-more') { items = LESSONS.map(cardLesson).join('') + PRACTICE.map(cardPractice).join(''); title = '전체 학습 과정'; }
     else { items = LESSONS.map(cardLesson).join(''); title = '추천 학습 과정'; }
-    var filters = [['all', '전체'], ['theory', '기초 이론'], ['practice', '실습'], ['curr', '10주 커리큘럼'], ['adv', '심화 학습']];
+    var filters = [['all', '전체'], ['theory', '기초 이론'], ['practice', '실습'], ['adv', '심화 학습']]   // 2026-10-20: 「학습 흐름」 줄과 「10주 커리큘럼」 필터는 빼 달라는 요청으로 삭제(커리큘럼은 아래 바로가기로);
     root.innerHTML =
       '<section class="home-hero"><div class="home-hero__bg">' + heroSvg() + '</div><div class="home-hero__text">' +
       '<h1>교회 음향팀을 위한<br>실습 중심 교육 플랫폼</h1><p>장비를 배우고, 직접 조작하고, 소리를 들어<br>실제 현장에서 바로 사용할 수 있는 음향 교육을 경험하세요.</p>' +
       '<div class="home-hero__stats"><span class="home-hero__stat">이론 레슨 <b>' + doneN + '</b> / ' + ready.length + ' 완료</span><span class="home-hero__stat">10주 과정 <b>' + weeksDone + '</b> / 10 주차</span></div></div>' +
       '<div class="home-hero__script" aria-hidden="true">Better Sound<br>Better Ministry</div></section>' +
-      '<div class="home-flow" aria-label="학습 흐름"><b>학습 흐름</b><span>개념 이해</span><i>→</i><span>원리 확인</span><i>→</i><span>직접 실습</span><i>→</i><span>결과 관찰</span><i>→</i><span>이해도 확인</span><i>→</i><span>심화 학습</span></div>' +
       '<div class="home-filters" role="tablist" aria-label="학습 과정 보기">' + filters.map(function (f) {
         var on = homeFilter === f[0] || (f[0] === 'all' && homeFilter === 'all-more');
         return '<button type="button" role="tab" class="home-filter" data-filter="' + f[0] + '" aria-selected="' + (on ? 'true' : 'false') + '">' + f[1] + '</button>';

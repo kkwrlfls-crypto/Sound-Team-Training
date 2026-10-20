@@ -2360,9 +2360,11 @@
     .pa3d-card:not([data-pa3d="s1"]) .pa3d-how { display: none; }   /* 세 실습에 똑같이 반복되던 조작법은 첫 카드에만 */
     /* 탭4: 말씀 인용 */
     .level-quote {
-      border-left: 3px solid var(--sta-cyan); padding: 2px 0 2px 14px;
-      color: var(--sta-ink); font-size: 0.92rem; line-height: 1.8; max-width: 72ch;
+      border-left: 3px solid var(--sta-cyan); padding: 4px 0 4px 16px;
+      color: var(--sta-ink); font-size: 0.95rem; line-height: 1.85; max-width: 72ch;
+      word-break: keep-all; overflow-wrap: break-word;   /* 한글 단어 중간에서 줄이 바뀌지 않게 */
     }
+    .level-quote .quote-line { display: block; }   /* 2026-10-20: 문장(구절)마다 줄바꿈 */
     /* 탭6: 단계 목록, 기능부 설명 편집 */
     .mg12xu-step-list { margin: 6px 0 0; padding-left: 20px; display: grid; gap: 4px; line-height: 1.6; }
     .mg12xu-sec-editbar { margin: 4px 0 10px; }
@@ -3293,8 +3295,8 @@
     <div id="tab4" class="tab-content">
       <div class="level-header">
         <!-- 2026-10-19: 설명 자리는 기완 님이 넣은 말씀 인용(원문 그대로). 제목은 "(아이디어 필요)" 자리에 Claude 가 제안해 채움 -->
-        <div class="level-title editable-text" data-field="tab4.title">세계 최고를 향한 10주 — 신입 스텝 과정</div>
-        <div class="level-desc level-quote editable-text" data-field="tab4.desc">■ 우리가 하나님의 영광을 드러내기 위한 것이다. 얼마든지 잘할 수 있다. 문화부에서 창설해 나가야 한다. 세계에서 최고 가는 것 말이다. 여러분들이 잠들어 있어서는 안된다. ‘문화부가 일어서기 전에는 발전이 있겠는가’ 이런 생각을 하고 분발하기 바란다.</div>
+        <div class="level-title editable-text" data-field="tab4.title">세계 최고의 실력자가 되자!</div>
+        <div class="level-desc level-quote editable-text" data-field="tab4.desc"><span class="quote-line">■ 우리가 하나님의 영광을 드러내기 위한 것이다.</span> <span class="quote-line">얼마든지 잘할 수 있다.</span> <span class="quote-line">문화부에서 창설해 나가야 한다.</span> <span class="quote-line">세계에서 최고 가는 것 말이다.</span> <span class="quote-line">여러분들이 잠들어 있어서는 안된다.</span> <span class="quote-line">‘문화부가 일어서기 전에는 발전이 있겠는가’</span> <span class="quote-line">이런 생각을 하고 분발하기 바란다.</span></div>
       </div>
 
       <div class="content-edit-bar" id="tab4EditBar">
