@@ -2438,6 +2438,24 @@
       .game-container.cl5-wide-mode { max-width: 1500px; }
     }
 
+
+    /* ---------- 2026-10-20 배선 실습: 장비는 미리 놓고 끌어서 잇기 ---------- */
+    #tab2[data-g3mode="practice"] .gear3d-tray-wrap, #tab2[data-g3mode="practice"] .control-bar.g3-practice-only { display: none; }
+    .g3w-tag {
+      pointer-events: auto; cursor: grab; user-select: none; touch-action: none;
+      font: 700 12px/1 var(--sta-font); color: #fff; background: rgba(15, 39, 71, 0.88);
+      border: 1.5px solid rgba(255, 255, 255, 0.85); border-radius: 999px; padding: 5px 10px; white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(15, 39, 71, 0.25);
+    }
+    .g3w-tag:hover { background: var(--sta-navy); }
+    .g3w-tag.on { background: #0e7490; }
+    .g3w-tag.from { background: #f59e0b; color: #1c1300; border-color: #fff; cursor: grabbing; }
+    .g3w-tag.over { background: #16a34a; border-color: #fff; transform: scale(1.12); }
+    .g3w-views { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin: 0 0 8px; font-size: 0.8rem; }
+    .g3w-views span { font-weight: 800; color: var(--sta-navy); margin-right: 2px; }
+    .g3w-views button { border: 1px solid var(--sta-line); background: var(--sta-surface); border-radius: 999px; padding: 5px 12px; font-size: 0.78rem; font-weight: 700; cursor: pointer; color: var(--sta-ink); }
+    .g3w-views button:hover { border-color: var(--sta-cyan); }
+
     /* ---------- 휴대폰 ---------- */
     @media (max-width: 640px) {
       .site-header__bar { padding: 12px 0 8px; }
@@ -2872,20 +2890,7 @@
         <div class="level-title">3층 음향 시스템</div>
         <div class="level-desc g3-trace-only">장비를 누르면 그 장비의 신호가 지나가는 길만 선으로 그려져요. 움직이는 점이 신호가 가는 방향이에요.</div>
         <div class="level-desc g3-tour-only g3-tour-desc">실제 설치 위치의 장비를 둘러봐요. 목록·이름표·장비를 누르면 그 장비로 이동해서 역할과 연결(어디서 받고 어디로 보내는지)을 보여 줘요. 좌/우는 회중석에서 단상을 바라본 기준이에요.</div>
-        <div class="level-desc g3-practice-only">아래 보관함에서 장비를 고른 뒤 3D 공간을 누르면 그 자리에 놓여요. 놓인 장비를 차례로 누르면 케이블이 연결돼요. 장비의 <b>ℹ️</b> 를 누르면 설명이 나와요.</div>
-        <details class="g3-keys g3-practice-only">
-          <summary>⌨️ 키보드로 미세 조정하기</summary>
-          <ul>
-            <li><kbd>←↑↓→</kbd> 수평 이동</li>
-            <li><kbd>PageUp</kbd> <kbd>PageDown</kbd> 높낮이</li>
-            <li><kbd>Q</kbd> <kbd>E</kbd> 도는 방향 (90°씩)</li>
-            <li><kbd>R</kbd> <kbd>F</kbd> 스피커 눕히기·세우기 (90°씩, <kbd>Shift</kbd> 를 누르면 15°씩)</li>
-            <li><kbd>Esc</kbd> 조정 끝내기</li>
-            <li>더블클릭: 보관함으로 되돌리기</li>
-            <li><kbd>Ctrl</kbd>+<kbd>Z</kbd> 되돌리기 · <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd> 다시 하기</li>
-          </ul>
-          <p>배치 직후나 놓인 장비를 한 번 누른 뒤에 쓸 수 있어요.</p>
-        </details>
+        <div class="level-desc g3-practice-only">장비는 실제 설치 위치에 놓여 있어요. 장비(또는 이름표)를 누른 채 <b>끌어서</b> 연결할 장비 위에 놓으면 케이블이 이어져요. 다 이었으면 아래 「케이블 연결 검증하기」를 누르세요.</div>
         <div id="layoutBestTag" class="g3-practice-only"></div>
       </div>
 
@@ -2923,7 +2928,7 @@
         <div class="gear3d-tray" id="gear3dTray"></div>
       </div>
 
-      <button class="btn g3-practice-only" onclick="checkLayoutComplete()">🔍 시스템 배치 및 케이블링 검증하기</button>
+      <button class="btn g3-practice-only" onclick="checkLayoutComplete()">🔍 케이블 연결 검증하기</button>
 
       <div class="result-panel g3-practice-only" id="layoutResultPanel"></div>
     </div>
@@ -3370,6 +3375,7 @@
   <script src="assets3d/pa_practice_3d.js"></script>
   <script src="assets3d/pa_troubleshoot_engine.js"></script>
   <script src="assets3d/pa_troubleshoot.js"></script>
+  <script src="assets3d/wiring_practice.js"></script>
   <script src="lessons/lessons_data.js"></script>
   <script src="lessons/lessons.js"></script>
 
@@ -6974,7 +6980,7 @@
       y7p_L: 'speaker', y7p_R: 'speaker', y10p_C: 'speaker',
       e8_L: 'speaker', e8_R: 'speaker',
       amp_40d: 'speaker', amp_10d: 'speaker',
-      stagebox: 'snake',
+      stagebox: 'xlr',   // 2026-10-20: 배선 실습에서 Rio 는 Dante(랜선)·AES(XLR)로만 연결 → 굵은 멀티코어 대신 가는 선
       console: 'xlr',
       speakon_connector: 'speaker'
     };
@@ -8444,15 +8450,17 @@
 
     /* ===== 정답 신호 경로 (스테이지박스 → 콘솔 → 앰프 → 스피커) ===== */
     const correctConnections = [
+      // 2026-10-20: 실제 3층 시스템(교회 둘러보기의 설치 데이터)과 맞춤 —
+      // 콘솔(CL5)은 Dante 로 Rio 와만 연결되고, 앰프는 Rio 의 AES/EBU 출력을 받음. 천장 가운데는 40D CH4.
       ['stagebox', 'console'],
-      ['console', 'amp_40d'],
-      ['console', 'amp_10d'],
+      ['stagebox', 'amp_40d'],
+      ['stagebox', 'amp_10d'],
       ['amp_40d', 'vi10p_L'],
       ['amp_40d', 'vi10p_R'],
       ['amp_40d', 'woofer_L'],
       ['amp_40d', 'woofer_R'],
+      ['amp_40d', 'y10p_C'],
       ['amp_10d', 'y7p_L'],
-      ['amp_10d', 'y10p_C'],
       ['amp_10d', 'y7p_R'],
       ['amp_10d', 'e8_L'],
       ['amp_10d', 'e8_R']
@@ -8508,11 +8516,11 @@
 
       let titleLine = '';
       if (missingPairs.length === 0 && wrongCables.length === 0) {
-        titleLine = '<div class="result-title">🏆 완벽합니다! 스테이지박스 → 콘솔 → 앰프 → 스피커까지 신호 경로가 모두 올바르게 연결되었습니다.</div>';
+        titleLine = '<div class="result-title">🏆 완벽합니다! 스테이지박스(Rio) ↔ 콘솔(CL5), Rio → 앰프 → 스피커까지 모두 올바르게 연결되었습니다.</div>';
       } else if (correctCount > 0) {
         titleLine = '<div class="result-title">👍 절반 이상 맞혔어요. 아래 표시된 부분만 더 고쳐보세요.</div>';
       } else {
-        titleLine = '<div class="result-title">💪 처음부터 다시 살펴볼까요? 힌트: 신호는 "스테이지박스 → 콘솔 → 앰프 → 스피커" 순서로 흘러요.</div>';
+        titleLine = '<div class="result-title">💪 처음부터 다시 살펴볼까요? 힌트: 콘솔(CL5)은 랜선(Dante)으로 스테이지박스(Rio)와 연결되고, 앰프는 Rio 에서 신호를 받아 스피커로 보내요.</div>';
       }
       panel.innerHTML = titleLine + html;
       panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
