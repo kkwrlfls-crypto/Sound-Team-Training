@@ -4282,7 +4282,7 @@
       let comp = null;
       if (MG12XU_COMP_CHANNELS.includes(ch)) {
         comp = ctx.createDynamicsCompressor();
-        comp.threshold.value = -3; comp.ratio.value = 1; comp.attack.value = 0.01; comp.release.value = 0.25; comp.knee.value = 10;
+        comp.threshold.value = -3; comp.ratio.value = 1; comp.attack.value = 0.025; comp.release.value = 0.3; comp.knee.value = 10;   // 2026-10-21 사양서: Attack ≈25ms, Release ≈300ms
       }
       const faderGain = ctx.createGain();   // 페이더
       const panner = (ctx.createStereoPanner ? ctx.createStereoPanner() : null); // PAN 노브
@@ -4407,9 +4407,10 @@
         node.input.gain.setTargetAtTime(mg12xuDbToGain(db), t, 0.02);
       } else if (type === 'comp' && node.comp) {
         // COMP 노브(0~10): 값이 높을수록 스레숄드가 낮아지고 비율이 세져서 더 세게 눌러줍니다.
+        // 2026-10-21 MG12XU 사양서 기준: Threshold +22 → −8 dBu(30 dB 폭), Ratio 1:1 → 4:1 (출력 0~+7 dB 보정은 브라우저 압축기의 자동 보정으로 근사)
         const frac = (angle + 135) / 270;
-        node.comp.threshold.setTargetAtTime(-3 - frac * 27, t, 0.02);
-        node.comp.ratio.setTargetAtTime(1 + frac * 9, t, 0.02);
+        node.comp.threshold.setTargetAtTime(-3 - frac * 30, t, 0.02);
+        node.comp.ratio.setTargetAtTime(1 + frac * 3, t, 0.02);
       } else if (type === 'high') {
         node.high.gain.setTargetAtTime(angle / 135 * 15, t, 0.02);
       } else if (type === 'mid') {

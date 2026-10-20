@@ -257,15 +257,7 @@ window.STA_MODULES = {
     ]
   },
 
-  /* ======================================================================= 준비 중 (같은 구조로 확장) */
-  cable: { id: 'cable', path: 'hardware', no: 2, status: 'planned', level: '기본', minutes: 30, img: 'img/modules/hw_cable.jpg', title: '케이블', sub: '신호와 전원을 안전하게 전달하는 통로', topics: ['XLR·TS·TRS·speakON·Ethernet·전원 케이블', '밸런스·언밸런스', '마이크·라인·스피커 레벨 경로', '커넥터 구조', '호환성과 단선·접촉 불량 진단'] },
-  console: { id: 'console', path: 'hardware', no: 3, status: 'planned', level: '중급', minutes: 45, img: 'img/modules/hw_console.jpg', title: '콘솔', sub: '입력 신호를 조절하고 하나로 섞는 장비', topics: ['입력과 출력', '프리앰프·PAD·HPF·팬텀', 'EQ·다이내믹', 'MUTE·페이더·PFL', '메인·AUX·FX Send/Return', '버스·라우팅·씬'] },
-  amp: { id: 'amp', path: 'hardware', no: 4, status: 'planned', level: '중급', minutes: 30, img: 'img/modules/hw_amp.jpg', title: '앰프', sub: '신호를 스피커를 움직일 힘으로 키우는 장비', topics: ['파워앰프의 역할', '입력 신호와 스피커 출력', '임피던스와 부하', '출력 정격과 매칭', '클리핑과 보호', '채널과 스피커 연결'] },
-  speaker: { id: 'speaker', path: 'hardware', no: 5, status: 'planned', level: '중급', minutes: 30, img: 'img/modules/hw_speaker.jpg', title: '스피커', sub: '전기 신호를 다시 소리로 바꾸는 장치', topics: ['액티브·패시브', '드라이버와 주파수 응답', '지향성·커버리지·설치 방향', '입력 단자', '메인·모니터·서브우퍼', '피드백과 설치 위치'] },
-  eq: { id: 'eq', path: 'mixing', no: 2, status: 'planned', level: '중급', minutes: 40, title: 'EQ', sub: '주파수별로 음색을 다듬기', thumb: 'eq', topics: ['주파수와 음색', 'HPF', '부스트와 컷', '주파수·Q', '채널 EQ와 출력 EQ', '보컬 적용 사례'] },
-  gate: { id: 'gate', path: 'mixing', no: 3, status: 'planned', level: '중급', minutes: 30, title: 'Gate', sub: '작은 잡음을 닫아 깨끗하게', thumb: 'gate', topics: ['Threshold', 'Attack·Hold·Release·Range', '잡음과 신호 구분', '말 시작·끝 잘림', '라이브에서의 한계'] },
-  compressor: { id: 'compressor', path: 'mixing', no: 4, status: 'planned', level: '중급', minutes: 40, title: 'Compressor', sub: '음량 편차를 고르게', thumb: 'comp', topics: ['다이내믹 레인지', 'Threshold·Ratio·Attack·Release·Knee', 'Gain Reduction', 'Makeup Gain', '보컬 음량 관리', '과도한 압축'] },
-  'fx-space': { id: 'fx-space', path: 'mixing', no: 5, status: 'planned', level: '중급', minutes: 35, title: '공간계 이펙트', sub: 'Reverb 와 Delay 로 공간감 더하기', thumb: 'reverb', topics: ['Reverb·Delay 차이', 'Decay·Pre-delay', 'Delay Time·반복', 'Wet/Dry', 'FX Send/Return', '공간감과 명료도'] }
+  /* 2026-10-21: 나머지 8개 모듈(cable·console·amp·speaker·eq·gate·compressor·fx-space)은 lessons/modules/<id>.js 에 각각 있습니다 */
 };
 
 /* 2026-10-21: 10주 커리큘럼 삭제로 주차 연결(STA_WEEK_MODULES)도 삭제 */
