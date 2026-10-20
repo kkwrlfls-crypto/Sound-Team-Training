@@ -57,6 +57,61 @@
       desc: 'MG12XU 출력을 Crown 파워앰프 입력에 넣고, 앰프의 speakON 출력을 ZX1 패시브 스피커에 스피커 케이블로 연결합니다. 패시브 스피커는 전원이 없고 앰프 출력으로 소리가 납니다. 믹서를 먼저 켜고 앰프를 나중에 켠 뒤, 앰프 앞면 감쇠기(볼륨)를 올려 음량을 맞추세요.',
       views: ['front', 'back', 'mixer', 'amp', 'mic', 'zx1', 'outlets'] }
   };
+  // 2026-10-20: 접이식 「실습 안내」 — 평소엔 접혀 있고, 필요할 때 펼쳐 봄 (학습 목표·역할·순서·케이블·단계·실수·확인 문제)
+  var GUIDE = {
+    s1: { brief: '믹서 없이 마이크 신호를 액티브 스피커로 바로 보내 봅니다.',
+      goal: ['액티브 스피커는 앰프가 들어 있어서, 신호와 전원이 둘 다 있어야 소리가 난다는 것을 확인한다.', '마이크 신호가 지나가는 가장 짧은 길(마이크 → 스피커)을 직접 연결해 본다.'],
+      roles: [['SM58S 마이크', '소리(공기의 떨림)를 아주 작은 전기 신호(마이크 레벨)로 바꿔요.'], ['ZXA1 액티브 스피커', '안에 앰프가 들어 있어서, 들어온 신호를 키워 소리로 내보내요. 그래서 전원이 필요해요.']],
+      flow: ['SM58S', 'XLR 케이블', 'ZXA1 MIC IN', 'ZXA1 내장 앰프', '스피커 유닛'],
+      cables: [['XLR 케이블', '마이크 신호처럼 작은 신호를 잡음에 강하게(평형) 전달하고, 잠금 장치가 있어 잘 빠지지 않아요.'], ['전원 케이블', '스피커 안의 앰프에 전기를 주는 선이에요. 신호는 지나가지 않아요.']],
+      steps: ['XLR 케이블로 SM58S 출력과 ZXA1 의 MIC IN 을 연결해요.', '전원 케이블로 ZXA1 과 콘센트를 연결해요.', 'ZXA1 전원 스위치를 켜요.', '마이크 스위치를 켜요.', 'MIC 노브와 MASTER 노브를 천천히 올려 알맞은 크기를 찾아요.'],
+      mistakes: ['마이크를 LINE IN 에 꽂기 — 마이크 신호는 작아서 라인 입력에서는 소리가 거의 안 들려요.', '전원 스위치나 마이크 스위치를 켜지 않기.', '노브를 처음부터 끝까지 올리기 — 하울링이 생기기 쉬워요. 작게 시작해서 올려요.'],
+      quiz: { q: '마이크 → ZXA1 연결을 다 했는데 스피커 POWER LED 가 꺼져 있어요. 소리가 안 나는 이유로 가장 알맞은 것은?', answer: 'b',
+        options: [['a', 'XLR 케이블 대신 speakON 케이블을 써야 해서', 'speakON 은 앰프 → 패시브 스피커용이에요. 마이크 연결은 XLR 이 맞아요.'],
+          ['b', '액티브 스피커는 내장 앰프에 전원이 있어야 동작해서', '맞아요. 신호가 들어와도 전원이 없으면 내장 앰프가 동작하지 않아요.'],
+          ['c', '마이크에 전원 케이블이 필요해서', 'SM58S 같은 다이내믹 마이크는 전원이 필요 없어요.']] } },
+    s2: { brief: '믹서(MG12XU)를 거쳐 소리를 섞고 크기를 조절한 뒤 액티브 스피커로 보냅니다.',
+      goal: ['믹서의 입력 → 채널 → STEREO 출력 순서로 신호가 지나간다는 것을 이해한다.', 'GAIN(입력 크기)과 페이더(섞는 양)의 역할 차이를 체험한다.'],
+      roles: [['SM58S 마이크', '마이크 레벨의 작은 신호를 만들어요.'], ['MG12XU 믹서', 'GAIN 으로 작은 신호를 알맞은 크기로 키우고, 여러 채널을 섞어 STEREO OUT 으로 보내요.'], ['ZXA1 액티브 스피커', '믹서에서 온 라인 레벨 신호를 LINE IN 으로 받아 소리로 내요.']],
+      flow: ['SM58S', 'XLR', 'MG12XU 입력 → GAIN → 채널 페이더 → STEREO 페이더', 'STEREO OUT', 'XLR', 'ZXA1 LINE IN'],
+      cables: [['XLR 케이블 (마이크 → 믹서)', '작은 마이크 신호를 잡음에 강하게 전달해요.'], ['XLR 케이블 (믹서 → 스피커)', '믹서 출력(라인 레벨)을 스피커 LINE IN 으로 보내요.'], ['전원 케이블', '믹서와 스피커에 각각 전기를 줘요.']],
+      steps: ['마이크를 MG12XU 입력(CH1 등)에 연결해요.', 'MG12XU STEREO OUT 을 ZXA1 LINE IN 에 연결해요.', '전원을 연결하고 믹서 → 스피커 순서로 켜요.', '믹서에서 GAIN 을 맞추고(미터와 PEAK 확인), 채널 페이더 → STEREO 페이더 순서로 올려요.', '스피커 MASTER 로 전체 음량을 맞춰요.'],
+      mistakes: ['믹서 출력을 스피커 MIC IN 에 꽂기 — 라인 신호가 마이크 입력에는 너무 커서 소리가 찌그러질 수 있어요.', 'GAIN 을 너무 올려 PEAK 가 켜지는 것.', '채널 ON 버튼이나 ST 버튼이 꺼져 있어 STEREO 로 신호가 가지 않는 것.', '스피커를 믹서보다 먼저 켜기 — 켤 때 「퍽」 소리가 스피커로 나갈 수 있어요.'],
+      quiz: { q: 'MG12XU 에서 GAIN 과 채널 페이더의 차이로 알맞은 것은?', answer: 'a',
+        options: [['a', 'GAIN 은 들어오는 신호의 크기를 맞추고, 페이더는 그 채널을 믹스에 얼마나 섞을지 정한다', '맞아요. GAIN 은 입력 단계, 페이더는 섞는 단계예요.'],
+          ['b', '둘 다 같은 역할이라 아무거나 올리면 된다', 'GAIN 이 너무 작으면 페이더를 올려도 잡음이 같이 커지고, 너무 크면 PEAK(찌그러짐)가 생겨요. 역할이 달라요.'],
+          ['c', '페이더로 입력 크기를 맞추고 GAIN 은 최대로 둔다', 'GAIN 을 최대로 두면 입력에서 이미 찌그러질 수 있어요.']] } },
+    s3: { brief: '파워앰프로 신호를 키워 전원이 없는 패시브 스피커를 울립니다.',
+      goal: ['패시브 스피커는 앰프가 없어서 파워앰프 출력으로만 소리가 난다는 것을 이해한다.', '신호 케이블(XLR)과 스피커 케이블(speakON)의 차이를 구분한다.'],
+      roles: [['MG12XU 믹서', '신호를 섞고 라인 레벨로 내보내요.'], ['Crown XLi1500 파워앰프', '라인 레벨 신호를 스피커를 움직일 만큼 큰 전력으로 키워요. 앞면 감쇠기로 채널별 크기를 줄일 수 있어요.'], ['ZX1 패시브 스피커', '앰프가 없어서 전원이 필요 없고, 앰프 출력이 곧 스피커를 움직이는 힘이에요.']],
+      flow: ['SM58S', 'XLR', 'MG12XU', 'STEREO OUT', 'XLR', 'Crown CH1 입력', 'Crown CH1 스피커 출력', 'speakON', 'ZX1'],
+      cables: [['XLR 케이블', '마이크·라인 신호용이에요. 믹서 → 앰프 입력까지 써요.'], ['speakON 스피커 케이블', '앰프의 큰 출력 전력을 스피커로 보내요. 잠금식이라 잘 빠지지 않아요. 신호용 케이블로 대신하면 안 돼요.'], ['전원 케이블', '믹서와 앰프에 전기를 줘요. 패시브 스피커에는 전원이 없어요.']],
+      steps: ['마이크 → MG12XU 입력, MG12XU STEREO OUT → Crown CH1 입력을 XLR 로 연결해요.', 'Crown CH1 스피커 출력 → ZX1 을 speakON 케이블로 연결해요.', '전원은 믹서를 먼저, 앰프를 마지막에 켜요. (끌 때는 앰프를 먼저)', '믹서에서 GAIN → 채널 페이더 → STEREO 페이더를 맞춰요.', '앰프 감쇠기(볼륨)를 천천히 올려 음량을 맞춰요.'],
+      mistakes: ['신호가 들어오는 채널(CH1)과 다른 채널(CH2) 출력에 스피커를 꽂기 — STEREO 모드에서 두 채널은 서로 독립이에요.', '앰프 감쇠기를 맨 아래로 둔 채 소리를 찾기.', '앰프를 믹서보다 먼저 켜기 — 켜질 때 생기는 큰 소리가 스피커로 나갈 수 있어요.', '패시브 스피커에 전원을 찾기 — 전원 단자가 없어요.'],
+      quiz: { q: '파워앰프 → 패시브 스피커 연결에 쓰는 케이블은?', answer: 'c',
+        options: [['a', 'XLR 케이블', 'XLR 은 마이크·라인 신호용이에요. 앰프의 큰 출력 전력을 보내는 용도가 아니에요.'],
+          ['b', '전원 케이블', '전원 케이블은 장비에 전기를 주는 선이에요. 소리 신호는 지나가지 않아요.'],
+          ['c', 'speakON 스피커 케이블', '맞아요. 앰프 출력(큰 전력)을 스피커로 보내는 전용 케이블이에요.']] } }
+  };
+  function guideHtml(sid) {
+    var g = GUIDE[sid]; if (!g) return '';
+    function ul(a) { return '<ul>' + a.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'; }
+    function dl(a) { return '<ul class="pa3d-gdl">' + a.map(function (x) { return '<li><b>' + esc(x[0]) + '</b> — ' + esc(x[1]) + '</li>'; }).join('') + '</ul>'; }
+    return '<details class="pa3d-guide" data-role="guide"><summary><span>📘 실습 안내 · 이번에 배울 내용</span><small>' + esc(g.brief) + '</small></summary><div class="pa3d-gbody">' +
+      '<h5>🎯 학습 목표</h5>' + ul(g.goal) + '<h5>🎛 장비별 역할</h5>' + dl(g.roles) +
+      '<h5>🔀 신호가 흐르는 순서</h5><div class="pa3d-gflow">' + g.flow.map(function (x) { return '<span>' + esc(x) + '</span>'; }).join('<i>→</i>') + '</div>' +
+      '<h5>🔌 케이블을 이렇게 고르는 이유</h5>' + dl(g.cables) + '<h5>🪜 실습 단계</h5><ol>' + g.steps.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ol>' +
+      '<h5>⚠️ 자주 하는 실수</h5>' + ul(g.mistakes) +
+      '<h5>❓ 확인 문제 <small>(실습을 마친 뒤 풀어 보세요)</small></h5><p class="pa3d-gq">' + esc(g.quiz.q) + '</p><div class="pa3d-gopts">' + g.quiz.options.map(function (o) { return '<button type="button" class="pa3d-btn pa3d-gopt" data-gq="' + o[0] + '">' + o[0].toUpperCase() + '. ' + esc(o[1]) + '</button>'; }).join('') + '</div><div class="pa3d-gfb" data-role="gfb" hidden></div>' +
+      '<p class="pa3d-gnote">연결과 조작은 실제 장비 구성을 바탕으로 한 교육용 시뮬레이션이에요.</p></div></details>';
+  }
+  function onGuideClick(e) {
+    var b = e.target.closest && e.target.closest('[data-gq]'); if (!b) return; var card = b.closest('[data-pa3d]'), g = card && GUIDE[card.getAttribute('data-pa3d')]; if (!g) return;
+    var o = b.getAttribute('data-gq'), pick = g.quiz.options.filter(function (x) { return x[0] === o; })[0], ok = o === g.quiz.answer, fb = card.querySelector('[data-role=gfb]');
+    card.querySelectorAll('[data-gq]').forEach(function (x) { x.classList.toggle('right', ok && x === b); x.classList.toggle('wrong', !ok && x === b); });
+    fb.hidden = false; fb.className = 'pa3d-gfb ' + (ok ? 'ok' : 'bad'); fb.innerHTML = (ok ? '<b>✅ 정답!</b> ' : '<b>❌ 오답이에요.</b> ') + esc(pick[2]) + (ok ? '' : ' 다시 골라 보세요.');
+  }
+  document.addEventListener('click', onGuideClick);
   var SOLUTIONS = {
     s1: { conns: [['xlr', ['sm58', 'xlrOut'], ['zxa1', 'micIn']], ['ac', ['zxa1', 'mainsIn'], ['outA', 'socketUpper']]],
       ctl: { 'sm58.switch': 1, 'zxa1.power': 1, 'zxa1.mic': 0.8, 'zxa1.master': 0.85 } },
@@ -104,6 +159,7 @@
     card.innerHTML =
       '<h3>🔌 3D 실습 ' + esc(sc.title) + '</h3>' +
       '<p class="pa3d-intro"><b>' + esc(sc.gear) + '</b></p>' +   /* 2026-10-19: 설명·조작법 문단은 빼 달라는 요청으로 삭제 */
+      guideHtml(sid) +   /* 2026-10-20: 설명은 접이식 「실습 안내」로 (기본은 접힘) */
       '<div class="pa3d-row"><span class="pa3d-label">케이블</span>' + sc.cables.map(function (c) { return '<button type="button" class="pa3d-btn pa3d-cable-btn" data-cable="' + c + '">' + CABLE_INFO[c].label + '</button>'; }).join('') + '</div>' +
       '<div class="pa3d-viewport" data-role="viewport"><div class="pa3d-start" data-role="start"><div>' + esc(sc.gear) + ' 3D 모델을 불러옵니다 (휴대폰에서는 몇 초 걸릴 수 있어요).</div>' +
       '<button type="button" class="btn" onclick="pa3dStart(\'' + sid + '\')">▶ 실습 시작</button></div><div class="pa3d-tip" data-role="tip"></div><div class="pa3d-busy" data-role="busy">케이블을 놓는 중…</div></div>' +
@@ -574,7 +630,7 @@
     document.querySelectorAll('[data-pa3d]').forEach(function (card) { var sid = card.getAttribute('data-pa3d'); if (!SCENARIOS[sid]) return; renderShell(card, sid); instances[sid] = createPractice(card, sid); });
   }
   window.PaPractice3D = {
-    SCENARIOS: SCENARIOS, SOLUTIONS: SOLUTIONS, PORTS: PORTS, VIEWS: ALL_VIEWS,
+    SCENARIOS: SCENARIOS, GUIDE: GUIDE, SOLUTIONS: SOLUTIONS, PORTS: PORTS, VIEWS: ALL_VIEWS,
     get: function (sid) { return instances[sid] || null; }, instances: instances,
     levels: { mgGainDb: mgGainDb, faderDb: faderDb, attDb: attDb, zxMicGainDb: zxMicGainDb, grade: grade, SRC_DBU: SRC_DBU, SENS: SENS }
   };

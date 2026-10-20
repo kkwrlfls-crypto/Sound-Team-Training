@@ -261,6 +261,9 @@
         try { if (window.mg12xuSec) window.mg12xuSec.show(go.sec); } catch (e) { /* noop */ }
         var z = document.querySelector('.mg12xu-sec-zone[data-sec="' + go.sec + '"]');
         if (z) z.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      } else if (go.ts) {
+        try { if (window.PaTroubleshoot) PaTroubleshoot.list(); } catch (e) { /* noop */ }
+        var mc = document.querySelector('#tsRoot .ts-mcard[data-mid="' + go.ts + '"]'); if (mc) { mc.scrollIntoView({ block: 'center', behavior: 'smooth' }); flash(mc); }
       } else if (go.audio) {
         try { if (window.mg12xuSec && mg12xuSec.state().on) mg12xuSec.setOn(false); } catch (e) { /* noop */ }
         var b = $('mg12xuAudioToggleBtn'); if (b) { b.scrollIntoView({ block: 'center', behavior: 'smooth' }); flash(b); }
@@ -269,7 +272,7 @@
   }
 
   /* ------------------------------------------------------------- 실습 화면·커리큘럼에 이론 연결 */
-  var TAB_LESSONS = { tab1: ['signal-flow'], tab2: ['signal-flow'], tab6: ['gain-fader', 'hpf-eq', 'aux-monitor'], tab5: ['gain-fader'] };
+  var TAB_LESSONS = { tab1: ['signal-flow'], tab2: ['signal-flow'], tab7: ['signal-flow'], tab6: ['gain-fader', 'hpf-eq', 'aux-monitor'], tab5: ['gain-fader'] };
   function theoryLinks(ids) {
     return ids.map(function (id) {
       var l = lessonById(id); if (!l) return '';

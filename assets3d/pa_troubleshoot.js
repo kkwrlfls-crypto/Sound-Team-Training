@@ -16,22 +16,37 @@
 
   // ---------------------------------------------------------------------------
   // 화면 골격
+  //  - 상단: 미션 제목·난이도·증상·신호 경로·진행 단계
+  //  - 데스크톱: 왼쪽 3D 공간 + 신호 흐름도 / 오른쪽 검사·조작 + 증거·기록.  모바일: 공간 → 검사·조작 → 흐름도 → 증거·기록 순서로 세로 배치
+  var HELP_KEY = 'soundTrainerTsHelp_v1', help = true;
+  try { help = localStorage.getItem(HELP_KEY) !== 'off'; } catch (e) { /* 기본: 도움 모드 켬 */ }
+  var STATUS_TXT = { ok: '✅ 이상 없음', warn: '⚠️ 주의', bad: '❌ 이상 발견', info: 'ℹ️ 정보' };
+  function evOk(key) { return /(Ok|Signal)$/.test(key); }
+
   function renderShell() {
     root.innerHTML =
-      '<div class="ts-note"><b>교육용 가상 시뮬레이션</b>이에요. 실제 소리·전기를 다루지 않고 장비 상태로 계산한 결과를 보여 줘요. 전원 조작도 가상이에요.</div>' +
+      '<div class="ts-note">🧪 <b>교육용 가상 시뮬레이션</b>이에요. 실제 소리·전기를 다루지 않고 장비 상태로 계산한 결과를 보여 줘요. 화면의 dB 값은 근사 계산값이라 <b>실제 현장 측정값이나 SPL 이 아니에요.</b> 전원 조작도 가상이에요.</div>' +
       '<section class="ts-missions" data-role="missions"></section>' +
       '<section class="ts-play" data-role="play" hidden>' +
-        '<div class="ts-head"><div><div class="ts-mtitle" data-role="mtitle"></div><div class="ts-chain" data-role="chain"></div></div>' +
-          '<div class="ts-head-btns"><button type="button" class="ts-btn" data-act="hint">💡 힌트 <span data-role="hintn">0/3</span></button><button type="button" class="ts-btn ts-primary" data-act="verify">✅ 최종 검증</button><button type="button" class="ts-btn" data-act="list">미션 목록</button></div></div>' +
-        '<div class="ts-symptom"><b>증상</b> <span data-role="symptom"></span></div>' +
+        '<div class="ts-card ts-headcard">' +
+          '<div class="ts-head"><div class="ts-headtxt"><span class="ts-level" data-role="level"></span><div class="ts-mtitle" data-role="mtitle"></div></div>' +
+            '<div class="ts-head-btns"><button type="button" class="ts-btn ts-helpbtn" data-act="help" data-role="helpbtn"></button><button type="button" class="ts-btn" data-act="hint">💡 힌트 <span data-role="hintn">0/3</span></button><button type="button" class="ts-btn ts-primary" data-act="verify">✅ 최종 검증</button><button type="button" class="ts-btn" data-act="list">미션 목록</button></div></div>' +
+          '<div class="ts-symptom"><b>⚠️ 증상</b><span data-role="symptom"></span></div>' +
+          '<div class="ts-pathline"><b>🔀 신호 경로</b><span data-role="chain"></span></div>' +
+          '<ol class="ts-steps" data-role="steps" aria-label="진행 단계"></ol>' +
+        '</div>' +
         '<div class="ts-hints" data-role="hints" hidden></div>' +
         '<div class="ts-verifymsg" data-role="verifymsg" hidden></div>' +
         '<div class="ts-grid">' +
-          '<div class="ts-card ts-flowcard"><h4>신호 흐름도 <small>검사한 곳만 결과가 표시됨</small></h4><div class="ts-flow" data-role="flow"></div><div class="ts-legend"><i class="lg-sig"></i>신호 확인 <i class="lg-none"></i>신호 없음 <i class="lg-open"></i>빠짐 <i class="lg-unk"></i>미검사 <i class="lg-stale"></i>조작 전 측정</div></div>' +
-          '<div class="ts-card ts-space"><h4>공간 화면 <small>장비·케이블을 눌러 선택</small></h4><div class="ts-viewport" data-role="viewport"><div class="ts-loading" data-role="loading">3D 장비를 불러오는 중…</div><div class="ts-tip" data-role="tip"></div></div>' +
-            '<div class="ts-chips" data-role="chips"></div></div>' +
-          '<div class="ts-card ts-panel" data-role="panel"><h4>검사 · 조작</h4><div class="ts-empty">공간 화면이나 흐름도에서 장비 또는 케이블을 고르세요.</div></div>' +
-          '<div class="ts-card ts-logcard"><div><h4>발견한 증거</h4><ul class="ts-evidence" data-role="evidence"></ul></div><div><h4>검사·조작 기록</h4><ol class="ts-log" data-role="log" reversed></ol></div></div>' +
+          '<div class="ts-col ts-col-l">' +
+            '<div class="ts-card ts-space"><h4>공간 화면 <small>장비·케이블을 눌러 선택</small></h4><div class="ts-viewport" data-role="viewport"><div class="ts-loading" data-role="loading">3D 장비를 불러오는 중…</div><div class="ts-tip" data-role="tip"></div></div>' +
+              '<div class="ts-chips" data-role="chips"></div></div>' +
+            '<div class="ts-card ts-flowcard"><h4>신호 흐름도 <small>검사한 곳만 결과가 표시돼요</small></h4><div class="ts-flow" data-role="flow"></div><div class="ts-legend"><span><i class="lg-sig"></i>✓ 신호 확인</span><span><i class="lg-none"></i>✕ 신호 없음</span><span><i class="lg-open"></i>빠짐</span><span><i class="lg-unk"></i>? 미검사</span><span><i class="lg-stale"></i>흐림 = 조작 전 측정</span></div></div>' +
+          '</div>' +
+          '<div class="ts-col ts-col-r">' +
+            '<div class="ts-card ts-panel" data-role="panel"></div>' +
+            '<div class="ts-card ts-logcard"><div><h4>🧾 발견한 증거</h4><ul class="ts-evidence" data-role="evidence"></ul></div><div><h4>📋 검사·조작 기록 <small>최근 것이 위</small></h4><ol class="ts-log" data-role="log" reversed></ol></div></div>' +
+          '</div>' +
         '</div>' +
       '</section>' +
       '<section class="ts-result" data-role="result" hidden></section>';
@@ -40,14 +55,19 @@
     root.addEventListener('input', onInput);
     renderMissions();
   }
+  function chainHtml(m) { return m.chain.split('→').map(function (x) { return '<span class="ts-cnode">' + esc(x.trim()) + '</span>'; }).join('<span class="ts-carrow">→</span>'); }
   function renderMissions() {
     var best = loadBest();
     $('[data-role=missions]').innerHTML = '<h3 class="ts-h3">미션 선택</h3><div class="ts-mgrid">' + E.MISSIONS.map(function (m) {
-      return '<div class="ts-mcard"><div class="ts-level">' + esc(m.level) + '</div><div class="ts-mname">미션 ' + m.id + '. ' + esc(m.title) + '</div><div class="ts-chain">' + esc(m.chain) + '</div>' +
-        '<div class="ts-symptom-s">' + esc(m.symptom) + '</div><div class="ts-scen">' + m.scenarios.map(function (sc, i) {
-          var b = best[sc.id]; return '<button type="button" class="ts-btn" data-act="start" data-m="' + m.id + '" data-s="' + sc.id + '">시나리오 ' + (i + 1) + (b !== undefined ? ' <small>최고 ' + b + '점</small>' : '') + '</button>'; }).join('') +
-        '<button type="button" class="ts-btn" data-act="start" data-m="' + m.id + '" data-s="random">무작위</button></div></div>'; }).join('') + '</div>' +
-      '<p class="ts-small">같은 증상이라도 시나리오마다 원인이 달라요.<br>점수: 100점에서 힌트 단계마다 −10 · 불필요한 조작 −5(최대 −30) · 최종 검증 실패 −10 · 원인 확인 전에 고치면 −20</p>';
+      return '<div class="ts-mcard" data-mid="' + m.id + '"><div class="ts-mtop"><span class="ts-level">' + esc(m.level) + '</span><span class="ts-mid">미션 ' + m.id + '</span></div><div class="ts-mname">' + esc(m.title) + '</div>' +
+        '<div class="ts-mrow"><b>문제 상황</b><p>' + esc(m.symptom) + '</p></div>' +
+        '<div class="ts-mrow"><b>장비 연결</b><div class="ts-chainbox">' + chainHtml(m) + '</div></div>' +
+        (m.principle ? '<div class="ts-mrow"><b>이번에 익힐 진단 원리</b><p>' + esc(m.principle) + '</p></div>' : '') +
+        '<button type="button" class="ts-btn ts-primary ts-startbtn" data-act="start" data-m="' + m.id + '" data-s="random">▶ 미션 시작</button>' +
+        '<div class="ts-scen"><span class="ts-scenlbl">시나리오 골라서:</span>' + m.scenarios.map(function (sc, i) {
+          var b = best[sc.id]; return '<button type="button" class="ts-btn ts-sbtn" data-act="start" data-m="' + m.id + '" data-s="' + sc.id + '">' + (i + 1) + (b !== undefined ? ' <small>최고 ' + b + '점</small>' : '') + '</button>'; }).join('') + '</div></div>'; }).join('') + '</div>' +
+      '<p class="ts-small">「미션 시작」은 같은 증상의 여러 원인 중 하나를 무작위로 골라요. 원인은 직접 검사해서 찾아야 해요.</p>' +
+      '<details class="ts-scorehelp"><summary>점수 계산 방법</summary><p class="ts-small">100점에서 힌트 단계마다 −10 · 불필요한 조작 −5(최대 −30) · 최종 검증 실패 −10 · 원인을 확인하기 전에 고치면 −20</p></details>';
   }
 
   // ---------------------------------------------------------------------------
@@ -56,15 +76,21 @@
     if (sid === 'random' || !E.scenario(m, sid)) sid = m.scenarios[Math.floor(Math.random() * m.scenarios.length)].id;
     S = E.newSession(mid, sid); sel = null; lastResult = null;
     $('[data-role=missions]').hidden = true; $('[data-role=result]').hidden = true; $('[data-role=play]').hidden = false;
+    $('[data-role=level]').textContent = m.level;
     $('[data-role=mtitle]').textContent = '미션 ' + m.id + '. ' + m.title + ' · 시나리오 ' + (m.scenarios.findIndex(function (x) { return x.id === sid; }) + 1);
-    $('[data-role=chain]').textContent = m.chain + ' (' + m.level + ')';
+    $('[data-role=chain]').innerHTML = chainHtml(m);
     $('[data-role=symptom]').textContent = m.symptom;
     $('[data-role=hints]').hidden = true; $('[data-role=hints]').innerHTML = ''; $('[data-role=verifymsg]').hidden = true;
-    renderChips(); renderFlow(); renderPanel(); renderLog(); updateHintBtn();
+    renderChips(); renderFlow(); renderPanel(); renderLog(); updateHintBtn(); renderHelpBtn();
     build3d();
     return S;
   }
   function M() { return E.mission(S.mission); }
+  function renderSteps() {
+    var el = $('[data-role=steps]'); if (!el || !S) return;
+    el.innerHTML = E.progress(S).map(function (x, i) { return '<li class="' + x.state + '"><span class="ts-stepn">' + (x.state === 'done' ? '✓' : i + 1) + '</span>' + esc(x.label) + (x.state === 'current' ? '<em> · 지금</em>' : '') + '</li>'; }).join('');
+  }
+  function renderHelpBtn() { var b = $('[data-role=helpbtn]'); if (b) { b.innerHTML = '🧭 도움 모드 <b>' + (help ? '켜짐' : '꺼짐') + '</b>'; b.classList.toggle('on', help); b.title = help ? '검사 결과마다 다음에 볼 곳을 추천해요. 끄면 자유롭게 검사해요.' : '켜면 검사 결과마다 다음에 볼 곳을 추천해요.'; } }
   function renderChips() {
     var m = M(), st = S.state, items = Object.keys(st.devices).filter(function (id) { return st.devices[id].type !== 'outlet'; }).map(function (id) { return [id, E.devName(m, id)]; })
       .concat(st.cables.map(function (c) { return ['cable:' + c.id, c.label]; }));
@@ -107,15 +133,34 @@
     $('[data-role=flow]').innerHTML = svg;
   }
 
-  // 선택한 장비/케이블 패널: 검사 버튼 + 조작
+  // 선택한 장비/케이블 패널: 검사 버튼 + 결과(확인된 상태·의미·증거·다음 확인) + 조작
+  function toolText(t) { var m = M(), who = S.state.devices[t.target] ? E.devName(m, t.target) : (E.cableById(S.state, t.target) || {}).label || t.target; return who + ' — ' + E.TOOL_INFO[t.tool].label; }
+  function nextHtml(list) {
+    if (!list || !list.length) return '';
+    if (!help) return '<div class="ts-next off">🧭 다음 검사 추천은 도움 모드에서 보여요.</div>';
+    return '<div class="ts-next"><div class="ts-rlbl">🧭 다음으로 확인할 곳</div>' + list.map(function (n) {
+      return '<button type="button" class="ts-btn ts-nextbtn" data-act="inspect" data-tool="' + n.tool + '" data-target="' + n.target + '" data-sel="1"><b>🔍 ' + esc(toolText(n)) + '</b><span>' + esc(n.why) + '</span></button>'; }).join('') + '</div>';
+  }
   function renderPanel(lastInspect) {
     var p = $('[data-role=panel]'), m = M(), st = S.state;
-    if (!sel) { p.innerHTML = '<h4>검사 · 조작</h4><div class="ts-empty">공간 화면이나 흐름도에서 장비 또는 케이블을 고르세요.</div>'; return; }
+    if (!sel) {
+      var mg = Object.keys(st.devices).filter(function (k) { return st.devices[k].type === 'mg12xu'; })[0];
+      p.innerHTML = '<h4>🔍 검사 · 🛠 조작</h4><div class="ts-empty">공간 화면, 아래 이름표, 흐름도에서 장비나 케이블을 고르세요.</div>' +
+        (help && mg && m.tools.indexOf('mg.outputMeter') >= 0 ? '<div class="ts-next"><div class="ts-rlbl">🧭 어디부터 볼까요?</div><p class="ts-small">신호 경로의 <b>가운데</b>에서 먼저 확인하면, 원인이 앞쪽(마이크 쪽)인지 뒤쪽(스피커 쪽)인지 한 번에 가를 수 있어요.</p>' +
+          '<button type="button" class="ts-btn ts-nextbtn" data-act="inspect" data-tool="mg.outputMeter" data-target="' + mg + '" data-sel="1"><b>🔍 ' + esc(toolText({ tool: 'mg.outputMeter', target: mg })) + '</b><span>믹서에서 신호가 나가고 있는지</span></button></div>' : '');
+      return;
+    }
     var isCable = sel.indexOf('cable:') === 0, name = isCable ? E.cableById(st, sel.slice(6)).label : E.devName(m, sel), tools = E.toolsFor(m, st, sel), ops = E.opsFor(m, st, sel);
-    var h = '<h4>' + esc(name) + '</h4><div class="ts-sub">검사</div><div class="ts-tools">' + (tools.length ? tools.map(function (t) { return '<button type="button" class="ts-btn" data-act="inspect" data-tool="' + t.tool + '" data-target="' + t.target + '">🔍 ' + esc(E.TOOL_INFO[t.tool].label) + '</button>'; }).join('') : '<span class="ts-empty">이 미션에서 쓸 수 있는 검사가 없어요.</span>') + '</div>';
-    if (lastInspect) h += '<div class="ts-res ' + lastInspect.status + '"><b>' + esc(lastInspect.title) + '</b><ul>' + lastInspect.lines.map(function (l) { return '<li>' + esc(l) + '</li>'; }).join('') + '</ul>' +
-      (lastInspect.evidence.length ? '<div class="ts-found">기록한 증거: ' + lastInspect.evidence.map(function (e) { return esc(e.label); }).join(' · ') + '</div>' : '') + '</div>';
-    h += '<div class="ts-sub">조작 (복구)</div><div class="ts-ops">' + (ops.length ? ops.map(function (o) { var v = E.getPath(st, o.path);
+    var h = '<h4>' + (isCable ? '🔌 ' : '🎛 ') + esc(name) + '</h4><div class="ts-sub">🔍 검사</div><div class="ts-tools">' + (tools.length ? tools.map(function (t) { return '<button type="button" class="ts-btn" data-act="inspect" data-tool="' + t.tool + '" data-target="' + t.target + '">🔍 ' + esc(E.TOOL_INFO[t.tool].label) + '</button>'; }).join('') : '<span class="ts-empty">이 미션에서 쓸 수 있는 검사가 없어요.</span>') + '</div>';
+    if (lastInspect) {
+      var L = lastInspect;
+      h += '<div class="ts-res ' + L.status + '" data-role="res"><div class="ts-reshead"><b>' + esc(L.title) + '</b><span class="ts-badge ' + L.status + '">' + STATUS_TXT[L.status] + '</span></div>' +
+        '<div class="ts-rlbl">확인된 상태</div><ul>' + L.lines.map(function (l) { return '<li>' + esc(l) + '</li>'; }).join('') + '</ul>' +
+        (L.meaning && L.meaning.length ? '<div class="ts-rlbl">💡 이 결과의 의미</div>' + L.meaning.map(function (x) { return '<p class="ts-meaning">' + esc(x) + '</p>'; }).join('') : '') +
+        (L.evidence.length ? '<div class="ts-found"><span class="ts-rlbl">🧾 기록한 증거</span> ' + L.evidence.map(function (e) { return '<span class="ts-evchip ' + (evOk(e.key) ? 'ok' : 'bad') + '">' + (evOk(e.key) ? '✓ ' : '✕ ') + esc(e.label) + '</span>'; }).join('') + '</div>' : '') +
+        nextHtml(L.next) + '</div>';
+    }
+    h += '<div class="ts-sub">🛠 조작 (복구)</div><div class="ts-ops">' + (ops.length ? ops.map(function (o) { var v = E.getPath(st, o.path);
       if (o.kind === 'toggle') return '<div class="ts-op"><span>' + esc(o.label) + ': <b>' + esc(v ? o.on : o.off) + '</b></span><button type="button" class="ts-btn" data-act="op" data-path="' + o.path + '" data-val="' + (!v) + '">' + esc(v ? (o.offAct || 'OFF 로') : (o.onAct || 'ON 으로')) + '</button></div>';
       if (o.kind === 'range') return '<label class="ts-op ts-range"><span>' + esc(o.label) + ' <b data-val="' + o.path + '">' + esc(o.fmt(v)) + '</b></span><input type="range" min="0" max="100" step="1" value="' + Math.round(v * 100) + '" data-path="' + o.path + '"></label>';
       return '<label class="ts-op"><span>' + esc(o.label) + '</span><select data-path="' + o.path + '">' + o.options.map(function (x) { return '<option value="' + x[0] + '"' + (x[0] === v ? ' selected' : '') + '>' + esc(x[1]) + '</option>'; }).join('') + '</select></label>'; }).join('') : '<span class="ts-empty">조작할 수 있는 것이 없어요.</span>') + '</div>';
@@ -127,13 +172,14 @@
     if (!o) return String(v); if (o.kind === 'toggle') return v ? o.on : o.off; if (o.kind === 'range') return o.fmt(v); var opt = o.options.filter(function (x) { return x[0] === v; })[0]; return opt ? opt[1] : E.portName(m, S.state, '', v); }
   function renderLog() {
     var ev = $('[data-role=evidence]'), lg = $('[data-role=log]'), keys = Object.keys(S.evidence);
-    ev.innerHTML = keys.length ? keys.map(function (k) { var e = S.evidence[k]; return '<li' + (e.version !== S.version ? ' class="stale" title="그 뒤 조작이 있어 지금은 다를 수 있음"' : '') + '>' + esc(e.label) + '</li>'; }).join('') : '<li class="ts-empty">아직 없음 — 검사를 해 보세요.</li>';
+    ev.innerHTML = keys.length ? keys.map(function (k) { var e = S.evidence[k], ok = evOk(k); return '<li class="' + (ok ? 'ok' : 'bad') + (e.version !== S.version ? ' stale" title="그 뒤 조작이 있어 지금은 다를 수 있음' : '') + '"><span class="ts-evi">' + (ok ? '✓' : '✕') + '</span>' + esc(e.label) + (e.version !== S.version ? ' <small>(조작 전)</small>' : '') + '</li>'; }).join('') : '<li class="ts-empty">아직 없음 — 검사를 해 보세요.</li>';
     lg.innerHTML = S.log.slice().reverse().map(function (e) {
-      if (e.kind === 'inspect') return '<li class="lg-i ' + e.status + '">🔍 ' + esc(e.title) + ' <small>' + esc(S.state.devices[e.target] ? E.devName(M(), e.target) : '') + ' · ' + (e.status === 'ok' ? '이상 없음' : e.status === 'warn' ? '주의' : '이상') + '</small></li>';
+      if (e.kind === 'inspect') return '<li class="lg-i ' + e.status + '">🔍 ' + esc(e.title) + ' <small>' + esc(S.state.devices[e.target] ? E.devName(M(), e.target) : '') + ' · ' + STATUS_TXT[e.status] + '</small></li>';
       if (e.kind === 'op') return '<li class="lg-o' + (e.unnecessary ? ' un' : '') + '">🛠 ' + esc(e.label || e.path) + ': ' + esc(e.fromTxt) + ' → ' + esc(e.toTxt) + '<div class="ts-small">' + esc(e.effect) + (e.note ? ' — ' + esc(e.note) : '') + '</div></li>';
       if (e.kind === 'hint') return '<li class="lg-h">💡 힌트 ' + e.level + '단계 사용</li>';
       if (e.kind === 'verify') return '<li class="lg-v ' + (e.ok ? 'ok' : 'bad') + '">✅ 최종 검증: ' + (e.ok ? '정상' : '아직 정상이 아님') + '</li>';
       return ''; }).join('');
+    renderSteps();
   }
   function updateHintBtn() { $('[data-role=hintn]').textContent = S.hints + '/3'; }
 
@@ -147,44 +193,95 @@
     renderPanel(); renderFlow(); renderLog(); renderChips(); if (view3d) view3d.sync();
     return r;
   }
-  function doHint() { var t = E.useHint(S); if (!t) return null; var h = $('[data-role=hints]'); h.hidden = false; h.innerHTML += '<div><b>힌트 ' + S.hints + '</b> ' + esc(t) + '</div>'; updateHintBtn(); renderLog(); return t; }
+  function doHint() { var t = E.useHint(S); if (!t) return null; var h = $('[data-role=hints]'); h.hidden = false; h.innerHTML += '<div><b>💡 힌트 ' + S.hints + '</b> ' + esc(t) + '</div>'; updateHintBtn(); renderLog(); return t; }
+  // 신호가 멈춘 곳을 사람이 읽는 말로 (경로별로 계산된 결과 사용)
+  function whereTxt(id, port) { var m = M(), st = S.state; if (st.devices[id]) { var p = port && E.TYPES[st.devices[id].type].ports.filter(function (x) { return x[0] === port; })[0]; return E.devName(m, id) + (p ? ' (' + p[1] + ')' : ''); } var c = E.cableById(st, id); return c ? c.label : id; }
+  function stopHtml(stop) {
+    var m = M(); if (!stop) return '신호는 끝까지 가지만 음량·좌우 균형이 정상 범위가 아니에요.';
+    var bads = (stop.paths || []).filter(function (x) { return !x.ok; });
+    if (!stop.paths || stop.paths.length < 2) return '테스트 신호가 <b>' + esc(whereTxt(stop.at, stop.port)) + '</b> 에서 더 나아가지 못해요. 그 부근을 검사해 보세요.';
+    var h = bads.map(function (x) { return '<b>' + esc(E.devName(m, x.target)) + '</b> 쪽 경로: 테스트 신호가 <b>' + esc(whereTxt(x.at, x.port)) + '</b> 에서 더 나아가지 못해요.'; }).join('<br>');
+    if (stop.okPaths && stop.okPaths.length) {
+      var okName = E.devName(m, stop.compareWith), badName = E.devName(m, stop.target);
+      h += '<br>' + esc(okName) + ' 쪽 경로는 끝까지 신호가 가요. ';
+      if (stop.divergeAt && stop.divergeAt === stop.at) h += '좌우가 나뉘는 <b>' + esc(E.devName(m, stop.at)) + '</b> 안에서 ' + esc(badName) + ' 쪽 출력으로 신호가 나가지 않아요. 장비 안에서 좌우를 나누는 설정을 확인해 보세요.';
+      else if (stop.divergeAt) h += '두 경로는 ' + esc(whereTxt(stop.divergeAt)) + ' 까지 같으니, 그 뒤 ' + esc(badName) + ' 쪽 구간을 ' + esc(okName) + ' 쪽과 같은 항목끼리 비교해 보세요.';
+    }
+    return h;
+  }
   function doVerify() {
     var r = E.verify(S), box = $('[data-role=verifymsg]'), m = M(); renderLog();
     if (!r.ok) {
-      var stop = r.assess.stop, where = stop ? (S.state.devices[stop.at] ? E.devName(m, stop.at) : E.cableById(S.state, stop.at).label) : null;
       box.hidden = false; box.className = 'ts-verifymsg bad';
-      box.innerHTML = '<b>아직 정상이 아닙니다.</b> ' + r.assess.speakers.map(function (s) { return esc(s.name) + ': ' + esc(E.GRADE_TEXT[s.grade]); }).join(', ') +
-        (m.level === '초급' && where ? '<div class="ts-small">초급 도움말: 테스트 신호가 <b>' + esc(where) + '</b> 에서 더 나아가지 못합니다. 그 부근을 검사해 보세요.</div>' : '') +
-        (m.level === '초급' && !where ? '<div class="ts-small">초급 도움말: 신호는 끝까지 가지만 음량·좌우 균형이 정상 범위가 아닙니다.</div>' : '');
+      box.innerHTML = '<b>❌ 아직 정상이 아니에요.</b> ' + r.assess.speakers.map(function (s) { return esc(s.name) + ': ' + esc(E.GRADE_TEXT[s.grade]); }).join(', ') +
+        (help || m.level === '초급' ? '<div class="ts-small">🧭 도움말: ' + stopHtml(r.assess.stop) + '</div>' : '');
       return r;
     }
     box.hidden = true; saveBest(S.scenario, r.result.score); lastResult = r.result; renderResult(); return r;
   }
+  function tlHtml(r) {
+    var m = M(), n = 0;
+    if (!r.timeline.length) return '<p>검사·조작 기록이 없어요.</p>';
+    return '<ol class="ts-timeline">' + r.timeline.map(function (e) {
+      n++;
+      if (e.kind === 'inspect') return '<li class="' + (e.decisive ? 'decisive' : '') + '"><div><b>🔍 ' + esc(e.title) + '</b> <small>' + esc(S.state.devices[e.target] ? E.devName(m, e.target) : '') + ' · ' + STATUS_TXT[e.status] + '</small>' + (e.decisive ? ' <span class="ts-badge root">🎯 결정적 증거</span>' : '') + '</div>' +
+        (e.meaning && e.meaning.length ? '<div class="ts-small">' + esc(e.meaning[0]) + '</div>' : '') + '</li>';
+      return '<li class="' + (e.unnecessary ? 'un' : 'fix') + '"><div><b>🛠 ' + esc(e.label || e.path) + '</b>: ' + esc(e.fromTxt) + ' → ' + esc(e.toTxt) + (e.unnecessary ? ' <span class="ts-badge warn">불필요</span>' : ' <span class="ts-badge ok">복구</span>') + '</div>' +
+        '<div class="ts-small">결과: ' + esc(e.effect) + (e.unnecessary ? '. 고장 원인과 관계없는 설정이라 증상이 해결되지 않았어요' + (e.note && /새 문제/.test(e.note) ? ' — 정상 설정과 달라져서 새 문제가 생길 수 있어요' : '') + '.' : '') + '</div></li>';
+    }).join('') + '</ol>';
+  }
+  function quizHtml(q) {
+    if (!q) return '';
+    return '<div class="ts-quiz" data-role="quiz"><p class="ts-q">' + esc(q.q) + '</p><div class="ts-qopts">' + q.options.map(function (o) {
+      return '<button type="button" class="ts-btn ts-qopt" data-act="quiz" data-o="' + o[0] + '">' + o[0].toUpperCase() + '. ' + esc(o[1]) + '</button>'; }).join('') + '</div><div class="ts-qfb" data-role="qfb" hidden></div></div>';
+  }
+  function answerQuiz(o) {
+    var q = lastResult && lastResult.quiz; if (!q) return null;
+    var pick = q.options.filter(function (x) { return x[0] === o; })[0], right = q.options.filter(function (x) { return x[0] === q.answer; })[0], ok = o === q.answer;
+    root.querySelectorAll('.ts-qopt').forEach(function (b) { var k = b.getAttribute('data-o'); b.classList.toggle('right', k === q.answer && ok); b.classList.toggle('wrong', k === o && !ok); });
+    var fb = $('[data-role=qfb]'); fb.hidden = false; fb.className = 'ts-qfb ' + (ok ? 'ok' : 'bad');
+    fb.innerHTML = ok ? '<b>✅ 정답!</b> ' + esc(pick[2]) : '<b>❌ 오답이에요.</b> ' + esc(pick[2]) + '<div class="ts-small">다시 골라 보세요. (정답을 보려면 한 번 더 틀려도 괜찮아요)</div>';
+    if (!ok) { lastResult.quizWrong = (lastResult.quizWrong || 0) + 1; if (lastResult.quizWrong >= 2) fb.innerHTML += '<div class="ts-small"><b>정답: ' + q.answer.toUpperCase() + '. ' + esc(right[1]) + '</b> — ' + esc(right[2]) + '</div>'; }
+    return ok;
+  }
   function renderResult() {
-    var r = lastResult, m = M(), el = $('[data-role=result]');
+    var r = lastResult, m = M(), el = $('[data-role=result]'), nm = r.nextMission && E.mission(r.nextMission);
     $('[data-role=play]').hidden = true; el.hidden = false;
     var stars = r.score >= 90 ? '★★★' : r.score >= 70 ? '★★☆' : r.score >= 50 ? '★☆☆' : '☆☆☆';
-    el.innerHTML = '<div class="ts-card ts-resultcard"><div class="ts-score"><b>' + r.score + '</b>점 <span>' + stars + '</span></div><div class="ts-mtitle">미션 ' + m.id + '. ' + esc(m.title) + ' — 복구 완료</div>' +
-      '<div class="ts-rgrid"><div><h4>고장 원인</h4><p>' + esc(r.cause) + '</p><h4>수정 내용</h4><ul>' + r.fixes.map(function (f) { return '<li>' + esc(f.label || f.path) + ': ' + esc(f.fromTxt) + ' → ' + esc(f.toTxt) + '</li>'; }).join('') + '</ul>' +
-      '<h4>정상 여부 (최종 검증, 시뮬레이션)</h4><ul>' + r.assess.speakers.map(function (s) { return '<li>' + esc(s.name) + ': ' + esc(E.GRADE_TEXT[s.grade]) + ' (' + E.levels.dbTxt(s.R) + ' dB, 최대 출력 대비)</li>'; }).join('') + '</ul></div>' +
-      '<div><h4>발견한 증거</h4><ul>' + (r.evidence.length ? r.evidence.map(function (e) { return '<li' + (e.root ? ' class="root"' : '') + '>' + (e.root ? '🎯 ' : '') + esc(e.label) + '</li>'; }).join('') : '<li>검사 기록 없음</li>') + '</ul>' +
-      '<p class="ts-small">' + (r.diagnosedFirst ? '원인을 가리키는 증거를 찾은 뒤에 고쳤습니다.' : '원인 증거를 찾기 전에 고쳤습니다(−20). 다음에는 검사로 원인을 먼저 확인해 보세요.') + '</p>' +
-      '<h4>점수 내역</h4><ul><li>힌트 ' + r.hints + '단계: −' + r.penalties.hints + '</li><li>불필요한 조작 ' + r.unnecessaryOps.length + '회: −' + r.penalties.unnecessary + '</li><li>최종 검증 실패: −' + r.penalties.verifyFails + '</li><li>진단 전 수리: −' + r.penalties.noDiagnosis + '</li></ul></div></div>' +
-      (r.unnecessaryOps.length ? '<h4>불필요했던 조작</h4><ul>' + r.unnecessaryOps.map(function (o) { return '<li>' + esc(o.label || o.path) + ': ' + esc(o.fromTxt) + ' → ' + esc(o.toTxt) + '</li>'; }).join('') + '</ul>' : '') +
-      '<h4>배운 점</h4><p>' + esc(r.learn) + '</p><div class="ts-head-btns"><button type="button" class="ts-btn ts-primary" data-act="start" data-m="' + m.id + '" data-s="' + S.scenario + '">같은 시나리오 다시</button>' +
-      '<button type="button" class="ts-btn" data-act="start" data-m="' + m.id + '" data-s="random">이 미션 무작위</button><button type="button" class="ts-btn" data-act="list">미션 목록</button></div></div>';
+    el.innerHTML = '<div class="ts-card ts-resultcard">' +
+      '<div class="ts-rhead"><div><span class="ts-level">' + esc(m.level) + '</span><div class="ts-mtitle">미션 ' + m.id + '. ' + esc(m.title) + ' — ✅ 복구 완료</div></div>' +
+        '<div class="ts-scorebox"><div class="ts-score"><b>' + r.score + '</b>점 <span>' + stars + '</span></div><details><summary>점수 내역</summary><ul><li>힌트 ' + r.hints + '단계: −' + r.penalties.hints + '</li><li>불필요한 조작 ' + r.unnecessaryOps.length + '회: −' + r.penalties.unnecessary + '</li><li>최종 검증 실패: −' + r.penalties.verifyFails + '</li><li>진단 전 수리: −' + r.penalties.noDiagnosis + '</li></ul></details></div></div>' +
+      '<section class="ts-rsec"><h4>🎯 고장 원인과 결정적 증거</h4><p><b>원인</b> ' + esc(r.cause) + '</p>' +
+        (r.why ? '<p><b>결정적 증거</b> ' + esc(r.why) + '</p>' : '') +
+        '<ul>' + (r.rootFound.length ? r.rootFound.map(function (x) { return '<li class="root">🎯 내가 찾은 증거: ' + esc(x) + '</li>'; }).join('') : '<li>원인을 가리키는 증거를 검사로 찾기 전에 고쳤어요. 다음에는 검사로 원인을 먼저 확인해 보세요.</li>') + '</ul>' +
+        '<p><b>수정 내용</b></p><ul>' + r.fixes.map(function (f) { return '<li>' + esc(f.label || f.path) + ': ' + esc(f.fromTxt) + ' → ' + esc(f.toTxt) + '</li>'; }).join('') + '</ul></section>' +
+      '<section class="ts-rsec"><h4>🧭 진단 과정 복습 <small>내가 한 순서대로</small></h4>' + tlHtml(r) + '</section>' +
+      '<section class="ts-rsec ts-core"><h4>📌 꼭 기억할 원리</h4>' + (r.core.length ? '<ul>' + r.core.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '<p>' + esc(r.learn) + '</p>') + '</section>' +
+      (r.quiz ? '<section class="ts-rsec"><h4>❓ 이해도 확인</h4>' + quizHtml(r.quiz) + '</section>' : '') +
+      '<section class="ts-rsec"><h4>➡️ 새로운 사례에 적용</h4>' + (r.apply ? '<p>' + esc(r.apply) + '</p>' : '') +
+        '<div class="ts-head-btns">' + (nm ? '<button type="button" class="ts-btn ts-primary" data-act="start" data-m="' + nm.id + '" data-s="random">▶ 미션 ' + nm.id + '. ' + esc(nm.title) + '</button>' : '') +
+        '<button type="button" class="ts-btn" data-act="start" data-m="' + m.id + '" data-s="random">이 미션 다른 시나리오(무작위)</button><button type="button" class="ts-btn" data-act="start" data-m="' + m.id + '" data-s="' + S.scenario + '">같은 시나리오 다시</button><button type="button" class="ts-btn" data-act="list">미션 목록</button>' + (window.STALessons ? '<button type="button" class="ts-btn" data-act="lesson" data-l="signal-flow">📘 이론: 음향 시스템의 신호 흐름</button>' : '') + '</div></section>' +
+      '<section class="ts-rsec ts-final"><h4>최종 검증 결과 <small>시뮬레이션 계산값</small></h4><ul>' + r.assess.speakers.map(function (s) { return '<li>' + esc(s.name) + ': ' + esc(E.GRADE_TEXT[s.grade]) + ' (' + E.levels.dbTxt(s.R) + ' dB, 최대 출력 대비 근사값)</li>'; }).join('') + '</ul><p class="ts-small">교육용 근사 계산이라 실제 현장의 측정값이나 SPL 이 아니에요.</p>' +
+        '<h4>발견한 증거 전체</h4><ul>' + (r.evidence.length ? r.evidence.map(function (e) { return '<li' + (e.root ? ' class="root"' : '') + '>' + (e.root ? '🎯 ' : evOk(e.key) ? '✓ ' : '✕ ') + esc(e.label) + '</li>'; }).join('') : '<li>검사 기록 없음</li>') + '</ul></section>' +
+      '</div>';
+    el.scrollIntoView && el.scrollIntoView({ block: 'start' });
   }
   function backToList() { $('[data-role=play]').hidden = true; $('[data-role=result]').hidden = true; $('[data-role=missions]').hidden = false; renderMissions(); if (view3d) view3d.pause(true); }
+  function setHelp(v) { help = !!v; try { localStorage.setItem(HELP_KEY, help ? 'on' : 'off'); } catch (e) { /* 무시 */ } renderHelpBtn(); var last = S && S.log.filter(function (e) { return e.kind === 'inspect'; }).slice(-1)[0];
+    renderPanel(last && sel === (S.state.devices[last.target] ? last.target : 'cable:' + last.target) ? last : undefined); }
 
   function onClick(e) {
     var t = e.target.closest('[data-act]'); if (!t || !root.contains(t)) return; var a = t.getAttribute('data-act');
     if (a === 'start') start(t.getAttribute('data-m'), t.getAttribute('data-s'));
     else if (a === 'sel') select(t.getAttribute('data-id'));
-    else if (a === 'inspect') doInspect(t.getAttribute('data-tool'), t.getAttribute('data-target'));
+    else if (a === 'inspect') { var tg = t.getAttribute('data-target'); if (t.getAttribute('data-sel')) { var id = S.state.devices[tg] ? tg : 'cable:' + tg; if (sel !== id) select(id); } doInspect(t.getAttribute('data-tool'), tg); }
     else if (a === 'op') doOp(t.getAttribute('data-path'), t.getAttribute('data-val') === 'true');
     else if (a === 'hint') doHint();
     else if (a === 'verify') doVerify();
     else if (a === 'list') backToList();
+    else if (a === 'help') setHelp(!help);
+    else if (a === 'quiz') answerQuiz(t.getAttribute('data-o'));
+    else if (a === 'lesson') { try { window.STALessons.open(t.getAttribute('data-l')); } catch (e2) { /* 레슨 화면이 없으면 무시 */ } }
   }
   function onInput(e) { var t = e.target; if (t.type === 'range' && t.getAttribute('data-path')) { var path = t.getAttribute('data-path'), b = root.querySelector('[data-val="' + path + '"]'); if (b) b.textContent = valTxt(path, +t.value / 100); } }
   function onChange(e) { var t = e.target, path = t.getAttribute && t.getAttribute('data-path'); if (!path) return;
@@ -316,7 +413,7 @@
     renderShell();
   }
   window.PaTroubleshoot = {
-    start: start, select: select, inspect: doInspect, op: doOp, hint: doHint, verify: doVerify, list: backToList,
+    start: start, select: select, inspect: doInspect, op: doOp, hint: doHint, verify: doVerify, list: backToList, quiz: answerQuiz, setHelp: setHelp, getHelp: function () { return help; },
     getSession: function () { return S; }, getView: function () { return view3d; }, engine: function () { return E; }
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup); else setup();

@@ -204,6 +204,51 @@
           hints: ['앰프 입력 신호(SIGNAL LED)가 어느 채널에 있나요?', '신호가 있는 채널의 출력이 실제로 스피커로 가고 있는지 확인하세요.', '앰프 "출력·스피커 연결" 검사로 CH1/CH2 출력에 무엇이 꽂혀 있는지 비교하세요.'] }
       ] }
   ];
+  // 학습용 정보 (미션 카드·완료 후 복습). 원인 정답은 결과 화면에서만 쓴다
+  var STUDY = {
+    A: { principle: '신호가 지나가는 순서대로 따라가며, 신호가 있는 마지막 지점과 없는 첫 지점을 찾습니다.',
+      core: ['소리가 안 날 때는 마이크 → 케이블 → 믹서 입력 → 채널 → 출력 → 케이블 → 스피커 순서로 신호를 따라갑니다.',
+        '신호가 있는 마지막 지점과 신호가 없는 첫 지점 사이에 원인이 있습니다.',
+        'MG12XU 의 입력 미터(PFL)와 STEREO 출력 미터를 비교하면 원인이 믹서 앞인지, 믹서 안인지, 믹서 뒤인지 한 번에 가를 수 있어요.',
+        '액티브 스피커(ZXA1)는 앰프가 들어 있어서 신호와 전원이 둘 다 있어야 소리가 납니다.'],
+      quiz: { q: 'MG12XU 입력 미터에는 마이크 신호가 보이는데, STEREO 출력 미터는 전혀 움직이지 않습니다. 가장 먼저 확인할 곳은?', answer: 'b',
+        options: [['a', '마이크 케이블 양 끝', '입력 미터에 신호가 있으면 마이크와 케이블은 이미 믹서까지 신호를 전달했어요.'],
+          ['b', '채널 ON 버튼 · 페이더 · ST 버튼', '맞아요. 입력과 출력 사이에서 막혔으니 채널 안의 설정이 원인 후보예요.'],
+          ['c', '스피커 전원', '믹서 출력이 0 이면 스피커가 켜져 있어도 받을 신호가 없어요. 스피커는 믹서 출력이 확인된 뒤에 봅니다.'],
+          ['d', 'GAIN 을 최대로 올리기', '입력 미터에 이미 신호가 보이면 GAIN 은 제 역할을 하고 있어요. 무작정 올리면 PEAK(과입력)가 생길 수 있어요.']] },
+      why: { 'A-1': '믹서 출력은 정상인데 ZXA1 POWER LED 가 꺼져 있고 전원 스위치가 OFF 였어요. 신호는 스피커까지 왔지만 스피커가 동작하지 않은 거예요.',
+        'A-2': '입력 미터에는 신호가 있는데 출력은 0 이었고, 채널 상태에서 ON 버튼이 꺼져 있었어요. 입력과 출력 사이(채널 안)에서 막힌 것이 확인됐어요.',
+        'A-3': '입력 미터가 0 이었고, 마이크 케이블의 믹서 쪽 끝이 빠져 있었어요. 신호가 믹서까지 도착하지 못한 이유예요.' },
+      nextMission: 'B', apply: '미션 B 에서는 같은 「따라가기」를 좌우 두 경로에 적용해요. 정상인 쪽과 비교하는 방법을 익힙니다.' },
+    B: { principle: '좌우 같은 항목끼리 비교해서, 정상인 쪽과 다른 지점을 찾습니다.',
+      core: ['한쪽만 소리가 안 날 때는 정상인 쪽이 가장 좋은 비교 기준입니다.',
+        '믹서 출력 미터 L/R 이 같으면 차이는 믹서 뒤(케이블·스피커)에서, 다르면 믹서 안(PAN 등)에서 생긴 것입니다.',
+        'PAN 을 한쪽 끝으로 돌리면 그 채널 신호는 반대쪽 출력으로 거의 가지 않아요.'],
+      quiz: { q: '오른쪽 스피커만 소리가 안 납니다. 믹서 출력 미터는 L 과 R 이 똑같이 움직입니다. 다음으로 확인할 곳은?', answer: 'b',
+        options: [['a', '채널 PAN', '출력 미터 L/R 이 같다면 PAN 때문에 좌우 차이가 생긴 것은 아니에요.'],
+          ['b', '오른쪽 스피커 케이블과 오른쪽 스피커 상태', '맞아요. 믹서까지는 좌우가 같으니 차이는 믹서 뒤 오른쪽 경로에 있어요. 왼쪽과 같은 항목끼리 비교하세요.'],
+          ['c', '마이크 스위치', '마이크가 꺼져 있으면 왼쪽도 소리가 안 나야 해요.'],
+          ['d', 'STEREO 페이더', 'STEREO 페이더는 L/R 을 함께 조절해요. 왼쪽이 정상으로 나오니 원인이 아닙니다.']] },
+      why: { 'B-1': '믹서 L/R 출력은 같았는데, 오른쪽 케이블의 스피커 쪽 끝이 빠져 있었어요.',
+        'B-2': '믹서 L/R 출력은 같았고, 오른쪽 ZXA1 의 전원 스위치가 OFF 였어요. 왼쪽 스피커와 같은 항목을 비교하면 바로 보이는 차이예요.',
+        'B-3': '믹서 출력 미터에서 R 이 없었고, 채널 PAN 이 왼쪽 끝이었어요. 좌우 차이가 믹서 안에서 생긴 거예요.' },
+      nextMission: 'C', apply: '미션 C 에서는 앰프와 패시브 스피커가 추가돼요. 「신호가 있는 마지막 지점」을 앰프 입력·출력에서 찾아보세요.' },
+    C: { principle: '패시브 스피커는 앰프 출력으로만 소리가 나므로, 앰프의 입력 → 전원 → 볼륨 → 출력 채널 순서로 확인합니다.',
+      core: ['패시브 스피커(ZX1)는 앰프가 없어서 파워앰프의 speakON 출력으로만 소리가 납니다.',
+        '앰프에서는 입력 신호(SIGNAL LED) → 전원 → 감쇠기(볼륨) → 신호가 나오는 출력 채널과 스피커 케이블 위치 순서로 확인합니다.',
+        'Crown 앰프를 STEREO 모드로 쓰면 CH1 과 CH2 는 서로 독립이라, CH1 으로 들어온 신호는 CH1 출력으로만 나옵니다.'],
+      quiz: { q: '앰프 CH1 SIGNAL LED 는 켜지는데, 스피커 케이블은 CH2 출력에 꽂혀 있습니다. 소리가 나지 않는 이유는?', answer: 'b',
+        options: [['a', 'CH2 감쇠기가 내려가 있어서', 'CH2 감쇠기를 올려도 CH2 에는 입력 신호가 없어서 출력이 생기지 않아요.'],
+          ['b', '신호가 들어오는 채널(CH1)과 스피커가 연결된 채널(CH2)이 달라서', '맞아요. STEREO 모드에서는 CH1 입력이 CH1 출력으로만 나가요. 스피커 케이블을 CH1 출력으로 옮겨야 합니다.'],
+          ['c', '패시브 스피커 전원이 꺼져 있어서', '패시브 스피커에는 전원 스위치가 없어요. 앰프 출력이 곧 스피커를 움직이는 힘입니다.'],
+          ['d', 'speakON 대신 XLR 케이블을 써야 해서', '앰프 → 패시브 스피커 연결은 스피커 케이블(speakON)이 맞아요. XLR 은 마이크·라인 신호용입니다.']] },
+      why: { 'C-1': '앰프 POWER LED 가 꺼져 있었고 전원 스위치가 OFF 였어요.',
+        'C-2': '앰프 입력 신호와 전원은 정상이었는데, 입력이 들어오는 CH1 의 감쇠기가 맨 아래였어요.',
+        'C-3': '신호는 CH1 으로 나오는데 스피커 케이블은 CH2 출력에 꽂혀 있었어요.' },
+      nextMission: 'A', apply: '미션 A 의 다른 시나리오에서 「입력 미터와 출력 미터 비교」를 다시 연습해 보세요. 앰프의 SIGNAL LED 와 같은 역할이에요.' }
+  };
+  MISSIONS.forEach(function (m) { var x = STUDY[m.id]; if (x) Object.keys(x).forEach(function (k) { m[k] = x[k]; }); });
+
   function mission(id) { for (var i = 0; i < MISSIONS.length; i++) if (MISSIONS[i].id === id) return MISSIONS[i]; return null; }
   function scenario(m, sid) { for (var i = 0; i < m.scenarios.length; i++) if (m.scenarios[i].id === sid) return m.scenarios[i]; return null; }
   function startState(m, sc) { var st = buildNormal(m); sc.fault.forEach(function (f) { setPath(st, f.path, f.value); }); return st; }
@@ -233,7 +278,7 @@
     'cable.compat': { dev: 'cable', label: '케이블 종류·단자 호환' }
   };
   function sigWord(x) { return x === NEG || x === undefined || x === null ? '신호 없음' : x < -60 ? '신호 거의 없음' : '신호 있음 (' + dbTxt(x) + ' dBu)'; }
-  function inspect(m, st, toolId, target) {
+  function inspect(m, st, toolId, target, known) {
     var ev = evaluate(m, st), R = { tool: toolId, target: target, title: TOOL_INFO[toolId].label, status: 'ok', lines: [], evidence: [], reveal: { nodes: {}, edges: {} } };
     var d = st.devices[target], name = devName(m, target);
     function bad(s) { if (s === 'bad' || (s === 'warn' && R.status !== 'bad')) R.status = s; }
@@ -329,7 +374,109 @@
       R.lines.push('케이블 종류: ' + CABLE_TYPES[c2.type]); R.lines.push('양 끝 단자: ' + cableEndText(m, st, c2.a) + ' (' + ka + ') ↔ ' + cableEndText(m, st, c2.b) + ' (' + kb + ')');
       R.lines.push(okc ? '종류가 단자와 맞습니다.' : '케이블 종류가 단자와 맞지 않습니다.'); if (!okc) { bad('bad'); evi('cable.' + c2.id + '.incompatible', c2.label + ' 종류가 단자와 맞지 않음'); }
     }
+    explain(m, st, ev, R, toolId, target, known || {});
     return R;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 검사 결과 해석: 지금 시뮬레이션 상태(ev)에서 계산한 값으로 「무슨 뜻인지」와 「다음에 볼 곳」을 만든다.
+  // (시나리오 정답 문구를 쓰지 않음 — 같은 검사라도 상태가 다르면 해석이 달라진다)
+  //  R.meaning[] : 이 결과가 의미하는 것,  R.next[] : { tool, target, why } 다음 확인 지점
+  function pathNodes(m) { return fullPaths(m); }
+  function neighbor(m, dev, dir) { // 흐름도에서 dev 바로 앞(dir=-1)/뒤(+1) 케이블 id 목록
+    var r = []; pathNodes(m).forEach(function (p) { var i = p.indexOf(dev); if (i >= 0 && p[i + dir] && r.indexOf(p[i + dir]) < 0) r.push(p[i + dir]); }); return r;
+  }
+  function devOfCable(st, cid, notDev) { var c = cableById(st, cid); if (!c) return null; return c.a.dev !== notDev ? c.a.dev : c.b.dev; }
+  function explain(m, st, ev, R, toolId, target, known) {
+    var M = [], N = [], d = st.devices[target], name = devName(m, target);
+    function nx(tool, tgt, why) { if (m.tools.indexOf(tool) < 0 || !tgt) return; if (N.some(function (x) { return x.tool === tool && x.target === tgt; })) return; N.push({ tool: tool, target: tgt, why: why }); }
+    function cabLabel(cid) { var c = cableById(st, cid); return c ? c.label : cid; }
+    function upChecks(dev, why) { neighbor(m, dev, -1).forEach(function (cid) { nx('cable.ends', cid, why || cabLabel(cid) + ' 양 끝이 꽂혀 있는지'); }); }
+    function speakerTool(id) { var t = st.devices[id] && st.devices[id].type; return t === 'zx1' ? 'pas.input' : 'spk.input'; }
+    var mgId = Object.keys(st.devices).filter(function (k) { return st.devices[k].type === 'mg12xu'; })[0];
+    var mx = mgId && ev.mixer[mgId], micCh = inputChannel(m, st), chInputOk = mx && mx.ch[micCh] && mx.ch[micCh].pre !== NEG;
+    var others = m.targets.filter(function (x) { return x !== target; });
+    if (toolId === 'mic.switch') {
+      if (d.switch) { M.push('마이크는 신호를 내보내고 있어요. 신호가 출발점에서는 정상입니다.'); upChecks('mg'); if (mgId) nx('mg.inputMeter', mgId, '그 신호가 믹서 입력까지 도착하는지'); }
+      else M.push('마이크 스위치가 꺼져 있으면 신호가 처음부터 만들어지지 않아요. 뒤쪽 장비를 아무리 봐도 신호가 없습니다.');
+    } else if (toolId === 'mg.power' || toolId === 'spk.status' || toolId === 'amp.status') {
+      var on = ev.power[target];
+      if (!on) { M.push(name + ' 에 전원이 들어오지 않아요. 전원이 없으면 이 장비는 신호를 처리하거나 내보내지 못합니다.');
+        if (!d.power) M.push('전원 케이블은 연결되어 있는데 스위치가 OFF 라면, 스위치를 켜는 것이 다음 조치예요.');
+        else M.push('스위치는 ON 인데 LED 가 꺼져 있다면 전원 케이블 연결을 확인해야 해요.');
+      } else if (toolId === 'mg.power') { M.push('믹서는 동작 중이에요. 이제 미터로 신호가 어디까지 왔는지 볼 수 있어요.'); nx('mg.inputMeter', target, '마이크 신호가 믹서 입력에 들어오는지'); nx('mg.outputMeter', target, '믹서 출력으로 신호가 나가는지'); }
+      else if (toolId === 'spk.status') {
+        if (d.master < 0.02) M.push('전원은 들어왔지만 MASTER 가 맨 아래면 들어온 신호가 소리로 나오지 않아요.');
+        else { M.push(name + ' 은 전원이 켜져 있고 볼륨도 열려 있어요. 스피커 자체는 소리 낼 준비가 되어 있습니다.'); nx('spk.input', target, '신호가 이 스피커 입력까지 도착하는지'); }
+        if (others.length && m.balance) others.forEach(function (o) { nx('spk.status', o, '반대쪽 스피커의 같은 항목과 비교'); });
+      } else if (toolId === 'amp.status') {
+        var used = [1, 2].filter(function (n) { return cableAt(st, target, 'inputXlrCh' + n); });
+        var down = used.filter(function (n) { return d.att[n] < 0.02; });
+        if (down.length) M.push('입력이 들어오는 CH' + down.join(',') + ' 의 감쇠기가 맨 아래예요. 앰프가 켜져 있어도 이 채널은 출력이 나가지 않습니다.');
+        else { M.push('앰프 전원과 감쇠기는 정상이에요. 남은 것은 출력 단자와 스피커 케이블 연결입니다.'); nx('amp.outputs', target, '신호가 나오는 채널과 스피커 케이블이 꽂힌 채널이 같은지'); }
+      }
+      if (!on) { var pc = st.cables.filter(function (c) { return c.type === 'ac' && (c.a.dev === target || c.b.dev === target); })[0]; if (pc && d.power) nx('cable.ends', pc.id, pc.label + ' 양 끝'); }
+    } else if (toolId === 'mg.inputMeter') {
+      if (!ev.power[target]) { M.push('믹서 전원이 없어서 미터로는 판단할 수 없어요. 먼저 전원을 확인해야 합니다.'); nx('mg.power', target, '믹서 전원 상태'); }
+      else if (chInputOk) { M.push('마이크 → 마이크 케이블 → 믹서 ' + CH_LABEL[micCh] + ' 입력까지는 신호가 정상으로 왔어요. 원인은 이보다 뒤쪽에 있습니다.'); nx('mg.outputMeter', target, '믹서 안을 지나 STEREO 출력으로 나가는지'); }
+      else { M.push(CH_LABEL[micCh] + ' 입력 미터가 움직이지 않아요. 신호가 믹서까지 도착하지 못했으니 원인은 마이크와 마이크 케이블 쪽(믹서 앞)입니다.'); var mic = Object.keys(st.devices).filter(function (k) { return st.devices[k].type === 'sm58'; })[0]; if (mic) nx('mic.switch', mic, '마이크 스위치'); upChecks(target); }
+    } else if (toolId === 'mg.channel') {
+      var c0 = inputChannel(m, st), s0 = d.ch[c0], blk = [];
+      if (!s0.on) blk.push('ON 버튼이 꺼져 있으면 채널 신호가 STEREO 로 가지 않아요 (매뉴얼: ON 이 꺼지면 버스로 보내지 않음).');
+      if (s0.fader < 0.02) blk.push('채널 페이더가 맨 아래면 STEREO 로 보내는 양이 0 이에요.');
+      if (!s0.st) blk.push('ST 버튼이 꺼져 있으면 이 채널이 STEREO 버스에 할당되지 않아요.');
+      if (d.stFader < 0.02) blk.push('STEREO 페이더가 맨 아래면 믹서 전체 출력이 0 이에요.');
+      if (s0.pan <= 0.05) blk.push('PAN 이 왼쪽 끝이면 이 채널 신호는 STEREO L 로만 가고 R 에는 거의 가지 않아요.');
+      if (s0.pan >= 0.95) blk.push('PAN 이 오른쪽 끝이면 이 채널 신호는 STEREO R 로만 가고 L 에는 거의 가지 않아요.');
+      if (blk.length) blk.forEach(function (x) { M.push(x); });
+      else { M.push('채널 안에서 신호를 막는 설정(ON·페이더·ST·STEREO 페이더)은 없어요. PAN 도 가운데라 좌우로 고르게 갑니다.'); nx('mg.outputMeter', target, '실제로 STEREO L/R 출력에 신호가 나가는지'); }
+    } else if (toolId === 'mg.outputMeter') {
+      if (!ev.power[target]) { M.push('믹서 전원이 없어서 출력 미터가 동작하지 않아요.'); nx('mg.power', target, '믹서 전원 상태'); }
+      else { var L = mx.L, Rr = mx.R;
+        if (L === NEG && Rr === NEG) {
+          var kIn = known[target + '.' + micCh + '.inputOk'], kNo = known[target + '.' + micCh + '.noInput'];
+          if (kIn && chInputOk) { M.push('입력 미터에는 신호가 있는데 출력 미터는 0 이에요. 입력과 출력 사이, 즉 믹서 채널 안에서 신호가 막혔다는 뜻입니다.'); M.push('점검할 곳: 채널 ON 버튼, 채널 페이더, ST 할당 버튼, STEREO 페이더.'); nx('mg.channel', target, '채널 ON·페이더·ST·STEREO 페이더'); }
+          else if (kNo && !chInputOk) { M.push('입력 미터도 0, 출력 미터도 0 이에요. 신호가 믹서에 들어오지도 못했으니 믹서 앞쪽(마이크·마이크 케이블)이 먼저예요.'); upChecks(target); }
+          else { M.push('출력 미터가 0 이에요. 입력 미터와 비교해야 어디서 끊겼는지 알 수 있어요 — 입력에 신호가 있으면 믹서 채널 안, 입력도 0 이면 믹서 앞쪽 문제예요.'); nx('mg.inputMeter', target, '입력 미터와 비교'); }
+        } else if (L === NEG || Rr === NEG || Math.abs(L - Rr) > 6) {
+          var miss = L === NEG || L < Rr ? 'L' : 'R';
+          M.push('출력 미터 L 과 R 이 달라요(' + miss + ' 쪽이 약하거나 없음). 믹서 안에서 이미 좌우 차이가 생겼다는 뜻이라, 뒤쪽 케이블·스피커보다 믹서 안 PAN 을 먼저 보는 게 맞아요.');
+          nx('mg.channel', target, '채널 PAN 위치');
+        } else {
+          M.push('믹서 STEREO 출력 L/R 모두 신호가 있고 크기도 비슷해요. 마이크부터 믹서 출력까지는 정상입니다.');
+          if (m.targets.length > 1) M.push('좌우 출력이 같으므로, 한쪽만 소리가 안 난다면 차이는 믹서 뒤(케이블·스피커)에서 생긴 거예요. 왼쪽과 오른쪽 경로를 같은 항목끼리 비교해 보세요.');
+          else M.push('원인은 믹서 뒤쪽(출력 케이블 → 다음 장비)에 있어요.');
+          neighbor(m, target, 1).forEach(function (cid) { var nd = devOfCable(st, cid, target), t = nd && st.devices[nd].type;
+            if (t === 'crown') nx('amp.input', nd, '앰프 입력에 신호가 도착하는지'); else if (nd) nx(speakerTool(nd), nd, devName(m, nd) + ' 입력에 신호가 도착하는지'); });
+        } }
+    } else if (toolId === 'spk.input' || toolId === 'pas.input') {
+      var sp = ev.speakers[target], anyCable = R.evidence.every(function (e) { return e.key !== target + '.noInputCable'; }), sig = R.evidence.some(function (e) { return e.key === target + '.inputOk'; });
+      if (!anyCable) { M.push(name + ' 입력 단자에 케이블이 꽂혀 있지 않아요. 신호가 들어올 길이 없습니다.'); upChecks(target); }
+      else if (!sig) { M.push('케이블은 꽂혀 있는데 신호가 오지 않아요. 케이블의 반대쪽 끝이 빠졌거나, 앞 장비가 신호를 내보내지 않는 경우예요.'); upChecks(target);
+        neighbor(m, target, -1).forEach(function (cid) { var pd = devOfCable(st, cid, target), t = pd && st.devices[pd].type; if (t === 'mg12xu') nx('mg.outputMeter', pd, '믹서 출력에 신호가 있는지'); if (t === 'crown') nx('amp.outputs', pd, '앰프 출력 채널과 케이블 위치'); }); }
+      else if (sp.grade === 'silent') { M.push('신호는 스피커 입력까지 도착했는데 소리가 없어요. 원인은 스피커 자체(전원·볼륨)입니다.'); if (toolId === 'spk.input') nx('spk.status', target, '전원 LED·스위치·MASTER'); }
+      else if (sp.grade === 'good') { M.push('신호가 도착하고 정상 크기로 소리가 나요. 이 경로는 정상입니다.'); if (others.length && m.balance) others.forEach(function (o) { nx(speakerTool(o), o, '반대쪽 스피커와 비교'); }); }
+      else M.push('신호가 도착하지만 소리가 정상 범위가 아니에요(' + GRADE_TEXT[sp.grade] + '). 볼륨 단계를 확인해 보세요.');
+      if (m.balance && others.length && sp.grade !== 'good') others.forEach(function (o) { nx(speakerTool(o), o, '정상인 반대쪽과 같은 항목 비교'); });
+    } else if (toolId === 'amp.input') {
+      var a = ev.amp[target], lit = [1, 2].filter(function (n) { return ev.power[target] && a.in[n] !== NEG && a.in[n] - SENS.crown > -40; });
+      if (!ev.power[target]) { M.push('앰프 전원이 꺼져 있으면 SIGNAL LED 로 입력을 확인할 수 없어요. 전원부터 확인하세요.'); nx('amp.status', target, '앰프 전원·감쇠기'); }
+      else if (lit.length) { M.push('믹서 → 앰프 CH' + lit.join(',') + ' 입력까지 신호가 정상으로 왔어요. 원인은 앰프 안이나 그 뒤쪽입니다.'); nx('amp.status', target, '앰프 감쇠기(볼륨)'); nx('amp.outputs', target, '신호가 나오는 출력 채널과 스피커 케이블 위치'); }
+      else { M.push('앰프 입력에 신호가 없어요. 믹서 출력이나 믹서 → 앰프 케이블 쪽을 봐야 해요.'); upChecks(target); if (mgId) nx('mg.outputMeter', mgId, '믹서 출력에 신호가 있는지'); }
+    } else if (toolId === 'amp.outputs') {
+      if (R.evidence.some(function (e) { return e.key === target + '.outputMismatch'; })) M.push('신호는 한 채널로 나오는데 스피커 케이블은 다른 채널에 꽂혀 있어요. 앰프의 CH1 과 CH2 는 서로 독립이라, 신호가 없는 채널에 스피커를 꽂으면 소리가 나지 않습니다.');
+      else if (R.evidence.some(function (e) { return e.key === target + '.noOutput'; })) { M.push('앰프 출력이 없어요. 앰프 입력·전원·감쇠기를 확인해야 해요.'); nx('amp.input', target, '앰프 입력 SIGNAL LED'); nx('amp.status', target, '전원·감쇠기'); }
+      else if (R.evidence.some(function (e) { return e.key === target + '.noSpeakerCable'; })) M.push('앰프 출력 단자에 스피커 케이블이 없어요.');
+      else { M.push('신호가 나오는 채널에 스피커 케이블이 꽂혀 있어요. 앰프 출력은 정상입니다.'); neighbor(m, target, 1).forEach(function (cid) { var nd = devOfCable(st, cid, target); nx('cable.ends', cid, cabLabel(cid) + ' 양 끝'); if (nd) nx(speakerTool(nd), nd, '스피커 입력에 신호가 도착하는지'); }); }
+    } else if (toolId === 'cable.ends') {
+      var c1 = cableById(st, target);
+      if (!(c1.a.seated && c1.b.seated)) M.push('케이블 한쪽 끝이라도 빠져 있으면 신호(또는 전원)가 건너가지 못해요. 이 케이블 뒤쪽 장비는 모두 신호가 없게 됩니다.');
+      else { M.push('이 케이블의 양 끝은 제대로 꽂혀 있어요. 연결 자체는 문제가 아니므로 케이블 앞뒤 장비를 확인하세요.');
+        var dn = c1.b.dev; if (st.devices[dn]) { var t2 = st.devices[dn].type; if (t2 === 'zxa1') nx('spk.status', dn, devName(m, dn) + ' 전원·상태'); if (t2 === 'zx1') nx('pas.input', dn, '스피커 입력 신호'); if (t2 === 'crown') nx('amp.input', dn, '앰프 입력 신호'); if (t2 === 'mg12xu') nx('mg.inputMeter', dn, '믹서 입력 미터'); } }
+    } else if (toolId === 'cable.compat') {
+      M.push(R.status === 'bad' ? '케이블 종류가 단자와 맞지 않으면 꽂히지 않거나 신호가 제대로 전달되지 않아요.' : '케이블 종류와 단자는 맞아요. XLR 은 라인·마이크 신호용, speakON 은 앰프 → 패시브 스피커용, 전원 케이블은 전원용입니다.');
+    }
+    R.meaning = M; R.next = N;
   }
   function kindOf2(st, e) { var d = st.devices[e.dev], p = d && portDef(d.type, e.port); return p ? p[2] : '?'; }
   function panWord(p) { return p <= 0.05 ? '왼쪽 끝 (L)' : p >= 0.95 ? '오른쪽 끝 (R)' : Math.abs(p - 0.5) < 0.06 ? '가운데' : (p < 0.5 ? '왼쪽으로 ' : '오른쪽으로 ') + Math.round(Math.abs(p - 0.5) * 200) + '%'; }
@@ -392,18 +539,54 @@
     var stop = signalStop(m, st, ev);
     return { ok: allGood && problems.length === 0, speakers: sp, problems: problems, stop: stop };
   }
-  // 신호가 멈춘 첫 지점(초급 설명용) — 흐름 순서대로 계산값을 따라감
-  function signalStop(m, st, ev) {
-    var path = m.flow[0], last = null;
-    for (var i = 0; i < path.length; i++) { var id = path[i], has;
-      if (st.devices[id]) { var d = st.devices[id];
-        if (d.type === 'sm58') has = ev.outLevels[id + '.xlrOut'] !== NEG;
-        else if (d.type === 'mg12xu') has = ev.mixer[id] && (ev.mixer[id].L !== NEG || ev.mixer[id].R !== NEG);
-        else if (d.type === 'crown') has = ev.amp[id] && (ev.amp[id].out[1] !== NEG || ev.amp[id].out[2] !== NEG);
-        else has = ev.speakers[id] && ev.speakers[id].grade !== 'silent';
-      } else { var l = ev.links.filter(function (x) { return x.cable === id; })[0]; has = l && l.ok; }
-      if (!has) return { at: id, after: last }; last = id; }
+  // 신호 경로(흐름도의 각 줄)를 처음부터 끝까지 이어진 경로로 펼침.
+  // 예) B 미션: [mic,cMic,mg,cL,spkL], [mg,cR,spkR] → 두 번째 줄 앞에 [mic,cMic] 를 붙여 독립 경로로 만든다
+  function fullPaths(m) {
+    var out = [];
+    m.flow.forEach(function (row) {
+      var p = row.slice();
+      for (var i = 0; i < out.length; i++) { var k = out[i].indexOf(p[0]); if (k > 0) { p = out[i].slice(0, k).concat(p); break; } }
+      out.push(p);
+    });
+    return out;
+  }
+  // 경로 안에서 장비 다음 케이블이 그 장비의 어느 단자에서 나가는지 → 믹서 L/R, 앰프 CH1/CH2 중 어느 쪽을 볼지 결정
+  function nextPort(st, path, i) {
+    var c = path[i + 1] && cableById(st, path[i + 1]); if (!c) return null;
+    return c.a.dev === path[i] ? c.a.port : c.b.dev === path[i] ? c.b.port : null;
+  }
+  function nodeHas(m, st, ev, path, i) {
+    var id = path[i];
+    if (st.devices[id]) { var d = st.devices[id], np = nextPort(st, path, i);
+      if (d.type === 'sm58') return ev.outLevels[id + '.xlrOut'] !== NEG;
+      if (d.type === 'mg12xu') { var mx = ev.mixer[id]; if (!mx) return false;
+        if (np === 'stereoOutXlrR') return mx.R !== NEG; if (np === 'stereoOutXlrL') return mx.L !== NEG; return mx.L !== NEG || mx.R !== NEG; }
+      if (d.type === 'crown') { var a = ev.amp[id]; if (!a) return false; var n = np && /Ch(\d)$/.exec(np);
+        return n ? a.out[+n[1]] !== NEG : (a.out[1] !== NEG || a.out[2] !== NEG); }
+      return !!ev.speakers[id] && ev.speakers[id].grade !== 'silent';
+    }
+    var l = ev.links.filter(function (x) { return x.cable === id; })[0]; return !!(l && l.ok);
+  }
+  function sideOf(st, path) { // 경로가 믹서의 어느 출력을 쓰는지 (좌우 비교 설명용)
+    for (var i = 0; i < path.length; i++) { var d = st.devices[path[i]]; if (d && d.type === 'mg12xu') { var np = nextPort(st, path, i); return np === 'stereoOutXlrR' ? 'R' : np === 'stereoOutXlrL' ? 'L' : null; } }
     return null;
+  }
+  // 신호가 멈춘 첫 지점(초급 설명용) — 경로마다 독립적으로 계산값을 따라감.
+  // 반환: 첫 번째 문제 경로의 { at, after } (기존 호환) + target·side + paths[] (경로별 결과) + okPaths(정상 경로) + divergeAt(정상 경로와 갈라지는 지점)
+  function signalStop(m, st, ev) {
+    var paths = fullPaths(m).map(function (p) {
+      var last = null, at = null, port = null;
+      for (var i = 0; i < p.length; i++) { if (!nodeHas(m, st, ev, p, i)) { at = p[i]; port = st.devices[at] ? nextPort(st, p, i) : null; break; } last = p[i]; }
+      return { target: p[p.length - 1], nodes: p, side: sideOf(st, p), at: at, port: port, after: at ? last : p[p.length - 1], ok: !at };
+    });
+    var bad = paths.filter(function (x) { return !x.ok; }), good = paths.filter(function (x) { return x.ok; });
+    if (!bad.length) return null;
+    var s = bad[0], r = { at: s.at, port: s.port, after: s.after, target: s.target, side: s.side, paths: paths, okPaths: good.map(function (x) { return x.target; }) };
+    if (good.length) { // 정상 경로와 공유하는 마지막 지점 = 좌우가 갈라지는 곳
+      var g = good[0].nodes, k = 0; while (k < s.nodes.length && s.nodes[k] === g[k]) k++;
+      r.divergeAt = k > 0 ? s.nodes[k - 1] : null; r.compareWith = good[0].target;
+    }
+    return r;
   }
 
   // ---------------------------------------------------------------------------
@@ -413,9 +596,9 @@
     return { mission: missionId, scenario: scenarioId, state: startState(m, sc), log: [], evidence: {}, hints: 0, ops: [], unnecessary: 0, verifyFails: 0, done: false, version: 0, t0: Date.now(), result: null };
   }
   function runInspect(s, tool, target) {
-    var m = mission(s.mission), r = inspect(m, s.state, tool, target);
+    var m = mission(s.mission), r = inspect(m, s.state, tool, target, s.evidence);
     r.evidence.forEach(function (e) { if (!s.evidence[e.key]) s.evidence[e.key] = { label: e.label, at: s.log.length, version: s.version }; });
-    s.log.push({ kind: 'inspect', tool: tool, target: target, title: r.title, status: r.status, lines: r.lines, version: s.version });
+    s.log.push({ kind: 'inspect', tool: tool, target: target, title: r.title, status: r.status, lines: r.lines, meaning: r.meaning, next: r.next, evidence: r.evidence.map(function (e) { return e.key; }), version: s.version });
     return r;
   }
   function runOp(s, path, value) {
@@ -446,13 +629,24 @@
     var score = Math.max(0, 100 - pen.hints - pen.unnecessary - pen.verifyFails - pen.noDiagnosis);
     s.result = { ok: true, score: score, penalties: pen, cause: sc.cause, fix: sc.fix, learn: m.learn, rootFound: rootFound.map(function (k) { return s.evidence[k].label; }), diagnosedFirst: diagnosedFirst,
       evidence: Object.keys(s.evidence).map(function (k) { return { key: k, label: s.evidence[k].label, root: sc.rootEvidence.indexOf(k) >= 0 }; }),
-      fixes: s.ops.filter(function (o) { return o.relevant; }), unnecessaryOps: s.ops.filter(function (o) { return o.unnecessary; }), assess: a, hints: s.hints };
+      fixes: s.ops.filter(function (o) { return o.relevant; }), unnecessaryOps: s.ops.filter(function (o) { return o.unnecessary; }), assess: a, hints: s.hints,
+      why: (m.why || {})[sc.id] || '', core: m.core || [], quiz: m.quiz || null, nextMission: m.nextMission || null, apply: m.apply || '',
+      timeline: s.log.filter(function (e) { return e.kind === 'inspect' || e.kind === 'op'; }).map(function (e) { var o = {}; Object.keys(e).forEach(function (k) { o[k] = e[k]; });
+        if (e.kind === 'inspect') o.decisive = (e.evidence || []).some(function (k) { return sc.rootEvidence.indexOf(k) >= 0; }); return o; }) };
     return { ok: true, result: s.result, assess: a };
+  }
+
+  // 진행 단계 (사용자 행동만으로 계산 — 정답 여부를 미리 드러내지 않음)
+  var STEPS = [['symptom', '증상 파악'], ['inspect', '장비 검사'], ['diagnose', '원인 진단'], ['repair', '복구'], ['verify', '최종 검증']];
+  function progress(s) {
+    var ins = s.log.filter(function (e) { return e.kind === 'inspect'; }), abn = ins.some(function (e) { return e.status === 'bad' || e.status === 'warn'; }),
+      ops = s.log.some(function (e) { return e.kind === 'op'; }), done = [s.log.length > 0, ins.length > 0, abn, ops, !!s.done], cur = done.indexOf(false);
+    return STEPS.map(function (x, i) { return { key: x[0], label: x[1], state: done[i] ? 'done' : i === cur ? 'current' : 'todo' }; });
   }
 
   var API = { NEG: NEG, TYPES: TYPES, CABLE_TYPES: CABLE_TYPES, MISSIONS: MISSIONS, TOOL_INFO: TOOL_INFO, GRADE_TEXT: GRADE_TEXT, CH_LABEL: CH_LABEL,
     mission: mission, scenario: scenario, buildNormal: buildNormal, startState: startState, evaluate: evaluate, inspect: inspect, toolsFor: toolsFor, opsFor: opsFor, assess: assess,
-    getPath: getPath, setPath: setPath, cableById: cableById, cableAt: cableAt, inputChannel: inputChannel, devName: devName, portName: portName,
-    newSession: newSession, runInspect: runInspect, runOp: runOp, useHint: useHint, verify: verify, levels: { gainDb: gainDb, faderDb: faderDb, attDb: attDb, panDb: panDb, grade: grade, dbTxt: dbTxt } };
+    getPath: getPath, setPath: setPath, fullPaths: fullPaths, signalStop: function (m, st) { return signalStop(m, st, evaluate(m, st)); }, cableById: cableById, cableAt: cableAt, inputChannel: inputChannel, devName: devName, portName: portName,
+    newSession: newSession, progress: progress, STEPS: STEPS, runInspect: runInspect, runOp: runOp, useHint: useHint, verify: verify, levels: { gainDb: gainDb, faderDb: faderDb, attDb: attDb, panDb: panDb, grade: grade, dbTxt: dbTxt } };
   if (typeof module !== 'undefined' && module.exports) module.exports = API; else root.PaTsEngine = API;
 })(typeof window !== 'undefined' ? window : this);
