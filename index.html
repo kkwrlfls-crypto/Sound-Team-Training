@@ -1491,6 +1491,18 @@
     .ts-qopt.right { background: #dcfce7; border-color: #16a34a; } .ts-qopt.wrong { background: #fee2e2; border-color: #dc2626; }
     .ts-qfb { margin-top: 8px; border-radius: 10px; padding: 10px 12px; font-size: 0.92rem; } .ts-qfb.ok { background: #f0fdf4; border: 1px solid #bbf7d0; } .ts-qfb.bad { background: #fef2f2; border: 1px solid #fecaca; }
     .ts-final { font-size: 0.9rem; }
+    /* 2026-10-20(2): 원인 골라 제출 → 정답 → 직접 고치기 */
+    .ts-grid > .ts-panel { align-self: start; }
+    .ts-lead { font-size: 0.92rem; color: var(--text-sub); margin: 0 0 12px; line-height: 1.55; word-break: keep-all; }
+    .ts-answer { display: flex; flex-direction: column; gap: 12px; }
+    .ts-answer label { display: flex; flex-direction: column; gap: 4px; } .ts-answer label > span { font-size: 0.9rem; font-weight: 800; color: var(--text-main); }
+    .ts-answer select { width: 100%; font-size: 0.95rem; padding: 9px 10px; border: 1px solid var(--border-color); border-radius: 10px; background: #fff; color: var(--text-main); font-family: inherit; }
+    .ts-submit { width: 100%; text-align: center !important; font-size: 1rem !important; font-weight: 800; padding: 11px 16px !important; margin-top: 4px; }
+    .ts-ansfb { margin-top: 12px; border-radius: 10px; padding: 10px 14px; font-size: 0.92rem; line-height: 1.6; } .ts-ansfb.bad { background: #fef2f2; border: 1px solid #fecaca; } .ts-ansfb.warn { background: #fffbeb; border: 1px solid #fde68a; }
+    .ts-tries { margin-top: 12px; } .ts-tries ol { margin: 2px 0 0 20px; font-size: 0.88rem; } .ts-tries li.ok { color: #047857; font-weight: 700; } .ts-tries li.bad { color: #991b1b; }
+    .ts-correct { background: #f0fdf4; border: 2px solid #16a34a; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+    .ts-correct-t { font-size: 1.15rem; font-weight: 800; color: #166534; margin-bottom: 4px; } .ts-correct p { margin: 4px 0; font-size: 0.92rem; word-break: keep-all; }
+    .ts-panel .ts-verifymsg { margin: 12px 0 4px; }
     /* 2026-10-20: 3D 실습 접이식 「실습 안내」 */
     .pa3d-guide { border: 1px solid #bae6fd; background: #f0f9ff; border-radius: 12px; margin: 4px 0 10px; }
     .pa3d-guide > summary { cursor: pointer; list-style: none; padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; }
@@ -2518,6 +2530,7 @@
     .g3w-tag:hover { background: var(--sta-navy); }
     .g3w-tag.on { background: #0e7490; }
     .g3w-tag.from { background: #f59e0b; color: #1c1300; border-color: #fff; cursor: grabbing; }
+    .g3w-tag.sel { background: #f59e0b; color: #1c1300; border-color: #fff; box-shadow: 0 0 0 3px rgba(245,158,11,0.45); }
     .g3w-tag.over { background: #16a34a; border-color: #fff; transform: scale(1.12); }
     .g3w-views { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin: 0 0 8px; font-size: 0.8rem; }
     .g3w-views span { font-weight: 800; color: var(--sta-navy); margin-right: 2px; }
@@ -2849,7 +2862,7 @@
     <div id="tab7" class="tab-content">
       <div class="level-header">
         <div class="level-title">음향 트러블슈팅</div>
-        <div class="level-desc">이미 설치된 시스템에 고장이 하나 생겼습니다. 증상을 보고 장비와 케이블을 검사해 원인을 찾고, 직접 고친 뒤 최종 검증까지 해 보세요.</div>
+        <div class="level-desc">이미 설치된 시스템에 고장이 하나 생겼습니다. 증상을 읽고 3D 화면에서 장비를 살펴본 뒤 원인을 골라 제출하세요. 맞히면 직접 고치고 최종 확인까지 해 보세요.</div>
       </div>
       <div id="tsRoot" class="ts-root"></div>
     </div>
@@ -6341,6 +6354,7 @@
       e8_L: 'e8', e8_R: 'e8',
       amp_40d: 'amp40d', amp_10d: 'amp10d',
       stagebox: 'rio3224d',
+      console: 'cl5',   // 2026-10-20: CL5 도 사진 카드 대신 3D 모델 (assets3d/cl5_console_data.js 를 따로 불러옴)
       speakon_connector: 'speakon',
     };
 
@@ -6788,6 +6802,8 @@
         });
       });
 
+      gear3dLoadCl5(loader);
+
       wrap.addEventListener('click', gear3dOnCanvasClick);
       wrap.addEventListener('dblclick', gear3dOnCanvasDblClick);
       window.addEventListener('resize', gear3dOnResize);
@@ -6804,6 +6820,25 @@
         // 케이블이 추가/제거될 때만 gear3dUpdateCablesForGear / gear3dRebuildAllCables를 호출합니다.
       }
       tick();
+    }
+
+    // CL5 콘솔 3D 모델(약 2.7MB)은 첫 화면을 느리게 하지 않도록 3D 공간을 열 때 따로 불러옵니다.
+    // 못 불러오면 예전처럼 사진 카드로 표시됩니다(gear3dPlaceAt 이 모델이 없으면 카드로 그림).
+    function gear3dLoadCl5(loader) {
+      function go() {
+        if (!window.CL5_GLB_BASE64) { gear3d.cl5Failed = true; return; }
+        loader.load('data:model/gltf-binary;base64,' + window.CL5_GLB_BASE64, function (gltf) {
+          gltf.scene.traverse(function (o) { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+          const box = new THREE.Box3().setFromObject(gltf.scene);
+          gear3d.models.cl5 = { scene: gltf.scene, offset: new THREE.Vector3(-(box.min.x + box.max.x) / 2, -box.min.y, -(box.min.z + box.max.z) / 2), height: box.max.y - box.min.y };
+        }, undefined, function (err) { gear3d.cl5Failed = true; console.error('[gear3d] CL5 3D 모델을 불러오지 못해 사진 카드로 표시합니다.', err); });
+      }
+      if (window.CL5_GLB_BASE64) { go(); return; }
+      const sc = document.createElement('script');
+      sc.src = 'assets3d/cl5_console_data.js';
+      sc.onload = go;
+      sc.onerror = function () { gear3d.cl5Failed = true; };
+      document.head.appendChild(sc);
     }
 
     function gear3dOnResize() {

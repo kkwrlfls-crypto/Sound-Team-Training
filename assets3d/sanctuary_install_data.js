@@ -116,7 +116,7 @@ window.SANCTUARY_INSTALL = {
     // ---- 방송실 ----
     { id: 'booth_desk', name: '방송실 책상', proc: 'desk', size: [2.2, 0.75, 0.8], color: 0xd9d4cb, decor: true,
       location: 'booth', pos: [3.05, 0.375, -10.95], yawDeg: -90, pitchDeg: 0 },
-    { id: 'cl5', name: 'CL5 콘솔', model: 'Yamaha CL5', proc: 'console', size: [1.053, 0.3, 0.667], color: 0x24272c,
+    { id: 'cl5', name: 'CL5 콘솔', model: 'Yamaha CL5', modelKey: 'cl5', proc: 'console', size: [1.053, 0.3, 0.667], color: 0x24272c,
       location: 'booth', pos: [3.05, 0.9, -11.2], yawDeg: -90, pitchDeg: 0, mount: '방송실 책상',
       img: 'console.jpg',
       role: '모든 입력을 받아 소리를 섞는 디지털 콘솔입니다. Rio 와 무선 수신기의 신호는 Dante(랜선)로, 강대상 마이크는 마이크 케이블로 바로 들어옵니다.' },

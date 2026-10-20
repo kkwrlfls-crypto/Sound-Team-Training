@@ -248,6 +248,42 @@
       nextMission: 'A', apply: '미션 A 의 다른 시나리오에서 「입력 미터와 출력 미터 비교」를 다시 연습해 보세요. 앰프의 SIGNAL LED 와 같은 역할이에요.' }
   };
   MISSIONS.forEach(function (m) { var x = STUDY[m.id]; if (x) Object.keys(x).forEach(function (k) { m[k] = x[k]; }); });
+  // 2026-10-20(2): 검사 기능 대신 「원인을 골라 제출」 → 맞히면 직접 고치기. 3D 화면에서 보이는 것으로 찾도록 힌트·단서 문구를 바꿈
+  var PROBLEMS = { power: '전원이 꺼져 있음', unplugged: '케이블 한쪽 끝이 빠져 있음', wrongPort: '다른 단자(채널)에 꽂혀 있음', micOff: '마이크 스위치가 꺼져 있음',
+    chOff: '채널 ON 버튼이 꺼져 있음 (음소거)', pan: 'PAN 이 한쪽 끝으로 돌아가 있음', fader: '페이더가 내려가 있음', gain: 'GAIN 이 너무 낮음',
+    volume: '볼륨(MASTER·감쇠기)이 끝까지 내려가 있음', broken: '장비 자체가 고장남' };
+  var PROBLEMS_BY = { cable: ['unplugged', 'wrongPort', 'broken'], sm58: ['micOff', 'broken'], mg12xu: ['power', 'chOff', 'pan', 'fader', 'gain', 'broken'],
+    zxa1: ['power', 'volume', 'wrongPort', 'broken'], crown: ['power', 'volume', 'wrongPort', 'broken'], zx1: ['wrongPort', 'broken'] };
+  var ANSWERS = { 'A-1': { t: ['spk'], k: 'power' }, 'A-2': { t: ['mg'], k: 'chOff' }, 'A-3': { t: ['cMic'], k: 'unplugged' },
+    'B-1': { t: ['cR'], k: 'unplugged' }, 'B-2': { t: ['spkR'], k: 'power' }, 'B-3': { t: ['mg'], k: 'pan' },
+    'C-1': { t: ['amp'], k: 'power' }, 'C-2': { t: ['amp'], k: 'volume' }, 'C-3': { t: ['cSpk', 'amp'], k: 'wrongPort' } };
+  var LOOK = { // 힌트: 검사 도구가 아니라 3D 화면에서 무엇을 볼지
+    'A-1': ['신호가 지나가는 순서(마이크 → 믹서 → 스피커)대로 장비를 하나씩 눌러 가까이 살펴보세요.', '액티브 스피커(ZXA1)는 소리를 내려면 신호 말고도 꼭 필요한 것이 있어요.', 'ZXA1 뒷면의 전원 스위치와 POWER LED 를 확인해 보세요.'],
+    'A-2': ['케이블과 전원이 모두 제대로 연결되어 있다면, 믹서 안의 설정을 의심해 보세요.', '마이크가 꽂힌 채널(CH1)에서 신호를 STEREO 로 보내는 버튼들을 살펴보세요.', 'MG12XU CH1 의 ON 버튼에 불이 켜져 있나요?'],
+    'A-3': ['장비 설정보다 먼저, 신호가 지나가는 케이블이 모두 제자리에 꽂혀 있는지 보세요.', '마이크에서 믹서로 가는 구간을 가까이 확인해 보세요.', '마이크 XLR 케이블의 믹서 쪽 끝이 CH1 입력에 꽂혀 있나요?'],
+    'B-1': ['왼쪽은 소리가 나니, 왼쪽과 오른쪽을 같은 항목끼리 비교해 보세요.', '믹서 뒤 오른쪽 경로(케이블 → 스피커)에서 왼쪽과 다른 점을 찾아보세요.', '오른쪽 스피커 XLR 케이블의 스피커 쪽 끝을 확인하세요.'],
+    'B-2': ['왼쪽은 소리가 나니, 왼쪽과 오른쪽을 같은 항목끼리 비교해 보세요.', '오른쪽 스피커 자체를 왼쪽 스피커와 비교해 보세요.', '오른쪽 ZXA1 의 전원 스위치와 POWER LED 를 왼쪽과 비교하세요.'],
+    'B-3': ['왼쪽은 소리가 나니, 왼쪽과 오른쪽을 같은 항목끼리 비교해 보세요.', '케이블과 스피커가 좌우 모두 같다면, 믹서 안에서 좌우를 나누는 곳을 보세요.', 'MG12XU CH1 의 PAN 노브가 어느 쪽을 가리키고 있나요?'],
+    'C-1': ['패시브 스피커는 앰프가 있어야 소리가 나요. 앰프부터 살펴보세요.', '앰프가 동작하고 있는지 앞면을 보세요.', 'Crown 앰프 앞면의 전원 스위치와 POWER LED 를 확인하세요.'],
+    'C-2': ['패시브 스피커는 앰프가 있어야 소리가 나요. 앰프부터 살펴보세요.', '앰프 전원은 켜져 있어요. 앞면의 다른 조절부를 보세요.', 'CH1 감쇠기(볼륨) 노브가 어디까지 돌아가 있나요?'],
+    'C-3': ['패시브 스피커는 앰프가 있어야 소리가 나요. 앰프부터 살펴보세요.', '앰프 뒷면에서 신호가 들어오는 채널과 스피커가 연결된 채널을 비교하세요.', '믹서 신호는 CH1 입력으로 들어와요. 스피커 케이블은 어느 출력에 꽂혀 있나요?'] };
+  var CLUE = {
+    'A-1': 'ZXA1 뒷면 전원 스위치가 OFF 라서 POWER LED 가 꺼져 있었어요. 액티브 스피커는 내장 앰프에 전원이 있어야 소리를 낼 수 있어요.',
+    'A-2': 'MG12XU CH1 의 ON 버튼이 꺼져 있었어요. ON 이 꺼지면 채널 신호가 STEREO 로 가지 않아요(입력 미터에는 신호가 보여도 출력은 0).',
+    'A-3': '마이크 XLR 케이블의 믹서 쪽 끝이 빠져 있었어요. 신호가 믹서까지 도착하지 못하니 그 뒤 장비는 모두 조용해요.',
+    'B-1': '오른쪽 스피커 XLR 케이블의 스피커 쪽 끝이 빠져 있었어요. 왼쪽 경로와 비교하면 바로 보이는 차이예요.',
+    'B-2': '오른쪽 ZXA1 의 전원 스위치가 OFF 였어요. 왼쪽 스피커의 POWER LED 와 비교하면 바로 보이는 차이예요.',
+    'B-3': 'MG12XU CH1 의 PAN 이 왼쪽 끝이었어요. 그래서 마이크 신호가 STEREO L 로만 가고 R 에는 거의 가지 않았어요.',
+    'C-1': 'Crown 앰프 앞면 전원 스위치가 OFF 라 POWER LED 가 꺼져 있었어요. 패시브 스피커는 앰프가 동작해야만 소리가 나요.',
+    'C-2': 'Crown 앰프 CH1 감쇠기(볼륨)가 맨 아래였어요. 앰프가 켜져 있어도 이 채널은 출력이 나가지 않아요.',
+    'C-3': '신호는 앰프 CH1 으로 들어오는데 스피커 케이블은 CH2 출력에 꽂혀 있었어요. STEREO 모드에서 CH1 과 CH2 는 서로 독립이에요.' };
+  MISSIONS.forEach(function (m) { m.scenarios.forEach(function (sc) { if (LOOK[sc.id]) sc.hints = LOOK[sc.id]; if (ANSWERS[sc.id]) sc.answer = ANSWERS[sc.id]; }); if (m.why) Object.keys(CLUE).forEach(function (k) { if (k.charAt(0) === m.id) m.why[k] = CLUE[k]; }); });
+  // 답 보기: 이 미션의 장비·케이블 + 종류별 「무엇이 문제」 목록
+  function answerTargets(m, st) {
+    var L = Object.keys(st.devices).filter(function (id) { return st.devices[id].type !== 'outlet'; }).map(function (id) { return { id: id, name: devName(m, id), problems: PROBLEMS_BY[st.devices[id].type] || ['broken'] }; });
+    return L.concat(st.cables.map(function (c) { return { id: c.id, name: c.label, cable: true, problems: PROBLEMS_BY.cable }; }));
+  }
+
 
   function mission(id) { for (var i = 0; i < MISSIONS.length; i++) if (MISSIONS[i].id === id) return MISSIONS[i]; return null; }
   function scenario(m, sid) { for (var i = 0; i < m.scenarios.length; i++) if (m.scenarios[i].id === sid) return m.scenarios[i]; return null; }
@@ -593,7 +629,7 @@
   // 세션: 기록·증거·힌트·점수
   function newSession(missionId, scenarioId) {
     var m = mission(missionId), sc = scenario(m, scenarioId);
-    return { mission: missionId, scenario: scenarioId, state: startState(m, sc), log: [], evidence: {}, hints: 0, ops: [], unnecessary: 0, verifyFails: 0, done: false, version: 0, t0: Date.now(), result: null };
+    return { mission: missionId, scenario: scenarioId, state: startState(m, sc), log: [], evidence: {}, hints: 0, ops: [], unnecessary: 0, verifyFails: 0, answered: false, wrong: 0, done: false, version: 0, t0: Date.now(), result: null };
   }
   function runInspect(s, tool, target) {
     var m = mission(s.mission), r = inspect(m, s.state, tool, target, s.evidence);
@@ -616,6 +652,13 @@
     s.ops.push(entry); s.log.push(entry);
     return { changed: true, entry: entry, after: after };
   }
+  function submitAnswer(s, target, problem) {
+    var m = mission(s.mission), sc = scenario(m, s.scenario), a = sc.answer, devOk = a.t.indexOf(target) >= 0, ok = devOk && a.k === problem;
+    var tname = (s.state.devices[target] ? devName(m, target) : (cableById(s.state, target) || {}).label) || target;
+    s.log.push({ kind: 'answer', target: target, targetName: tname, problem: problem, problemText: PROBLEMS[problem] || problem, ok: ok, devOk: devOk });
+    if (ok) s.answered = true; else s.wrong = (s.wrong || 0) + 1;
+    return { ok: ok, devOk: devOk, cause: ok ? sc.cause : null, clue: ok ? ((m.why || {})[sc.id] || '') : null };
+  }
   function useHint(s) { var m = mission(s.mission), sc = scenario(m, s.scenario); if (s.hints >= 3) return null; s.hints++; s.log.push({ kind: 'hint', level: s.hints }); return sc.hints[s.hints - 1]; }
   function verify(s) {
     var m = mission(s.mission), sc = scenario(m, s.scenario), a = assess(m, s.state);
@@ -625,13 +668,15 @@
     // 점수: 100 − 힌트 10/단계 − 불필요 조작 5/회(최대 30) − 검증 실패 10/회 − 원인 증거를 고치기 전에 찾지 못하면 20
     var firstFix = s.ops.filter(function (o) { return o.relevant; })[0], rootFound = sc.rootEvidence.filter(function (k) { return s.evidence[k]; });
     var diagnosedFirst = rootFound.length > 0 && firstFix && rootFound.some(function (k) { return s.evidence[k].at < s.log.indexOf(firstFix); });
-    var pen = { hints: s.hints * 10, unnecessary: Math.min(30, s.unnecessary * 5), verifyFails: s.verifyFails * 10, noDiagnosis: diagnosedFirst ? 0 : 20 };
-    var score = Math.max(0, 100 - pen.hints - pen.unnecessary - pen.verifyFails - pen.noDiagnosis);
+    var answerMode = s.log.some(function (e) { return e.kind === 'answer'; });   // 원인 고르기 방식: 진단 = 정답 제출
+    if (answerMode) diagnosedFirst = !!s.answered;
+    var pen = { hints: s.hints * 10, unnecessary: Math.min(30, s.unnecessary * 5), verifyFails: s.verifyFails * 10, noDiagnosis: diagnosedFirst ? 0 : 20, wrongAnswers: Math.min(30, (s.wrong || 0) * 10) };
+    var score = Math.max(0, 100 - pen.hints - pen.unnecessary - pen.verifyFails - pen.noDiagnosis - pen.wrongAnswers);
     s.result = { ok: true, score: score, penalties: pen, cause: sc.cause, fix: sc.fix, learn: m.learn, rootFound: rootFound.map(function (k) { return s.evidence[k].label; }), diagnosedFirst: diagnosedFirst,
       evidence: Object.keys(s.evidence).map(function (k) { return { key: k, label: s.evidence[k].label, root: sc.rootEvidence.indexOf(k) >= 0 }; }),
       fixes: s.ops.filter(function (o) { return o.relevant; }), unnecessaryOps: s.ops.filter(function (o) { return o.unnecessary; }), assess: a, hints: s.hints,
       why: (m.why || {})[sc.id] || '', core: m.core || [], quiz: m.quiz || null, nextMission: m.nextMission || null, apply: m.apply || '',
-      timeline: s.log.filter(function (e) { return e.kind === 'inspect' || e.kind === 'op'; }).map(function (e) { var o = {}; Object.keys(e).forEach(function (k) { o[k] = e[k]; });
+      wrongAnswers: s.wrong || 0, timeline: s.log.filter(function (e) { return e.kind === 'inspect' || e.kind === 'op' || e.kind === 'answer'; }).map(function (e) { var o = {}; Object.keys(e).forEach(function (k) { o[k] = e[k]; });
         if (e.kind === 'inspect') o.decisive = (e.evidence || []).some(function (k) { return sc.rootEvidence.indexOf(k) >= 0; }); return o; }) };
     return { ok: true, result: s.result, assess: a };
   }
@@ -647,6 +692,6 @@
   var API = { NEG: NEG, TYPES: TYPES, CABLE_TYPES: CABLE_TYPES, MISSIONS: MISSIONS, TOOL_INFO: TOOL_INFO, GRADE_TEXT: GRADE_TEXT, CH_LABEL: CH_LABEL,
     mission: mission, scenario: scenario, buildNormal: buildNormal, startState: startState, evaluate: evaluate, inspect: inspect, toolsFor: toolsFor, opsFor: opsFor, assess: assess,
     getPath: getPath, setPath: setPath, fullPaths: fullPaths, signalStop: function (m, st) { return signalStop(m, st, evaluate(m, st)); }, cableById: cableById, cableAt: cableAt, inputChannel: inputChannel, devName: devName, portName: portName,
-    newSession: newSession, progress: progress, STEPS: STEPS, runInspect: runInspect, runOp: runOp, useHint: useHint, verify: verify, levels: { gainDb: gainDb, faderDb: faderDb, attDb: attDb, panDb: panDb, grade: grade, dbTxt: dbTxt } };
+    newSession: newSession, submitAnswer: submitAnswer, answerTargets: answerTargets, PROBLEMS: PROBLEMS, progress: progress, STEPS: STEPS, runInspect: runInspect, runOp: runOp, useHint: useHint, verify: verify, levels: { gainDb: gainDb, faderDb: faderDb, attDb: attDb, panDb: panDb, grade: grade, dbTxt: dbTxt } };
   if (typeof module !== 'undefined' && module.exports) module.exports = API; else root.PaTsEngine = API;
 })(typeof window !== 'undefined' ? window : this);

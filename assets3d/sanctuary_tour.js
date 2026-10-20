@@ -333,7 +333,7 @@
     var G = g3();
     if (!G || !G.inited || !G.modelRoot) return;
     if (!waitStart) waitStart = Date.now();
-    var missing = neededModelKeys().filter(function (k) { return !G.models[k]; });
+    var missing = neededModelKeys().filter(function (k) { return !G.models[k] && !(k === 'cl5' && G.cl5Failed); });
     if (missing.length && Date.now() - waitStart < 25000) return;
     if (missing.length) console.warn('[둘러보기] 장비 3D 모델을 불러오지 못해 임시 상자로 표시합니다:', missing.join(', '));
     build();
@@ -363,7 +363,15 @@
     var tour = tourLike();
     if (T.mode !== 'trace') stopTrace();
     if (T.cableRoot) T.cableRoot.visible = !!T.showCables && T.mode !== 'trace';
-    if (T.root) T.root.visible = tour;
+    // 실습 모드에서도 책상·랙 캐비닛 같은 가구(decor)는 보이게 둠 — 장비가 허공에 뜬 것처럼 보이지 않도록
+    if (T.root) {
+      T.root.visible = true;
+      T.root.children.forEach(function (c) {
+        if (c === T.cableRoot || c === T.pulseGroup) return;
+        var id = c.userData && c.userData.tourId, d = id && DATA.devices.find(function (x) { return x.id === id; });
+        c.visible = tour || !!(d && d.decor);
+      });
+    }
     T.labels.forEach(function (o) { o.visible = tour; });
     practiceObjects(function (o) { o.visible = !tour; });
     var G = g3();
