@@ -93,18 +93,42 @@
           ['b', '전원 케이블', '전원 케이블은 장비에 전기를 주는 선이에요. 소리 신호는 지나가지 않아요.'],
           ['c', 'speakON 스피커 케이블', '맞아요. 앰프 출력(큰 전력)을 스피커로 보내는 전용 케이블이에요.']] } }
   };
-  function guideHtml(sid) {
+  // 2026-10-20(2): 접이식 대신 「① 먼저 배우기 → ② 연결 실습」 순서. 배우기 화면은 펼쳐진 채로 보이고,
+  //  「연결 실습 시작」을 누르면 실습 화면으로 넘어감(3D 도 바로 불러옴). 확인 문제는 실습 화면 아래에서 풂.
+  var LEARN_KEY = 'soundTrainerPa3dLearned_v1';
+  function learned(sid) { try { return !!JSON.parse(localStorage.getItem(LEARN_KEY) || '{}')[sid]; } catch (e) { return false; } }
+  function setLearned(sid) { try { var o = JSON.parse(localStorage.getItem(LEARN_KEY) || '{}'); o[sid] = true; localStorage.setItem(LEARN_KEY, JSON.stringify(o)); } catch (e) { /* 저장 안 돼도 진행 */ } }
+  function learnHtml(sid) {
     var g = GUIDE[sid]; if (!g) return '';
     function ul(a) { return '<ul>' + a.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'; }
     function dl(a) { return '<ul class="pa3d-gdl">' + a.map(function (x) { return '<li><b>' + esc(x[0]) + '</b> — ' + esc(x[1]) + '</li>'; }).join('') + '</ul>'; }
-    return '<details class="pa3d-guide" data-role="guide"><summary><span>📘 실습 안내 · 이번에 배울 내용</span><small>' + esc(g.brief) + '</small></summary><div class="pa3d-gbody">' +
+    return '<div class="pa3d-gbody pa3d-learnbody"><p class="pa3d-brief">' + esc(g.brief) + '</p>' +
       '<h5>🎯 학습 목표</h5>' + ul(g.goal) + '<h5>🎛 장비별 역할</h5>' + dl(g.roles) +
       '<h5>🔀 신호가 흐르는 순서</h5><div class="pa3d-gflow">' + g.flow.map(function (x) { return '<span>' + esc(x) + '</span>'; }).join('<i>→</i>') + '</div>' +
       '<h5>🔌 케이블을 이렇게 고르는 이유</h5>' + dl(g.cables) + '<h5>🪜 실습 단계</h5><ol>' + g.steps.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ol>' +
-      '<h5>⚠️ 자주 하는 실수</h5>' + ul(g.mistakes) +
-      '<h5>❓ 확인 문제 <small>(실습을 마친 뒤 풀어 보세요)</small></h5><p class="pa3d-gq">' + esc(g.quiz.q) + '</p><div class="pa3d-gopts">' + g.quiz.options.map(function (o) { return '<button type="button" class="pa3d-btn pa3d-gopt" data-gq="' + o[0] + '">' + o[0].toUpperCase() + '. ' + esc(o[1]) + '</button>'; }).join('') + '</div><div class="pa3d-gfb" data-role="gfb" hidden></div>' +
-      '<p class="pa3d-gnote">연결과 조작은 실제 장비 구성을 바탕으로 한 교육용 시뮬레이션이에요.</p></div></details>';
+      '<h5>⚠️ 자주 하는 실수</h5>' + ul(g.mistakes) + '</div>';
   }
+  function quizHtml(sid) {
+    var g = GUIDE[sid]; if (!g) return '';
+    return '<div class="pa3d-quiz"><h5>❓ 확인 문제 <small>(실습을 마쳤으면 풀어 보세요)</small></h5><p class="pa3d-gq">' + esc(g.quiz.q) + '</p><div class="pa3d-gopts">' + g.quiz.options.map(function (o) { return '<button type="button" class="pa3d-btn pa3d-gopt" data-gq="' + o[0] + '">' + o[0].toUpperCase() + '. ' + esc(o[1]) + '</button>'; }).join('') + '</div><div class="pa3d-gfb" data-role="gfb" hidden></div>' +
+      '<p class="pa3d-gnote">연결과 조작은 실제 장비 구성을 바탕으로 한 교육용 시뮬레이션이에요.</p></div>';
+  }
+  function showPane(card, which) {
+    var L = card.querySelector('[data-role=learnPane]'), P = card.querySelector('[data-role=practicePane]'); if (!L || !P) return;
+    L.hidden = which !== 'learn'; P.hidden = which !== 'practice';
+    card.querySelectorAll('[data-pstep]').forEach(function (b) { var on = b.getAttribute('data-pstep') === which; b.classList.toggle('on', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); });
+    var inst = instances[card.getAttribute('data-pa3d')]; if (inst && inst.pause) { try { inst.pause(which !== 'practice'); } catch (e) { /* 아직 시작 전 */ } }
+  }
+  function onStepClick(e) {
+    var b = e.target.closest && e.target.closest('[data-pstep], [data-role=learnDone]'); if (!b) return; var card = b.closest('[data-pa3d]'); if (!card) return;
+    var sid = card.getAttribute('data-pa3d'), to = b.getAttribute('data-role') === 'learnDone' ? 'practice' : b.getAttribute('data-pstep');
+    if (to === 'practice') {
+      setLearned(sid); showPane(card, 'practice');
+      var stt = card.querySelector('[data-role=start]'); if (stt && stt.style.display !== 'none' && b.getAttribute('data-role') === 'learnDone') window.pa3dStart(sid);
+      if (b.getAttribute('data-role') === 'learnDone') card.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    } else { showPane(card, 'learn'); card.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+  }
+  document.addEventListener('click', onStepClick);
   function onGuideClick(e) {
     var b = e.target.closest && e.target.closest('[data-gq]'); if (!b) return; var card = b.closest('[data-pa3d]'), g = card && GUIDE[card.getAttribute('data-pa3d')]; if (!g) return;
     var o = b.getAttribute('data-gq'), pick = g.quiz.options.filter(function (x) { return x[0] === o; })[0], ok = o === g.quiz.answer, fb = card.querySelector('[data-role=gfb]');
@@ -159,7 +183,10 @@
     card.innerHTML =
       '<h3>🔌 3D 실습 ' + esc(sc.title) + '</h3>' +
       '<p class="pa3d-intro"><b>' + esc(sc.gear) + '</b></p>' +   /* 2026-10-19: 설명·조작법 문단은 빼 달라는 요청으로 삭제 */
-      guideHtml(sid) +   /* 2026-10-20: 설명은 접이식 「실습 안내」로 (기본은 접힘) */
+      '<div class="pa3d-steps" role="tablist"><button type="button" role="tab" data-pstep="learn">① 먼저 배우기</button><span aria-hidden="true">→</span><button type="button" role="tab" data-pstep="practice">② 연결 실습</button></div>' +
+      '<div class="pa3d-learn" data-role="learnPane">' + learnHtml(sid) +
+        '<div class="pa3d-learnnext"><button type="button" class="btn pa3d-learndone" data-role="learnDone">✅ 다 읽었어요 — 연결 실습 시작 →</button></div></div>' +
+      '<div class="pa3d-practicepane" data-role="practicePane" hidden>' +
       '<div class="pa3d-row"><span class="pa3d-label">케이블</span>' + sc.cables.map(function (c) { return '<button type="button" class="pa3d-btn pa3d-cable-btn" data-cable="' + c + '">' + CABLE_INFO[c].label + '</button>'; }).join('') + '</div>' +
       '<div class="pa3d-viewport" data-role="viewport"><div class="pa3d-start" data-role="start"><div>' + esc(sc.gear) + ' 3D 모델을 불러옵니다 (휴대폰에서는 몇 초 걸릴 수 있어요).</div>' +
       '<button type="button" class="btn" onclick="pa3dStart(\'' + sid + '\')">▶ 실습 시작</button></div><div class="pa3d-tip" data-role="tip"></div><div class="pa3d-busy" data-role="busy">케이블을 놓는 중…</div></div>' +
@@ -167,7 +194,8 @@
       '<div class="pa3d-row"><span class="pa3d-label">보기</span>' + sc.views.map(function (v, i) { return '<button type="button" class="pa3d-btn pa3d-vbtn' + (i ? '' : ' on') + '" data-view="' + v + '">' + ALL_VIEWS[v].label + '</button>'; }).join('') + '</div>' +
       '<div class="pa3d-grid"><div class="pa3d-box" data-role="mission"></div><div class="pa3d-box"><h4>장비 조작</h4><div data-role="controls" class="pa3d-ctls"><span class="pa3d-empty">실습을 시작하면 나타나요.</span></div></div>' +
       '<div class="pa3d-box"><h4>전원 · 소리</h4><div data-role="power"></div><div data-role="speakers"></div></div><div class="pa3d-box"><h4>연결한 케이블</h4><ul class="pa3d-conns" data-role="conns"></ul></div></div>' +
-      '<div class="pa3d-actions"><button type="button" class="pa3d-btn" data-role="solve">💡 정답 보기 (연결 + 조작)</button><button type="button" class="curriculum-reset-btn" data-role="reset">처음 상태로</button></div>';
+      '<div class="pa3d-actions"><button type="button" class="pa3d-btn" data-role="solve">💡 정답 보기 (연결 + 조작)</button><button type="button" class="curriculum-reset-btn" data-role="reset">처음 상태로</button></div>' +
+      quizHtml(sid) + '</div>';
   }
 
   // ---------------------------------------------------------------------------
@@ -627,10 +655,10 @@
   // ---------------------------------------------------------------------------
   var instances = {};
   function setup() {
-    document.querySelectorAll('[data-pa3d]').forEach(function (card) { var sid = card.getAttribute('data-pa3d'); if (!SCENARIOS[sid]) return; renderShell(card, sid); instances[sid] = createPractice(card, sid); });
+    document.querySelectorAll('[data-pa3d]').forEach(function (card) { var sid = card.getAttribute('data-pa3d'); if (!SCENARIOS[sid]) return; renderShell(card, sid); instances[sid] = createPractice(card, sid); showPane(card, learned(sid) ? 'practice' : 'learn'); });
   }
   window.PaPractice3D = {
-    SCENARIOS: SCENARIOS, GUIDE: GUIDE, SOLUTIONS: SOLUTIONS, PORTS: PORTS, VIEWS: ALL_VIEWS,
+    SCENARIOS: SCENARIOS, GUIDE: GUIDE, showPane: function (sid, w) { var c = document.querySelector('[data-pa3d="' + sid + '"]'); if (c) showPane(c, w); }, SOLUTIONS: SOLUTIONS, PORTS: PORTS, VIEWS: ALL_VIEWS,
     get: function (sid) { return instances[sid] || null; }, instances: instances,
     levels: { mgGainDb: mgGainDb, faderDb: faderDb, attDb: attDb, zxMicGainDb: zxMicGainDb, grade: grade, SRC_DBU: SRC_DBU, SENS: SENS }
   };
@@ -654,6 +682,7 @@
   window.pa3dStart = function (sid) {
     var inst = instances[sid || 's1']; if (!inst) return;
     var card = document.querySelector('[data-pa3d="' + (sid || 's1') + '"]'), st = card && card.querySelector('[data-role="start"]'); if (st) st.style.display = 'none';
+    if (card) { var pp = card.querySelector('[data-role=practicePane]'); if (pp && pp.hidden) showPane(card, 'practice'); }
     var msg = card && card.querySelector('[data-role="msg"]');
     reloadMissingModels(function (n) {
       if (n && msg) { msg.textContent = '3D 모델 파일 ' + n + '개를 다시 받아 왔어요.'; msg.className = 'pa3d-msg'; }
