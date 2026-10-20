@@ -7,23 +7,28 @@
    - 글을 고칠 때는 이 파일만 고치면 됩니다. (나중에 편집 모드에서 바로 고칠 수 있게 연결할 예정)
    ============================================================================= */
 window.STA_PATHS = [
+  /* 2026-10-21 목차 정리: 각 경로 = 기초 이론(선수 학습) → 학습 모듈 → 그 경로에 맞는 실습 탭 */
   { id: 'hardware', title: '하드웨어 이해', icon: 'mic', img: 'img/modules/hw_mic.jpg',
     sum: '장비의 구조를 알고, 어떻게 연결되는지 이해합니다.',
     lead: '실제 장비를 식별하고, 구조와 원리를 이해하며, 올바르게 연결할 수 있는 기본기를 다집니다.',
     route: ['마이크', '케이블', '콘솔', '앰프', '스피커'],
-    tip: '소리가 지나가는 순서대로 배우면 연결과 고장 진단이 쉬워져요.',
-    modules: ['mic', 'cable', 'console', 'amp', 'speaker'] },
+    tip: '소리가 지나가는 순서대로 배우고, 확성 시스템의 기본 → 3층 음향 시스템 실습으로 실제 연결을 익혀요.',
+    prereq: ['signal-flow'],
+    modules: ['mic', 'cable', 'console', 'amp', 'speaker'],
+    practice: ['tab1', 'tab6', 'tab2'], practiceTitle: '장비 연결 실습' },
   { id: 'mixing', title: '믹싱 스킬', icon: 'fader', img: 'console_strip.jpg',
     sum: '신호 레벨을 관리하고, 음색·다이내믹·공간감을 조절합니다.',
     lead: '신호 레벨을 올바르게 관리하는 것부터 시작해, 음색과 다이내믹, 공간감을 다루는 방법을 익힙니다.',
     route: ['Gain Structure', 'EQ', 'Gate', 'Compressor', '공간계 이펙트'],
-    tip: '먼저 「기초 이론」의 신호 흐름 · GAIN과 페이더 레슨을 마치고 시작하세요.',
-    prereq: ['signal-flow', 'gain-fader', 'aux-monitor'],
-    modules: ['gain-structure', 'eq', 'gate', 'compressor', 'fx-space'] },
+    tip: '먼저 「기초 이론」의 GAIN과 페이더 · HPF와 EQ · AUX와 모니터 레슨을 보고 시작하세요.',
+    prereq: ['gain-fader', 'hpf-eq', 'aux-monitor'],
+    modules: ['gain-structure', 'eq', 'gate', 'compressor', 'fx-space'],
+    practice: ['tab3'], practiceTitle: '귀 훈련' },
   { id: 'field', title: '통합 실전 훈련', icon: 'bus', img: 'jack_strip.jpg',
-    sum: '배운 내용을 실제 시스템과 현장 시나리오에 적용합니다.',
-    lead: '3D 실습, 콘솔 실습, 3층 음향 시스템, 트러블슈팅 미션으로 배운 것을 현장처럼 연습합니다.',
-    practice: ['tab1', 'tab6', 'tab5', 'tab2', 'tab7', 'tab3'] }
+    sum: '배운 내용을 실제 예배 진행과 고장 상황에 적용합니다.',
+    lead: '예배 식순에 맞춘 콘솔 운용과 고장 진단 미션으로, 배운 것을 현장처럼 연습합니다.',
+    tip: '하드웨어 이해와 믹싱 스킬을 마친 뒤 도전해 보세요. 이 경로는 내용을 더 보완할 예정이에요.',
+    practice: ['tab5', 'tab7'], practiceTitle: '실전 훈련' }
 ];
 
 window.STA_MODULES = {
@@ -263,5 +268,4 @@ window.STA_MODULES = {
   'fx-space': { id: 'fx-space', path: 'mixing', no: 5, status: 'planned', level: '중급', minutes: 35, title: '공간계 이펙트', sub: 'Reverb 와 Delay 로 공간감 더하기', thumb: 'reverb', topics: ['Reverb·Delay 차이', 'Decay·Pre-delay', 'Delay Time·반복', 'Wet/Dry', 'FX Send/Return', '공간감과 명료도'] }
 };
 
-/* 10주 커리큘럼 ↔ 학습 모듈 (주차 목표와 직접 관련 있는 것만) */
-window.STA_WEEK_MODULES = { 3: ['gain-structure'], 6: ['mic'], 7: ['mic'], 8: ['gain-structure'] };
+/* 2026-10-21: 10주 커리큘럼 삭제로 주차 연결(STA_WEEK_MODULES)도 삭제 */

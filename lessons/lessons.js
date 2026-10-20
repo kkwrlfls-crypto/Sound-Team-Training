@@ -1,13 +1,13 @@
 /* =============================================================================
    학습 대시보드(홈, #tabHome) + 미니 이론 레슨(#tabLesson) (2026-10-19)
-   - 데이터: lessons/lessons_data.js (window.STA_LESSONS, STA_WEEK_LESSONS, STA_ADVANCED)
+   - 데이터: lessons/lessons_data.js (window.STA_LESSONS, STA_ADVANCED)
    - 기존 함수(switchTab, renderCurriculum, mg12xuSec, SanctuaryTour …)는 고치지 않고 불러 쓰기만 합니다.
    - 진행 상태: localStorage 'soundTrainerLessons_v1' (기존 커리큘럼·점수 저장과 같은 방식, 브라우저에만 저장)
      레슨 완료 = 이해도 확인 문제를 모두 맞혔을 때. 레슨을 열거나 버튼만 누른 것은 완료로 치지 않습니다.
    ============================================================================= */
 (function () {
   'use strict';
-  var LESSONS = window.STA_LESSONS || [], WEEK = window.STA_WEEK_LESSONS || {}, ADV = window.STA_ADVANCED || [];
+  var LESSONS = window.STA_LESSONS || [], ADV = window.STA_ADVANCED || [];
   var KEY = 'soundTrainerLessons_v1';
   var SECS = [
     { k: 'A', n: 1, name: '핵심 개념', panel: 'learn' },
@@ -19,7 +19,7 @@
   var PANELS = [
     { id: 'learn', name: '학습하기' }, { id: 'practice', name: '실습 연결' }, { id: 'quiz', name: '이해도 확인' }, { id: 'deeper', name: '더 깊이 공부하기' }
   ];
-  var cur = null, curSec = 1, homeFilter = 'all', backTo = null;
+  var cur = null, curSec = 1, backTo = null;
 
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -30,7 +30,6 @@
   function put(id, s) { var a = load(); a[id] = s; save(a); }
   function markSeen(id, n) { var s = st(id); if (s.seen.indexOf(n) < 0) { s.seen.push(n); put(id, s); } }
   function status(l) { if (l.status !== 'ready') return 'soon'; var s = st(l.id); return s.done ? 'done' : (s.seen.length ? 'doing' : 'new'); }
-  function curriculumDone() { try { var p = JSON.parse(localStorage.getItem('soundTrainerCurriculumProgress_v1')) || {}; return p; } catch (e) { return {}; } }
 
   /* ------------------------------------------------------------- 그림(아이콘·썸네일) */
   var ICON = {
@@ -77,20 +76,6 @@
   }
 
   /* ------------------------------------------------------------- 홈(대시보드) */
-  var PRACTICE = [
-    { tab: 'tab1', title: '확성 시스템 기초', sum: '세 가지 연결 구성을 3D 로 직접 연결해 봅니다.' },
-    { tab: 'tab6', title: 'MG12XU 실습', sum: '실제 콘솔 사진 위에서 연결하고, 소리를 들으며 조작합니다.' },
-    { tab: 'tab5', title: 'CL5 콘솔 트레이닝', sum: '예배 식순에 맞춰 채널을 켜고 DCA 를 다룹니다.' },
-    { tab: 'tab3', title: 'Ear Training', sum: '볼륨 변화, 대역별 소리, 밸런스를 귀로 훈련합니다.' },
-    { tab: 'tab2', title: '3층 음향 시스템', sum: '실제 설치 위치와 신호가 지나는 길을 3D 로 봅니다.' },
-    { tab: 'tab7', title: '음향 트러블슈팅', sum: '고장 증상을 보고 원인을 찾아 고칩니다.' }
-  ];
-  var PHASES = [
-    { name: '오리엔테이션', weeks: [1], label: '1주차', color: '#2b8fd6', ico: '<path d="M4 6h16v12H4z"/><path d="M8 10h8M8 14h5"/>' },
-    { name: '모니터 스텝', weeks: [2, 3, 4, 5], label: '2–5주차', color: '#8b5cf6', ico: '<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/>' },
-    { name: '단상 스텝', weeks: [6, 7], label: '6–7주차', color: '#0f2747', ico: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/>' },
-    { name: '오퍼레이팅', weeks: [8, 9, 10], label: '8–10주차', color: '#0e7490', ico: '<path d="M6 4v16M12 4v16M18 4v16"/><rect x="4" y="13" width="4" height="3"/><rect x="10" y="7" width="4" height="3"/><rect x="16" y="11" width="4" height="3"/>' }
-  ];
   function cardLesson(l) {
     var s = status(l), soon = s === 'soon';
     var stTxt = { done: '완료 ✓', doing: '학습 중', new: '', soon: '' }[s];
@@ -100,49 +85,38 @@
       '<div class="home-card__meta"><span class="home-tag' + (soon ? ' soon' : '') + '">' + (soon ? '준비 중' : esc(l.level)) + '</span><span>⏱ 약 ' + l.minutes + '분</span>' +
       (stTxt ? '<span class="home-status ' + s + '">' + stTxt + '</span>' : '') + '</div></div></button>';
   }
-  function cardPractice(p) {
-    return '<button type="button" class="home-card" data-go-tab="' + p.tab + '"><div class="home-card__thumb">' + thumbHtml('practice-' + p.tab) + '</div><div class="home-card__body">' +
-      '<div class="home-card__title">' + esc(p.title) + '</div><div class="home-card__sum">' + esc(p.sum) + '</div>' +
-      '<div class="home-card__meta"><span class="home-tag practice">실습</span></div></div></button>';
-  }
-  function cardAdv(a) {
-    var need = a.need.map(function (id) { var l = lessonById(id); return l ? l.title : id; }).join(', ');
-    return '<div class="home-card" aria-disabled="true" role="group"><div class="home-card__body"><div class="home-card__title">' + esc(a.title) + '</div>' +
-      '<div class="home-card__sum">먼저 배울 것: ' + esc(need) + '</div><div class="home-card__meta"><span class="home-tag adv">심화 ' + a.level + '단계</span><span class="home-tag soon">준비 중</span></div></div></div>';
-  }
-  function phaseCards() {
-    var p = curriculumDone();
-    return PHASES.map(function (ph, i) {
-      var done = ph.weeks.filter(function (w) { return p[w]; }).length;
-      return '<button type="button" class="home-phase" data-phase="' + esc(ph.name) + '"><span class="home-phase__ico" style="background:' + ph.color + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + ph.ico + '</svg></span>' +
-        '<div><div class="home-phase__t">' + (i + 1) + '. ' + esc(ph.name) + '</div><div class="home-phase__s">' + ph.label + ' · ' + done + '/' + ph.weeks.length + ' 완료</div>' +
-        '<div class="home-phase__bar"><i style="width:' + Math.round(done / ph.weeks.length * 100) + '%"></i></div></div></button>';
-    }).join('');
+  /* 2026-10-21: 심화 주제 → 그 내용을 다루는 학습 모듈의 이론 주제(또는 실습)로 바로 연결 */
+  var ADV_GO = {
+    '데시벨, 전압, 전력 및 신호 레벨': { module: 'amp', find: '데시벨' },
+    '게인 구조, 헤드룸과 노이즈 플로어': { module: 'gain-structure', find: '헤드룸' },
+    '주파수, 파장, 위상과 극성': { module: 'eq', find: '파장' },
+    '마이크 지향성과 피드백': { module: 'mic', find: '지향성' },
+    '반사음과 시간 지연': { module: 'fx-space', find: '반사음' },
+    '스피커의 지향성 및 시스템 튜닝 기초': { module: 'speaker', find: '튜닝' },
+    '아날로그 및 디지털 오디오 연결': { module: 'cable', find: '디지털' },
+    '네트워크 오디오와 시스템 운용': { module: 'cable', find: '네트워크' },
+    '현장 트러블슈팅의 진단 원리': { tab: 'tab7' }
+  };
+  function advWhere(a) { var g = ADV_GO[a.title]; if (!g) return null; if (g.tab) return { g: g, label: '음향 트러블슈팅 실습' }; var m = (window.STA_MODULES || {})[g.module]; return m && m.status === 'ready' ? { g: g, label: '「' + m.title + '」 모듈' } : null; }
+  function cardAdvOpen(a, i) {
+    var w = advWhere(a), need = a.need.map(function (id) { var l = lessonById(id); return l ? l.title : id; }).join(', ');
+    return '<button type="button" class="home-card home-adv" data-adv="' + i + '"' + (w ? '' : ' aria-disabled="true"') + '><div class="home-card__body"><div class="home-card__title">' + esc(a.title) + '</div>' +
+      '<div class="home-card__sum">' + (w ? '이어서 배울 곳: ' + esc(w.label) : '준비 중') + '</div><div class="home-card__sum home-adv__need">먼저 배울 것: ' + esc(need) + '</div><div class="home-card__meta"><span class="home-tag adv">심화 ' + a.level + '단계</span></div></div></button>';
   }
   function renderHome() {
     var root = $('tabHome'); if (!root) return;
     var ready = LESSONS.filter(function (l) { return l.status === 'ready'; });
     var doneN = ready.filter(function (l) { return st(l.id).done; }).length;
-    var cp = curriculumDone(), weeksDone = Object.keys(cp).filter(function (k) { return cp[k]; }).length;
-    var items, title;
-    if (homeFilter === 'theory') { items = LESSONS.map(cardLesson).join(''); title = '기초 이론'; }
-    else if (homeFilter === 'practice') { items = PRACTICE.map(cardPractice).join(''); title = '실습'; }
-    else if (homeFilter === 'adv') { items = ADV.map(cardAdv).join(''); title = '심화 학습 (준비 중)'; }
-    else if (homeFilter === 'all-more') { items = LESSONS.map(cardLesson).join('') + PRACTICE.map(cardPractice).join(''); title = '전체 학습 과정'; }
-    else { items = LESSONS.map(cardLesson).join(''); title = '추천 학습 과정'; }
-    var filters = [['all', '전체'], ['theory', '기초 이론'], ['practice', '실습'], ['adv', '심화 학습']]   // 2026-10-20: 「학습 흐름」 줄과 「10주 커리큘럼」 필터는 빼 달라는 요청으로 삭제(커리큘럼은 아래 바로가기로);
+    var mods = Object.keys(window.STA_MODULES || {}).map(function (k) { return STA_MODULES[k]; }).filter(function (m) { return m.status === 'ready'; });
+    var modDone = window.STAModules ? mods.filter(function (m) { return STAModules.status(m.id) === 'done'; }).length : 0;
     root.innerHTML =
       '<section class="home-hero"><div class="home-hero__bg">' + heroSvg() + '</div><div class="home-hero__text">' +
       '<h1>교회 음향팀을 위한<br>실습 중심 교육 플랫폼</h1><p>장비를 배우고, 직접 조작하고, 소리를 들어<br>실제 현장에서 바로 사용할 수 있는 음향 교육을 경험하세요.</p>' +
-      '<div class="home-hero__stats"><span class="home-hero__stat">이론 레슨 <b>' + doneN + '</b> / ' + ready.length + ' 완료</span><span class="home-hero__stat">10주 과정 <b>' + weeksDone + '</b> / 10 주차</span></div></div>' +
+      '<div class="home-hero__stats"><span class="home-hero__stat">기초 이론 <b>' + doneN + '</b> / ' + ready.length + ' 완료</span><span class="home-hero__stat">학습 모듈 <b>' + modDone + '</b> / ' + mods.length + ' 완료</span></div></div>' +
       '<div class="home-hero__script" aria-hidden="true">Better Sound<br>Better Ministry</div></section>' +
-      (window.STAModules ? STAModules.homeHtml() : '') +   /* 2026-10-20: 전체 학습 과정(하드웨어 이해·믹싱 스킬·통합 실전 훈련) */
-      '<div class="home-filters" role="tablist" aria-label="학습 과정 보기">' + filters.map(function (f) {
-        var on = homeFilter === f[0] || (f[0] === 'all' && homeFilter === 'all-more');
-        return '<button type="button" role="tab" class="home-filter" data-filter="' + f[0] + '" aria-selected="' + (on ? 'true' : 'false') + '">' + f[1] + '</button>';
-      }).join('') + '</div>' +
-      (homeFilter === 'curr' ? '' : '<section class="home-sec"><div class="home-sec-head"><h2>' + title + '</h2>' + (homeFilter === 'all' ? '<button type="button" class="home-more" data-filter="all-more">전체 보기 →</button>' : '') + '</div><div class="home-cards">' + items + '</div></section>') +
-      '<section class="home-sec" id="homePhases"><div class="home-sec-head"><h2>10주 커리큘럼 바로가기</h2><button type="button" class="home-more" data-go-tab="tab4">커리큘럼 전체 →</button></div><div class="home-phases">' + phaseCards() + '</div></section>';
+      (window.STAModules ? STAModules.homeHtml() : '') +   /* 하드웨어 이해 · 믹싱 스킬 · 통합 실전 훈련 */
+      '<section class="home-sec" id="homeTheory"><div class="home-sec-head"><h2>기초 이론</h2><span class="mod-home-sub">학습 과정을 시작하기 전에 먼저 보면 좋은 짧은 레슨이에요.</span></div><div class="home-cards">' + LESSONS.map(cardLesson).join('') + '</div></section>' +
+      '<section class="home-sec" id="homeAdv"><div class="home-sec-head"><h2>심화 주제</h2><span class="mod-home-sub">더 깊이 알고 싶은 주제를, 그 내용을 다루는 과정으로 바로 열어요.</span></div><div class="home-cards">' + ADV.map(cardAdvOpen).join('') + '</div></section>';
   }
 
   /* ------------------------------------------------------------- 레슨 화면 */
@@ -273,8 +247,9 @@
   }
 
   /* ------------------------------------------------------------- 실습 화면·커리큘럼에 이론 연결 */
-  var TAB_MODULES = { tab1: ['mic'], tab6: ['gain-structure'], tab5: ['gain-structure'], tab7: ['mic'] };   // 2026-10-20: 학습 모듈 연결
-  var TAB_LESSONS = { tab1: ['signal-flow'], tab2: ['signal-flow'], tab7: ['signal-flow'], tab6: ['gain-fader', 'hpf-eq', 'aux-monitor'], tab5: ['gain-fader'] };
+  // 2026-10-21: 실습 탭 머리에 다는 관련 이론·모듈 (모든 모듈 개방에 맞춰 넓힘)
+  var TAB_MODULES = { tab1: ['mic', 'cable', 'amp', 'speaker'], tab6: ['console', 'gain-structure', 'eq'], tab2: ['cable', 'console', 'amp', 'speaker'], tab5: ['console', 'gain-structure', 'compressor'], tab7: ['cable', 'console'], tab3: ['eq', 'compressor', 'fx-space'] };
+  var TAB_LESSONS = { tab1: ['signal-flow'], tab2: ['signal-flow'], tab7: ['signal-flow'], tab6: ['gain-fader', 'hpf-eq', 'aux-monitor'], tab5: ['gain-fader', 'aux-monitor'], tab3: ['hpf-eq'] };
   function theoryLinks(ids) {
     return ids.map(function (id) {
       var l = lessonById(id); if (!l) return '';
@@ -287,23 +262,9 @@
       var head = document.querySelector('#' + tab + ' > .level-header'); if (!head) return;
       var old = head.querySelector('.lsn-theory-links'); if (old) old.remove();   // 편집 저장 파일에 남은 것 정리
       var d = document.createElement('div'); d.className = 'lsn-theory-links'; d.setAttribute('aria-label', '관련 이론');
-      d.innerHTML = theoryLinks(TAB_LESSONS[tab]) + (TAB_MODULES[tab] || []).map(function (id) { var mm = (window.STA_MODULES || {})[id]; return mm ? '<button type="button" class="lsn-theory-link mod-weeklink" data-module="' + id + '">🧭 ' + esc(mm.title) + ' 모듈</button>' : ''; }).join(''); head.appendChild(d);
+      d.innerHTML = theoryLinks(TAB_LESSONS[tab]) + (TAB_MODULES[tab] || []).map(function (id) { var mm = (window.STA_MODULES || {})[id]; return mm && mm.status === 'ready' ? '<button type="button" class="lsn-theory-link mod-weeklink" data-module="' + id + '">🧭 ' + esc(mm.title) + ' 모듈</button>' : ''; }).join(''); head.appendChild(d);
     });
   }
-  function addWeekTheory() {
-    var list = $('curriculumList'); if (!list) return;
-    list.querySelectorAll('.week-card').forEach(function (card) {
-      var chk = card.querySelector('.week-check'); if (!chk) return;
-      var m = /^(\d+)주차/.exec(chk.getAttribute('aria-label') || ''); if (!m) return;
-      var info = WEEK[m[1]]; var old = card.querySelector('.week-theory'); if (old) old.remove();
-      if (!info) return;
-      var d = document.createElement('div'); d.className = 'week-theory';
-      d.innerHTML = '<div class="week-theory-row"><b>📘 먼저 볼 이론</b>' + theoryLinks(info.lessons) + (window.STAModules ? STAModules.weekLinks(m[1]) : '') + '</div>' +
-        (info.check ? '<div class="week-theory-row"><b>✔ 실습 후 확인</b><span>' + esc(info.check) + '</span></div>' : '');
-      var body = card.querySelector('.week-body'); if (body) body.appendChild(d);
-    });
-  }
-
   /* ------------------------------------------------------------- 이벤트 */
   document.addEventListener('click', function (e) {
     var t = e.target.closest ? e.target : null; if (!t) return;
@@ -311,19 +272,9 @@
     if (lk && !lk.closest('.home-card[aria-disabled="true"]') && lk.getAttribute('aria-disabled') !== 'true') { openLesson(lk.getAttribute('data-lesson')); return; }
     var gt = t.closest('[data-go-tab]');
     if (gt && (gt.closest('#tabHome') || gt.closest('#tabLesson'))) { if (gt.closest('#tabLesson')) showBack(); if (typeof switchTab === 'function') switchTab(gt.getAttribute('data-go-tab')); window.scrollTo(0, 0); return; }
-    var f = t.closest('#tabHome [data-filter]');
-    if (f) {
-      var v = f.getAttribute('data-filter');
-      if (v === 'curr') { homeFilter = 'curr'; renderHome(); var ps = $('homePhases'); if (ps) ps.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
-      homeFilter = v; renderHome(); return;
-    }
-    var ph = t.closest('#tabHome [data-phase]');
-    if (ph) {
-      if (typeof switchTab === 'function') switchTab('tab4');
-      var name = ph.getAttribute('data-phase');
-      setTimeout(function () { var dv = Array.prototype.find.call(document.querySelectorAll('#curriculumList .phase-divider'), function (x) { return x.textContent.trim() === name; }); if (dv) { dv.scrollIntoView({ block: 'start', behavior: 'smooth' }); flash(dv.nextElementSibling); } }, 60);
-      return;
-    }
+    var av = t.closest('#tabHome [data-adv]');
+    if (av) { if (av.getAttribute('aria-disabled') === 'true') return; var w = advWhere(ADV[+av.getAttribute('data-adv')]); if (!w) return;
+      if (w.g.tab) { if (typeof switchTab === 'function') switchTab(w.g.tab); window.scrollTo(0, 0); } else if (window.STAModules) STAModules.openModule(w.g.module, 'theory', w.g.find); return; }
     if (!t.closest('#tabLesson') && !t.closest('#lsnBack')) return;
     if (t.closest('#lsnBack')) { if (backTo) openLesson(backTo.id, backTo.sec); return; }
     if (t.closest('[data-home]')) { goHome(); return; }
@@ -363,13 +314,12 @@
     if (!$('tabHome')) return;
     if (!$('lsnBack')) { var b = document.createElement('button'); b.type = 'button'; b.id = 'lsnBack'; b.className = 'lsn-back'; b.hidden = true; document.body.appendChild(b); }
     else hideBack();
-    renderHome(); addTabLinks(); addWeekTheory();
-    var list = $('curriculumList'); if (list && window.MutationObserver) new MutationObserver(addWeekTheory).observe(list, { childList: true });
+    renderHome(); addTabLinks();
     if (window.MutationObserver) document.querySelectorAll('#tabHome, #tabLesson').forEach(function (el) { new MutationObserver(function (ms) { if (ms.some(function (m) { return m.attributeName === 'class'; })) onTabChange(); }).observe(el, { attributes: true, attributeFilter: ['class'] }); });
     // 주소 끝 #lesson-<id> 로 레슨 바로 열기 (예: #lesson-gain-fader)
     var m = /^#lesson-([\w-]+)/.exec(location.hash || ''); if (m) openLesson(m[1]);
     window.addEventListener('hashchange', function () { var h = /^#lesson-([\w-]+)/.exec(location.hash || ''); if (h) openLesson(h[1]); });
   }
-  window.STALessons = { open: openLesson, home: goHome, renderHome: renderHome, state: function (id) { return st(id); }, reset: function () { save({}); renderHome(); }, openPractice: openPractice };
+  window.STALessons = { current: function () { return cur && $('tabLesson') && $('tabLesson').classList.contains('active') ? { id: cur.id, sec: curSec } : null; }, open: openLesson, home: goHome, renderHome: renderHome, state: function (id) { return st(id); }, reset: function () { save({}); renderHome(); }, openPractice: openPractice };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

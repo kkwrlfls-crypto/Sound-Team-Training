@@ -206,3 +206,31 @@
   .mod-rail__it { padding: 6px 8px; font-size: 0.8rem; }
 }
 @media (prefers-reduced-motion: reduce) { .mod-pathcard__img img, .mod-card { transition: none; } }
+
+/* ---------- 2026-10-21 메뉴: 학습 경로 묶음(하드웨어 이해 · 믹싱 스킬 · 통합 실전 훈련) ---------- */
+.site-header .tab-nav .tab-group {
+  display: flex; align-items: center; gap: 8px; flex: 0 0 auto; border: 0; background: transparent; cursor: pointer;
+  color: #e2ecf7; font: 800 0.84rem/1.25 var(--sta-font, inherit); padding: 11px 12px 12px; white-space: nowrap;
+  border-bottom: 3px solid transparent; border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+.site-header .tab-nav .tab-group:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+.site-header .tab-nav .tab-group.active { color: #fff; background: rgba(34, 211, 238, 0.10); border-bottom-color: var(--sta-cyan-bright, #22d3ee); }
+.site-header .tab-nav .tab-group.in { color: #fff; }
+.site-header .tab-nav .tab-group:focus-visible { outline: 2px solid var(--sta-cyan-bright, #22d3ee); outline-offset: -2px; }
+@media (max-width: 1199px) {
+  .site-header .tab-nav .tab-btn { flex: 0 0 auto; white-space: nowrap; }
+}
+@media (min-width: 1200px) {
+  .site-header .tab-nav .tab-group {
+    width: 100%; margin-top: 12px; padding: 9px 12px; border-left: 0; border-bottom: 0; border-radius: 8px;
+    font-size: 0.8rem; letter-spacing: 0.02em; color: #8fe9f8; text-align: left;
+  }
+  .site-header .tab-nav .tab-group.active { background: rgba(34, 211, 238, 0.14); box-shadow: inset 3px 0 0 var(--sta-cyan-bright, #22d3ee); color: #fff; }
+  .site-header .tab-nav .tab-btn.tab-sub { padding: 8px 12px 8px 22px; font-size: 0.82rem; }
+}
+/* 사진 출처 */
+.mod-credit { margin: 14px 0 0; font-size: 0.72rem; color: var(--sta-sub, #64748b); }
+.mod-credit a { color: inherit; }
+/* 심화 주제에서 이론 주제로 바로 갔을 때 잠깐 강조 */
+.mod-sec--focus { box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.55); transition: box-shadow 0.4s; border-radius: var(--sta-r, 12px); }
+.home-adv__need { font-size: 0.76rem; opacity: 0.8; }

@@ -1904,6 +1904,9 @@
     }
     .mg12xu-pfl-hotspot:hover { border-color: rgba(74, 222, 128, 0.7); }
     .mg12xu-pfl-hotspot.active { border-color: #4ade80; background: rgba(74, 222, 128, 0.35); box-shadow: 0 0 8px 2px rgba(74, 222, 128, 0.65); }
+    .mg12xu-pre-btn { position: absolute; transform: translate(-50%, -50%); width: 3.6%; height: 1.6%; border-radius: 4px; border: 1.5px solid rgba(148, 163, 184, 0.55); background: rgba(10, 12, 18, 0.35); color: transparent; font-size: 0.5rem; font-weight: 800; cursor: pointer; pointer-events: auto; padding: 0; }
+    .mg12xu-pre-btn:hover { border-color: rgba(255, 255, 255, 0.85); color: #cbd5e1; }
+    .mg12xu-pre-btn.on { background: #d97706; border-color: #fbbf24; color: #1c1917; box-shadow: 0 0 5px 1px rgba(217, 119, 6, 0.6); }
     .mg12xu-pad-btn, .mg12xu-hpf-btn {
       position: absolute;
       transform: translate(-50%, -50%);
@@ -2798,7 +2801,6 @@
       </div>
   <div class="tab-nav">
       <button class="tab-btn active" data-tab="tabHome" onclick="switchTab('tabHome')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/></svg><span>홈</span></button>
-      <button class="tab-btn" data-tab="tab4" onclick="switchTab('tab4')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4M8 14l2 2 4-4"/></svg><span>10주 커리큘럼</span></button>
       <button class="tab-btn" data-tab="tab1" onclick="switchTab('tab1')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg><span>확성 시스템의 기본</span></button>
       <button class="tab-btn" data-tab="tab6" onclick="switchTab('tab6')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5v17M12 3.5v17M18 3.5v17"/><rect x="4" y="13" width="4" height="3" rx="0.8"/><rect x="10" y="7" width="4" height="3" rx="0.8"/><rect x="16" y="11" width="4" height="3" rx="0.8"/></svg><span>MG12XU 실습</span></button>
       <button class="tab-btn" data-tab="tab7" onclick="switchTab('tab7')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0 5 5L12 19a2.1 2.1 0 0 1-3-3l7.5-7.5"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/><path d="M5 5l4 4M3.5 8.5l5-5"/></svg><span>음향 트러블슈팅</span></button>
@@ -2977,7 +2979,7 @@
           <div class="result-panel" id="mg12xuStep1Result"></div>
           <details class="mg12xu-sec-list" id="mg12xuSecList">
             <summary>📖 기능부 설명 전체 보기</summary>
-            <ul class="mg12xu-sec-texts"><li class="mg12xu-sec-src" data-sec="input"><b class="editable-text" data-field="tab6.sec.input.title">입력 단자 (MIC / LINE)</b><div class="editable-text" data-field="tab6.sec.input.desc">마이크나 악기를 꽂는 곳입니다. 1~4번은 XLR과 잭을 함께 쓰는 콤보 단자(MIC/LINE), 5~8번은 MIC(XLR)와 LINE(잭)이 따로 있고, 9~12번은 스테레오 라인 입력(잭·RCA)과 USB 오디오 입력입니다.</div></li><li class="mg12xu-sec-src" data-sec="padhpf"><b class="editable-text" data-field="tab6.sec.padhpf.title">PAD · HPF</b><div class="editable-text" data-field="tab6.sec.padhpf.desc">PAD는 입력 신호를 26dB 줄여 큰 소리(라인 기기, 드럼 등)가 찌그러지지 않게 합니다. HPF는 80Hz 아래 저음(무대 울림, 핸들링 소음, 바람 소리)을 잘라냅니다. 보컬·말 마이크는 HPF를 켜 두는 경우가 많습니다.</div></li><li class="mg12xu-sec-src" data-sec="phantom"><b class="editable-text" data-field="tab6.sec.phantom.title">팬텀 전원 (+48V)</b><div class="editable-text" data-field="tab6.sec.phantom.desc">콘덴서 마이크에 필요한 +48V 전원으로, CH1~7/8 MIC 입력에 한꺼번에 걸립니다. SM58 같은 다이내믹 마이크에는 필요 없고, 마이크를 꽂거나 뺄 때는 꺼 두는 것이 안전합니다.</div></li><li class="mg12xu-sec-src" data-sec="gain"><b class="editable-text" data-field="tab6.sec.gain.title">GAIN · PEAK</b><div class="editable-text" data-field="tab6.sec.gain.desc">입력 신호를 알맞은 크기로 키우는 첫 단계입니다. 실제로 말하거나 노래하게 하면서 GAIN을 올리고, PEAK 램프가 가끔 깜빡이면 조금 내립니다. 음량은 GAIN이 아니라 페이더로 맞춥니다.</div></li><li class="mg12xu-sec-src" data-sec="comp"><b class="editable-text" data-field="tab6.sec.comp.title">COMP (컴프레서)</b><div class="editable-text" data-field="tab6.sec.comp.desc">1~4번 채널의 원 노브 컴프레서입니다. 오른쪽으로 돌릴수록 큰 소리를 눌러 작은 소리와의 차이를 줄입니다. 말소리·보컬을 고르게 할 때 조금만 사용합니다.</div></li><li class="mg12xu-sec-src" data-sec="eq"><b class="editable-text" data-field="tab6.sec.eq.title">EQ (HIGH · MID · LOW)</b><div class="editable-text" data-field="tab6.sec.eq.desc">3밴드 이퀄라이저입니다. HIGH 10kHz, MID 2.5kHz, LOW 100Hz를 ±15dB 조절합니다(9~12번은 HIGH·LOW만). 가운데(0)가 기본이고, 거슬리는 대역을 조금 깎는 쪽으로 쓰는 것이 좋습니다.</div></li><li class="mg12xu-sec-src" data-sec="aux1"><b class="editable-text" data-field="tab6.sec.aux1.title">AUX1 (모니터 보내기)</b><div class="editable-text" data-field="tab6.sec.aux1.desc">무대 모니터 스피커(연주자·싱어가 듣는 소리)로 보내는 양입니다. 채널마다 AUX1 노브로 보내고, SEND MASTER의 AUX1로 전체 양을 정하면 AUX1 SEND 단자로 나갑니다. PRE 버튼을 누르면 페이더와 상관없이 보냅니다.</div></li><li class="mg12xu-sec-src" data-sec="fx"><b class="editable-text" data-field="tab6.sec.fx.title">AUX2/FX · SPX 이펙터 · FX RTN</b><div class="editable-text" data-field="tab6.sec.fx.desc">내장 SPX 이펙터(리버브·딜레이)로 보내는 경로입니다. 채널 AUX2/FX 노브 → SEND MASTER AUX2 → SPX(PROGRAM으로 효과 선택, PARAMETER로 길이 조절) → FX RTN 페이더로 메인에 섞입니다. AUX2 SEND 단자로 외부 장비에 보낼 수도 있습니다.</div></li><li class="mg12xu-sec-src" data-sec="pan"><b class="editable-text" data-field="tab6.sec.pan.title">PAN / BAL</b><div class="editable-text" data-field="tab6.sec.pan.desc">소리를 왼쪽(L)·오른쪽(R) 어디에 둘지 정합니다. 스테레오 채널(5/6 이후)은 BAL로 좌우 균형을 맞춥니다.</div></li><li class="mg12xu-sec-src" data-sec="on"><b class="editable-text" data-field="tab6.sec.on.title">ON (채널 켜기)</b><div class="editable-text" data-field="tab6.sec.on.desc">채널을 켜고 끄는 버튼입니다(켜지면 불이 들어옴). 꺼지면 메인·그룹·FX와 페이더 뒤(POST) AUX로 나가는 소리가 모두 꺼집니다.</div></li><li class="mg12xu-sec-src" data-sec="route"><b class="editable-text" data-field="tab6.sec.route.title">버스 할당 (1-2 / ST)</b><div class="editable-text" data-field="tab6.sec.route.desc">채널 소리를 어디로 보낼지 고릅니다. ST는 STEREO(메인) 버스, 1-2는 GROUP 1-2 버스입니다. 보통 ST를 켜 둡니다.</div></li><li class="mg12xu-sec-src" data-sec="fader"><b class="editable-text" data-field="tab6.sec.fader.title">채널 페이더</b><div class="editable-text" data-field="tab6.sec.fader.desc">채널의 최종 음량입니다. 0 표시(유니티) 근처에서 쓰는 것이 기본이고, 페이더를 많이 올려야 한다면 GAIN이 낮은 것은 아닌지 먼저 확인합니다.</div></li><li class="mg12xu-sec-src" data-sec="pfl"><b class="editable-text" data-field="tab6.sec.pfl.title">PFL (사전 청취)</b><div class="editable-text" data-field="tab6.sec.pfl.desc">PFL을 누르면 페이더 앞 신호를 헤드폰(PHONES)과 레벨 미터로 따로 들어볼 수 있습니다. 메인 소리를 건드리지 않고 GAIN을 맞추거나 문제 채널을 찾을 때 씁니다.</div></li><li class="mg12xu-sec-src" data-sec="group"><b class="editable-text" data-field="tab6.sec.group.title">GROUP 1-2</b><div class="editable-text" data-field="tab6.sec.group.desc">GROUP 1-2 버스의 마스터입니다. 여러 채널을 묶어 한 번에 조절하거나 GROUP OUT 단자로 따로 내보냅니다. ST 버튼을 누르면 STEREO 메인에도 섞입니다.</div></li><li class="mg12xu-sec-src" data-sec="stereo"><b class="editable-text" data-field="tab6.sec.stereo.title">STEREO 마스터 (메인 출력)</b><div class="editable-text" data-field="tab6.sec.stereo.desc">메인 출력(L/R)의 마스터 페이더입니다. 여기 신호가 STEREO OUT(XLR·잭) 단자로 나가 메인 스피커나 파워앰프로 갑니다.</div></li><li class="mg12xu-sec-src" data-sec="meter"><b class="editable-text" data-field="tab6.sec.meter.title">레벨 미터 · POWER</b><div class="editable-text" data-field="tab6.sec.meter.desc">STEREO 출력(PFL을 누르면 그 채널)의 레벨을 보여 줍니다. 0 근처에서 가끔 노란색까지 오르는 정도가 알맞고, 빨간색(+10)이 자주 켜지면 줄입니다. POWER 램프는 전원 표시입니다.</div></li><li class="mg12xu-sec-src" data-sec="monitor"><b class="editable-text" data-field="tab6.sec.monitor.title">모니터 · 헤드폰</b><div class="editable-text" data-field="tab6.sec.monitor.desc">엔지니어가 듣는 모니터입니다. MONITOR LEVEL은 MONITOR OUT 단자(컨트롤룸 모니터 스피커), PHONES는 헤드폰 음량이고, SOURCE 스위치로 STEREO와 GROUP 중 들을 소스를 고릅니다.</div></li><li class="mg12xu-sec-src" data-sec="footsw"><b class="editable-text" data-field="tab6.sec.footsw.title">FOOT SW (풋 스위치)</b><div class="editable-text" data-field="tab6.sec.footsw.desc">발로 밟는 스위치를 꽂아 내장 이펙터(FX)를 켜고 끕니다.</div></li></ul>
+            <ul class="mg12xu-sec-texts"><li class="mg12xu-sec-src" data-sec="input"><b class="editable-text" data-field="tab6.sec.input.title">입력 단자 (MIC / LINE)</b><div class="editable-text" data-field="tab6.sec.input.desc">마이크나 악기를 꽂는 곳입니다. 1~4번은 XLR과 잭을 함께 쓰는 콤보 단자(MIC/LINE), 5~8번은 MIC(XLR)와 LINE(잭)이 따로 있고, 9~12번은 스테레오 라인 입력(잭·RCA)과 USB 오디오 입력입니다.</div></li><li class="mg12xu-sec-src" data-sec="padhpf"><b class="editable-text" data-field="tab6.sec.padhpf.title">PAD · HPF</b><div class="editable-text" data-field="tab6.sec.padhpf.desc">PAD는 입력 신호를 26dB 줄여 큰 소리(라인 기기, 드럼 등)가 찌그러지지 않게 합니다. HPF는 80Hz 아래 저음(무대 울림, 핸들링 소음, 바람 소리)을 잘라냅니다. 보컬·말 마이크는 HPF를 켜 두는 경우가 많습니다.</div></li><li class="mg12xu-sec-src" data-sec="phantom"><b class="editable-text" data-field="tab6.sec.phantom.title">팬텀 전원 (+48V)</b><div class="editable-text" data-field="tab6.sec.phantom.desc">콘덴서 마이크에 필요한 +48V 전원으로, CH1~7/8 MIC 입력에 한꺼번에 걸립니다. SM58 같은 다이내믹 마이크에는 필요 없고, 마이크를 꽂거나 뺄 때는 꺼 두는 것이 안전합니다.</div></li><li class="mg12xu-sec-src" data-sec="gain"><b class="editable-text" data-field="tab6.sec.gain.title">GAIN · PEAK</b><div class="editable-text" data-field="tab6.sec.gain.desc">입력 신호를 알맞은 크기로 키우는 첫 단계입니다. 실제로 말하거나 노래하게 하면서 GAIN을 올리고, PEAK 램프가 가끔 깜빡이면 조금 내립니다. 음량은 GAIN이 아니라 페이더로 맞춥니다.</div></li><li class="mg12xu-sec-src" data-sec="comp"><b class="editable-text" data-field="tab6.sec.comp.title">COMP (컴프레서)</b><div class="editable-text" data-field="tab6.sec.comp.desc">1~4번 채널의 원 노브 컴프레서입니다. 오른쪽으로 돌릴수록 큰 소리를 눌러 작은 소리와의 차이를 줄입니다. 말소리·보컬을 고르게 할 때 조금만 사용합니다.</div></li><li class="mg12xu-sec-src" data-sec="eq"><b class="editable-text" data-field="tab6.sec.eq.title">EQ (HIGH · MID · LOW)</b><div class="editable-text" data-field="tab6.sec.eq.desc">3밴드 이퀄라이저입니다. HIGH 10kHz, MID 2.5kHz, LOW 100Hz를 ±15dB 조절합니다(9~12번은 HIGH·LOW만). 가운데(0)가 기본이고, 거슬리는 대역을 조금 깎는 쪽으로 쓰는 것이 좋습니다.</div></li><li class="mg12xu-sec-src" data-sec="aux1"><b class="editable-text" data-field="tab6.sec.aux1.title">AUX1 (모니터 보내기)</b><div class="editable-text" data-field="tab6.sec.aux1.desc">무대 모니터 스피커(연주자·싱어가 듣는 소리)로 보내는 양입니다. 채널마다 AUX1 노브로 보내고, SEND MASTER의 AUX1로 전체 양을 정하면 AUX1 SEND 단자로 나갑니다. AUX1 아래 PRE 버튼을 누르면 페이더 앞(PRE)에서 보내서 페이더를 움직여도 모니터 소리가 바뀌지 않고, 끄면 페이더 뒤(POST)에서 보냅니다. AUX2/FX는 늘 페이더 뒤에서 보냅니다(설명서 기준).</div></li><li class="mg12xu-sec-src" data-sec="fx"><b class="editable-text" data-field="tab6.sec.fx.title">AUX2/FX · SPX 이펙터 · FX RTN</b><div class="editable-text" data-field="tab6.sec.fx.desc">내장 SPX 이펙터(리버브·딜레이)로 보내는 경로입니다. 채널 AUX2/FX 노브 → SEND MASTER AUX2 → SPX(PROGRAM으로 효과 선택, PARAMETER로 길이 조절) → FX RTN 페이더로 메인에 섞입니다. AUX2 SEND 단자로 외부 장비에 보낼 수도 있습니다.</div></li><li class="mg12xu-sec-src" data-sec="pan"><b class="editable-text" data-field="tab6.sec.pan.title">PAN / BAL</b><div class="editable-text" data-field="tab6.sec.pan.desc">소리를 왼쪽(L)·오른쪽(R) 어디에 둘지 정합니다. 스테레오 채널(5/6 이후)은 BAL로 좌우 균형을 맞춥니다.</div></li><li class="mg12xu-sec-src" data-sec="on"><b class="editable-text" data-field="tab6.sec.on.title">ON (채널 켜기)</b><div class="editable-text" data-field="tab6.sec.on.desc">채널을 켜고 끄는 버튼입니다(켜지면 불이 들어옴). 꺼지면 메인(ST)·GROUP·AUX1·AUX2/FX로 나가는 소리가 모두 꺼집니다(PRE로 보내던 모니터 소리도 꺼짐). PFL로는 계속 들어 볼 수 있습니다.</div></li><li class="mg12xu-sec-src" data-sec="route"><b class="editable-text" data-field="tab6.sec.route.title">버스 할당 (1-2 / ST)</b><div class="editable-text" data-field="tab6.sec.route.desc">채널 소리를 어디로 보낼지 고릅니다. ST는 STEREO(메인) 버스, 1-2는 GROUP 1-2 버스입니다. 보통 ST를 켜 둡니다.</div></li><li class="mg12xu-sec-src" data-sec="fader"><b class="editable-text" data-field="tab6.sec.fader.title">채널 페이더</b><div class="editable-text" data-field="tab6.sec.fader.desc">채널의 최종 음량입니다. 0 표시(유니티) 근처에서 쓰는 것이 기본이고, 페이더를 많이 올려야 한다면 GAIN이 낮은 것은 아닌지 먼저 확인합니다.</div></li><li class="mg12xu-sec-src" data-sec="pfl"><b class="editable-text" data-field="tab6.sec.pfl.title">PFL (사전 청취)</b><div class="editable-text" data-field="tab6.sec.pfl.desc">PFL을 누르면 페이더 앞 신호를 헤드폰(PHONES)과 레벨 미터로 따로 들어볼 수 있습니다. 메인 소리를 건드리지 않고 GAIN을 맞추거나 문제 채널을 찾을 때 씁니다.</div></li><li class="mg12xu-sec-src" data-sec="group"><b class="editable-text" data-field="tab6.sec.group.title">GROUP 1-2</b><div class="editable-text" data-field="tab6.sec.group.desc">GROUP 1-2 버스의 마스터입니다. 여러 채널을 묶어 한 번에 조절하거나 GROUP OUT 단자로 따로 내보냅니다. ST 버튼을 누르면 STEREO 메인에도 섞입니다.</div></li><li class="mg12xu-sec-src" data-sec="stereo"><b class="editable-text" data-field="tab6.sec.stereo.title">STEREO 마스터 (메인 출력)</b><div class="editable-text" data-field="tab6.sec.stereo.desc">메인 출력(L/R)의 마스터 페이더입니다. 여기 신호가 STEREO OUT(XLR·잭) 단자로 나가 메인 스피커나 파워앰프로 갑니다.</div></li><li class="mg12xu-sec-src" data-sec="meter"><b class="editable-text" data-field="tab6.sec.meter.title">레벨 미터 · POWER</b><div class="editable-text" data-field="tab6.sec.meter.desc">STEREO 출력(PFL을 누르면 그 채널)의 레벨을 보여 줍니다. 0 근처에서 가끔 노란색까지 오르는 정도가 알맞고, 빨간색(+10)이 자주 켜지면 줄입니다. POWER 램프는 전원 표시입니다.</div></li><li class="mg12xu-sec-src" data-sec="monitor"><b class="editable-text" data-field="tab6.sec.monitor.title">모니터 · 헤드폰</b><div class="editable-text" data-field="tab6.sec.monitor.desc">엔지니어가 듣는 모니터입니다. MONITOR LEVEL은 MONITOR OUT 단자(컨트롤룸 모니터 스피커), PHONES는 헤드폰 음량이고, SOURCE 스위치로 STEREO와 GROUP 중 들을 소스를 고릅니다.</div></li><li class="mg12xu-sec-src" data-sec="footsw"><b class="editable-text" data-field="tab6.sec.footsw.title">FOOT SW (풋 스위치)</b><div class="editable-text" data-field="tab6.sec.footsw.desc">발로 밟는 스위치를 꽂아 내장 이펙터(FX)를 켜고 끕니다.</div></li></ul>
           </details>
         </div>
 
@@ -3400,34 +3402,7 @@
 
     </div>
 
-    <!-- TAB 4: 사운드팀 신입 스텝 10주 커리큘럼 -->
-    <div id="tab4" class="tab-content">
-      <div class="level-header">
-        <!-- 2026-10-19: 설명 자리는 기완 님이 넣은 말씀 인용(원문 그대로). 제목은 "(아이디어 필요)" 자리에 Claude 가 제안해 채움 -->
-        <div class="level-title editable-text" data-field="tab4.title">세계 최고의 실력자가 되자!</div>
-        <div class="level-desc level-quote editable-text" data-field="tab4.desc"><span class="quote-line">■ 우리가 하나님의 영광을 드러내기 위한 것이다.</span> <span class="quote-line">얼마든지 잘할 수 있다.</span> <span class="quote-line">문화부에서 창설해 나가야 한다.</span> <span class="quote-line">세계에서 최고 가는 것 말이다.</span> <span class="quote-line">여러분들이 잠들어 있어서는 안된다.</span> <span class="quote-line">‘문화부가 일어서기 전에는 발전이 있겠는가’</span> <span class="quote-line">이런 생각을 하고 분발하기 바란다.</span></div>
-      </div>
-
-      <div class="content-edit-bar" id="tab4EditBar">
-        <button type="button" class="content-edit-btn" id="tab4EditBtn" onclick="toggleContentEdit('tab4')">✏️ 커리큘럼 내용 편집</button>
-        <button type="button" class="content-edit-btn save" onclick="saveEditedContent('tab4')">💾 저장 (새 index.html 다운로드)</button>
-        <button type="button" class="content-edit-btn cancel" onclick="cancelContentEdit('tab4')">편집 취소</button>
-        <span class="content-edit-hint">각 주차의 글을 눌러 고친 뒤 저장하면, 고친 내용이 담긴 index.html 파일이 내려받아져요.</span>
-      </div>
-
-      <div class="curriculum-progress-wrap">
-        <div class="curriculum-progress-bar-bg">
-          <div class="curriculum-progress-bar-fill" id="curriculumProgressFill" style="width:0%;"></div>
-        </div>
-        <div class="curriculum-progress-text" id="curriculumProgressText">0 / 10주 완료</div>
-      </div>
-
-      <div id="curriculumList"></div>
-
-      <div class="curriculum-reset-row">
-        <button class="curriculum-reset-btn" onclick="resetCurriculumProgress()">진행 상황 초기화</button>
-      </div>
-    </div>
+    <!-- 2026-10-21: 10주 커리큘럼 탭(tab4)은 요청에 따라 삭제 -->
 
   </main>
 
@@ -3484,9 +3459,18 @@
   <script src="lessons/modules_data.js"></script>
   <script src="lessons/modules_visuals.js"></script>
   <script src="lessons/modules_sims.js"></script>
+  <script src="lessons/modules/cable.js"></script>
+  <script src="lessons/modules/console.js"></script>
+  <script src="lessons/modules/amp.js"></script>
+  <script src="lessons/modules/speaker.js"></script>
+  <script src="lessons/modules/eq.js"></script>
+  <script src="lessons/modules/gate.js"></script>
+  <script src="lessons/modules/compressor.js"></script>
+  <script src="lessons/modules/fx-space.js"></script>
   <script src="lessons/modules.js"></script>
   <script src="lessons/lessons_data.js"></script>
   <script src="lessons/lessons.js"></script>
+  <script src="lessons/nav_history.js"></script>
 
   <script>
     /* ===== 공통 모달 (alert 대체) ===== */
@@ -3751,6 +3735,9 @@
       ch5_6: 60.33, ch7_8: 69.81
     };
     const MG12XU_HPF_Y_PCT = 19.97;
+    // 2026-10-21 PRE 버튼 위치(console_strip.jpg 1055×1540 픽셀 측정 → %)
+    const MG12XU_PRE_X_PCT = { ch1: 16.5, ch2: 27.65, ch3: 38.75, ch4: 49.86, ch5_6: 61.0, ch7_8: 72.1, ch9_10: 85.25, ch11_12: 96.5 };
+    const MG12XU_PRE_Y_PCT = 45.95;
     let mg12xuHpfOn = {}; // 'ch5_6' -> true/false
     // 2026-10-08 수정: 사용자 제공 사진으로 재확인한 결과, 1~4번 채널의 실제 PAD/HPF 스위치는
     // 콘솔 전면이 아니라 입출력 패치베이 패널(jack_strip.jpg, 1491x440)의 XLR 입력 단자 옆에
@@ -4287,11 +4274,11 @@
       padGain.gain.value = mg12xuPadOn[ch] ? mg12xuDbToGain(-26) : 1;
       const hpf = ctx.createBiquadFilter(); hpf.type = 'highpass'; // HPF(80Hz) 스위치
       hpf.frequency.value = mg12xuHpfOn[ch] ? 80 : 20;
-      hpf.Q.value = 0.707;
+      hpf.Q.value = -3.01;   // Web Audio 의 highpass Q 는 dB 단위 → 버터워스(Q 0.707) = −3.01 dB (12 dB/oct)
       const input = ctx.createGain();       // GAIN 노브
       const low = ctx.createBiquadFilter();  low.type = 'lowshelf';  low.frequency.value = 100;
-      const mid = ctx.createBiquadFilter();  mid.type = 'peaking';   mid.frequency.value = 1000; mid.Q.value = 1;
-      const high = ctx.createBiquadFilter(); high.type = 'highshelf'; high.frequency.value = 8000;
+      const mid = ctx.createBiquadFilter();  mid.type = 'peaking';   mid.frequency.value = 2500; mid.Q.value = 1;   // 2026-10-21 설명서 기준: MID 2.5kHz 피킹
+      const high = ctx.createBiquadFilter(); high.type = 'highshelf'; high.frequency.value = 10000; // 설명서 기준: HIGH 10kHz 쉘빙 (LOW 100Hz 쉘빙)
       let comp = null;
       if (MG12XU_COMP_CHANNELS.includes(ch)) {
         comp = ctx.createDynamicsCompressor();
@@ -4305,6 +4292,11 @@
       const aux1Send = ctx.createGain();    // AUX1 노브 → AUX1 SEND 버스
       const aux2Send = ctx.createGain();    // AUX2 노브 → AUX2/FX SEND 버스
       const pflSend = ctx.createGain();     // PFL — 프리페이더(페이더 이전 지점)에서 PHONES 솔로 버스로
+      // 2026-10-21 설명서 기준 PRE 스위치: MG12XU 는 채널마다 AUX1 의 [PRE] — 누르면 AUX1 로 페이더 앞(PRE) 신호를 보냄(AUX2/FX 는 POST).
+      // ON 을 끄면 PRE 든 POST 든 AUX·GROUP 으로 나가지 않음(PFL 은 계속 들림) — 설명서 p.19
+      const preOn = ctx.createGain();       // 페이더 앞 신호 + ON 스위치
+      const auxPreSel = ctx.createGain();   // PRE 선택 시 1
+      const auxPostSel = ctx.createGain();  // POST(기본) 선택 시 1
 
       padGain.connect(hpf);
       hpf.connect(input);
@@ -4320,14 +4312,16 @@
       faderGain.connect(muteGain);
       muteGain.connect(groupSend);
       muteGain.connect(stereoSend);
-      muteGain.connect(aux1Send);
-      muteGain.connect(aux2Send);
+      postEq.connect(preOn); preOn.connect(auxPreSel);
+      muteGain.connect(auxPostSel);
+      auxPreSel.connect(aux1Send); auxPostSel.connect(aux1Send);
+      muteGain.connect(aux2Send);   // AUX2/FX 는 늘 페이더 뒤(POST) — 설명서 p.22 「AUX2 PRE 는 MG16XU 만」
       if (mg12xuBusGain.group) groupSend.connect(mg12xuBusGain.group);
       if (mg12xuBusGain.stereo) stereoSend.connect(mg12xuBusGain.stereo);
       if (mg12xuBusGain.aux1) aux1Send.connect(mg12xuBusGain.aux1);
       if (mg12xuBusGain.aux2) aux2Send.connect(mg12xuBusGain.aux2);
 
-      const node = { padGain, hpf, input, low, mid, high, comp, panner, faderGain, muteGain, groupSend, stereoSend, aux1Send, aux2Send, pflSend };
+      const node = { padGain, hpf, input, low, mid, high, comp, panner, faderGain, muteGain, groupSend, stereoSend, aux1Send, aux2Send, pflSend, preOn, auxPreSel, auxPostSel };
       mg12xuChannelNodes[ch] = node;
       mg12xuPadGain[ch] = padGain;
       mg12xuHpfNode[ch] = hpf;
@@ -4336,6 +4330,7 @@
       (MG12XU_CHANNEL_KNOBS[ch] || MG12XU_KNOB_TYPES).forEach(type => mg12xuApplyKnobAudio(ch, type));
       mg12xuApplyFaderAudio(ch);
       mg12xuApplyMuteAudio(ch);
+      mg12xuApplyPreAudio(ch);
       mg12xuApplyRouteAudio(ch);
       mg12xuApplyPflAudio();
       return node;
@@ -4352,6 +4347,21 @@
     function mg12xuUpdatePadVisual(ch) {
       const btn = document.querySelector(`.mg12xu-pad-btn[data-ch="${ch}"]`);
       if (btn) btn.classList.toggle('on', !!mg12xuPadOn[ch]);
+    }
+    // 2026-10-21 PRE 스위치(AUX1 을 페이더 앞에서 보냄) 토글 — 설명서 p.18·p.22
+    let mg12xuPreOn = {}; // 'ch1' -> true/false (기본 꺼짐 = POST)
+    function mg12xuApplyPreAudio(ch) {
+      const node = mg12xuChannelNodes[ch]; if (!node || !mg12xuAudioCtx || !node.auxPreSel) return;
+      const t = mg12xuAudioCtx.currentTime, pre = !!mg12xuPreOn[ch];
+      node.auxPreSel.gain.setTargetAtTime(pre ? 1 : 0, t, 0.01);
+      node.auxPostSel.gain.setTargetAtTime(pre ? 0 : 1, t, 0.01);
+      node.preOn.gain.setTargetAtTime(mg12xuChannelOn[ch] === false ? 0 : 1, t, 0.01);
+    }
+    function toggleMg12xuPre(ch) {
+      mg12xuPreOn[ch] = !mg12xuPreOn[ch];
+      const btn = document.querySelector(`.mg12xu-pre-btn[data-ch="${ch}"]`);
+      if (btn) { btn.classList.toggle('on', !!mg12xuPreOn[ch]); btn.setAttribute('aria-pressed', mg12xuPreOn[ch] ? 'true' : 'false'); }
+      if (mg12xuAudioOn && mg12xuAudioCtx) mg12xuApplyPreAudio(ch);
     }
     // HPF(80Hz 하이패스) 토글
     function toggleMg12xuHpf(ch) {
@@ -4437,6 +4447,7 @@
     function mg12xuApplyMuteAudio(ch) {
       if (!mg12xuAudioOn || !mg12xuAudioCtx || !mg12xuChannelNodes[ch]) return;
       mg12xuChannelNodes[ch].muteGain.gain.setTargetAtTime(mg12xuChannelOn[ch] === false ? 0 : 1, mg12xuAudioCtx.currentTime, 0.01);
+      if (mg12xuChannelNodes[ch].preOn) mg12xuChannelNodes[ch].preOn.gain.setTargetAtTime(mg12xuChannelOn[ch] === false ? 0 : 1, mg12xuAudioCtx.currentTime, 0.01);   // ON 끄면 PRE AUX 도 꺼짐(설명서)
     }
 
     function mg12xuApplyRouteAudio(ch) {
@@ -4767,6 +4778,20 @@
           routeLayer.appendChild(hpfBtn);
           mg12xuUpdateHpfVisual(ch);
         }
+
+        // 2026-10-21 PRE 버튼 — 실제 사진 속 AUX1 과 AUX2/FX 노브 사이(모든 채널)
+        const preBtn = document.createElement('button');
+        preBtn.type = 'button';
+        preBtn.className = 'mg12xu-pre-btn';
+        preBtn.dataset.ch = ch;
+        preBtn.style.left = MG12XU_PRE_X_PCT[ch] + '%';
+        preBtn.style.top = MG12XU_PRE_Y_PCT + '%';
+        preBtn.textContent = 'PRE';
+        preBtn.setAttribute('aria-pressed', mg12xuPreOn[ch] ? 'true' : 'false');
+        preBtn.title = `CH ${MG12XU_CHANNEL_LABELS[ch]} AUX1 PRE — 누르면 AUX1 을 페이더 앞에서 보냄`;
+        preBtn.addEventListener('click', () => toggleMg12xuPre(ch));
+        if (mg12xuPreOn[ch]) preBtn.classList.add('on');
+        routeLayer.appendChild(preBtn);
 
         const muteCol = document.createElement('div');
         muteCol.className = 'mg12xu-mute-col';
