@@ -15,7 +15,7 @@ window.STA_PATHS = [
     tip: '소리가 지나가는 순서대로 배우고, 확성 시스템의 기본 → 3층 음향 시스템 실습으로 실제 연결을 익혀요.',
     prereq: ['signal-flow'],
     modules: ['mic', 'cable', 'console', 'amp', 'speaker'],
-    practice: ['tab1', 'tab6', 'tab2'], practiceTitle: '장비 연결 실습' },
+    practice: ['tab1', 'tab6', 'tab2', 'tabBrands'], practiceTitle: '장비 연결 실습 · 브랜드' },
   { id: 'mixing', title: '믹싱 스킬', icon: 'fader', img: 'console_strip.jpg',
     sum: '신호 레벨을 관리하고, 음색·다이내믹·공간감을 조절합니다.',
     lead: '신호 레벨을 올바르게 관리하는 것부터 시작해, 음색과 다이내믹, 공간감을 다루는 방법을 익힙니다.',
@@ -28,7 +28,7 @@ window.STA_PATHS = [
     sum: '배운 내용을 실제 예배 진행과 고장 상황에 적용합니다.',
     lead: '예배 식순에 맞춘 콘솔 운용과 고장 진단 미션으로, 배운 것을 현장처럼 연습합니다.',
     tip: '하드웨어 이해와 믹싱 스킬을 마친 뒤 도전해 보세요. 이 경로는 내용을 더 보완할 예정이에요.',
-    practice: ['tab5', 'tab7'], practiceTitle: '실전 훈련' }
+    practice: ['tab5', 'tab7', 'tabFeedback'], practiceTitle: '실전 훈련' }
 ];
 
 window.STA_MODULES = {
