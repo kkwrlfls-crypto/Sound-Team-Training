@@ -32,7 +32,7 @@
           '<div class="sim-box"><h4>조절</h4><label class="sim-range"><span>마이크 방향 <b data-out="ang"></b></span><input type="range" min="-180" max="180" step="1" data-sim="ang" aria-label="마이크 방향"></label>' +
             '<div class="sim-btns"><button type="button" class="sim-btn" data-sim="aim">입 쪽으로 향하기</button><button type="button" class="sim-btn" data-sim="near">입 앞 8 cm 로</button><button type="button" class="sim-btn" data-sim="reset">처음 위치</button></div></div>' +
           '<div class="sim-box sim-listen"><h4>소리로 듣기</h4><button type="button" class="sim-btn sim-play" data-sim="play">🔊 소리 켜기</button>' +
-            '<p class="sim-note" data-role="listen">실제 보컬 녹음이 지금 마이크 위치에서 들리는 소리로 바뀌어요. 거리·방향·근접 효과·실내 울림·피드백이 함께 반영돼요. 헤드폰을 권해요.</p></div>' +
+            '<p class="sim-note" data-role="listen">실제 보컬 녹음이 지금 마이크 위치에서 들리는 소리로 바뀌어요. 거리·방향·근접 효과·실내 울림이 반영돼요.</p></div>' +
           '<div class="sim-box sim-read" data-role="read"></div>' +
         '</div>' +
       '</div>';
@@ -118,12 +118,13 @@
       ctx.fillStyle = '#92400e'; ctx.font = 'bold 11px sans-serif'; ctx.fillText('방향', hp.x, hp.y - 13);
     }
     function handlePos() { var P = toPx(S), A = S.ang * Math.PI / 180, r = 0.5 * px; return { x: P.x + r * Math.cos(A), y: P.y + r * Math.sin(A) }; }
-    /* ---- 소리 (교육용 근사) ----
-       실제 보컬 녹음 → [방향: 고음 감쇠 로우패스] → [근접 효과: 저음 쉘빙] → [거리·지향성 크기] → 출력
-       실내 울림: 녹음을 짧은 잔향으로 만든 소리를 거리와 상관없이 일정하게(지향성 마이크는 덜 받음) 더함
-       피드백: 출력 → 지연(스피커→마이크 거리) → 대역 필터 → 루프 이득(피드백 여유로 정함) → 다시 마이크 입력. 진짜 되먹임 루프이며, 귀 보호를 위해 루프 안에 소프트 리미터를 둠 */
+    /* ---- 소리 (교육용 근사) — 2026-10-22 다시 만듦 ----
+       실제 보컬 녹음 → [방향: 입에서 벗어날수록 고음 감쇠] → [근접 효과: 저음 쉘빙] → [거리·지향성 크기] → 출력
+       + 실내 울림(짧고 부드러운 잔향)을 거리와 상관없이 일정하게 → 멀어질수록 「멀고 울리는」 소리
+       하울링은 소리로 흉내 내지 않고 화면 표시만 함(귀에 거슬리는 소리 방지). 하울링 연습은 「하울링 제어 훈련」 탭에서. */
     var actx = null, A = null;
-    function roomIR(ctx) { var n = Math.floor(ctx.sampleRate * 1.2), b = ctx.createBuffer(2, n, ctx.sampleRate); for (var k = 0; k < 2; k++) { var d = b.getChannelData(k); for (var i = 0; i < n; i++) { var t = i / ctx.sampleRate; d[i] = (Math.random() * 2 - 1) * Math.exp(-t / 0.22) * (t < 0.012 ? 0 : 1); } } return b; }
+    function roomIR(ctx) { var sr = ctx.sampleRate, n = Math.floor(sr * 0.9), b = ctx.createBuffer(2, n, sr);
+      for (var k = 0; k < 2; k++) { var d = b.getChannelData(k), lp = 0; for (var i = 0; i < n; i++) { var t = i / sr, w = Math.random() * 2 - 1; lp += (w - lp) * 0.18; d[i] = t < 0.015 ? 0 : lp * Math.exp(-t / 0.16) * 0.9; } } return b; }   // 고음을 깎은 잡음 꼬리 = 부드러운 울림
     function startAudio() {
       var info = el.querySelector('[data-role=listen]'), btn = el.querySelector('[data-sim=play]');
       var AC = window.AudioContext || window.webkitAudioContext; if (!AC) { info.textContent = '이 브라우저에서는 소리를 낼 수 없어요.'; return; }
@@ -134,49 +135,37 @@
         if (!env.buffer) { info.textContent = '녹음을 불러오지 못해 소리는 들을 수 없어요.'; return; }
         if (A) return;
         var src = actx.createBufferSource(); src.buffer = env.buffer; src.loop = true;
-        var norm = actx.createGain(); norm.gain.value = 0.5 / (env.max || 1);
-        var micIn = actx.createGain();                                            // 마이크가 받는 소리의 합(목소리 + 실내 + 스피커 되먹임)
-        var lp = actx.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 0.5;
-        var ls = actx.createBiquadFilter(); ls.type = 'lowshelf'; ls.frequency.value = 180;
+        var norm = actx.createGain(); norm.gain.value = 0.45 / (env.max || 1);
+        var lp = actx.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = -3.01;
+        var ls = actx.createBiquadFilter(); ls.type = 'lowshelf'; ls.frequency.value = 160;
         var dir = actx.createGain();
         var room = actx.createConvolver(); room.buffer = roomIR(actx); var roomG = actx.createGain();
-        var live = actx.createGain();                                             // 팬텀 없는 콘덴서 = 0
-        var out = actx.createGain(); out.gain.value = 0.8;
-        var lim = actx.createDynamicsCompressor(); lim.threshold.value = -6; lim.knee.value = 0; lim.ratio.value = 20; lim.attack.value = 0.002; lim.release.value = 0.1;
-        // 되먹임 루프
-        var fbDelay = actx.createDelay(0.1), fbBp = actx.createBiquadFilter(); fbBp.type = 'peaking'; fbBp.frequency.value = 2500; fbBp.Q.value = 4; fbBp.gain.value = 9;
-        var fbHp = actx.createBiquadFilter(); fbHp.type = 'highpass'; fbHp.frequency.value = 300;
-        var fbSoft = actx.createWaveShaper(), cn = 1024, cv2 = new Float32Array(cn); for (var i = 0; i < cn; i++) { var x = i / (cn - 1) * 2 - 1; cv2[i] = 0.35 * Math.tanh(x * 3); } fbSoft.curve = cv2;
-        var fbG = actx.createGain(); fbG.gain.value = 0;
-        src.connect(norm); norm.connect(lp); lp.connect(ls); ls.connect(dir); dir.connect(micIn);
-        norm.connect(room); room.connect(roomG); roomG.connect(micIn);
-        micIn.connect(live); live.connect(lim); lim.connect(out); out.connect(actx.destination);
-        lim.connect(fbDelay); fbDelay.connect(fbHp); fbHp.connect(fbBp); fbBp.connect(fbSoft); fbSoft.connect(fbG); fbG.connect(micIn);
+        var live = actx.createGain(), out = actx.createGain(); out.gain.value = 0.9;
+        var lim = actx.createDynamicsCompressor(); lim.threshold.value = -10; lim.knee.value = 6; lim.ratio.value = 8; lim.attack.value = 0.005; lim.release.value = 0.2;
+        src.connect(norm); norm.connect(lp); lp.connect(ls); ls.connect(dir); dir.connect(live);
+        norm.connect(room); room.connect(roomG); roomG.connect(live);
+        live.connect(lim); lim.connect(out); out.connect(actx.destination);
         src.start();
-        A = { src: src, lp: lp, ls: ls, dir: dir, roomG: roomG, live: live, fbDelay: fbDelay, fbG: fbG, out: out };
+        A = { src: src, lp: lp, ls: ls, dir: dir, roomG: roomG, live: live, out: out };
         btn.textContent = '🔇 소리 끄기'; btn.classList.add('on');
-        info.textContent = '지금 마이크 위치의 소리예요. 마이크를 끌어 멀리·가까이, 옆으로 돌려 보세요. (교육용 근사)';
+        info.textContent = '지금 마이크 위치에서 들리는 소리예요. 끌어서 멀리·가까이, 옆으로 돌려 보세요. 하울링은 아래 「피드백 위험」으로 보여 줘요. (교육용 근사)';
         S.audio = true; applyAudio(S.last || calc(), true);
       });
     }
     function stopAudio() {
-      if (A) { try { A.src.stop(); A.out.disconnect(); A.fbG.disconnect(); } catch (e) { /* 이미 멈춤 */ } }
+      if (A) { try { A.src.stop(); A.out.disconnect(); } catch (e) { /* 이미 멈춤 */ } }
       A = null; S.audio = false; var btn = el.querySelector('[data-sim=play]'); if (btn) { btn.textContent = '🔊 소리 켜기'; btn.classList.remove('on'); }
     }
     function applyAudio(c, now) {
-      if (!A || !c) return; var t = actx.currentTime, tc = now ? 0.005 : 0.05, m = c.m;
-      var f = clamp(18000 * Math.pow(0.5, c.tsDeg / 30), 2500, 18000);                       // 입에서 벗어날수록 고음부터 줄어듦
+      if (!A || !c) return; var t = actx.currentTime, tc = now ? 0.005 : 0.06, m = c.m;
+      var f = clamp(16000 * Math.pow(0.5, c.tsDeg / 35), 3000, 16000);                       // 입에서 벗어날수록 고음부터 줄어듦
       A.lp.frequency.setTargetAtTime(f, t, tc);
-      A.ls.gain.setTargetAtTime(Math.min(18, c.prox), t, tc);
-      var vDb = clamp(c.voice - m.sens, -40, 12) + Math.min(m.sens, 6) * 0.5;                // 목소리 크기(감도 차이는 절반만 반영 — 귀 보호)
-      A.dir.gain.setTargetAtTime(Math.pow(10, (vDb - 2) / 20), t, tc);
+      A.ls.gain.setTargetAtTime(Math.min(12, c.prox), t, tc);                                  // 근접 효과(귀 보호를 위해 +12 dB 까지만)
+      var vDb = clamp(c.voice - m.sens, -36, 9);                                              // 거리·방향에 따른 목소리 크기(감도 차이는 듣기 편하게 빼고 화면에만 표시)
+      A.dir.gain.setTargetAtTime(Math.pow(10, (vDb - 3) / 20), t, tc);
       var ree = m.a >= 1 ? 1 : m.a >= 0.5 ? 0.58 : 0.52;                                       // 실내 울림을 받는 정도(무지향 1, 카디오이드 ≈ 1/√3)
-      A.roomG.gain.setTargetAtTime(0.05 * ree, t, tc);
-      A.live.gain.setTargetAtTime(c.live ? 1 : 0, t, 0.01);
-      A.fbDelay.delayTime.setTargetAtTime(Math.min(0.09, 0.004 + c.dw / 343), t, tc);
-      // 루프 전체 이득(2.5 kHz) = 10^((6 − 여유)/20): 여유 15 dB → 0.35(살짝 울림), 8 → 0.79(울림이 길게 남음), 6 이하 → 1 이상(하울링)
-      //   루프 안의 다른 이득: 피킹 +9 dB(×2.82) × 소프트 리미터 기울기 1.05 = ×2.96
-      A.fbG.gain.setTargetAtTime(c.live ? Math.pow(10, clamp(6 - c.margin, -40, 4) / 20) / 2.96 : 0, t, 0.15);
+      A.roomG.gain.setTargetAtTime(0.045 * ree, t, tc);
+      A.live.gain.setTargetAtTime(c.live ? 1 : 0, t, 0.02);
     }
     var drag = null;
     function evPt(e) { var r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
@@ -211,7 +200,7 @@
     size(); update();
     return {
       destroy: function () { stopAudio(); if (actx && actx.close) { try { actx.close(); } catch (e) { /* noop */ } } actx = null; if (ro) ro.disconnect(); el.innerHTML = ''; },
-      state: function () { var c = S.last || calc(); return { audio: !!A, lp: A ? A.lp.frequency.value : null, fb: A ? A.fbG.gain.value : null, dir: A ? A.dir.gain.value : null, type: S.type, phantom: S.phantom, x: S.x, y: S.y, ang: S.ang, ds: c.ds, voice: c.voice, margin: c.margin, risk: c.risk, prox: c.prox, live: c.live, done: Object.keys(S.done) }; },
+      state: function () { var c = S.last || calc(); return { audio: !!A, lp: A ? A.lp.frequency.value : null, room: A ? A.roomG.gain.value : null, dir: A ? A.dir.gain.value : null, type: S.type, phantom: S.phantom, x: S.x, y: S.y, ang: S.ang, ds: c.ds, voice: c.voice, margin: c.margin, risk: c.risk, prox: c.prox, live: c.live, done: Object.keys(S.done) }; },
       set: function (o) { Object.keys(o).forEach(function (k) { S[k] = o[k]; }); var r = el.querySelector('input[name=simMicType][value="' + S.type + '"]'); if (r) r.checked = true; phIn.checked = !!S.phantom; update(); return this.state(); },
       mouth: mouth, wedge: wedge
     };
