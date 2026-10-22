@@ -1,15 +1,26 @@
 /* =============================================================================
    장비 브랜드 알아보기 — 데이터 (2026-10-23)
    - 화면은 lessons/brands.js 가 그립니다. 여기에는 내용만 있어요.
-   - 모든 사실(나라·소속 회사·제품군)은 2026년 10월에 제조사 사이트·신뢰할 만한 자료로 확인했고,
-     각 분류의 sources 에 근거를 적었습니다. 확인하지 못한 소속(모회사) 정보는 일부러 적지 않았어요.
-   - 로고·제품 사진은 넣지 않습니다(상표·저작권). 브랜드 이름은 글자로만 보여 줍니다.
+   - 모든 사실(나라·소속 회사·제품군·대표 제품)은 2026년 10월에 제조사 사이트·신뢰할 만한 자료로 확인했고,
+     각 분류의 sources 와 대표 제품의 url 에 근거를 적었습니다. 확인하지 못한 정보는 일부러 적지 않았어요.
+   - 로고는 넣지 않습니다(상표). 제조사 제품 사진도 쓰지 않아요(저작권).
    - ours: 우리 교회에서 실제로 쓰는 장비 → 「우리 교회 장비」 배지
+
+   대표 제품 3단계 (brand.tiers)
+   - tier: 'entry'(엔트리·입문) | 'mid'(중급) | 'high'(하이엔드) — 가격·용도 기준의 대략적인 구분
+   - id: '<분류>-<브랜드>-<단계>' — 사진 파일 이름과 같아요: img/brands/<id>.jpg
+   - img: null 이면 화면에 자리표시(분류 아이콘) + 「제조사 페이지에서 사진 보기 ↗」 링크가 나와요.
+     자유 이용 사진(위키미디어 공용 등)을 넣을 때는 img 에 경로를, credit 에 「저작자 · 라이선스」를 적어요.
+       예) img: 'img/brands/mic-shure-entry.jpg', credit: 'Jane Doe · CC BY-SA 4.0 (Wikimedia Commons)'
+   - ours: 우리 교회 장비 / discontinued: 제조사 사이트에 단종(또는 Legacy)으로 표시된 제품
+   - tierNote: 세 단계가 다 있지 않은 브랜드의 이유
    ============================================================================= */
 window.STA_BRANDS = {
   asOf: '2026년 10월',
-  dateNote: '브랜드·제품 정보는 2026년 10월 기준으로 확인했고, 바뀔 수 있어요. 회사 소속(모회사)은 자주 바뀌니, 확인된 경우에만 적었어요.',
+  dateNote: '브랜드·제품 정보(대표 제품 3단계 포함)는 2026년 10월 기준으로 확인했고, 바뀔 수 있어요. 회사 소속(모회사)은 자주 바뀌니, 확인된 경우에만 적었어요.',
   lead: '현장에서 장비 이름표를 보면 브랜드가 먼저 눈에 들어와요. 브랜드마다 잘하는 분야와 쓰는 방식이 조금씩 달라요. 순위를 매기려는 게 아니라, 「이 장비는 어떤 회사가 어떤 용도로 만든 것인지」 알아보는 게 목적이에요.',
+  tierLabels: { entry: '엔트리', mid: '중급', high: '하이엔드' },
+  tierLegend: '엔트리(입문) · 중급 · 하이엔드는 가격·용도 기준의 대략적인 구분이에요. 같은 브랜드 안에서 제품군을 비교해 보는 용도이고, 하이엔드가 우리 공간에 꼭 더 맞는 것은 아니에요.',
 
   categories: [
     { id: 'mic', title: '마이크(유선)', short: '마이크', icon: 'mic',
@@ -31,24 +42,25 @@ window.STA_BRANDS = {
         { t: 'DPA 본사(덴마크 Allerød) — ProSoundWeb', u: 'https://www.prosoundweb.com/rcf-group-acquires-dpa-microphones/' },
         { t: 'DPA 제품군 (d:fine·d:screet·4099·성가대용) — CCI Solutions', u: 'https://shop.ccisolutions.com/StoreFront/category/dpa-microphones' }
       ] },
-    { id: 'wireless', title: '무선 마이크·인이어 모니터', short: '무선·인이어', icon: 'wireless',
+    { id: 'wireless', title: '무선 마이크', short: '무선 마이크', icon: 'wireless',
       modules: [{ id: 'mic', label: '마이크 모듈' }],
-      intro: '무선은 마이크 소리만큼 「전파」가 중요해요. 브랜드와 시리즈마다 쓰는 주파수 대역, 디지털 방식, 동시에 쓸 수 있는 채널 수, 배터리 관리 방법이 달라요.',
+      intro: '무선 마이크는 마이크 소리만큼 「전파」가 중요해요. 브랜드와 시리즈마다 쓰는 주파수 대역, 디지털 방식, 동시에 쓸 수 있는 채널 수, 배터리 관리 방법이 달라요.',
       look: ['국내에서 쓸 수 있는 주파수 대역인지, 국내 전파 인증(KC)을 받은 정식 유통 제품인지', '디지털/아날로그 방식과 동시에 쓸 채널 수', '배터리 — 건전지인지 충전식인지, 남은 양이 수신기에 보이는지', '수신기 출력 — 아날로그(XLR)만인지, Dante 같은 네트워크 출력도 있는지'],
       sources: [
-        { t: 'Shure — Wikipedia (ULX-D·SLX-D·Axient Digital·PSM 연혁)', u: 'https://en.wikipedia.org/wiki/Shure' },
+        { t: 'Shure — Wikipedia (ULX-D·SLX-D·Axient Digital 연혁)', u: 'https://en.wikipedia.org/wiki/Shure' },
         { t: 'Shure ULX-D 발표 — ProSoundWeb (기업·교육·예배·공연 시설용)', u: 'https://www.prosoundweb.com/shure-unveils-ulx-d-digital-wireless-system/' },
-        { t: 'Shure PSM 300 발표 — Shure Newsroom', u: 'https://www.shure.com/en-US/newsroom/shure-introduces-psm-300-stereo-personal-monitor-systems' },
+        { t: 'Shure SLX-D+ 발표 — Shure Newsroom', u: 'https://www.shure.com/en-US/newsroom/shure-introduces-slx-d-plus-wireless-microphone-system' },
         { t: 'Sennheiser EW-DX 리뷰 (EW-D·Digital 6000 과 비교) — AudioTechnology', u: 'https://www.audiotechnology.com/?p=77258' },
-        { t: 'Sennheiser ew IEM G4 (제조사)', u: 'https://sennheiser.com/en-ae/catalog/products/wireless-systems/ew-iem-g4-twin' },
-        { t: 'Audio-Technica Pro Live 카탈로그 — 3000 시리즈·System 10·M3 (제조사)', u: 'https://www.audio-technica.com/uploads/Pro_Live_Catalog-2019-L00069ENG_V1.0_web.pdf' },
+        { t: 'Sennheiser EW-D vs EW-DX vs EW-DP — Sennheiser', u: 'https://www.sennheiser.com/en-ae/stories/the-pulse/the-pulse-stories/ew-d-vs.-ew-dx-vs.-ew-dp---finding-your-voice-in-the-evolution-wireless-digital-family' },
+        { t: 'Audio-Technica Pro Live 카탈로그 — 3000 시리즈·System 10 (제조사)', u: 'https://www.audio-technica.com/uploads/Pro_Live_Catalog-2019-L00069ENG_V1.0_web.pdf' },
+        { t: 'Audio-Technica 4세대 3000 시리즈 발표 — 제조사', u: 'https://www.audio-technica.com/en-us/press/audio-technica-introduces-fourth-generation-3000-series-frequency-agile-true-diversity-uhf-wireless-systems' },
         { t: 'Sony Pro Audio — DWX·UWP-D (제조사)', u: 'https://pro.sony/en_GL/products/audio/pro-audio' },
         { t: '해외직구 무선 마이크 전파 안전성 시험 — 경향신문(2025-11)', u: 'https://www.khan.co.kr/article/202511181442001/' }
       ] },
     { id: 'console', title: '콘솔(믹서)', short: '콘솔', icon: 'console',
       modules: [{ id: 'console', label: '콘솔 모듈' }, { id: 'gain-structure', label: 'Gain Structure 모듈' }],
-      intro: '콘솔은 기본 원리(GAIN → EQ → 페이더 → 버스)는 같지만, 브랜드마다 화면 구성과 메뉴 이름, 스테이지박스 연결 방식이 달라요. 한 브랜드에 익숙해지면 같은 브랜드의 다른 모델은 금방 배워요.',
-      look: ['필요한 입력·출력(AUX·모니터) 채널 수', '아날로그인지 디지털인지 — 디지털은 씬 저장·불러오기 가능', '스테이지박스 연결 방식(Dante·AES50·전용 방식)이 맞는지', '봉사자가 배우기 쉬운지, 교육 자료가 있는지'],
+      intro: '콘솔은 기본 원리(GAIN → EQ → 페이더 → 버스)는 같지만, 브랜드마다 화면 구성과 메뉴 이름이 달라요. 한 브랜드에 익숙해지면 같은 브랜드의 다른 모델은 금방 배워요.',
+      look: ['필요한 입력·출력(AUX·모니터) 채널 수', '아날로그인지 디지털인지 — 디지털은 씬 저장·불러오기 가능', '지금 쓰는 무대 입출력 장비와 연결 방식(Dante·AES50 등)이 맞는지', '봉사자가 배우기 쉬운지, 교육 자료가 있는지'],
       sources: [
         { t: 'Yamaha 믹서 제품군 (CL·QL 단종 표시 포함) — 제조사', u: 'https://usa.yamaha.com/products/proaudio/mixers/' },
         { t: 'Yamaha 회사 개요 (하마마쓰 본사) — 제조사', u: 'https://www.yamaha.com/en/about/profile' },
@@ -56,12 +68,12 @@ window.STA_BRANDS = {
         { t: 'Allen & Heath 제품군 — 제조사', u: 'https://www.allen-heath.com/hardware' },
         { t: 'Audiotonix 브랜드 목록(Allen & Heath·DiGiCo) — SVG (2026-02)', u: 'https://www.sportsvideo.org/2026/02/02/audiotonix-acquires-dpa-microphones-wisycom-and-austrian-audio/' },
         { t: 'Midas Consoles — Wikipedia', u: 'https://en.wikipedia.org/wiki/Midas_Consoles' },
-        { t: 'Midas M32·DL32 발표 — rAVe', u: 'https://ravepubs.com/midas-m32-digital-console/' },
+        { t: 'Midas M32 발표 — rAVe', u: 'https://ravepubs.com/midas-m32-digital-console/' },
         { t: 'Behringer — Wikipedia', u: 'https://en.wikipedia.org/wiki/Behringer' },
         { t: 'Music Tribe — Wikipedia (브랜드 목록)', u: 'https://en.wikipedia.org/wiki/Music_Tribe' },
-        { t: 'X32 과 S16 연결(AES50) — Sweetwater', u: 'https://www.sweetwater.com/sweetcare/articles/behringer-x32-s16-setup/' },
         { t: 'Behringer WING 과 X32/M32 비교 — Drew Brashler', u: 'https://drewbrashler.com/2025/behringer-wing-vs-x32-m32/' },
         { t: 'Soundcraft — Wikipedia', u: 'https://en.wikipedia.org/wiki/Soundcraft' },
+        { t: 'Soundcraft Signature 12 (단종 표시) — 제조사', u: 'https://www.soundcraft.com/en-US/products/signature-12' },
         { t: 'DiGiCo — Wikipedia', u: 'https://en.wikipedia.org/wiki/DiGiCo' },
         { t: 'Avid Technology — Wikipedia (본사)', u: 'https://en.wikipedia.org/wiki/Avid_Technology' },
         { t: 'Avid VENUE | S6L — Avid 보도자료', u: 'https://ir.avid.com/news-releases/news-release-details/avid-expands-venue-s6l-live-sound-platform-delivers-promise' },
@@ -79,8 +91,11 @@ window.STA_BRANDS = {
         { t: 'Powersoft X 시리즈 투어링 앰프 — 제조사', u: 'https://powersoft.com/en/products/touring-amps/x-series' },
         { t: 'QSC 인수(Acuity Brands, 2025-01) — Orange County Business Journal', u: 'https://www.ocbj.com/technology/costa-mesa-av-firm-qsc-thrives-under-new-owners/' },
         { t: 'QSC CX-Q 네트워크 앰프 — Q-SYS', u: 'https://in.qsys.com/resources/news/detail/qsc-introduces-cx-q-series-network-amplifiers-for-the-q-sys-ecosystem/' },
+        { t: 'QSC CX-Q 시리즈 (모델 목록) — Q-SYS', u: 'https://www.qsys.com/products-solutions/q-sys/audio-network-amplifiers/cx-q-series/' },
+        { t: 'QSC 단종 앰프 목록 — Q-SYS', u: 'https://www.qsys.com/products-solutions/discontinued-products/amplifiers/' },
         { t: 'QSC K.2 시리즈 — 제조사', u: 'https://qsc.com/k.2' },
         { t: 'Lab.gruppen — Wikipedia', u: 'https://en.wikipedia.org/wiki/Lab_Gruppen' },
+        { t: 'Lab.gruppen 제품 목록 — 제조사', u: 'https://www.labgruppen.com/en/products' },
         { t: 'Lab.gruppen D 시리즈 DSP 앰프 — SVG Europe', u: 'https://www.svgeurope.org/blog/headlines/lab-gruppen-eyes-sports-stadia-potential-with-new-d-series-dsp-amps/' },
         { t: 'd&b 40D 설치용 4채널 앰프 — 제조사', u: 'https://www.dbaudio.com/global/de/produkte/verstaerker/40d-verstaerker' },
         { t: 'd&b 10D·30D 설치용 앰프 발표 — 제조사', u: 'https://www.dbaudio.com/global/en/about-db/press/newsroom/15062015-infocomm-marks-the-launch-of-the-eagerly-anticipated-installation-specific-db-amplifiers' },
@@ -111,20 +126,6 @@ window.STA_BRANDS = {
         { t: 'NEXO 연혁 (Yamaha 인수 2008) — 제조사', u: 'https://www.nexo-sa.com/about-us/history' },
         { t: 'Martin Audio 라이브 제품군 — 제조사', u: 'https://martin-audio.com/live' },
         { t: 'Focusrite 그룹의 Martin Audio 인수 — Focusrite', u: 'https://us.focusrite.com/articles/the-focusrite-group-announces-the-acquisition-of-martin-audio-ltd/' }
-      ] },
-    { id: 'stagebox', title: '스테이지박스·네트워크 오디오·DI', short: '스테이지박스·DI', icon: 'stagebox',
-      modules: [{ id: 'cable', label: '케이블 모듈 (네트워크 오디오)' }, { id: 'console', label: '콘솔 모듈' }],
-      intro: '스테이지박스는 무대의 마이크 신호를 디지털로 바꿔 랜선 하나로 콘솔까지 보내 줘요. 브랜드마다 쓰는 연결 방식(Dante, AES50, 전용 방식)이 달라서, 대개 「콘솔과 짝이 맞는 것」을 골라야 해요. DI 박스는 건반·기타 같은 악기 신호를 마이크 입력에 맞게 바꿔 주는 작은 상자예요.',
-      look: ['콘솔과 같은 연결 방식인지 — Dante, AES50, dSnake 등', '필요한 입력·출력 채널 수', 'DI 는 액티브(팬텀 전원 사용)인지 패시브인지', '네트워크 장비(스위치)와 설정 프로그램을 누가 관리하는지'],
-      sources: [
-        { t: 'Yamaha Dante 인터페이스 (Rio-D2 단종·Rio-D3·Tio) — Canford', u: 'https://www.canford.co.uk/YAMAHA-DANTE-INTERFACES' },
-        { t: 'Dante 의 역사와 Audinate — ProSoundWeb', u: 'https://www.prosoundweb.com/nearly-two-decades-of-dante-the-history-evolution-of-audinates-networking-platforn/' },
-        { t: 'Dante Controller 무료 제공 — LSi', u: 'https://lsionline.co.uk/news/dante-controller-updated-dark-mode' },
-        { t: 'Radial Engineering 연혁 — 제조사', u: 'https://www.radialeng.com/history' },
-        { t: 'Allen & Heath 제품군(I/O 확장·네트워킹) — 제조사', u: 'https://www.allen-heath.com/hardware' },
-        { t: 'Allen & Heath DX168 dSnake 스테이지박스 — Andertons', u: 'https://www.andertons.co.uk/looms-multicores/allen-heath-dx168-dsnake-stagebox' },
-        { t: 'X32 과 S16 연결(AES50) — Sweetwater', u: 'https://www.sweetwater.com/sweetcare/articles/behringer-x32-s16-setup/' },
-        { t: 'Midas DL32 (AES50 포트) — rAVe', u: 'https://ravepubs.com/midas-m32-digital-console/' }
       ] }
   ],
 
@@ -137,53 +138,121 @@ window.STA_BRANDS = {
       families: [
         { n: 'SM 시리즈 (SM58·SM57 등)', d: '보컬·악기용 다이내믹 마이크. SM58S 는 손잡이에 ON/OFF 스위치가 달린 SM58 이에요.' },
         { n: 'Beta 시리즈', d: '지향성이 좁은(슈퍼카디오이드) 라이브용 마이크 — 큰 무대 소리 속에서 목소리를 따로 잡을 때.' },
-        { n: 'KSM 시리즈', d: '녹음용 고급 마이크(1999년 KSM32 부터).' }
+        { n: 'KSM 시리즈', d: '녹음용·무대용 고급 마이크(1999년 KSM32 부터).' }
       ],
       meet: ['교회 강단', '찬양팀', '공연장', '학교·강당'],
       tip: 'SM58S 의 스위치를 끄면 콘솔에서는 「신호 없음」처럼 보여요. 소리가 안 나면 콘솔보다 마이크 스위치를 먼저 확인해요.',
-      ours: { label: 'SM58S', where: '확성 실습·강단' } },
+      ours: { label: 'SM58S', where: '확성 실습·강단' },
+      tiers: [
+        { id: 'mic-shure-entry', tier: 'entry', model: 'SM58 (SM58S)', family: 'SM 시리즈',
+          text: '카디오이드 다이내믹 보컬 마이크. SM58S 는 손잡이에 ON/OFF 스위치가 달린 버전이에요.',
+          url: 'https://www.shure.com/en-US/products/microphones/sm58?variant=SM58S',
+          img: null, credit: null, ours: true, discontinued: false },
+        { id: 'mic-shure-mid', tier: 'mid', model: 'Beta 58A', family: 'Beta 시리즈',
+          text: '지향성이 더 좁은 슈퍼카디오이드 다이내믹 — 큰 무대 소리 속에서 목소리를 따로 잡을 때.',
+          url: 'https://www.shure.com/en-US/products/microphones/beta_58a',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'mic-shure-high', tier: 'high', model: 'KSM9', family: 'KSM 시리즈',
+          text: '무대용 콘덴서 보컬 마이크. 카디오이드·슈퍼카디오이드를 스위치로 골라요(팬텀 전원 필요).',
+          url: 'https://www.shure.com/en-US/products/microphones/ksm9',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'sennheiser-mic', cat: 'mic', name: 'Sennheiser', ko: '젠하이저', country: '독일',
       identity: '1945년 하노버 근처 베데마르크에서 시작한 가족 경영 음향 회사예요.',
       known: '라이브용 evolution 마이크, 오래 쓰여 온 악기용 MD 421, 방송용 MKH 샷건 마이크로 알려져 있어요.',
       families: [
-        { n: 'evolution 시리즈 (e 835·e 845 등)', d: '보컬·악기용 라이브 마이크. e 845 는 슈퍼카디오이드라 주변 소리·피드백을 줄이는 데 도움이 돼요.' },
+        { n: 'evolution 시리즈 (e 835·e 945 등)', d: '보컬·악기용 라이브 마이크. e 945 는 슈퍼카디오이드라 주변 소리·피드백을 줄이는 데 도움이 돼요.' },
         { n: 'MD 421', d: '1960년부터 이어진 다이내믹 마이크 — 드럼·앰프 등 악기 수음에 많이 써요.' },
         { n: 'MKH 시리즈', d: '방송·영상용 콘덴서(샷건) 마이크.' }
       ],
       meet: ['찬양팀', '공연장', '방송·영상'],
       tip: '스튜디오 마이크로 유명한 Neumann 은 Sennheiser 그룹 회사예요(1991년 인수).',
-      group: 'Sennheiser 그룹 (Neumann 포함)' },
+      group: 'Sennheiser 그룹 (Neumann 포함)',
+      tiers: [
+        { id: 'mic-sennheiser-entry', tier: 'entry', model: 'e 835', family: 'evolution 시리즈',
+          text: '카디오이드 다이내믹 보컬 마이크 — 노래와 말소리에 두루 써요.',
+          url: 'https://www.sennheiser.com/en-be/catalog/products/microphones/e-835/e-835-004513',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'mic-sennheiser-mid', tier: 'mid', model: 'e 945', family: 'evolution 시리즈',
+          text: '슈퍼카디오이드 다이내믹 보컬 마이크 — 주변 소리·피드백을 줄이는 데 도움이 돼요.',
+          url: 'https://www.sennheiser.com/en-us/catalog/products/microphones/e-945/e-945-009422',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'mic-sennheiser-high', tier: 'high', model: 'MD 445', family: 'MD 시리즈',
+          text: '제조사가 상위 다이내믹 라인으로 소개하는 슈퍼카디오이드 보컬 마이크.',
+          url: 'https://www.sennheiser.com/en-us/catalog/products/microphones/md-445/md-445-508828',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'audiotechnica-mic', cat: 'mic', name: 'Audio-Technica', ko: '오디오테크니카', country: '일본',
       identity: '1962년 도쿄에서 시작했고, 본사는 도쿄 마치다에 있어요.',
       known: '라이브 마이크, 녹음용 콘덴서, 헤드폰까지 폭넓게 만들어요.',
       families: [
         { n: 'Artist Elite (AE) 시리즈', d: '보컬·악기용 라이브 마이크.' },
-        { n: 'Artist 시리즈 (ATM 등)', d: '드럼·악기 수음용 마이크.' },
+        { n: 'Artist 시리즈 (ATM 등)', d: '보컬·드럼·악기 수음용 마이크.' },
         { n: '40 시리즈 (AT4033 등)', d: '녹음 스튜디오용 콘덴서 마이크.' }
       ],
       meet: ['교회', '학교·강당', '녹음실'],
-      tip: '무선 마이크(3000 시리즈·System 10)도 만들어요 — 「무선·인이어」 분류에서 볼 수 있어요.' },
+      tip: '무선 마이크(3000 시리즈·System 10)도 만들어요 — 「무선 마이크」 분류에서 볼 수 있어요.',
+      tiers: [
+        { id: 'mic-audiotechnica-entry', tier: 'entry', model: 'ATM510', family: 'Artist 시리즈',
+          text: '카디오이드 다이내믹 보컬 마이크 — 라이브 보컬·말소리용.',
+          url: 'https://www.audio-technica.com/en-us/atm510',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'mic-audiotechnica-mid', tier: 'mid', model: 'AE6100', family: 'Artist Elite 시리즈',
+          text: '하이퍼카디오이드 다이내믹 보컬 마이크 — 모니터 스피커 소리를 덜 받아요.',
+          url: 'https://www.audio-technica.com/en-us/ae6100',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'mic-audiotechnica-high', tier: 'high', model: 'AE5400', family: 'Artist Elite 시리즈',
+          text: '카디오이드 콘덴서 보컬 마이크 — 무대용(팬텀 전원 필요).',
+          url: 'https://www.audio-technica.com/en-us/ae5400',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'akg-mic', cat: 'mic', name: 'AKG', ko: '에이케이지', country: '오스트리아에서 시작',
       identity: '1947년 오스트리아 빈에서 시작했어요. 지금은 HARMAN(삼성전자 자회사)의 전문 음향 브랜드예요.',
       known: '여러 지향성을 고를 수 있는 콘덴서 마이크 C414, 킥드럼용 D112 로 알려져 있어요.',
       families: [
         { n: 'C414', d: '지향성 패턴을 여러 개 고를 수 있는 대형 진동판 콘덴서 — 피아노·성가대·악기 녹음.' },
         { n: 'D112', d: '대형 진동판 다이내믹 — 킥드럼(베이스 드럼)에 많이 써요.' },
-        { n: 'DMS 등 무선 시스템', d: '무선 마이크 시스템도 만들어요.' }
+        { n: 'D5 등 라이브 보컬 마이크', d: '무대 보컬용 다이내믹 마이크.' }
       ],
       meet: ['찬양팀(드럼·피아노)', '녹음실', '공연장'],
       tip: '빈의 본사·공장은 2017년에 문을 닫았고, 브랜드는 HARMAN 안에서 이어지고 있어요.',
-      group: 'HARMAN Professional (삼성전자 자회사)' },
+      group: 'HARMAN Professional (삼성전자 자회사)',
+      tiers: [
+        { id: 'mic-akg-entry', tier: 'entry', model: 'D5', family: 'D 시리즈 (라이브 보컬)',
+          text: '슈퍼카디오이드 다이내믹 보컬 마이크 — 라이브 보컬용.',
+          url: 'https://www.akg.com/microphones/dynamic-microphones/D5.html',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'mic-akg-mid', tier: 'mid', model: 'C214', family: '콘덴서 마이크',
+          text: '대형 진동판 카디오이드 콘덴서 — 보컬·어쿠스틱 악기 녹음과 수음.',
+          url: 'https://www.akg.com/microphones/condenser-microphones/C214.html',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'mic-akg-high', tier: 'high', model: 'C414 XLII', family: 'C414',
+          text: '지향성 패턴 9가지를 고를 수 있는 대형 진동판 콘덴서 — 피아노·성가대·악기.',
+          url: 'https://www.akg.com/microphones/condenser-microphones/C414+XLII.html',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'neumann-mic', cat: 'mic', name: 'Neumann', ko: '노이만', country: '독일',
       identity: '독일 베를린에 있는 마이크 회사로, 1991년부터 Sennheiser 그룹 회사예요.',
       known: '녹음 스튜디오용 콘덴서 마이크로 잘 알려져 있고, 무대용 콘덴서 보컬 마이크도 만들어요.',
       families: [
         { n: 'KMS 104 / KMS 105', d: '무대용 콘덴서 보컬 마이크. KMS 105 는 슈퍼카디오이드라 뒤쪽 소리를 더 잘 막아요.' },
-        { n: 'KM 184 등 소형 진동판 콘덴서', d: '카디오이드 소형 진동판 콘덴서 — 녹음·악기 수음.' }
+        { n: 'KM 184 등 소형 진동판 콘덴서', d: '카디오이드 소형 진동판 콘덴서 — 녹음·악기 수음.' },
+        { n: 'U 87 Ai 등 스튜디오 마이크', d: '녹음실·방송용 대형 진동판 콘덴서.' }
       ],
       meet: ['녹음실', '고급 공연', '방송'],
       tip: '콘덴서 마이크라서 팬텀 전원(+48V)이 꼭 필요해요.',
-      group: 'Sennheiser 그룹' },
+      group: 'Sennheiser 그룹',
+      tierNote: 'Neumann 은 입문 가격대 제품을 거의 만들지 않아서 중급·하이엔드만 보여요.',
+      tiers: [
+        { id: 'mic-neumann-mid', tier: 'mid', model: 'KMS 105', family: 'KMS 무대용 마이크',
+          text: '무대용 슈퍼카디오이드 콘덴서 보컬 마이크(팬텀 전원 필요).',
+          url: 'https://www.neumann.com/en-us/products/microphones/kms-105',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'mic-neumann-high', tier: 'high', model: 'U 87 Ai', family: '스튜디오 마이크',
+          text: '지향성을 고를 수 있는 대형 진동판 스튜디오 콘덴서 — 녹음실·방송.',
+          url: 'https://www.neumann.com/en-us/products/microphones/u-87-ai',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'dpa-mic', cat: 'mic', name: 'DPA Microphones', ko: '디피에이', country: '덴마크',
       identity: '덴마크 알레뢰드(Allerød)에 있는 마이크 회사예요.',
       known: '몸에 붙이는 아주 작은 마이크(헤드셋·핀마이크)와 악기에 붙이는 클립형 마이크로 알려져 있어요.',
@@ -191,55 +260,116 @@ window.STA_BRANDS = {
         { n: 'd:fine 헤드셋', d: '귀에 거는 헤드셋 마이크 — 설교·뮤지컬·강연.' },
         { n: 'd:screet 미니어처', d: '옷에 다는 아주 작은 무지향 마이크(핀마이크).' },
         { n: '4099 악기용', d: '악기에 클립으로 붙이는 콘덴서 마이크.' },
-        { n: '성가대용 마이크', d: '성가대·합창 수음용 마이크.' }
+        { n: '핸드헬드 보컬 (2028·d:facto)', d: '무대용 콘덴서 보컬 마이크.' }
       ],
       meet: ['설교자 헤드셋', '뮤지컬·연극', '방송'],
-      tip: '이런 작은 마이크는 무선 바디팩 송신기에 연결해 쓰는 경우가 많아요. 송신기 브랜드에 맞는 커넥터(어댑터)를 확인해요.' },
+      tip: '이런 작은 마이크는 무선 바디팩 송신기에 연결해 쓰는 경우가 많아요. 송신기 브랜드에 맞는 커넥터(어댑터)를 확인해요.',
+      tierNote: 'DPA 는 업무용 고급 마이크 위주라 입문 단계가 따로 없어요. 같은 용도(핸드헬드 보컬)로 두 단계를 골랐어요.',
+      tiers: [
+        { id: 'mic-dpa-mid', tier: 'mid', model: '2028', family: '핸드헬드 보컬 마이크',
+          text: '무대용 슈퍼카디오이드 콘덴서 보컬 마이크.',
+          url: 'https://www.dpamicrophones.com/microphones/handheld/2028?variant=13',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'mic-dpa-high', tier: 'high', model: 'd:facto 4018V', family: 'd:facto',
+          text: '무대·투어용 슈퍼카디오이드 콘덴서 보컬 마이크.',
+          url: 'https://www.dpamicrophones.com/microphones/handheld/4018v?variant=14',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
 
-    /* ===== 무선 마이크·인이어 ===== */
+    /* ===== 무선 마이크 ===== */
     { id: 'shure-wl', cat: 'wireless', name: 'Shure', ko: '슈어', country: '미국',
-      identity: '유선 마이크와 함께 무선 마이크·인이어 모니터 시스템도 오래 만들어 온 회사예요.',
-      known: '디지털 무선 ULX-D·SLX-D·Axient Digital 과 인이어 모니터 PSM 시리즈로 알려져 있어요.',
+      identity: '유선 마이크와 함께 무선 마이크 시스템도 오래 만들어 온 회사예요.',
+      known: '디지털 무선 SLX-D·ULX-D·Axient Digital 로 알려져 있어요.',
       families: [
-        { n: 'ULX-D', d: '2012년에 나온 디지털 무선. 기업·교육·예배·공연 시설용으로 만들어졌고, 암호화와 배터리 관리 기능이 있어요.' },
         { n: 'SLX-D / SLX-D+', d: '보급형 디지털 무선(2020년). 2026년 2월에 후속 SLX-D+ 가 나왔어요.' },
-        { n: 'Axient Digital', d: '대형 공연·방송용 상위 무선 시스템(2017년).' },
-        { n: 'PSM 시리즈 (PSM 300·900·1000)', d: '무선 인이어 모니터 — 찬양팀이 귀로 자기 모니터 소리를 들을 때.' }
+        { n: 'ULX-D', d: '2012년에 나온 디지털 무선. 기업·교육·예배·공연 시설용으로 만들어졌고, 암호화와 배터리 관리 기능이 있어요.' },
+        { n: 'Axient Digital', d: '대형 공연·방송용 상위 무선 시스템(2017년).' }
       ],
       meet: ['교회 강단·찬양팀', '공연장', '방송'],
       tip: '무선 마이크 소리가 끊기면 송신기 배터리와 수신기의 RF(전파) 표시를 먼저 봐요.',
-      ours: { label: 'ULX-D 수신기', where: '3층 예배당' } },
+      ours: { label: 'ULX-D 수신기', where: '3층 예배당' },
+      tiers: [
+        { id: 'wireless-shure-entry', tier: 'entry', model: 'SLX-D+ (예: SLXD24+/58)', family: 'SLX-D+',
+          text: '보급형 디지털 무선(2026년 출시). SM58·Beta 58A 캡슐 핸드헬드를 골라 써요.',
+          url: 'https://www.shure.com/en-US/products/wireless-systems/slxd-plus',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'wireless-shure-mid', tier: 'mid', model: 'ULX-D', family: 'ULX-D',
+          text: '기업·교육·예배·공연 시설용 디지털 무선. 암호화와 배터리 관리 기능이 있어요.',
+          url: 'https://www.shure.com/en-US/products/wireless-systems/ulx-d_digital_wireless',
+          img: null, credit: null, ours: true, discontinued: false },
+        { id: 'wireless-shure-high', tier: 'high', model: 'Axient Digital (예: AD4Q 수신기)', family: 'Axient Digital',
+          text: '대형 공연·방송용 상위 디지털 무선 시스템.',
+          url: 'https://www.shure.com/en-US/products/wireless-systems/axient_digital',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'sennheiser-wl', cat: 'wireless', name: 'Sennheiser', ko: '젠하이저', country: '독일',
-      identity: '독일의 가족 경영 음향 회사로, 무선 마이크와 인이어 시스템을 폭넓게 만들어요.',
+      identity: '독일의 가족 경영 음향 회사로, 무선 마이크 시스템을 폭넓게 만들어요.',
       known: '보급형부터 공연·방송용까지 단계별 디지털 무선 라인이 있어요.',
       families: [
         { n: 'Evolution Wireless Digital (EW-D)', d: '디지털 무선의 기본 라인.' },
         { n: 'EW-DX', d: 'EW-D 보다 채널·대역이 넓고, 다채널 수신기·암호화·Dante 옵션이 있는 중간 단계.' },
-        { n: 'Digital 6000 / 9000', d: '공연·방송용 상위 무선 시스템.' },
-        { n: 'ew IEM G4', d: '라이브용 무선 인이어 모니터 시스템.' }
+        { n: 'Digital 6000 / 9000', d: '공연·방송용 상위 무선 시스템.' }
       ],
       meet: ['교회', '공연장', '방송·행사'],
-      tip: '같은 브랜드라도 시리즈가 다르면 송신기와 수신기가 서로 연결되지 않을 수 있어요.' },
+      tip: '같은 브랜드라도 시리즈가 다르면 송신기와 수신기가 서로 연결되지 않을 수 있어요.',
+      tiers: [
+        { id: 'wireless-sennheiser-entry', tier: 'entry', model: 'EW-D', family: 'Evolution Wireless Digital',
+          text: '디지털 무선의 기본 라인 — 작은 예배실·행사.',
+          url: 'https://www.sennheiser.com/en-us/product-families/ew-d',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'wireless-sennheiser-mid', tier: 'mid', model: 'EW-DX', family: 'Evolution Wireless Digital',
+          text: '다채널 수신기·암호화·Dante 출력 옵션이 있는 중간 단계.',
+          url: 'https://www.sennheiser.com/en-us/product-families/ew-dx',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'wireless-sennheiser-high', tier: 'high', model: 'Digital 6000', family: 'Digital 6000',
+          text: '공연·방송용 상위 디지털 무선(2채널 수신기 EM 6000).',
+          url: 'https://www.sennheiser.com/en-us/product-families/2-channel-receiver-live-audio-productions-digital-6000',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'audiotechnica-wl', cat: 'wireless', name: 'Audio-Technica', ko: '오디오테크니카', country: '일본',
-      identity: '일본 도쿄의 음향 회사로, 무선 마이크와 인이어 시스템도 만들어요.',
+      identity: '일본 도쿄의 음향 회사로, 무선 마이크 시스템도 만들어요.',
       known: 'UHF 무선 3000·5000 시리즈와 디지털 무선 System 10 으로 알려져 있어요.',
       families: [
+        { n: 'System 10 / System 10 PRO', d: '2.4GHz 디지털 무선 시스템.' },
         { n: '3000 시리즈', d: '주파수를 바꿔 쓸 수 있는 UHF 무선 마이크.' },
-        { n: '5000 시리즈', d: '주파수를 바꿔 쓸 수 있는 UHF 무선(트루 다이버시티).' },
-        { n: 'System 10 / System 10 PRO', d: '디지털 무선 시스템.' },
-        { n: 'M3', d: '무선 인이어 모니터 시스템.' }
+        { n: '5000 시리즈', d: '주파수를 바꿔 쓸 수 있는 UHF 무선(트루 다이버시티) — 투어·방송용.' }
       ],
       meet: ['교회', '학교·강당', '행사'],
-      tip: '여러 대를 함께 쓸 때는 제조사 설명서의 채널(주파수) 조합표를 따라 설정해요.' },
+      tip: '여러 대를 함께 쓸 때는 제조사 설명서의 채널(주파수) 조합표를 따라 설정해요.',
+      tiers: [
+        { id: 'wireless-audiotechnica-entry', tier: 'entry', model: 'System 10 (ATW-1102)', family: 'System 10',
+          text: '2.4GHz 대역을 쓰는 디지털 무선 — 주파수 설정이 간단해요.',
+          url: 'https://www.audio-technica.com/en-us/atw-1102',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'wireless-audiotechnica-mid', tier: 'mid', model: '3000 시리즈 (ATW-3212)', family: '3000 시리즈',
+          text: '주파수를 바꿔 쓸 수 있는 UHF 무선(4세대).',
+          url: 'https://www.audio-technica.com/en-us/3000-series',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'wireless-audiotechnica-high', tier: 'high', model: '5000 시리즈 (ATW-R5220)', family: '5000 시리즈',
+          text: '투어·공연장·방송용 UHF 무선. Dante 출력 수신기(ATW-R5220DAN)도 있어요.',
+          url: 'https://www.audio-technica.com/en/microphones/wireless-systems/series/5000-series',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'sony-wl', cat: 'wireless', name: 'Sony', ko: '소니', country: '일본',
       identity: '전자 회사 소니의 전문 음향 제품군이에요. 방송·영상 현장에서 자주 만나요.',
       known: '카메라와 함께 쓰는 소형 무선 UWP-D 와 디지털 무선 DWX 로 알려져 있어요.',
       families: [
         { n: 'UWP-D', d: '작고 가벼운 무선 — 뉴스 취재, 다큐, 결혼식 같은 영상 현장.' },
-        { n: 'DWX', d: '스튜디오·라이브용 디지털 무선.' }
+        { n: 'DWX', d: '방송·라이브용 디지털 무선.' }
       ],
       meet: ['교회 영상·방송팀', '촬영 현장'],
-      tip: '영상팀이 카메라에 무선 마이크를 바로 연결하는 경우가 많아요. 음향팀 무선과 주파수가 겹치지 않게 미리 이야기해요.' },
+      tip: '영상팀이 카메라에 무선 마이크를 바로 연결하는 경우가 많아요. 음향팀 무선과 주파수가 겹치지 않게 미리 이야기해요.',
+      tierNote: 'Sony 무선은 영상용 UWP-D 와 방송·공연용 DWX 두 갈래라 중간 단계를 따로 두지 않았어요.',
+      tiers: [
+        { id: 'wireless-sony-entry', tier: 'entry', model: 'UWP-D21', family: 'UWP-D',
+          text: '카메라에 다는 소형 무선 핀마이크 세트 — 취재·영상 현장.',
+          url: 'https://pro.sony/ue_US/products/broadcastaudiouwpdseriesmicpackages/uwp-d21',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'wireless-sony-high', tier: 'high', model: 'DWX (예: DWR-S03D 수신기)', family: 'DWX',
+          text: '방송·공연용 디지털 무선(3세대). 예: 카메라에 꽂는 2채널 수신기 DWR-S03D.',
+          url: 'https://pro.sony/ue_US/products/dwx-digital-series-receivers/dwr-s03d',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
 
     /* ===== 콘솔(믹서) ===== */
     { id: 'yamaha-console', cat: 'console', name: 'Yamaha', ko: '야마하', country: '일본',
@@ -253,7 +383,21 @@ window.STA_BRANDS = {
       ],
       meet: ['교회', '공연장', '학교·강당', '행사'],
       tip: '「단종」은 못 쓴다는 뜻이 아니라 새로 만들지 않는다는 뜻이에요. 부품·수리 지원 기간은 따로 확인해요.',
-      ours: { label: 'MG12XU · CL5', where: 'MG12XU 실습 · 3층 방송실 CL5' } },
+      ours: { label: 'MG12XU · CL5', where: 'MG12XU 실습 · 3층 방송실 CL5' },
+      tiers: [
+        { id: 'console-yamaha-entry', tier: 'entry', model: 'MG12XU', family: 'MG 시리즈',
+          text: '12채널 아날로그 믹서. SPX 이펙트와 USB 가 들어 있어요.',
+          url: 'https://usa.yamaha.com/products/proaudio/mixers/mg_series_xu_model/index.html',
+          img: null, credit: null, ours: true, discontinued: false },
+        { id: 'console-yamaha-mid', tier: 'mid', model: 'TF 시리즈 (TF5 등)', family: 'TF',
+          text: '터치 화면으로 조작하는 디지털 믹서 — 교회·행사용.',
+          url: 'https://usa.yamaha.com/products/proaudio/mixers/tf/features.html',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'console-yamaha-high', tier: 'high', model: 'CL5', family: 'CL 시리즈',
+          text: 'Dante 기반 디지털 콘솔. 제조사 미국 사이트에 「단종」 표시 — 지금 판매 중인 상위 라인은 DM7·RIVAGE PM 이에요.',
+          url: 'https://usa.yamaha.com/products/proaudio/mixers/cl_series/index.html',
+          img: 'img/brands/console-yamaha-high.jpg', credit: '사진: 3층에 설치된 Yamaha CL5 (제조사 제품 사진)', ours: true, discontinued: true }
+      ] },
     { id: 'allenheath-console', cat: 'console', name: 'Allen & Heath', ko: '앨런앤히스', country: '영국',
       identity: '1969년 런던에서 시작했고, 지금은 영국 콘월에서 믹서를 설계해요. Audiotonix 그룹 브랜드예요.',
       known: '소형부터 대형까지 디지털 믹서 라인이 다양해서 교회·공연장에서 자주 만나요.',
@@ -261,43 +405,98 @@ window.STA_BRANDS = {
         { n: 'CQ · Qu · SQ', d: '소형·중형 디지털 믹서.' },
         { n: 'Avantis · dLive', d: '중대형 디지털 믹싱 시스템.' },
         { n: 'ZED', d: '아날로그 믹서.' },
-        { n: 'ME', d: '연주자가 직접 모니터를 섞는 개인 모니터 시스템.' }
+        { n: 'ME', d: '연주자가 직접 모니터를 섞는 개인 모니터 믹서.' }
       ],
       meet: ['교회', '공연장', '행사'],
-      group: 'Audiotonix 그룹' },
+      group: 'Audiotonix 그룹',
+      tiers: [
+        { id: 'console-allenheath-entry', tier: 'entry', model: 'CQ-18T', family: 'CQ',
+          text: '터치 화면·앱으로 조작하는 소형 디지털 믹서.',
+          url: 'https://www.allen-heath.com/hardware/cq/cq-18t/',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'console-allenheath-mid', tier: 'mid', model: 'SQ-6', family: 'SQ',
+          text: '중형 디지털 믹서 — 교회·공연장에서 자주 만나요.',
+          url: 'https://www.allen-heath.com/hardware/sq/sq-6/',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'console-allenheath-high', tier: 'high', model: 'dLive (예: S5000)', family: 'dLive',
+          text: '제조사가 대표(flagship) 플랫폼으로 소개하는 대형 디지털 믹싱 시스템.',
+          url: 'https://www.allen-heath.com/hardware/dlive-series/',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'midas-console', cat: 'console', name: 'Midas', ko: '마이다스', country: '영국',
       identity: '1970년 런던에서 시작한 콘솔 회사예요. 지금은 Music Tribe 그룹 브랜드예요.',
       known: '1970년대부터 공연용 콘솔을 만들어 왔고, M32 같은 디지털 콘솔도 만들어요.',
       families: [
+        { n: 'M-AIR (MR18 등)', d: '태블릿으로 조작하는 소형 디지털 믹서.' },
         { n: 'M32', d: '40입력·25버스 디지털 콘솔(2014년).' },
-        { n: 'PRO 시리즈 · Heritage-D (HD96)', d: '대형 공연용 디지털 콘솔.' },
-        { n: 'DL 스테이지박스', d: 'AES50 으로 콘솔과 연결되는 스테이지박스(DL16·DL32 등).' }
+        { n: 'PRO 시리즈 · Heritage-D (HD96)', d: '대형 공연용 디지털 콘솔.' }
       ],
       meet: ['교회', '공연장', '렌탈 업체'],
       tip: 'M32 와 Behringer X32 는 같은 그룹 제품이라 화면 구성이 비슷해요.',
-      group: 'Music Tribe 그룹' },
+      group: 'Music Tribe 그룹',
+      tiers: [
+        { id: 'console-midas-entry', tier: 'entry', model: 'MR18', family: 'M-AIR',
+          text: '태블릿으로 조작하는 18입력 디지털 믹서(Wi-Fi 내장).',
+          url: 'https://www.midasconsoles.com/en/products/0605-AAF',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'console-midas-mid', tier: 'mid', model: 'M32 LIVE', family: 'M32',
+          text: '40입력 디지털 콘솔 — M32 계열의 라이브용 모델.',
+          url: 'https://www.midasconsoles.com/en/products/0603-aeo',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'console-midas-high', tier: 'high', model: 'HD96-24', family: 'Heritage-D',
+          text: '144입력 채널, 21인치 터치 화면의 대형 공연용 디지털 콘솔.',
+          url: 'https://www.midasconsoles.com/en/products/0603-AED',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'behringer-console', cat: 'console', name: 'Behringer', ko: '베링거', country: '독일',
       identity: '1989년 독일 빌리히에서 울리 베링거가 세운 회사예요. Music Tribe 그룹 브랜드예요.',
       known: '디지털 믹서 X32·WING 과 소형 X AIR 를 교회·소규모 공연장에서 자주 만나요.',
       families: [
-        { n: 'X32', d: '디지털 콘솔. AES50 으로 S16 같은 스테이지박스를 연결해요.' },
+        { n: 'X32', d: '교회·소규모 공연장에서 자주 만나는 디지털 콘솔.' },
         { n: 'WING', d: 'X32 다음 세대 디지털 콘솔 — 48채널(모노·스테레오 선택), 터치 화면.' },
         { n: 'X AIR (XR18 등)', d: '소형 디지털 믹서.' }
       ],
       meet: ['교회', '소규모 공연장', '행사'],
       tip: '태블릿·와이파이로 조작하는 믹서를 쓴다면, 와이파이가 끊길 때를 대비해 유선 연결이나 다른 조작 방법을 준비해요.',
-      group: 'Music Tribe 그룹' },
+      group: 'Music Tribe 그룹',
+      tiers: [
+        { id: 'console-behringer-entry', tier: 'entry', model: 'XR18', family: 'X AIR',
+          text: '태블릿·컴퓨터로 조작하는 18입력 소형 디지털 믹서.',
+          url: 'https://www.behringer.com/en/products/0605-AAD',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'console-behringer-mid', tier: 'mid', model: 'X32', family: 'X32',
+          text: '교회·소규모 공연장에서 자주 만나는 32채널 디지털 콘솔.',
+          url: 'https://www.behringer.com/en/products/0603-ACE',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'console-behringer-high', tier: 'high', model: 'WING', family: 'WING',
+          text: 'X32 다음 세대 — 48채널, 터치 화면. 이 브랜드의 상위 모델이에요.',
+          url: 'https://www.behringer.com/en/products/0603-AEN',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'soundcraft-console', cat: 'console', name: 'Soundcraft', ko: '사운드크래프트', country: '영국',
       identity: '1973년 영국에서 시작한 콘솔 회사예요. 지금은 HARMAN(삼성전자 자회사) 브랜드예요.',
       known: '아날로그 믹서와 디지털 콘솔을 함께 만들어요.',
       families: [
-        { n: 'Signature · EPM', d: '아날로그 믹서.' },
+        { n: 'Signature Plus · Signature', d: '아날로그 믹서(Signature 12 는 단종, 지금은 Signature Plus).' },
         { n: 'Ui 시리즈 (Ui24R 등)', d: '무선(태블릿 등)으로 조작하는 디지털 믹서.' },
-        { n: 'Si 시리즈 (Si Impact 등)', d: '디지털 콘솔.' },
-        { n: 'Vi 시리즈', d: '디지털 콘솔.' }
+        { n: 'Vi 시리즈', d: '라이브용 디지털 콘솔.' }
       ],
       meet: ['교회', '행사', '공연장'],
-      group: 'HARMAN Professional (삼성전자 자회사)' },
+      group: 'HARMAN Professional (삼성전자 자회사)',
+      tiers: [
+        { id: 'console-soundcraft-entry', tier: 'entry', model: 'Signature Plus 12', family: 'Signature Plus',
+          text: '12채널 아날로그 믹서 — Lexicon 이펙트·USB-C 오디오 인터페이스 내장. 이전 Signature 12 는 단종됐어요.',
+          url: 'https://www.soundcraft.com/en-US/products/signature-plus-12',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'console-soundcraft-mid', tier: 'mid', model: 'Ui24R', family: 'Ui 시리즈',
+          text: '24채널 디지털 믹서 — 태블릿 등으로 무선 조작, USB 멀티트랙 녹음.',
+          url: 'https://www.soundcraft.com/en-US/products/ui24r',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'console-soundcraft-high', tier: 'high', model: 'Vi3000', family: 'Vi 시리즈',
+          text: '터치 화면 4개를 쓰는 라이브 디지털 콘솔.',
+          url: 'https://www.soundcraft.com/en-US/products/vi3000',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'digico-console', cat: 'console', name: 'DiGiCo', ko: '디지코', country: '영국',
       identity: '2002년에 생긴 영국 체싱턴의 디지털 콘솔 회사예요. Audiotonix 그룹 브랜드예요.',
       known: '공연·투어 현장의 디지털 콘솔로 알려져 있어요.',
@@ -306,14 +505,32 @@ window.STA_BRANDS = {
         { n: 'Quantum 시리즈', d: 'SD 시리즈를 잇는 디지털 콘솔 라인.' }
       ],
       meet: ['대형 공연장', '투어', '대형 교회'],
-      group: 'Audiotonix 그룹' },
+      group: 'Audiotonix 그룹',
+      tierNote: 'DiGiCo 는 공연·투어용 업무 장비만 만들어서 입문 단계가 없어요.',
+      tiers: [
+        { id: 'console-digico-mid', tier: 'mid', model: 'Quantum 225', family: 'Quantum',
+          text: 'Quantum 라인의 작은 모델(72/96채널) — 공연장·교회.',
+          url: 'https://digico.biz/consoles/quantum225/',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'console-digico-high', tier: 'high', model: 'Quantum 852', family: 'Quantum',
+          text: '엔진 두 개로 384채널을 다루는 대형 콘솔 — 제조사 대표 모델.',
+          url: 'https://digico.biz/consoles/quantum852/',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'avid-console', cat: 'console', name: 'Avid', ko: '아비드', country: '미국',
       identity: '녹음 프로그램 Pro Tools 로 알려진 회사로, 본사는 미국 매사추세츠주 벌링턴에 있어요.',
       known: '라이브 콘솔 VENUE | S6L 은 Pro Tools 와 연동돼요.',
       families: [
         { n: 'VENUE | S6L', d: '공연·모니터·방송·공연장용 모듈형 라이브 콘솔. Pro Tools 와 연동돼요.' }
       ],
-      meet: ['대형 공연', '방송', '투어'] },
+      meet: ['대형 공연', '방송', '투어'],
+      tierNote: 'Avid 의 라이브 콘솔은 VENUE | S6L 한 라인이라 하이엔드만 보여요.',
+      tiers: [
+        { id: 'console-avid-high', tier: 'high', model: 'VENUE | S6L', family: 'VENUE | S6L',
+          text: '공연·방송용 모듈형 라이브 콘솔 — Pro Tools 와 연동돼요.',
+          url: 'https://www.avid.com/products/venue-s6l-system/features',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
 
     /* ===== 파워앰프 ===== */
     { id: 'crown-amp', cat: 'amp', name: 'Crown', ko: '크라운', country: '미국',
@@ -326,7 +543,21 @@ window.STA_BRANDS = {
       meet: ['교회', '행사', '공연장'],
       tip: 'XLi 1500 의 제조사 표기 출력은 4Ω 에서 450W 예요. 스피커 임피던스와 출력이 맞는지 먼저 확인해요.',
       ours: { label: 'XLi 1500', where: '확성 실습' },
-      group: 'HARMAN Professional (삼성전자 자회사)' },
+      group: 'HARMAN Professional (삼성전자 자회사)',
+      tiers: [
+        { id: 'amp-crown-entry', tier: 'entry', model: 'XLi 1500', family: 'XLi 시리즈',
+          text: '2채널 앰프(4Ω 에서 450W) — 연주자·예배당·이동 PA.',
+          url: 'https://www.crownaudio.com/en-US/products/xli-1500',
+          img: null, credit: null, ours: true, discontinued: false },
+        { id: 'amp-crown-mid', tier: 'mid', model: 'DCi 4|600N', family: 'DriveCore Install Network',
+          text: '4채널 설치용 앰프 — 네트워크로 상태를 보고 조정해요.',
+          url: 'https://www.crownaudio.com/en-US/products/dci-4-600n',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'amp-crown-high', tier: 'high', model: 'I-Tech 4x3500HD', family: 'I-Tech HD',
+          text: '4채널 투어용 앰프 — 아날로그·AES3·CobraNet 입력.',
+          url: 'https://www.crownaudio.com/en-US/products/i-tech-4x3500hd',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'powersoft-amp', cat: 'amp', name: 'Powersoft', ko: '파워소프트', country: '이탈리아',
       identity: '1995년에 생긴 이탈리아 피렌체 근처 스칸디치의 앰프 회사예요.',
       known: '투어용과 설치용 파워앰프를 나눠서 만들어요.',
@@ -334,38 +565,88 @@ window.STA_BRANDS = {
         { n: 'X 시리즈 · T 시리즈 · K 시리즈', d: '투어·공연용 앰프.' },
         { n: 'Quattrocanali · Ottocanali · Duecanali · Mezzo', d: '설치용 앰프(이름이 채널 수를 뜻해요: 4·8·2채널).' }
       ],
-      meet: ['공연장', '설치 현장', '대형 교회'] },
+      meet: ['공연장', '설치 현장', '대형 교회'],
+      tiers: [
+        { id: 'amp-powersoft-entry', tier: 'entry', model: 'Mezzo 604 A', family: 'Mezzo',
+          text: '작은 설치 공간용 소형 4채널 앰프.',
+          url: 'https://www.powersoft.com/en/products/install-amps/mezzo-series/mezzo-604-a',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'amp-powersoft-mid', tier: 'mid', model: 'Quattrocanali 4804 DSP+D', family: 'Quattrocanali',
+          text: '설치용 4채널 앰프 — DSP 와 Dante 가 들어 있어요.',
+          url: 'https://www.powersoft.com/en/products/install-amps/quattrocanali-series/quattrocanali-4804dspd',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'amp-powersoft-high', tier: 'high', model: 'X8', family: 'X 시리즈',
+          text: '8채널 투어·공연용 앰프.',
+          url: 'https://www.powersoft.com/en/products/touring-amps/x-series/x8',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'qsc-amp', cat: 'amp', name: 'QSC', ko: '큐에스씨', country: '미국',
       identity: '캘리포니아 코스타메사에 있는 회사예요. 2025년 1월 Acuity Brands 에 인수됐어요.',
       known: '앰프, 파워드 스피커, 네트워크 음향 시스템 Q-SYS 를 함께 만들어요.',
       families: [
-        { n: 'CX-Q · CXD-Q', d: 'Q-SYS 와 바로 연결되는 4·8채널 네트워크 앰프.' },
+        { n: 'CX-Q', d: 'Q-SYS 와 바로 연결되는 4·8채널 네트워크 앰프.' },
         { n: 'Q-SYS', d: '오디오·영상·제어를 소프트웨어로 다루는 시스템.' },
         { n: 'K.2 시리즈', d: '앰프가 들어 있는 파워드 스피커.' }
       ],
       meet: ['교회', '회의실·강당', '행사'],
-      group: 'Acuity Brands' },
+      group: 'Acuity Brands',
+      tierNote: 'QSC 앰프는 지금 제조사 사이트에서 Q-SYS 네트워크 앰프(CX-Q) 중심으로 소개돼요. 예전 이동용 앰프(GXD·PLD 등)는 현재 판매 제품으로 확인되지 않아 넣지 않았어요.',
+      tiers: [
+        { id: 'amp-qsc-mid', tier: 'mid', model: 'CX-Q 4K4', family: 'CX-Q',
+          text: 'Q-SYS 와 바로 연결되는 4채널 네트워크 앰프(4·8채널 모델이 있어요).',
+          url: 'https://www.qsys.com/products-solutions/power-amplifiers/installed/network/cx-q-series/cx-q-4k4/',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'labgruppen-amp', cat: 'amp', name: 'Lab.gruppen', ko: '랩그루펜', country: '스웨덴',
       identity: '1979년 스웨덴 쿵스바카에서 시작한 앰프 회사예요. 지금은 Music Tribe 그룹 브랜드예요.',
-      known: '파워앰프 전문 브랜드예요.',
+      known: '파워앰프 전문 브랜드예요. 투어·설치용 대형 앰프(PLM·D 시리즈)로 알려졌고, 지금은 상업 공간용 앰프(CA·FA 등)도 만들어요.',
       families: [
-        { n: 'PLM+ · FP+', d: '주요 파워앰프 라인.' },
+        { n: 'PLM+ · FP+', d: '투어·공연용 파워앰프 라인.' },
         { n: 'D 시리즈', d: 'DSP 가 들어 있는 설치용 앰프.' },
-        { n: 'C 시리즈 · IPD', d: '그 밖의 앰프 라인.' }
+        { n: 'CA · FA · CPA', d: '매장·회의실 같은 상업 공간용 앰프.' }
       ],
       meet: ['공연장', '투어', '설치 현장'],
-      group: 'Music Tribe 그룹' },
+      group: 'Music Tribe 그룹',
+      tierNote: '투어·설치용 대형 앰프(D·PLM 시리즈)는 제조사 사이트에 「Legacy(이전 제품)」로 표시돼 있어 「단종」으로 표시했어요.',
+      tiers: [
+        { id: 'amp-labgruppen-entry', tier: 'entry', model: 'FA2402', family: 'FA 시리즈',
+          text: '2×240W 상업 공간용 앰프 — 매장·회의실 배경음악·안내 방송.',
+          url: 'https://www.labgruppen.com/en/products/0101-aao',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'amp-labgruppen-mid', tier: 'mid', model: 'D 40:4L', family: 'D 시리즈',
+          text: '설치용 4채널 앰프 — Lake DSP·Dante. 제조사 사이트에 「Legacy(이전 제품)」 표시.',
+          url: 'https://www.labgruppen.com/en/products/0107-AAE',
+          img: null, credit: null, ours: false, discontinued: true },
+        { id: 'amp-labgruppen-high', tier: 'high', model: 'PLM 20K44 SP', family: 'PLM+',
+          text: '투어용 4채널 대형 앰프 — Lake DSP 내장. 제조사 사이트에 「Legacy(이전 제품)」 표시.',
+          url: 'https://www.labgruppen.com/en/products/0107-AAH',
+          img: null, credit: null, ours: false, discontinued: true }
+      ] },
     { id: 'db-amp', cat: 'amp', name: 'd&b audiotechnik', ko: '디앤비 오디오테크닉', country: '독일',
       identity: '스피커 회사이면서, 자기 스피커를 구동하는 전용 앰프도 함께 만들어요.',
       known: 'd&b 앰프는 d&b 스피커를 구동하도록 만들어요. 예를 들어 D40 은 KSL·V·Y·T 시리즈를 구동하는 앰프예요.',
       families: [
         { n: '10D · 30D · 40D', d: '설치용 4채널 앰프(2U). 10D 는 작은 공간, 30D 는 중대형 공간용이에요(제조사 설명).' },
-        { n: 'D40 등', d: '이동·투어용 4채널 앰프.' },
+        { n: 'D40 · D80 등', d: '이동·투어용 4채널 앰프.' },
         { n: 'R1 소프트웨어', d: '앰프를 원격으로 보고 조정하는 프로그램.' }
       ],
       meet: ['대형 교회', '공연장', '렌탈 업체'],
       tip: '10D·30D 는 아날로그 입력 4개와 디지털(AES/EBU) 입력 4개를 받아 어느 출력으로든 보낼 수 있어요.',
-      ours: { label: '10D · 40D', where: '3층 앰프 랙' } },
+      ours: { label: '10D · 40D', where: '3층 앰프 랙' },
+      tiers: [
+        { id: 'amp-db-entry', tier: 'entry', model: '10D', family: 'xD 설치용 앰프',
+          text: '작은 공간용 4채널 설치 앰프(2U).',
+          url: 'https://www.dbaudio.com/global/en/products/amplifiers/10d/',
+          img: 'img/brands/amp-db-entry.jpg', credit: '사진: 3층에 설치된 d&b 10D (제조사 제품 사진)', ours: true, discontinued: false },
+        { id: 'amp-db-mid', tier: 'mid', model: '40D', family: 'xD 설치용 앰프',
+          text: '4채널 설치용 앰프 — 10D 보다 큰 공간용.',
+          url: 'https://www.dbaudio.com/global/en/products/amplifiers/40d/',
+          img: 'img/brands/amp-db-mid.jpg', credit: '사진: 3층에 설치된 d&b 40D (제조사 제품 사진)', ours: true, discontinued: false },
+        { id: 'amp-db-high', tier: 'high', model: 'D80', family: 'D 이동·투어용 앰프',
+          text: '4채널 투어용 앰프 — 대형 공연 시스템을 구동해요.',
+          url: 'https://www.dbaudio.com/global/en/products/amplifiers/d80/',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
 
     /* ===== 스피커 ===== */
     { id: 'db-spk', cat: 'speaker', name: 'd&b audiotechnik', ko: '디앤비 오디오테크닉', country: '독일',
@@ -379,7 +660,21 @@ window.STA_BRANDS = {
       ],
       meet: ['대형 교회', '공연장', '렌탈 업체'],
       tip: 'Y 시리즈의 설치용(Yi) 모델은 이동용과 통 만듦새·설치 부품만 달라요. 설치용은 색상 맞춤·방수 옵션도 있어요.',
-      ours: { label: 'E8 · Yi7P · Vi10P', where: '3층 예배당' } },
+      ours: { label: 'E8 · Yi7P · Vi10P', where: '3층 예배당' },
+      tiers: [
+        { id: 'speaker-db-entry', tier: 'entry', model: 'E8', family: 'E 시리즈',
+          text: '8인치 동축형 2웨이 — 말·음악용 단독 시스템이나 무대 모니터.',
+          url: 'https://www.dbaudio.com/global/en/products/series/e-series/e8/',
+          img: 'img/brands/speaker-db-entry.jpg', credit: '사진: 3층에 설치된 d&b E8 (제조사 제품 사진)', ours: true, discontinued: false },
+        { id: 'speaker-db-mid', tier: 'mid', model: 'Yi7P', family: 'Y 시리즈 (설치용 Yi)',
+          text: '8인치 두 개를 쓰는 2웨이 설치용 포인트 소스 — 중소형 공간.',
+          url: 'https://www.dbaudio.com/global/en/products/series/y-series/yi7p/',
+          img: 'img/brands/speaker-db-mid.jpg', credit: '사진: 3층에 설치된 d&b Yi7P (제조사 제품 사진)', ours: true, discontinued: false },
+        { id: 'speaker-db-high', tier: 'high', model: 'Vi10P', family: 'V 시리즈 (설치용 Vi)',
+          text: '10인치 두 개를 쓰는 3웨이 설치용 포인트 소스. 더 큰 공연에는 SL 시리즈 라인 어레이가 있어요.',
+          url: 'https://www.dbaudio.com/global/en/products/series/v-series/vi10p/',
+          img: 'img/brands/speaker-db-high.jpg', credit: '사진: 3층에 설치된 d&b Vi10P (제조사 제품 사진)', ours: true, discontinued: false }
+      ] },
     { id: 'lacoustics-spk', cat: 'speaker', name: 'L-Acoustics', ko: '엘어쿠스틱스', country: '프랑스',
       identity: '1984년 크리스티안 하일 박사가 세운 회사로, 본사는 파리 남쪽 마르쿠시에 있어요.',
       known: '대형 공연용 라인 어레이와 몰입형 음향 기술 L-ISA 로 알려져 있어요.',
@@ -389,7 +684,21 @@ window.STA_BRANDS = {
         { n: 'X 시리즈 (X8·X12 등)', d: '동축형 스피커.' },
         { n: 'LA 앰프 컨트롤러 (LA4X·LA12X 등)', d: '전용 앰프.' }
       ],
-      meet: ['대형 공연장', '페스티벌', '대형 교회'] },
+      meet: ['대형 공연장', '페스티벌', '대형 교회'],
+      tiers: [
+        { id: 'speaker-lacoustics-entry', tier: 'entry', model: 'X8', family: 'X 시리즈',
+          text: '8인치 동축형 소형 스피커 — 무대 모니터·보조 스피커.',
+          url: 'https://www.l-acoustics.com/products/x8/',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'speaker-lacoustics-mid', tier: 'mid', model: 'Kara II', family: 'K 시리즈',
+          text: '중형 라인 어레이 — 공연장·교회.',
+          url: 'https://www.l-acoustics.com/products/kara-ii/',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'speaker-lacoustics-high', tier: 'high', model: 'K1', family: 'K 시리즈',
+          text: '대형 공연·페스티벌용 라인 어레이. 새 대형 라인으로 L 시리즈(L1)도 있어요.',
+          url: 'https://www.l-acoustics.com/products/k1/',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'meyer-spk', cat: 'speaker', name: 'Meyer Sound', ko: '마이어 사운드', country: '미국',
       identity: '1979년 존·헬렌 마이어 부부가 세운 회사로, 본사는 캘리포니아 버클리에 있어요.',
       known: '앰프가 들어 있는 파워드 공연용 스피커를 많이 만들어요.',
@@ -397,7 +706,21 @@ window.STA_BRANDS = {
         { n: 'PANTHER · LEOPARD', d: '라인 어레이.' },
         { n: 'ULTRA-X 시리즈', d: '포인트 소스 스피커.' }
       ],
-      meet: ['공연장', '극장', '대형 교회'] },
+      meet: ['공연장', '극장', '대형 교회'],
+      tiers: [
+        { id: 'speaker-meyer-entry', tier: 'entry', model: 'ULTRA-X20', family: 'ULTRA-X',
+          text: '앰프 내장 소형 포인트 소스 — 넓게 퍼지는 근거리·보조용.',
+          url: 'https://meyersound.com/product/ultra-x20/',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'speaker-meyer-mid', tier: 'mid', model: 'LEOPARD', family: 'LEO 계열 라인 어레이',
+          text: '앰프 내장 소형 라인 어레이 — 극장·공연장.',
+          url: 'https://meyersound.com/product/leopard/',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'speaker-meyer-high', tier: 'high', model: 'PANTHER', family: '라인 어레이',
+          text: '앰프 내장 대형 라인 어레이 — 투어·대형 공연.',
+          url: 'https://docs.meyersound.com/products/en/panther.html',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'jbl-spk', cat: 'speaker', name: 'JBL Professional', ko: '제이비엘', country: '미국',
       identity: 'HARMAN(삼성전자 자회사)의 전문 스피커 브랜드예요.',
       known: '들고 다니는 파워드 스피커부터 투어용 라인 어레이까지 폭넓게 만들어요.',
@@ -408,7 +731,21 @@ window.STA_BRANDS = {
         { n: 'VTX 시리즈 (VTX A12 등)', d: '중대형 투어·고급 설치용 라인 어레이.' }
       ],
       meet: ['교회', '행사', '공연장'],
-      group: 'HARMAN Professional (삼성전자 자회사)' },
+      group: 'HARMAN Professional (삼성전자 자회사)',
+      tiers: [
+        { id: 'speaker-jbl-entry', tier: 'entry', model: 'EON712', family: 'EON700 시리즈',
+          text: '12인치 앰프 내장 이동용 스피커(블루투스).',
+          url: 'https://jblpro.com/en-US/products/jbl-eon712',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'speaker-jbl-mid', tier: 'mid', model: 'PRX915', family: 'PRX900 시리즈',
+          text: '15인치 앰프 내장 2웨이 — 행사·교회 이동용 PA.',
+          url: 'https://jblpro.com/en-US/products/prx915',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'speaker-jbl-high', tier: 'high', model: 'VTX A12', family: 'VTX 시리즈',
+          text: '중대형 투어·고급 설치용 라인 어레이.',
+          url: 'https://jblpro.com/en-US/products/vtx-a12',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'ev-spk', cat: 'speaker', name: 'Electro-Voice', ko: '일렉트로보이스', country: '미국',
       identity: '1927년 미국 인디애나주 사우스벤드에서 시작했어요. 2025년 7월부터 Keenfinity 그룹 브랜드예요.',
       known: '스피커와 마이크를 함께 만들어요. 방송용 마이크 RE20 도 이 회사 제품이에요.',
@@ -416,33 +753,75 @@ window.STA_BRANDS = {
         { n: 'ZX · ZXA (ZX1·ZXA1)', d: '8인치 2웨이 소형 스피커. ZXA1 은 앰프 내장(파워드), ZX1 은 앰프가 따로 필요한 패시브예요.' },
         { n: 'ZLX', d: '2013년부터 나온 스피커 시리즈.' },
         { n: 'EVOLVE', d: '들고 다니는 기둥(컬럼)형 파워드 스피커.' },
-        { n: 'EVERSE', d: '배터리로 움직이는 이동용 스피커.' }
+        { n: 'X-Line Advance', d: '공연용 라인 어레이.' }
       ],
       meet: ['교회', '행사', '소규모 공연'],
       tip: '모델 이름의 「A」는 앰프 내장(Active)을 뜻하는 경우가 많아요. ZXA1 은 전원 코드, ZX1 은 앰프의 스피커 케이블이 필요해요.',
       ours: { label: 'ZXA1 · ZX1', where: '확성 실습' },
-      group: 'Keenfinity 그룹 (2025년 Bosch 에서 분리)' },
+      group: 'Keenfinity 그룹 (2025년 Bosch 에서 분리)',
+      tiers: [
+        { id: 'speaker-ev-entry', tier: 'entry', model: 'ZXA1 (패시브 ZX1)', family: 'ZX · ZXA',
+          text: '8인치 2웨이 소형 스피커. ZXA1 은 앰프 내장, ZX1 은 앰프가 따로 필요해요.',
+          url: 'https://products.electrovoice.com/na/en/zxa1/',
+          img: null, credit: null, ours: true, discontinued: false },
+        { id: 'speaker-ev-mid', tier: 'mid', model: 'EVOLVE 50M', family: 'EVOLVE',
+          text: '앰프와 8채널 믹서가 들어 있는 기둥(컬럼)형 이동용 스피커.',
+          url: 'https://www.electrovoice.com/product/evolve-50m',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'speaker-ev-high', tier: 'high', model: 'X2-212/120', family: 'X-Line Advance',
+          text: '12인치 두 개를 쓰는 공연용 라인 어레이.',
+          url: 'https://products.electrovoice.com/na/en/x2-212120',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'rcf-spk', cat: 'speaker', name: 'RCF', ko: '알씨에프', country: '이탈리아',
       identity: '1949년 이탈리아 레조에밀리아에서 시작한 스피커 회사예요.',
       known: '이동용 파워드 스피커와 설치용 스피커를 폭넓게 만들어요.',
       families: [
         { n: 'ART 시리즈', d: '이동용 파워드 스피커.' },
-        { n: 'HDL 시리즈', d: '전문가용 이동형 스피커.' },
+        { n: 'HDL 시리즈', d: '앰프 내장 라인 어레이.' },
         { n: 'EVOX', d: '기둥(컬럼)형 이동용 스피커.' },
         { n: 'COMPACT · NX', d: '설치용·전문가용 스피커.' }
       ],
       meet: ['교회', '행사', '공연장'],
-      group: 'RCF 그룹' },
+      group: 'RCF 그룹',
+      tiers: [
+        { id: 'speaker-rcf-entry', tier: 'entry', model: 'ART 912-A', family: 'ART 9 시리즈',
+          text: '12인치 앰프 내장 이동용 스피커.',
+          url: 'https://www.rcf.it/en/products/product-detail/art-912-a',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'speaker-rcf-mid', tier: 'mid', model: 'HDL 30-A', family: 'HDL 시리즈',
+          text: '앰프 내장 2웨이 라인 어레이 — 중소형 공연·행사.',
+          url: 'https://www.rcf.it/en/products/product-detail/hdl-30-a',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'speaker-rcf-high', tier: 'high', model: 'HDL 50-A 4K', family: 'HDL 시리즈',
+          text: '앰프 내장 3웨이 대형 라인 어레이.',
+          url: 'https://www.rcf.it/en/products/product-detail/hdl-50-a-4k',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'nexo-spk', cat: 'speaker', name: 'NEXO', ko: '넥쏘', country: '프랑스',
       identity: '1979년에 생긴 프랑스 플라이의 스피커 회사로, 2008년부터 Yamaha 회사예요.',
       known: '라인 어레이와 포인트 소스, 전용 앰프·프로세서를 함께 만들어요.',
       families: [
-        { n: 'GEO 시리즈 · Alpha+', d: '라인 어레이.' },
-        { n: 'P+ · ID · EPS 시리즈', d: '포인트 소스·소형 스피커.' },
+        { n: 'GEO 시리즈 · STM', d: '라인 어레이.' },
+        { n: 'P+ · ID 시리즈', d: '포인트 소스·소형 스피커.' },
         { n: 'NXAMP', d: '전용 앰프 겸 프로세서.' }
       ],
       meet: ['공연장', '교회', '행사'],
-      group: 'Yamaha' },
+      group: 'Yamaha',
+      tiers: [
+        { id: 'speaker-nexo-entry', tier: 'entry', model: 'ID24', family: 'ID 시리즈',
+          text: '아주 작은 설치·보조용 스피커.',
+          url: 'https://www.nexo-sa.com/systems/id-series/',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'speaker-nexo-mid', tier: 'mid', model: 'GEO M10', family: 'GEO M 시리즈',
+          text: '소형 라인 어레이 — 극장·교회·행사.',
+          url: 'https://www.nexo-sa.com/systems/geo-m10/overview/',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'speaker-nexo-high', tier: 'high', model: 'STM M46', family: 'STM 시리즈',
+          text: '모듈을 조합해 쓰는 투어용 라인 어레이.',
+          url: 'https://www.nexo-sa.com/products/stm-m46-main-module/',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] },
     { id: 'martin-spk', cat: 'speaker', name: 'Martin Audio', ko: '마틴 오디오', country: '영국',
       identity: '영국 버킹엄셔에 있는 스피커 회사로, 2019년 Focusrite 그룹에 들어갔어요.',
       known: '공연용 라인 어레이와 설치용 스피커를 만들어요.',
@@ -452,67 +831,28 @@ window.STA_BRANDS = {
         { n: 'CDD-LIVE! · BlacklineX', d: '라이브용 스피커 시리즈.' }
       ],
       meet: ['공연장', '행사', '렌탈 업체'],
-      group: 'Focusrite 그룹' },
-
-    /* ===== 스테이지박스·네트워크·DI ===== */
-    { id: 'yamaha-io', cat: 'stagebox', name: 'Yamaha', ko: '야마하', country: '일본',
-      identity: 'Yamaha 디지털 콘솔과 짝을 이루는 Dante 스테이지박스를 만들어요.',
-      known: 'Rio 시리즈 스테이지박스는 CL·QL 같은 Yamaha 디지털 콘솔과 Dante 로 연결돼요.',
-      families: [
-        { n: 'Rio 시리즈 (Rio3224·Rio1608)', d: '무대용 Dante 스테이지박스. D2 세대는 단종됐고 지금은 D3 세대가 나와요.' },
-        { n: 'Tio1608-D2', d: 'TF·DM3 콘솔에서 GAIN 을 원격 조정하는 16입력 Dante 스테이지박스.' }
-      ],
-      meet: ['교회', '공연장'],
-      tip: '스테이지박스의 마이크 GAIN 은 무대가 아니라 콘솔에서 원격으로 조정해요.',
-      ours: { label: 'Rio3224-D', where: '3층 무대' } },
-    { id: 'audinate-io', cat: 'stagebox', name: 'Audinate (Dante)', ko: '오디네이트 · 단테', country: '호주',
-      identity: '2006년 호주 시드니에서 생긴 회사로, 네트워크 오디오 기술 Dante 를 만들었어요.',
-      known: 'Dante 는 일반 이더넷(랜) 네트워크로 여러 채널의 오디오를 보내는 기술이에요. 여러 브랜드의 장비가 Dante 를 넣어 서로 연결해요.',
-      families: [
-        { n: 'Dante Controller', d: '어느 장비의 소리를 어디로 보낼지 정하는 무료 설정 프로그램.' },
-        { n: 'Dante Virtual Soundcard', d: '추가 장비 없이 컴퓨터를 Dante 네트워크에 연결하는 프로그램.' },
-        { n: 'AVIO 어댑터', d: '예전 아날로그·디지털 장비를 Dante 에 연결하는 작은 어댑터.' },
-        { n: 'Dante Domain Manager', d: '큰 네트워크를 관리·보안하는 프로그램.' }
-      ],
-      meet: ['교회', '공연장', '방송', '회의실'],
-      tip: 'Audinate 는 콘솔이나 스피커를 만드는 회사가 아니에요. Yamaha·Shure 같은 회사의 장비 안에 Dante 기술이 들어가요.' },
-    { id: 'radial-io', cat: 'stagebox', name: 'Radial Engineering', ko: '레이디얼', country: '캐나다',
-      identity: '1996년 캐나다 밴쿠버에서 시작한 회사로, 지금은 포트코퀴틀람에 있어요.',
-      known: 'DI 박스로 잘 알려져 있어요.',
-      families: [
-        { n: 'JDI', d: '패시브 DI (트랜스포머 사용).' },
-        { n: 'J48', d: '액티브 DI (팬텀 전원으로 동작).' },
-        { n: 'ProDI 등 Pro 시리즈', d: '부담 없는 가격의 DI.' }
-      ],
-      meet: ['찬양팀 건반·베이스·어쿠스틱 기타', '공연장'],
-      tip: '액티브 DI 는 콘솔의 팬텀 전원(+48V)을 켜야 동작해요. 「소리 안 남」 문제에서 자주 놓치는 부분이에요.' },
-    { id: 'allenheath-io', cat: 'stagebox', name: 'Allen & Heath', ko: '앨런앤히스', country: '영국',
-      identity: 'Allen & Heath 디지털 믹서와 짝을 이루는 스테이지박스를 만들어요.',
-      known: '자체 연결 방식(dSnake 등)과 Dante 같은 네트워크 카드를 함께 지원해요.',
-      families: [
-        { n: 'AR2412 · AB168', d: 'SQ·Qu·Avantis 같은 믹서와 연결하는 스테이지박스(AudioRack).' },
-        { n: 'DX168 · GX4816', d: 'dLive·Avantis·SQ 용 스테이지박스(I/O 확장).' },
-        { n: '네트워킹 카드', d: 'Dante, MADI, Waves 등 다른 시스템과 연결하는 확장 카드.' }
-      ],
-      meet: ['교회', '공연장'],
-      group: 'Audiotonix 그룹' },
-    { id: 'behringer-io', cat: 'stagebox', name: 'Behringer · Midas', ko: '베링거 · 마이다스', country: '독일 · 영국',
-      identity: '같은 Music Tribe 그룹의 두 브랜드로, AES50 방식 스테이지박스를 만들어요.',
-      known: 'X32·M32 콘솔은 AES50 포트로 차폐 랜선(Cat5e) 하나만 연결하면 스테이지박스를 쓸 수 있어요.',
-      families: [
-        { n: 'Behringer S16 · SD8 · SD16', d: 'X32·WING 과 연결하는 AES50 스테이지박스.' },
-        { n: 'Midas DL16 · DL32', d: 'M32 등과 연결하는 AES50 스테이지박스.' }
-      ],
-      meet: ['교회', '소규모 공연장'],
-      tip: 'AES50 은 랜선을 쓰지만 Dante 와는 다른 방식이에요. Dante 스테이지박스(예: Yamaha Rio)를 X32 에 바로 꽂으면 동작하지 않아요.',
-      group: 'Music Tribe 그룹' }
+      group: 'Focusrite 그룹',
+      tiers: [
+        { id: 'speaker-martin-entry', tier: 'entry', model: 'Blackline X12', family: 'BlacklineX',
+          text: '12인치 2웨이 패시브 — 이동·설치 겸용.',
+          url: 'https://martin-audio.com/products/loudspeakers/blacklinex12',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'speaker-martin-mid', tier: 'mid', model: 'TORUS T1230', family: 'TORUS',
+          text: '곡률이 일정한(constant curvature) 어레이 — 중형 공연장·설치.',
+          url: 'https://martin-audio.com/products/loudspeakers/t1230',
+          img: null, credit: null, ours: false, discontinued: false },
+        { id: 'speaker-martin-high', tier: 'high', model: 'WPL', family: 'Wavefront Precision',
+          text: '대형 공연용 라인 어레이(Wavefront Precision Longbow).',
+          url: 'https://martin-audio.com/products/loudspeakers/wpl',
+          img: null, credit: null, ours: false, discontinued: false }
+      ] }
   ],
 
   /* ---------------------------------------------------- 브랜드보다 중요한 것 */
   principles: [
     { t: '우리 공간과 용도에 맞는지', d: '유명한 브랜드라도 예배당 크기, 소리가 퍼지는 범위, 쓰는 사람(설교·찬양·성가대)에 맞지 않으면 좋은 소리가 나지 않아요.' },
     { t: '국내 지원과 수리', d: '고장 났을 때 국내 정식 수입·서비스 업체가 있는지, 부품을 구할 수 있는지가 오래 쓰는 데 더 중요해요. 무선 장비는 국내 전파 인증(KC) 제품인지도 꼭 봐요.' },
-    { t: '지금 시스템과의 짝', d: '콘솔과 스테이지박스, 앰프와 스피커처럼 서로 짝이 맞아야 하는 장비가 많아요. 새 장비는 「지금 있는 장비와 연결되는지」부터 확인해요.' },
+    { t: '지금 시스템과의 짝', d: '무선 수신기와 콘솔, 앰프와 스피커처럼 서로 짝이 맞아야 하는 장비가 많아요. 새 장비는 「지금 있는 장비와 연결되는지」부터 확인해요.' },
     { t: '봉사자가 배울 수 있는지', d: '봉사자가 바뀌어도 이어서 쓸 수 있도록, 조작이 익숙하고 교육 자료가 있는 장비가 운영에 유리해요. 결국 소리를 만드는 건 장비보다 사람이에요.' }
   ],
 
@@ -520,16 +860,16 @@ window.STA_BRANDS = {
   quiz: [
     { q: '우리 교회 3층 예배당의 무선 마이크 수신기는 어느 브랜드의 어떤 제품일까요?',
       options: [{ t: 'Sennheiser EW-D' }, { t: 'Audio-Technica 3000 시리즈' }, { t: 'Shure ULX-D', ok: true }, { t: 'Sony UWP-D' }],
-      why: '3층은 Shure 의 디지털 무선 ULX-D 수신기를 써요. 기업·교육·예배·공연 시설을 위해 만든 시리즈예요.' },
+      why: '3층은 Shure 의 디지털 무선 ULX-D 수신기를 써요. 기업·교육·예배·공연 시설을 위해 만든 시리즈로, Shure 무선 가운데 중급 단계예요.' },
     { q: 'Electro-Voice ZXA1 과 ZX1 의 차이로 맞는 것은?',
       options: [{ t: 'ZXA1 은 마이크, ZX1 은 스피커' }, { t: 'ZXA1 은 앰프 내장(파워드), ZX1 은 앰프가 따로 필요한 패시브', ok: true }, { t: '둘은 이름만 다른 같은 제품' }, { t: 'ZX1 이 앰프 내장, ZXA1 이 패시브' }],
       why: 'ZXA1 은 앰프가 들어 있어 전원만 연결하면 되고, ZX1 은 Crown XLi 1500 같은 파워앰프에서 스피커 케이블로 받아야 소리가 나요.' },
-    { q: 'Behringer X32 콘솔에 스테이지박스를 연결하려고 해요. 바로 쓸 수 있는 것은?',
-      options: [{ t: 'Dante 스테이지박스 Yamaha Rio3224' }, { t: 'Allen & Heath DX168' }, { t: '랜선만 꽂히면 어느 브랜드든 된다' }, { t: 'AES50 으로 연결하는 Behringer S16', ok: true }],
-      why: '스테이지박스는 랜선을 써도 연결 방식(AES50·Dante·dSnake)이 달라요. X32 는 AES50 이라 S16 같은 AES50 스테이지박스와 짝이 맞아요.' },
-    { q: 'Dante 를 바르게 설명한 것은?',
-      options: [{ t: '일반 이더넷(랜) 네트워크로 여러 채널의 오디오를 보내는 기술', ok: true }, { t: 'Yamaha 가 만든 스피커 시리즈' }, { t: '무선 마이크가 쓰는 주파수 대역 이름' }, { t: '마이크 케이블 커넥터 종류' }],
-      why: 'Dante 는 호주의 Audinate 가 만든 네트워크 오디오 기술이에요. CL5 와 Rio3224-D 도 Dante 로 연결돼요.' },
+    { q: '이 탭의 「엔트리 · 중급 · 하이엔드」 구분을 바르게 이해한 것은?',
+      options: [{ t: '하이엔드일수록 어느 공간에서나 소리가 더 좋다' }, { t: '제조사가 공식으로 정한 등급이다' }, { t: '가격·용도 기준의 대략적인 구분이고, 우리 공간과 용도에 맞는 것이 좋은 장비다', ok: true }, { t: '엔트리 제품은 교회에서 쓰면 안 된다' }],
+      why: '세 단계는 같은 브랜드 안의 제품군을 비교하려는 대략적인 구분이에요. 우리 교회도 실습에서 엔트리 단계의 SM58S·MG12XU 를 잘 쓰고 있어요. 공간·용도·봉사자가 다루기 쉬운지가 더 중요해요.' },
+    { q: '3층 방송실의 Yamaha CL5 처럼 제조사 사이트에 「단종」 표시가 붙은 장비는 어떻게 봐야 할까요?',
+      options: [{ t: '바로 사용을 멈추고 바꿔야 한다' }, { t: '새로 만들지 않는다는 뜻 — 계속 쓸 수 있지만 수리·부품 지원 기간을 따로 확인한다', ok: true }, { t: '소리 품질이 떨어졌다는 뜻이다' }, { t: '펌웨어를 올리면 단종 표시가 사라진다' }],
+      why: '「단종」은 새로 생산하지 않는다는 뜻이에요. 지금 잘 동작하는 장비는 계속 쓰되, 고장에 대비해 수리·부품 지원 기간과 후속 모델(Yamaha 는 DM7·RIVAGE PM)을 알아 두면 좋아요.' },
     { q: '해외 쇼핑몰에서 싸고 좋아 보이는 무선 마이크를 찾았어요. 교회에 들이기 전에 가장 먼저 볼 것은?',
       options: [{ t: '유명 브랜드 이름이 붙어 있는지만' }, { t: '국내 전파 인증(KC)을 받은 정식 유통 제품인지, 국내에서 수리할 수 있는지', ok: true }, { t: '디자인이 예배당과 어울리는지' }, { t: '가장 비싼 모델인지' }],
       why: '해외 직구 무선 제품 중에는 국내 전파 안전성 시험에서 부적합 판정을 받은 사례가 있어요. 무선 장비는 인증과 국내 지원부터 확인해요.' }
