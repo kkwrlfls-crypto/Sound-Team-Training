@@ -103,3 +103,20 @@
 /* 편집 모드에서도 교안 본문은 넓게, 제목·설명은 줄을 나눠 표시 */
 #tabIntro .level-header .editable-text { display: block; }
 #introDoc { display: block !important; width: 100%; box-sizing: border-box; }
+
+/* ---------- 그림 (2026-10-23) */
+.fld-svg { display: block; width: 100%; height: auto; }
+.fld-fig { margin: 0; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px; }
+.fld-fig figcaption { font-size: 0.72rem; color: #64748b; margin-top: 4px; text-align: center; }
+.chk-item.has-fig { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); column-gap: 16px; align-items: start; }
+.chk-item.has-fig > .fld-fig { grid-column: 2; grid-row: 1 / span 6; align-self: start; }
+.chk-item.has-fig > :not(.fld-fig) { grid-column: 1; min-width: 0; }
+.chk-item.is-good .fld-fig, .chk-item.is-warn .fld-fig, .chk-item.is-bad .fld-fig { background: #fff; }
+.fld-ico { width: 15px; height: 15px; flex: none; vertical-align: -3px; margin-right: 4px; }
+.tip-cat { display: inline-flex; align-items: center; }
+.chk-filter button .fld-ico { margin-right: 5px; }
+.tip-card .fld-fig { padding: 6px; }
+@media (max-width: 760px) {
+  .chk-item.has-fig { display: block; }
+  .chk-item.has-fig > .fld-fig { margin-bottom: 10px; max-width: 420px; }
+}
