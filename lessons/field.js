@@ -13,6 +13,7 @@
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function load(k) { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch (e) { return {}; } }
   function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장이 안 돼도 화면은 동작 */ } }
+  function fig(name, cap) { var f = window.STAFieldFig && window.STAFieldFig[name]; return f ? '<figure class="fld-fig">' + f() + (cap ? '<figcaption>' + esc(cap) + '</figcaption>' : '') + '</figure>' : ''; }
   function modLink(id) { var m = MODS()[id]; return m && m.status === 'ready' ? '<button type="button" class="fld-modlink" data-module="' + esc(id) + '">📘 관련 학습: ' + esc(m.title) + ' 모듈</button>' : ''; }
 
   /* =================================================================== 자가 진단 기준표 */
@@ -27,7 +28,7 @@
   function grade(p) { return p == null ? ['—', ''] : p >= 85 ? ['좋아요', 'ok'] : p >= 60 ? ['보완하면 좋아요', 'warn'] : ['개선이 필요해요', 'bad']; }
   function itemHtml(s, it) {
     var v = ck.items[it.id] || {};
-    return '<article class="chk-item' + (v.s ? ' is-' + v.s : '') + '" id="chk-' + it.id + '">' +
+    return '<article class="chk-item' + (v.s ? ' is-' + v.s : '') + (it.fig ? ' has-fig' : '') + '" id="chk-' + it.id + '">' + (it.fig ? fig(it.fig) : '') +
       '<div class="chk-item__head"><span class="chk-id">' + it.id + '</span><h4>' + esc(it.q) + '</h4><span class="chk-w" title="중요도">' + '●'.repeat(it.w) + '<i>' + '●'.repeat(3 - it.w) + '</i></span></div>' +
       '<p class="chk-std"><b>양호 기준</b> ' + esc(it.std) + '</p>' +
       '<details class="chk-more"><summary>점검 방법 · 개선 방법</summary><div><p><b>점검 방법</b> ' + esc(it.how) + '</p><p><b>개선 방법</b> ' + esc(it.fix) + '</p>' + (it.link ? modLink(it.link) : '') + '</div></details>' +
@@ -94,8 +95,8 @@
   function catName(k) { var c = TIPS.cats.find(function (x) { return x.k === k; }); return c ? c.t : k; }
   function tipHtml(t) {
     var on = !!tk.star[t.id];
-    return '<article class="tip-card" id="tip-' + t.id + '"><div class="tip-card__top"><span class="tip-cat">' + esc(catName(t.cat)) + '</span><button type="button" class="tip-star' + (on ? ' on' : '') + '" data-tipstar="' + t.id + '" aria-pressed="' + on + '" title="즐겨찾기">' + (on ? '★' : '☆') + '</button></div>' +
-      '<h4>' + esc(t.title) + '</h4><p class="tip-scene"><b>이런 상황</b> ' + esc(t.scene) + '</p>' +
+    return '<article class="tip-card' + (t.fig ? ' has-fig' : '') + '" id="tip-' + t.id + '"><div class="tip-card__top"><span class="tip-cat">' + (window.STAFieldIcon ? STAFieldIcon(t.cat) : '') + esc(catName(t.cat)) + '</span><button type="button" class="tip-star' + (on ? ' on' : '') + '" data-tipstar="' + t.id + '" aria-pressed="' + on + '" title="즐겨찾기">' + (on ? '★' : '☆') + '</button></div>' +
+      '<h4>' + esc(t.title) + '</h4>' + (t.fig ? fig(t.fig) : '') + '<p class="tip-scene"><b>이런 상황</b> ' + esc(t.scene) + '</p>' +
       '<div class="tip-how"><b>이렇게 해요</b><ol>' + t.how.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ol></div>' +
       '<p class="tip-why"><b>왜 그럴까요?</b> ' + esc(t.why) + '</p>' + (t.link ? modLink(t.link) : '') + '</article>';
   }
@@ -110,7 +111,7 @@
     var root = $('tipRoot'); if (!root || !TIPS) return;
     root.innerHTML = '<p class="tip-lead">현장에서 자주 겪는 상황과 대처법이에요. 우리 팀 상황에 맞게 고쳐 쓰세요. ☆ 를 눌러 즐겨찾기 해 두면 다시 보기 쉬워요.</p>' +
       '<div class="tip-tools"><div class="chk-filter tip-cats" role="tablist" aria-label="분류">' + [['all', '전체']].concat(TIPS.cats.map(function (c) { return [c.k, c.t]; })).map(function (c) {
-        return '<button type="button" role="tab" aria-selected="' + (tipCat === c[0]) + '" data-tipcat="' + c[0] + '">' + esc(c[1]) + '</button>'; }).join('') + '</div>' +
+        return '<button type="button" role="tab" aria-selected="' + (tipCat === c[0]) + '" data-tipcat="' + c[0] + '">' + (c[0] !== 'all' && window.STAFieldIcon ? STAFieldIcon(c[0]) : '') + esc(c[1]) + '</button>'; }).join('') + '</div>' +
       '<div class="tip-search"><input type="search" data-role="tipQ" placeholder="검색 (예: 배터리, 하울링)" value="' + esc(tipQ) + '" aria-label="꿀팁 검색"><label><input type="checkbox" data-role="tipStar"' + (tipStar ? ' checked' : '') + '> ★ 만 보기</label><span data-role="tipCount"></span></div></div>' +
       '<div class="tip-grid" data-role="tipCards"></div>' +
       '<p class="tip-foot">※ 여러 교회 현장에서 흔히 쓰는 일반적인 노하우예요. 숫자는 대략적인 경향이에요. 우리 팀만의 꿀팁이 생기면 알려 주세요 — 여기에 계속 더해 갈게요.</p>';
