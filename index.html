@@ -2703,6 +2703,7 @@
   </style>
   <link rel="stylesheet" href="lessons/lessons.css">
   <link rel="stylesheet" href="lessons/modules.css">
+  <link rel="stylesheet" href="lessons/field.css">
 </head>
 <body>
 
@@ -2801,10 +2802,13 @@
       </div>
   <div class="tab-nav">
       <button class="tab-btn active" data-tab="tabHome" onclick="switchTab('tabHome')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/></svg><span>홈</span></button>
+      <button class="tab-btn" data-tab="tabIntro" onclick="switchTab('tabIntro')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M12 7v6M9 10h6"/></svg><span>음향의 중요성</span></button>
       <button class="tab-btn" data-tab="tab1" onclick="switchTab('tab1')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg><span>확성 시스템의 기본</span></button>
       <button class="tab-btn" data-tab="tab6" onclick="switchTab('tab6')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5v17M12 3.5v17M18 3.5v17"/><rect x="4" y="13" width="4" height="3" rx="0.8"/><rect x="10" y="7" width="4" height="3" rx="0.8"/><rect x="16" y="11" width="4" height="3" rx="0.8"/></svg><span>MG12XU 실습</span></button>
       <button class="tab-btn" data-tab="tab7" onclick="switchTab('tab7')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0 5 5L12 19a2.1 2.1 0 0 1-3-3l7.5-7.5"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/><path d="M5 5l4 4M3.5 8.5l5-5"/></svg><span>음향 트러블슈팅</span></button>
       <button class="tab-btn" data-tab="tabFeedback" onclick="switchTab('tabFeedback')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0"/><path d="M12 3v3M12 18v3"/></svg><span>하울링 제어 훈련</span></button>
+      <button class="tab-btn" data-tab="tabCheck" onclick="switchTab('tabCheck')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3.5" width="14" height="18" rx="2"/><path d="M9 3.5V2h6v1.5M8.5 10l1.5 1.5 3-3M8.5 16l1.5 1.5 3-3M15 10.5h1.5M15 16.5h1.5"/></svg><span>자가 진단 기준표</span></button>
+      <button class="tab-btn" data-tab="tabTips" onclick="switchTab('tabTips')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg><span>실전 꿀팁</span></button>
       <button class="tab-btn" data-tab="tab2" onclick="switchTab('tab2')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/></svg><span>3층 음향 시스템</span></button>
       <button class="tab-btn" data-tab="tabBrands" onclick="switchTab('tabBrands')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span>장비 브랜드 알아보기</span></button>
       <button class="tab-btn" data-tab="tab5" onclick="switchTab('tab5')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><rect x="5.5" y="7.5" width="8" height="4" rx="0.6"/><path d="M16.5 8v3M19 8v3M6 15h.01M9 15h.01M12 15h.01M15 15h.01M18 15h.01"/></svg><span>CL5 콘솔 트레이닝</span></button>
@@ -2856,6 +2860,22 @@
       <div id="brandRoot"></div>
     </div>
 
+    <!-- 2026-10-22: 음향의 중요성 — 기완 님이 직접 작성하는 교안(처음엔 비어 있음). 편집 → 저장하면 새 index.html 내려받기 -->
+    <div id="tabIntro" class="tab-content">
+      <div class="level-header">
+        <div class="level-title editable-text" data-field="tabIntro.title">음향의 중요성</div>
+        <div class="level-desc editable-text" data-field="tabIntro.desc">예배 안에서 음향이 왜 중요한지, 우리 팀이 어떤 마음으로 섬기는지 함께 생각해 봅니다.</div>
+      </div>
+      <div class="content-edit-bar" id="tabIntroEditBar">
+        <button type="button" class="content-edit-btn" id="tabIntroEditBtn" onclick="toggleContentEdit('tabIntro')">✏️ 교안 편집</button>
+        <button type="button" class="content-edit-btn save" onclick="saveEditedContent('tabIntro')">💾 저장 (새 index.html 다운로드)</button>
+        <button type="button" class="content-edit-btn cancel" onclick="cancelContentEdit('tabIntro')">편집 취소</button>
+        <span class="content-edit-hint">제목·설명·본문을 눌러 직접 쓰고, 저장하면 고친 내용이 담긴 index.html 파일이 내려받아져요.</span>
+      </div>
+      <div class="intro-tools" id="introTools" hidden><span>본문 서식</span><button type="button" class="sim-btn" data-fmt="h2">큰 제목</button><button type="button" class="sim-btn" data-fmt="h3">작은 제목</button><button type="button" class="sim-btn" data-fmt="p">본문</button><button type="button" class="sim-btn" data-fmt="b">굵게</button><button type="button" class="sim-btn" data-fmt="ul">목록</button></div>
+      <div class="intro-doc editable-text" id="introDoc" data-field="tabIntro.body"></div>
+    </div>
+
     <div id="tab1" class="tab-content">
       <div class="level-header">
         <div class="level-title editable-text" data-field="tab1.title">확성 시스템의 기본</div>
@@ -2902,6 +2922,24 @@
         <div class="level-desc">하울링(피드백)이 왜 생기는지 보고, 링아웃 · 예배 중 돌발 대응 · 귀로 주파수 찾기를 직접 연습합니다.</div>
       </div>
       <div id="fbtRoot"></div>
+    </div>
+
+    <!-- 2026-10-22: 통합 실전 훈련 — 음향 시스템 자가 진단 기준표 (lessons/field.js · field_data.js) -->
+    <div id="tabCheck" class="tab-content">
+      <div class="level-header">
+        <div class="level-title">음향 시스템 자가 진단 기준표</div>
+        <div class="level-desc">방송실 모니터링 환경, 메인 스피커의 지향각과 설치 위치, 룸 어쿠스틱을 중심으로 우리 시스템의 약한 곳을 스스로 찾아봅니다.</div>
+      </div>
+      <div id="chkRoot"></div>
+    </div>
+
+    <!-- 2026-10-22: 통합 실전 훈련 — 실전 꿀팁 -->
+    <div id="tabTips" class="tab-content">
+      <div class="level-header">
+        <div class="level-title">실전 꿀팁!</div>
+        <div class="level-desc">책이나 이론으로는 접하기 어려운, 현장 경험에서 나온 노하우를 모았어요.</div>
+      </div>
+      <div id="tipRoot"></div>
     </div>
 
     <div id="tab7" class="tab-content">
@@ -3493,6 +3531,8 @@
   <script src="lessons/brands_data.js"></script>
   <script src="lessons/brands.js"></script>
   <script src="lessons/feedback_trainer.js"></script>
+  <script src="lessons/field_data.js"></script>
+  <script src="lessons/field.js"></script>
   <script src="lessons/nav_history.js"></script>
 
   <script>
@@ -6211,8 +6251,8 @@
     /* ===== 탭1 설명 / 탭4 커리큘럼 내용 편집 모드 (저장 시 수정 내용이 담긴 새 index.html 다운로드) =====
        - localStorage에 저장하지 않습니다. "저장" 버튼을 누르면 현재 페이지 전체를 다시 직렬화해서
          새 index.html 파일로 다운로드하며, 사용자가 그 파일로 기존 파일을 교체해야 수정이 반영됩니다. */
-    let mg12xuContentEditing = { tab1: false, tab4: false, tab6: false };
-    let mg12xuEditSnapshot = { tab1: null, tab4: null, tab6: null };
+    let mg12xuContentEditing = { tab1: false, tab4: false, tab6: false, tabIntro: false };
+    let mg12xuEditSnapshot = { tab1: null, tab4: null, tab6: null, tabIntro: null };
 
     function mg12xuApplyEditableState(tabId, editing) {
       const container = document.getElementById(tabId);
@@ -6232,7 +6272,7 @@
       const container = document.getElementById(tabId);
       const snap = [];
       if (container) {
-        container.querySelectorAll('.editable-text').forEach(el => snap.push({ el, text: el.textContent }));
+        container.querySelectorAll('.editable-text').forEach(el => snap.push({ el, html: el.innerHTML }));   // 2026-10-22: 교안 본문 서식(제목·목록)도 그대로 되돌리도록 innerHTML 로
       }
       mg12xuEditSnapshot[tabId] = snap;
       mg12xuApplyEditableState(tabId, true);
@@ -6241,7 +6281,7 @@
     function cancelContentEdit(tabId) {
       mg12xuContentEditing[tabId] = false;
       const snap = mg12xuEditSnapshot[tabId];
-      if (snap) snap.forEach(({ el, text }) => { if (el.isConnected) el.textContent = text; });
+      if (snap) snap.forEach(({ el, html }) => { if (el.isConnected) el.innerHTML = html; });
       mg12xuEditSnapshot[tabId] = null;
       mg12xuApplyEditableState(tabId, false);
       if (tabId === 'tab4') renderCurriculum();
@@ -6286,7 +6326,7 @@
       if (tabId === 'tab4') mg12xuSyncCurriculumFromDom();
       // 저장 파일에 편집 UI 상태(점선 테두리, contenteditable 등)가 그대로 남지 않도록
       // 양쪽 탭 모두 편집 모드를 끈 뒤 직렬화합니다.
-      ['tab1', 'tab4', 'tab6'].forEach(id => {
+      ['tab1', 'tab6', 'tabIntro'].forEach(id => {   // 2026-10-22: tab4 삭제, 음향의 중요성(tabIntro) 추가
         mg12xuContentEditing[id] = false;
         mg12xuApplyEditableState(id, false);
       });
