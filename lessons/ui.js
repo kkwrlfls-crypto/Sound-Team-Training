@@ -20,7 +20,7 @@
     btn.setAttribute('aria-expanded', open ? 'true' : 'false');
     if (open) {
       nav.setAttribute('role', 'dialog'); nav.setAttribute('aria-modal', 'true'); nav.setAttribute('aria-label', '전체 메뉴');
-      var a = nav.querySelector('.tab-btn.active, .tab-group.active') || nav.querySelector('.tab-btn, .tab-group');
+      var a = nav.querySelector('.tab-btn.active, .tab-group.active, .nav-mod.active') || nav.querySelector('.tab-btn, .tab-group');
       if (a) { try { a.focus({ preventScroll: true }); a.scrollIntoView({ block: 'nearest' }); } catch (e) { /* noop */ } }
     } else {
       nav.removeAttribute('role'); nav.removeAttribute('aria-modal'); nav.removeAttribute('aria-label');
@@ -42,7 +42,7 @@
   });
   // 메뉴 항목을 누르면(기존 onclick 실행 뒤) 서랍 닫기
   nav.addEventListener('click', function (e) {
-    if (e.target.closest && e.target.closest('.tab-btn, .tab-group')) setTimeout(function () { setOpen(false, false); }, 0);
+    if (e.target.closest && e.target.closest('.tab-btn, .tab-group, .nav-mod')) setTimeout(function () { setOpen(false, false); }, 0);
   });
   if (mq && mq.addEventListener) mq.addEventListener('change', function () { if (!narrow()) setOpen(false, false); });
 
@@ -52,9 +52,10 @@
     if (!cur) return;
     var g = nav.querySelector('.tab-group.active') || nav.querySelector('.tab-group.in');
     var b = nav.querySelector('.tab-btn.active');
-    var gt = label(g), bt = label(b);
+    var gt = label(g), bt = label(b), md = nav.querySelector('.nav-mod.active');
     var html = '';
-    if (nav.querySelector('.tab-group.active')) html = '<b>' + esc(gt) + '</b>';
+    if (md) html = esc(gt) + ' › <b>' + esc(md.lastElementChild ? md.lastElementChild.textContent : '') + '</b>';   // 2026-10-23 과정 화면
+    else if (nav.querySelector('.tab-group.active')) html = '<b>' + esc(gt) + '</b>';
     else if (gt && bt) html = esc(gt) + ' › <b>' + esc(bt) + '</b>';
     else if (bt) html = '<b>' + esc(bt) + '</b>';
     cur.innerHTML = html;

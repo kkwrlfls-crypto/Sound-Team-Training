@@ -10,8 +10,9 @@
 (function () {
   'use strict';
   var PATHS = window.STA_PATHS || [], MODS = window.STA_MODULES || {}, VIS = window.STAVisuals || {}, SIMS = window.STASims || {};
+  var GL = window.STA_GLANCE || {};   // 2026-10-23: 「한눈에 보기」 + 장비 사진 설명 (lessons/modules_glance.js)
   var KEY = 'soundTrainerModules_v1';
-  var TABS = [['overview', '학습 개요'], ['theory', '이론 학습'], ['practice', '실습하기'], ['quiz', '확인 문제'], ['missions', '관련 미션'], ['deeper', '심화 학습']];
+  var TABS = [['overview', '핵심 개념'], ['theory', '이론 학습'], ['practice', '실습하기'], ['quiz', '확인 문제'], ['missions', '관련 미션'], ['deeper', '심화 학습']];
   var PRACTICE_INFO = {
     tab1: ['확성 시스템의 기본', '마이크·믹서·앰프·스피커를 3D 로 직접 연결하고 조작해 봅니다.', 'vi10p.jpg'],
     tab6: ['MG12XU 실습', '실제 콘솔 사진 위에서 연결하고, 소리를 들으며 조작합니다.', 'console_strip.jpg'],
@@ -30,10 +31,12 @@
     'img/modules/hw_cable.jpg': { t: '사진: Jud McCranie, 「XLR connectors, male and female」, CC BY-SA 4.0 (Wikimedia Commons, 잘라서 사용)', url: 'https://commons.wikimedia.org/wiki/File:XLR_connectors,_male_and_female.jpg' },
     'img/modules/hw_console.jpg': { t: '사진: 3층에 설치된 Yamaha CL5 (제조사 제품 사진)' },
     'img/modules/hw_amp.jpg': { t: '사진: 3층에 설치된 d&b 40D · 10D 앰프 (제조사 제품 사진)' },
-    'img/modules/hw_speaker.jpg': { t: '사진: 3층에 설치된 d&b 서브우퍼 · E8 · Vi10P (제조사 제품 사진)' }
+    'img/modules/hw_speaker.jpg': { t: '사진: 3층에 설치된 d&b 서브우퍼 · E8 · Vi10P (제조사 제품 사진)' },
+    'img/modules/mg12xu_full.jpg': { t: '사진: 「MG12XU 실습」 화면의 콘솔 (Yamaha 제품 사진 + 실습용 페이더)' }
   };
+  var IMG_R = { 'img/modules/mg12xu_full.jpg': 1754 / 1862 };   // 사진 가로÷세로 (그 밖의 장비 사진은 1200×900)
   function creditHtml(img) { var c = IMG_CREDITS[img]; if (!c) return ''; return '<p class="mod-credit">' + (c.url ? '<a href="' + esc(c.url) + '" target="_blank" rel="noopener">' + esc(c.t) + '</a>' : esc(c.t)) + '</p>'; }
-  var view = { path: null, mod: null, tab: 'overview' }, sim = null, viewer = null, backTo = null;
+  var view = { path: null, mod: null, tab: 'overview', fig: 'photo' }, sim = null, viewer = null, backTo = null;
 
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -132,12 +135,74 @@
       }).join('') + '</fieldset><div class="lsn-qbar"><button type="button" class="lsn-check" data-' + kind + 'chk="' + qi + '"' + (answered ? '' : ' disabled') + '>' + (answered ? '다시 확인' : '확인') + '</button>' +
       (answered ? '<span class="lsn-fb ' + (q.options[ans] && q.options[ans].ok ? 'ok">정답입니다!' : 'no">다시 생각해 보세요') + '</span>' : '') + '</div></div>';
   }
+  /* ------------------------------------------------------------- 2026-10-23 학습 화면(시안 2): 머리 · 장비 사진 설명 · 핵심 개념 */
+  var MI = {   // 메뉴·카드와 같은 선 아이콘
+    level: '<path d="M4 20V14M10 20V9M16 20V4"/>',
+    time: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    prac: '<path d="M8 5v14l11-7z"/>',
+    ts: '<path d="M14.5 6.5a4 4 0 0 0 5 5L12 19a2.1 2.1 0 0 1-3-3l7.5-7.5"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/>',
+    bulb: '<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/>',
+    check: '<circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/>',
+    dot: '<circle cx="12" cy="12" r="9"/>'
+  };
+  function mi(k) { return '<svg class="mod-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (MI[k] || '') + '</svg>'; }
+  function tsLinked(m) { return (m.practice.links || []).concat(m.missions || []).some(function (x) { return x.go && x.go.tab === 'tab7'; }); }
+  function metaHtml(m, c) {
+    var n = (m.practice.links || []).length;
+    return '<span class="mod-mi">' + mi('level') + esc(m.level) + '</span><span class="mod-mi">' + mi('time') + minutesTxt(m.minutes) + '</span>' +
+      (n ? '<span class="mod-mi">' + mi('prac') + '실습 연동 ' + n + '</span>' : '') + (tsLinked(m) ? '<span class="mod-mi">' + mi('ts') + '트러블슈팅 연결</span>' : '') +
+      dot(c.learnDone, '학습 ' + c.learn + '/' + c.learnN) + dot(c.pracDone, '실습 ' + c.prac + '/' + c.pracN) + dot(c.quizDone, '이해도 ' + c.quiz + '/' + c.quizN);
+  }
+  function progHtml(c) {
+    var d = c.learn + c.prac + c.quiz, n = c.learnN + c.pracN + c.quizN, pct = n ? Math.round(d / n * 100) : 0;
+    return '<div class="mod-top__bar"><span>학습 진행도 <b>' + d + ' / ' + n + '</b></span><span class="ui-bar"><i style="width:' + pct + '%"></i></span></div>' +
+      '<div class="ui-ring ui-ring--light" style="--p:' + pct + '" role="img" aria-label="학습 진행도 ' + pct + '퍼센트"><span>' + pct + '%</span></div>';
+  }
+  function updateHead(m, c) {   // 문제를 맞힐 때 머리(메타·진행도)만 새로
+    var meta = document.querySelector('#tabModule .mod-head__meta'); if (meta) meta.innerHTML = metaHtml(m, c);
+    var pr = document.querySelector('#tabModule .mod-top__prog'); if (pr) pr.innerHTML = progHtml(c);
+  }
+  /* 장비 사진 + 설명 상자. 상자 위치는 그림 틀(16:10) 기준, 점 위치는 사진 기준(0~1) */
+  var FIG_A = 1.6;
+  function figHtml(m) {
+    var h = (GL[m.id] || {}).hero, d3 = MODEL3D[m.overview.model], is3d = view.fig === '3d' && d3;
+    var tools = d3 ? '<div class="mod-fig__tools" role="group" aria-label="보기 방식"><button type="button" data-mfig="photo" aria-pressed="' + !is3d + '">사진 설명</button><button type="button" data-mfig="3d" aria-pressed="' + !!is3d + '">3D 로 돌려 보기</button></div>' : '';
+    if (is3d) return '<figure class="mod-fig mod-fig--3d"><div class="mod-viewer" data-role="viewer"><div class="mod-viewer__msg">3D 모델을 불러오는 중…</div></div>' +
+      '<figcaption class="mod-fig__foot mod-viewer__bar">' + tools + '<span>끌어서 돌려 보기 · ' + esc(d3.label) + '</span>' + (d3.toggle ? '<button type="button" class="sim-btn" data-mviewer="switch">' + esc(d3.toggleTxt) + '</button>' : '') + '</figcaption></figure>';
+    if (h && h.vis && VIS[h.vis]) return '<figure class="mod-fig mod-fig--vis"><div class="mod-visual">' + VIS[h.vis]() + '</div>' + (tools ? '<div class="mod-fig__foot">' + tools + '</div>' : '') + '</figure>';
+    var img = (h && h.img) || m.img; if (!img) return '';
+    var v = (h && h.view) || [0.5, 0, 1], r = IMG_R[img] || 4 / 3, k = r / (v[2] * FIG_A), pts = (h && h.pts) || [];
+    var lines = '', marks = '', labels = '', legend = '';
+    pts.forEach(function (p, i) {
+      var fx = 0.5 + (p[0] - v[0]) * k, fy = (p[1] - v[1]) / v[2], left = p[2] === 'l', ax = left ? 0.215 : 0.785, n = i + 1;
+      lines += '<line x1="' + (ax * 1600).toFixed(1) + '" y1="' + (p[3] * 1000).toFixed(1) + '" x2="' + (fx * 1600).toFixed(1) + '" y2="' + (fy * 1000).toFixed(1) + '"/>';
+      marks += '<span class="mod-fig__pt" style="left:' + (fx * 100).toFixed(2) + '%;top:' + (fy * 100).toFixed(2) + '%">' + n + '</span>';
+      labels += '<div class="mod-fig__lb ' + (left ? 'l' : 'r') + '" style="top:' + (p[3] * 100).toFixed(1) + '%"><b><i>' + n + '</i>' + esc(p[4]) + '</b><span>' + esc(p[5]) + '</span></div>';
+      legend += '<li><b>' + esc(p[4]) + '</b> — ' + esc(p[5]) + '</li>';
+    });
+    return '<figure class="mod-fig" style="--fig-bg:' + esc((h && h.bg) || '#0b1626') + '">' +
+      '<div class="mod-fig__stage"><img src="' + esc(img) + '" alt="' + esc(m.title) + ' 장비 사진" style="height:' + (100 / v[2]).toFixed(2) + '%;top:' + (-v[1] / v[2] * 100).toFixed(2) + '%;left:' + ((0.5 - v[0] * k) * 100).toFixed(2) + '%">' +
+      (pts.length ? '<svg class="mod-fig__lines" viewBox="0 0 1600 1000" preserveAspectRatio="none" aria-hidden="true">' + lines + '</svg>' + marks + labels : '') + '</div>' +
+      (pts.length ? '<ol class="mod-fig__legend">' + legend + '</ol>' : '') + ((tools || IMG_CREDITS[img]) ? '<div class="mod-fig__foot">' + tools + creditHtml(img) + '</div>' : '') + '</figure>';
+  }
+  function heroHtml(m) {
+    var s = st(m.id);
+    return '<section class="mod-hero" aria-label="장비 살펴보기와 핵심 학습 포인트">' + figHtml(m) +
+      '<aside class="mod-learn"><h2>핵심 학습 포인트</h2><ul>' + m.theory.map(function (x, i) { var ok = s.checks[i] === okIdx(x.check);
+        return '<li><button type="button" data-mtheory="' + i + '" class="' + (ok ? 'ok' : '') + '">' + mi(ok ? 'check' : 'dot') + '<span>' + esc(x.title) + '</span></button></li>'; }).join('') +
+      '</ul><button type="button" class="ui-btn ui-btn--secondary ui-btn--block" data-mtab="theory">자세히 보기 · 이론 학습</button></aside></section>';
+  }
   function tabOverview(m) {
-    var o = m.overview;
-    return '<div class="mod-ov"><div class="mod-ov__main"><h2 class="mod-h2">핵심 개념 미리보기</h2><p class="mod-lead">' + o.lead + '</p>' +
-      '<h3 class="mod-h3">꼭 알아야 할 용어 <small>눌러서 펼치기</small></h3><div class="mod-terms">' + o.terms.map(function (t2) { return '<details class="mod-term"><summary>' + esc(t2[0]) + '</summary><p>' + esc(t2[1]) + '</p></details>'; }).join('') + '</div></div>' +
-      '<aside class="mod-ov__side">' + (MODEL3D[o.model] ? '<div class="mod-viewer" data-role="viewer"><div class="mod-viewer__msg">3D 모델을 불러오는 중…</div></div><div class="mod-viewer__bar"><span>끌어서 돌려 보기 · ' + esc(MODEL3D[o.model].label) + '</span>' + (MODEL3D[o.model].toggle ? '<button type="button" class="sim-btn" data-mviewer="switch">' + esc(MODEL3D[o.model].toggleTxt) + '</button>' : '') + '</div>' : (VIS[o.model] ? '<div class="mod-visual">' + VIS[o.model]() + '</div>' : '')) +
-      '<div class="lsn-points mod-points"><h4>💡 핵심 포인트</h4><ul>' + o.points.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div></aside></div>' +
+    var o = m.overview, g = (GL[m.id] || {}), h = g.hero || {}, links = m.practice.links || [];
+    var showVis = VIS[o.model] && !(h.vis === o.model);
+    return '<div class="mod-ov"><div class="mod-ov__main"><section class="mod-box mod-concept"><h2 class="mod-box__h">' + mi('bulb') + '핵심 개념</h2><p class="mod-lead">' + o.lead + '</p>' +
+      (g.glance ? '<div class="mod-glance" aria-label="한눈에 보기"><h3>한눈에 보기</h3><dl>' + g.glance.map(function (x) { return '<div class="mod-gl"><dt>' + esc(x[0]) + '</dt><dd>' + esc(x[1]) + '</dd></div>'; }).join('') + '</dl></div>' : '') +
+      '<h3 class="mod-h3">주요 용어 <small>눌러서 뜻 보기</small></h3><div class="mod-terms">' + o.terms.map(function (t2) { return '<details class="mod-term"><summary>' + esc(t2[0]) + '</summary><p>' + esc(t2[1]) + '</p></details>'; }).join('') + '</div>' +
+      (showVis ? '<div class="mod-visual">' + VIS[o.model]() + '</div>' : '') + '</section></div>' +
+      '<aside class="mod-ov__side">' + (links.length ? '<section class="mod-box mod-go"><h2 class="mod-box__h">관련 실습 바로가기</h2>' + links.map(function (x, i) { var info = PRACTICE_INFO[x.go && x.go.tab] || [], th = info[2];
+        return '<div class="mod-go__it"><span class="mod-go__th">' + (th ? '<img src="' + esc(th) + '" alt="" loading="lazy">' : '') + '</span><div><b>' + esc(x.title) + '</b>' + (x.text ? '<p>' + esc(x.text) + '</p>' : '') +
+          '<button type="button" class="ui-btn ' + (i ? 'ui-btn--secondary' : 'ui-btn--primary') + ' ui-btn--sm" data-mgo="practice:' + i + '">실습 시작하기 →</button></div></div>'; }).join('') + '</section>' : '') +
+      '<div class="lsn-points mod-points"><h4>기억할 점</h4><ul>' + o.points.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div></aside></div>' +
       '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="theory">이론 학습 시작 →</button></div>';
   }
   function tabTheory(m) {
@@ -183,22 +248,24 @@
     destroySim(); destroyViewer();
     var p = pathById(m.path), c = counts(m), s = status(m), tab = view.tab;
     var body = { overview: tabOverview, theory: tabTheory, practice: tabPractice, quiz: tabQuiz, missions: tabMissions, deeper: tabDeeper }[tab](m);
+    /* 2026-10-23: 왼쪽 과정 목록은 사이드 메뉴로 옮김. 머리(제목·정보·진행도) → [핵심 개념 탭] 장비 사진 + 핵심 학습 포인트 → 단계 탭 → 내용 */
     root.innerHTML = crumb([[p.title, 'data-path="' + p.id + '"'], [String(m.no).padStart(2, '0') + '. ' + m.title]]) +
-      '<div class="mod-layout"><aside class="mod-rail"><h3>' + esc(p.title) + '</h3>' + p.modules.map(function (id) { var x = MODS[id]; if (!x) return ''; var sx = status(x);
-        return '<button type="button" class="mod-rail__it' + (id === m.id ? ' cur' : '') + (sx === 'soon' ? ' soon' : '') + '" data-module="' + id + '"' + (sx === 'soon' ? ' aria-disabled="true"' : '') + '><span class="n">' + (sx === 'done' ? '✓' : String(x.no).padStart(2, '0')) + '</span>' + esc(x.title) + (sx === 'soon' ? '<small>준비 중</small>' : '') + '</button>'; }).join('') + '</aside>' +
-      '<div class="mod-main"><div class="mod-head"><div><h1 id="modTitle">' + String(m.no).padStart(2, '0') + '. ' + esc(m.title) + ' <span class="mod-st ' + s + '">' + STATUS_TXT[s] + '</span></h1><p>' + esc(m.sub) + '</p>' +
-        '<div class="mod-head__meta"><span>◎ ' + esc(m.level) + '</span><span>⏱ ' + minutesTxt(m.minutes) + '</span>' + dot(c.learnDone, '학습 ' + c.learn + '/' + c.learnN) + dot(c.pracDone, '실습 ' + c.prac + '/' + c.pracN) + dot(c.quizDone, '이해도 ' + c.quiz + '/' + c.quizN) + '</div>' +
-        (m.prereq ? '<div class="mod-head__pre">먼저 볼 레슨: ' + m.prereq.map(function (id) { var l = lessonById(id); return l ? '<button type="button" class="lsn-theory-link" data-lesson="' + id + '">' + (lessonDone(id) ? '✓ ' : '📘 ') + esc(l.title) + '</button>' : ''; }).join('') + '</div>' : '') + '</div></div>' +
+      '<div class="mod-page"><header class="mod-head mod-top"><div class="mod-top__main"><div class="mod-top__title"><h1 id="modTitle">' + String(m.no).padStart(2, '0') + '. ' + esc(m.title) + ' <span class="mod-st ' + s + '">' + STATUS_TXT[s] + '</span></h1><button type="button" class="mod-pathtag" data-path="' + p.id + '">' + esc(p.title) + '</button></div>' +
+        '<p class="mod-top__sub">' + esc(m.sub) + '</p><div class="mod-head__meta">' + metaHtml(m, c) + '</div>' +
+        (m.prereq ? '<div class="mod-head__pre">먼저 볼 레슨: ' + m.prereq.map(function (id) { var l = lessonById(id); return l ? '<button type="button" class="lsn-theory-link" data-lesson="' + id + '">' + (lessonDone(id) ? '✓ ' : '📘 ') + esc(l.title) + '</button>' : ''; }).join('') + '</div>' : '') +
+        '</div><div class="mod-top__prog">' + progHtml(c) + '</div></header>' +
+        (tab === 'overview' ? heroHtml(m) : '') +
         '<div class="mod-tabs" role="tablist" aria-label="학습 단계">' + TABS.map(function (t2, i) { var done = (t2[0] === 'theory' && c.learnDone) || (t2[0] === 'practice' && c.pracDone) || (t2[0] === 'quiz' && c.quizDone);
           return '<button type="button" role="tab" class="mod-tab' + (done ? ' done' : '') + '" data-mtab="' + t2[0] + '" aria-selected="' + (t2[0] === tab) + '"><span class="n">' + (done ? '✓' : i + 1) + '</span>' + t2[1] + '</button>'; }).join('') + '</div>' +
-        '<div class="mod-body" data-tab="' + tab + '">' + body + '</div></div></div>';
+        '<div class="mod-body" data-tab="' + tab + '">' + body + '</div></div>';
     if (tab === 'practice') mountSim(m);
-    if (tab === 'overview' && MODEL3D[m.overview.model]) mountViewer(MODEL3D[m.overview.model]);
+    if (tab === 'overview' && view.fig === '3d' && MODEL3D[m.overview.model]) mountViewer(MODEL3D[m.overview.model]);
+    markHomeNav();
   }
   function refreshHead() { var m = MODS[view.mod]; if (!m) return; var y = window.scrollY; var keepSim = sim; if (view.tab === 'practice' && keepSim) { // 실습 중에는 실습 화면을 다시 만들지 않고 과제 목록·머리만 새로
       var s = st(m.id), c = counts(m); document.querySelectorAll('#tabModule .mod-tasks li').forEach(function (li) { var d = !!s.tasks[li.getAttribute('data-task')]; li.classList.toggle('done', d); li.querySelector('.mod-task__ck').textContent = d ? '✓' : ''; });
       var h3 = document.querySelector('#tabModule .mod-tasks h3 small'); if (h3) h3.textContent = c.prac + '/' + c.pracN;
-      var meta = document.querySelector('#tabModule .mod-head__meta'); if (meta) meta.innerHTML = '<span>◎ ' + esc(m.level) + '</span><span>⏱ ' + minutesTxt(m.minutes) + '</span>' + dot(c.learnDone, '학습 ' + c.learn + '/' + c.learnN) + dot(c.pracDone, '실습 ' + c.prac + '/' + c.pracN) + dot(c.quizDone, '이해도 ' + c.quiz + '/' + c.quizN);
+      updateHead(m, c);
       var tb = document.querySelector('#tabModule .mod-tab[data-mtab=practice]'); if (tb && c.pracDone) { tb.classList.add('done'); tb.querySelector('.n').textContent = '✓'; }
       var tasks = document.querySelector('#tabModule .mod-tasks'); if (tasks && c.pracDone && !tasks.querySelector('.mod-okline')) { var sm = tasks.querySelector('.mod-small'); if (sm) sm.outerHTML = '<div class="mod-okline">🎉 실습 과제를 모두 마쳤어요. <b>실습 완료</b>!</div>'; }
       return; }
@@ -242,14 +309,20 @@
   function destroyViewer() { if (viewer) { try { viewer.destroy(); } catch (e) { /* noop */ } viewer = null; } }
 
   /* ------------------------------------------------------------- 이동 */
-  /* 메뉴: 경로(하드웨어 이해 · 믹싱 스킬 · 통합 실전 훈련) 묶음 머리 + 그 아래 실습 탭 */
+  /* 메뉴: 경로 묶음 머리 → (2026-10-23) 그 경로의 과정 01~05 → 「실습」 → 실습 탭 */
+  var NAV_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 7.5v9l7.5-4.5z"/></svg>',
+    NAV_OK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 12.5l3.2 3.2L17 9"/></svg>';   // 메뉴 과정 동그라미: 재생(시작 전·진행 중) / 체크(완료)
   function markHomeNav() {
-    var act = document.querySelector('.tab-content.active'), pid = null;
-    if (act && act.id === 'tabPath') pid = view.path; else if (act && act.id === 'tabModule' && MODS[view.mod]) pid = MODS[view.mod].path;
+    var act = document.querySelector('.tab-content.active'), pid = null, onMod = act && act.id === 'tabModule' && MODS[view.mod];
+    if (act && act.id === 'tabPath') pid = view.path; else if (onMod) pid = MODS[view.mod].path;
     document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.toggle('active', pid ? false : b.dataset.tab === 'tabHome'); });
-    document.querySelectorAll('.tab-group').forEach(function (g) { g.classList.toggle('active', g.getAttribute('data-navpath') === pid); });
+    document.querySelectorAll('.tab-group').forEach(function (g) { var me = g.getAttribute('data-navpath') === pid; g.classList.toggle('active', me && !onMod); g.classList.toggle('in', !!(me && onMod)); });
+    document.querySelectorAll('.nav-mod').forEach(function (b) { var id = b.getAttribute('data-module'), on = !!(onMod && id === view.mod);
+      b.classList.toggle('active', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+      var sx = status(MODS[id]); b.classList.toggle('done', sx === 'done'); var n = b.querySelector('.nav-mod__n'); if (n) n.innerHTML = sx === 'done' ? NAV_OK : NAV_PLAY; });
   }
   function syncGroups() { var act = document.querySelector('.tab-content.active'); if (!act || act.id === 'tabPath' || act.id === 'tabModule') return; var tabId = act.id;
+    document.querySelectorAll('.nav-mod').forEach(function (b) { b.classList.remove('active'); b.removeAttribute('aria-current'); });
     document.querySelectorAll('.tab-group').forEach(function (g) { g.classList.remove('active'); g.classList.toggle('in', !!PATHS.find(function (p) { return p.id === g.getAttribute('data-navpath') && (p.practice || []).indexOf(tabId) >= 0; })); }); }
   function buildNav() {
     var nav = document.querySelector('.site-header .tab-nav'); if (!nav || nav.querySelector('.tab-group')) return;
@@ -259,6 +332,11 @@
       g.innerHTML = '<svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ico[p.id] || '') + '</svg><span>' + esc(p.title) + '</span>';
       g.addEventListener('click', function () { openPath(p.id); });
       nav.appendChild(g);
+      (p.modules || []).forEach(function (id) { var m = MODS[id]; if (!m || m.status !== 'ready') return;
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'nav-mod'; b.setAttribute('data-module', id);
+        b.innerHTML = '<span class="nav-mod__n" aria-hidden="true">' + NAV_PLAY + '</span><span>' + String(m.no).padStart(2, '0') + '. ' + esc(m.title) + '</span>';
+        nav.appendChild(b); });
+      if (p.modules && p.practice && p.practice.length) { var lb = document.createElement('div'); lb.className = 'nav-sublabel'; lb.setAttribute('aria-hidden', 'true'); lb.textContent = '실습'; nav.appendChild(lb); }
       (p.practice || []).forEach(function (tab) { var b = nav.querySelector('.tab-btn[data-tab="' + tab + '"]'); if (b) { b.classList.add('tab-sub'); nav.appendChild(b); } });
     });
     nav.querySelectorAll('.tab-btn').forEach(function (b) { if (!b.classList.contains('tab-sub') && b.dataset.tab !== 'tabHome' && b.dataset.tab !== 'tabIntro') nav.appendChild(b); });
@@ -268,6 +346,7 @@
   function openPath(id) { if (!pathById(id)) return; view.path = id; hideBack(); destroySim(); destroyViewer(); switchTo('tabPath'); renderPath(); setHash('path-' + id); focusTitle(); }
   function openModule(id, tab, find) {
     var m = MODS[id]; if (!m || m.status !== 'ready') return;
+    if (view.mod !== id) view.fig = 'photo';
     view.mod = id; view.path = m.path; view.tab = tab && TABS.some(function (t2) { return t2[0] === tab; }) ? tab : 'overview';
     var s = st(id); if (!s.opened) { s.opened = true; put(id, s); }
     hideBack(); switchTo('tabModule'); renderModule(); setHash('module-' + id + (view.tab !== 'overview' ? '-' + view.tab : '')); focusTitle();
@@ -300,6 +379,8 @@
     var gt = t.closest('[data-mgo-tab]'); if (gt) { if (typeof switchTab === 'function') switchTab(gt.getAttribute('data-mgo-tab')); window.scrollTo(0, 0); return; }
     if (!t.closest('#tabModule')) return;
     var tb = t.closest('[data-mtab]'); if (tb) { setTab(tb.getAttribute('data-mtab')); return; }
+    var th = t.closest('[data-mtheory]'); if (th) { var ti = +th.getAttribute('data-mtheory'); setTab('theory'); var sec = $('modSec' + ti); if (sec) { sec.scrollIntoView({ block: 'start', behavior: 'smooth' }); sec.classList.add('mod-sec--focus'); setTimeout(function () { sec.classList.remove('mod-sec--focus'); }, 2200); } return; }
+    var fg = t.closest('[data-mfig]'); if (fg) { var y0 = window.scrollY; view.fig = fg.getAttribute('data-mfig') === '3d' ? '3d' : 'photo'; renderModule(); window.scrollTo(0, y0); return; }
     var mg = t.closest('[data-mgo]'); if (mg) { var pr = mg.getAttribute('data-mgo').split(':'), m = MODS[view.mod]; var item = pr[0] === 'practice' ? m.practice.links[+pr[1]] : m.missions[+pr[1]]; showBack(); go(item.go); return; }
     var vw = t.closest('[data-mviewer]'); if (vw && viewer) { var on = viewer.toggle(); vw.textContent = on ? '스위치 ON/OFF (지금 켜짐)' : '스위치 ON/OFF (지금 꺼짐)'; return; }
     var ck = t.closest('[data-mcheckchk],[data-mquizchk]');
@@ -310,7 +391,7 @@
       var c = counts(mm), wasDone = kind === 'mcheck' ? c.learnDone : c.quizDone;
       var y = window.scrollY; if (wasDone) { renderModule(); window.scrollTo(0, y); var fb = document.querySelector('#tabModule .mod-okline'); if (fb) fb.setAttribute('role', 'status'); }
       else { var pl = document.querySelector('#tabModule .mod-progline'); if (pl) pl.innerHTML = kind === 'mcheck' ? '각 주제 끝의 <b>개념 체크</b>를 모두 맞히면 학습 완료예요. (지금 ' + c.learn + '/' + c.learnN + ')' : c.quizN + '문제를 모두 맞히면 이해도 확인이 완료돼요. (지금 ' + c.quiz + '/' + c.quizN + ')';
-        var meta = document.querySelector('#tabModule .mod-head__meta'); if (meta) meta.innerHTML = '<span>◎ ' + esc(mm.level) + '</span><span>⏱ ' + minutesTxt(mm.minutes) + '</span>' + dot(c.learnDone, '학습 ' + c.learn + '/' + c.learnN) + dot(c.pracDone, '실습 ' + c.prac + '/' + c.pracN) + dot(c.quizDone, '이해도 ' + c.quiz + '/' + c.quizN);
+        updateHead(mm, c);
         if (kind === 'mcheck') { var sec = document.getElementById('modSec' + qi), h2 = sec && sec.querySelector('.mod-sec__h'); if (h2 && s.checks[qi] === okIdx(q) && !h2.querySelector('.mod-tick')) h2.insertAdjacentHTML('beforeend', '<span class="mod-tick">✓</span>'); } }
       return;
     }

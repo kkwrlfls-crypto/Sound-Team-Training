@@ -450,3 +450,134 @@ button[onclick^="reset"], button[onclick*="Reset"],
   .mod-tabs::-webkit-scrollbar { display: none; }
   .mod-tab { flex: 0 0 auto; white-space: nowrap; }
 }
+
+/* =============================================================================
+   2026-10-23 (2) 메뉴: 경로 아래 과정 01~05 · 학습 화면(시안 2) · 한눈에 보기
+   ============================================================================= */
+/* ---- 메뉴: 과정 항목 */
+.site-header .tab-nav .nav-mod {
+  position: relative; display: flex; align-items: center; gap: 10px; flex: none;
+  width: calc(100% - 20px); margin-left: 20px; min-height: 36px; padding: 6px 10px;
+  border: 0; border-radius: 8px; background: transparent; color: var(--sta-navy-ink);
+  font: inherit; font-size: 0.84rem; font-weight: 500; line-height: 1.3; text-align: left; cursor: pointer;
+}
+.site-header .tab-nav .nav-mod::before { content: ""; position: absolute; left: -10px; top: -1px; bottom: -1px; width: 1px; background: var(--sta-navy-line); }
+.site-header .tab-nav .nav-mod:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
+.site-header .tab-nav .nav-mod:focus-visible { outline: 2px solid var(--sta-cyan-bright); outline-offset: -2px; }
+.nav-mod__n svg { width: 14px; height: 14px; display: block; }
+.nav-mod__n {
+  width: 22px; height: 22px; flex: none; border-radius: 50%; display: grid; place-items: center;
+  border: 1.5px solid currentColor; font-size: 0.64rem; font-weight: 800; font-variant-numeric: tabular-nums; opacity: 0.9;
+}
+.site-header .tab-nav .nav-mod.active { background: var(--sta-blue); color: #fff; font-weight: 700; }
+.site-header .tab-nav .nav-mod.active .nav-mod__n { background: #fff; border-color: #fff; color: var(--sta-blue); opacity: 1; }
+.site-header .tab-nav .nav-mod.done:not(.active) .nav-mod__n { border-color: #6ee7b7; color: #6ee7b7; }
+.site-header .tab-nav .nav-sublabel { margin: 8px 0 2px 32px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; color: var(--sta-navy-ink-2); }
+.site-header .tab-nav .tab-group.in { background: rgba(255, 255, 255, 0.06); }
+@media (max-width: 1023px) { .site-header .tab-nav .nav-mod { min-height: 42px; } }
+
+/* ---- 학습 화면: 머리 */
+.mod-page { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+#tabModule .mod-head.mod-top {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: center;
+  margin: 0; padding: 22px 26px; background: var(--sta-surface); border: 1px solid var(--sta-line); border-radius: var(--sta-r-lg);
+}
+.mod-top__main { min-width: 0; }
+.mod-top__title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+#tabModule .mod-top__title h1 { margin: 0; font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); color: var(--sta-ink); }
+.mod-pathtag { border: 0; background: var(--sta-blue-soft); color: var(--sta-blue); font: inherit; font-size: 0.78rem; font-weight: 700; padding: 5px 12px; border-radius: 999px; cursor: pointer; }
+.mod-pathtag:hover { background: #dbe7fc; }
+.mod-pathtag:focus-visible { outline: 2px solid var(--sta-blue); outline-offset: 2px; }
+#tabModule .mod-top__sub { margin: 6px 0 0; font-size: 1rem; color: var(--sta-ink-2); }
+#tabModule .mod-head__meta { gap: 6px 16px; margin-top: 12px; font-size: 0.82rem; color: var(--sta-ink-3); }
+.mod-mi { display: inline-flex; align-items: center; gap: 6px; }
+.mod-ico { width: 16px; height: 16px; flex: none; }
+.mod-top__prog { display: flex; align-items: center; gap: 14px; }
+.mod-top__bar { display: flex; flex-direction: column; gap: 6px; min-width: 150px; font-size: 0.78rem; color: var(--sta-ink-3); font-variant-numeric: tabular-nums; }
+.mod-top__bar b { color: var(--sta-ink); margin-left: 4px; }
+.ui-ring--light { background: conic-gradient(var(--sta-blue) calc(var(--p) * 1%), #e6ecf3 0); }
+.ui-ring--light > span { background: var(--sta-surface); color: var(--sta-ink); }
+
+/* ---- 학습 화면: 장비 사진 + 설명 상자 / 핵심 학습 포인트 */
+.mod-hero { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: stretch; }
+.mod-fig { container-type: inline-size; margin: 0; display: flex; flex-direction: column; min-width: 0; overflow: hidden;
+  border: 1px solid var(--sta-line); border-radius: var(--sta-r-lg); background: var(--fig-bg, #0b1626); }
+.mod-fig__stage { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }
+.mod-fig__stage img { position: absolute; width: auto; max-width: none; display: block; user-select: none; }
+.mod-fig__lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; filter: drop-shadow(0 0 1.5px rgba(8, 23, 49, 0.9)); }
+.mod-fig__lines line { stroke: #9bdcf5; stroke-width: 1.6; vector-effect: non-scaling-stroke; }
+.mod-fig__pt { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--sta-blue); border: 2px solid #fff; color: #fff; font-size: 0.68rem; font-weight: 800; box-shadow: 0 0 0 3px rgba(31, 95, 214, 0.35); }
+.mod-fig__lb { position: absolute; width: 19.5%; transform: translateY(-50%); padding: 0.55em 0.7em; border-radius: 10px;
+  background: rgba(9, 24, 48, 0.92); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  font-size: clamp(0.66rem, 1.45cqw, 0.86rem); }
+.mod-fig__lb.l { left: 2%; } .mod-fig__lb.r { right: 2%; }
+.mod-fig__lb b { display: flex; align-items: center; gap: 0.4em; font-size: 1em; font-weight: 800; line-height: 1.3; }
+.mod-fig__lb b i { font-style: normal; flex: none; width: 1.5em; height: 1.5em; border-radius: 50%; display: grid; place-items: center; background: var(--sta-blue); font-size: 0.8em; }
+.mod-fig__lb span { display: block; margin-top: 0.25em; font-size: 0.86em; line-height: 1.45; color: #c9d6e6; }
+.mod-fig__legend { display: none; }
+.mod-fig__foot { display: flex; align-items: center; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; margin: 0; padding: 8px 12px;
+  background: var(--sta-surface); border-top: 1px solid var(--sta-line); font-size: 0.74rem; color: var(--sta-ink-3); }
+.mod-fig__foot .mod-credit { margin: 0; font-size: 0.72rem; }
+.mod-fig__tools { display: inline-flex; padding: 3px; border-radius: 999px; background: var(--sta-surface-2); border: 1px solid var(--sta-line); }
+.mod-fig__tools button { border: 0; background: none; color: var(--sta-ink-2); font: inherit; font-size: 0.76rem; font-weight: 700; padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+.mod-fig__tools button[aria-pressed="true"] { background: var(--sta-blue); color: #fff; }
+.mod-fig__tools button:focus-visible { outline: 2px solid var(--sta-blue); outline-offset: 1px; }
+.mod-fig--3d .mod-viewer { aspect-ratio: 16 / 10; border-radius: 0; }
+.mod-fig--3d .mod-viewer__bar { margin: 0; }
+.mod-fig--vis { background: var(--sta-surface); }
+.mod-fig--vis .mod-visual { border: 0; margin: 0; padding: 16px; flex: 1; display: grid; place-items: center; }
+@container (max-width: 620px) {
+  .mod-fig__lb, .mod-fig__lines { display: none; }
+  .mod-fig__legend { display: block; margin: 0; padding: 10px 14px 12px 34px; background: var(--sta-surface); color: var(--sta-ink-2); font-size: 0.84rem; line-height: 1.6; }
+  .mod-fig__legend li + li { margin-top: 4px; }
+  .mod-fig__legend b { color: var(--sta-ink); }
+}
+.mod-learn { display: flex; flex-direction: column; gap: 10px; padding: 18px; background: var(--sta-surface); border: 1px solid var(--sta-line); border-radius: var(--sta-r-lg); }
+.mod-learn h2 { margin: 0 0 2px; font-size: 1rem; font-weight: 800; color: var(--sta-blue); }
+.mod-learn ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.mod-learn li button { width: 100%; display: flex; align-items: flex-start; gap: 10px; padding: 8px; border: 0; border-radius: 8px; background: none;
+  font: inherit; font-size: 0.87rem; line-height: 1.45; color: var(--sta-ink); text-align: left; cursor: pointer; }
+.mod-learn li button:hover { background: var(--sta-surface-2); }
+.mod-learn li button:focus-visible { outline: 2px solid var(--sta-blue); outline-offset: 0; }
+.mod-learn li .mod-ico { width: 18px; height: 18px; margin-top: 1px; color: var(--sta-blue); }
+.mod-learn li button.ok .mod-ico { color: var(--sta-ok); }
+
+/* ---- 학습 화면: 핵심 개념 + 관련 실습 */
+#tabModule .mod-ov { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+.mod-box { padding: 20px 22px; background: var(--sta-surface); border: 1px solid var(--sta-line); border-radius: var(--sta-r-lg); }
+.mod-box__h { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: 1.05rem; font-weight: 800; color: var(--sta-ink); }
+.mod-box__h .mod-ico { width: 22px; height: 22px; color: var(--sta-blue); }
+.mod-concept .mod-lead { color: var(--sta-ink-2); }
+#tabModule .mod-terms { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+#tabModule .mod-points { margin-top: 0; }
+.mod-ov__side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.mod-go__it { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 12px; padding: 12px 0; border-top: 1px solid var(--sta-line); }
+.mod-go__it:first-of-type { border-top: 0; padding-top: 4px; }
+.mod-go__th { width: 92px; height: 70px; border-radius: 8px; overflow: hidden; background: var(--sta-navy-2); }
+.mod-go__th img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mod-go__it b { display: block; font-size: 0.88rem; line-height: 1.4; color: var(--sta-ink); }
+.mod-go__it p { margin: 4px 0 8px; font-size: 0.78rem; line-height: 1.5; color: var(--sta-ink-2); }
+
+/* ---- 한눈에 보기 (학습 모듈 · 기초 이론 레슨 공통) */
+.mod-glance { margin: 14px 0 6px; padding: 14px; border-radius: 12px; background: var(--sta-blue-soft); border: 1px solid var(--sta-blue-line); }
+.mod-glance h3 { margin: 0 0 10px; font-size: 0.8rem; font-weight: 800; letter-spacing: 0.04em; color: var(--sta-blue); }
+.mod-glance dl { margin: 0; display: grid; gap: 8px; }
+.mod-gl { display: grid; grid-template-columns: 9.5em minmax(0, 1fr); gap: 4px 12px; align-items: baseline; padding: 10px 14px; border-radius: 10px; background: var(--sta-surface); border: 1px solid #d6e3fa; }
+.mod-gl dt { font-size: 0.98rem; font-weight: 800; color: var(--sta-navy); word-break: keep-all; }
+.mod-gl dd { margin: 0; font-size: 0.93rem; line-height: 1.55; color: var(--sta-ink); }
+.mod-gl dd::before { content: "= "; font-weight: 800; color: var(--sta-blue); }
+
+@media (max-width: 1180px) {
+  .mod-hero, #tabModule .mod-ov { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+  #tabModule .mod-head.mod-top { grid-template-columns: minmax(0, 1fr); padding: 18px; gap: 14px; }
+  .mod-top__prog { justify-content: space-between; }
+  .mod-top__bar { flex: 1; }
+  .mod-box { padding: 16px; }
+  #tabModule .mod-terms { grid-template-columns: minmax(0, 1fr); }
+  .mod-gl { grid-template-columns: minmax(0, 1fr); padding: 10px 12px; }
+  .mod-go__it { grid-template-columns: 76px minmax(0, 1fr); }
+  .mod-go__th { width: 76px; height: 60px; }
+}

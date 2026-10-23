@@ -155,7 +155,7 @@
     }
     var firstL = lessonById('signal-flow'), mic = (window.STA_MODULES || {}).mic, rec = [];
     if (firstL && firstL.status === 'ready') rec.push({ attr: 'data-lesson="signal-flow"', thumb: firstL.thumb, kicker: '기초 이론 · ' + minTxt(firstL.minutes), title: firstL.title });
-    if (mic && mic.status === 'ready') rec.push({ attr: 'data-module="mic"', img: mic.img, kicker: '하드웨어 이해 · 01', title: mic.title });
+    if (mic && mic.status === 'ready') rec.push({ attr: 'data-module="mic"', img: mic.img, kicker: (((window.STA_PATHS || [])[0] || {}).title || '') + ' · 01', title: mic.title });
     rec.push({ attr: 'data-mgo-tab="tab1"', img: 'vi10p.jpg', kicker: '실습', title: tabName('tab1') });
     rec.push({ attr: 'data-mgo-tab="tab6"', img: 'console_strip.jpg', kicker: '실습', title: tabName('tab6') });
     return '<section class="hm-sec" id="homeNext"><div class="hm-sec__head"><h2>처음이라면 이 순서로 시작하세요</h2><p>신호 흐름 → 장비 → 실습 순서로 배우면 이해가 빨라요.</p></div><div class="hm-next">' +
@@ -218,6 +218,7 @@
     var s = st(l.id), sec = SECS[curSec - 1];
     var c = l.concept, w = l.why, p = l.practice;
     var learn = '<section class="lsn-sec" data-k="A" id="lsnSecA">' + secHead('A') + '<h3 class="lsn-sub">' + esc(c.heading) + '</h3><p class="lsn-lead">' + c.lead + '</p>' +
+      ((window.STA_LESSON_GLANCE || {})[l.id] ? '<div class="mod-glance" aria-label="한눈에 보기"><h3>한눈에 보기</h3><dl>' + STA_LESSON_GLANCE[l.id].map(function (x) { return '<div class="mod-gl"><dt>' + esc(x[0]) + '</dt><dd>' + esc(x[1]) + '</dd></div>'; }).join('') + '</dl></div>' : '') +   /* 2026-10-23 */
       c.body.map(function (b) { return '<p class="lsn-p">' + b + '</p>'; }).join('') + flowHtml(c.flow) +
       '<div class="lsn-cards">' + c.cards.map(function (cd) { return '<div class="lsn-card"><h4>' + esc(cd.title) + '</h4><ul>' + cd.items.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div>'; }).join('') + '</div>' +
       '<div class="lsn-points"><h4>💡 핵심 포인트</h4><ul>' + c.points.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div></section>' +
