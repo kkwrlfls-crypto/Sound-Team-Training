@@ -2704,6 +2704,9 @@
   <link rel="stylesheet" href="lessons/lessons.css">
   <link rel="stylesheet" href="lessons/modules.css">
   <link rel="stylesheet" href="lessons/field.css">
+  <!-- 2026-10-23 UI 1차 리디자인: 글꼴(Pretendard, 사이트에 함께 올림 · 화면에 쓰인 글자 묶음만 받음) + 공통 디자인 시스템(맨 마지막에 읽어 덮어씀) -->
+  <link rel="stylesheet" href="fonts/pretendard/pretendardvariable-dynamic-subset.css">
+  <link rel="stylesheet" href="lessons/ui.css">
 </head>
 <body>
 
@@ -2799,8 +2802,11 @@
           <span class="brand__mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 12h2M7 8v8M11 5v14M15 9v6M19 11v2M21 12h0"/></svg></span>
           <span class="brand__text"><span class="brand__name">Sound Team Academy</span><span class="brand__sub">Live Sound Lab</span></span>
         </div>
+        <!-- 2026-10-23: 좁은 화면 상단 바 — 현재 위치 + 메뉴 열기(lessons/ui.js). 넓은 화면에서는 숨김 -->
+        <span class="nav-current" id="navCurrent"></span>
+        <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>메뉴</span></button>
       </div>
-  <div class="tab-nav">
+  <div class="tab-nav" id="siteNav">
       <button class="tab-btn active" data-tab="tabHome" onclick="switchTab('tabHome')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/></svg><span>홈</span></button>
       <button class="tab-btn" data-tab="tabIntro" onclick="switchTab('tabIntro')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M12 7v6M9 10h6"/></svg><span>음향의 중요성</span></button>
       <button class="tab-btn" data-tab="tab1" onclick="switchTab('tab1')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg><span>확성 시스템의 기본</span></button>
@@ -2817,6 +2823,7 @@
       <div class="site-header__foot" aria-hidden="true"><b>오늘도<br>좋은 소리를 만듭니다</b><span>함께 배우고, 함께 성장하는<br>교회 음향팀</span></div>
     </div>
   </header>
+  <div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
   <script>
     /* 2026-10-19: 탭1 경로 요약 카드를 누르면 해당 3D 실습 카드로 이동 (편집 중에는 동작하지 않음) */
     document.addEventListener('click', function (e) {
@@ -3535,6 +3542,7 @@
   <script src="lessons/field_visuals.js"></script>
   <script src="lessons/field.js"></script>
   <script src="lessons/nav_history.js"></script>
+  <script src="lessons/ui.js"></script>
 
   <script>
     /* ===== 공통 모달 (alert 대체) ===== */

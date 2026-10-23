@@ -61,20 +61,6 @@
     if (kind === 'practice-tab7') return '<img src="jack_strip.jpg" alt="" loading="lazy">';
     return thumbSvg(kind);
   }
-  function heroSvg() {
-    var beams = '', faders = '', i;
-    for (i = 0; i < 4; i++) beams += '<polygon points="' + (520 + i * 140) + ',0 ' + (560 + i * 140) + ',0 ' + (700 + i * 120) + ',420 ' + (500 + i * 120) + ',420" fill="url(#hb)" opacity="' + (0.5 - i * 0.08) + '"/>';
-    for (i = 0; i < 14; i++) { var x = 640 + i * 34, y = 300 + Math.round(30 * Math.sin(i * 1.3)); faders += '<path d="M' + x + ' 250V400" stroke="#4b6a93" stroke-width="2"/><rect x="' + (x - 7) + '" y="' + y + '" width="14" height="22" rx="3" fill="#8fb3dd" fill-opacity=".55"/>'; }
-    return '<svg viewBox="0 0 1200 420" preserveAspectRatio="xMinYMid slice" aria-hidden="true"><defs>' +
-      '<linearGradient id="hg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0a1c35"/><stop offset=".55" stop-color="#0f2747"/><stop offset="1" stop-color="#173b66"/></linearGradient>' +
-      '<linearGradient id="hb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfefff" stop-opacity=".35"/><stop offset="1" stop-color="#cfefff" stop-opacity="0"/></linearGradient>' +
-      '<linearGradient id="hf" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0a1c35"/><stop offset=".5" stop-color="#0a1c35" stop-opacity=".2"/><stop offset="1" stop-color="#0a1c35" stop-opacity="0"/></linearGradient></defs>' +
-      '<rect width="1200" height="420" fill="url(#hg)"/>' + beams +
-      '<path d="M560 330 C640 300 700 360 780 330 S920 300 1000 330 S1120 360 1200 330" fill="none" stroke="#22d3ee" stroke-opacity=".35" stroke-width="2"/>' +
-      '<rect x="600" y="240" width="560" height="180" rx="10" fill="#0b1626" fill-opacity=".7" stroke="#2a4a72"/>' + faders +
-      '<rect width="1200" height="420" fill="url(#hf)"/></svg>';
-  }
-
   /* ------------------------------------------------------------- 홈(대시보드) */
   function cardLesson(l) {
     var s = status(l), soon = s === 'soon';
@@ -103,20 +89,105 @@
     return '<button type="button" class="home-card home-adv" data-adv="' + i + '"' + (w ? '' : ' aria-disabled="true"') + '><div class="home-card__body"><div class="home-card__title">' + esc(a.title) + '</div>' +
       '<div class="home-card__sum">' + (w ? '이어서 배울 곳: ' + esc(w.label) : '준비 중') + '</div><div class="home-card__sum home-adv__need">먼저 배울 것: ' + esc(need) + '</div><div class="home-card__meta"><span class="home-tag adv">심화 ' + a.level + '단계</span></div></div></button>';
   }
+  /* 2026-10-23 UI 1차 리디자인: 홈 = 소개·학습 시작·나의 학습 현황 → 진행 중(없으면 추천 순서) → 4개 분류 → 기초 이론 → 심화 주제
+     카드·버튼은 기존 이동 속성(data-path · data-module · data-lesson · data-mgo-tab · data-adv)을 그대로 써서 기존 이동 코드로 열립니다.
+     진도 숫자는 이 브라우저에 저장된 실제 기록(레슨·모듈 완료)만 셉니다. */
+  var CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+  var ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  var CAT_ICO = {   // 메뉴 아이콘과 같은 선 굵기·크기
+    hardware: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/>',
+    mixing: '<path d="M6 4v16M12 4v16M18 4v16"/><rect x="4" y="13" width="4" height="3"/><rect x="10" y="7" width="4" height="3"/><rect x="16" y="11" width="4" height="3"/>',
+    church: '<path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/>',
+    trouble: '<path d="M14.5 6.5a4 4 0 0 0 5 5L12 19a2.1 2.1 0 0 1-3-3l7.5-7.5"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/>'
+  };
+  function svgIco(k) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (CAT_ICO[k] || '') + '</svg>'; }
+  /* 교회 시스템 실습 · 트러블슈팅은 메뉴의 실습 화면을 묶어 보여 줍니다(메뉴 구성은 그대로). */
+  var HOME_CATS = [
+    { id: 'hardware', path: 'hardware', img: 'img/modules/hw_mic.jpg' },
+    { id: 'mixing', path: 'mixing', img: 'console_strip.jpg', imgPos: '50% 22%' },
+    { id: 'church', title: '교회 시스템 실습', sum: '본당에 설치된 실제 장비 구성으로 배치·배선하고, 콘솔을 직접 조작해 봅니다.', tabs: ['tab2', 'tab5', 'tab6', 'tab1'], img: 'cl5_top.jpg', imgPos: '50% 70%' },
+    { id: 'trouble', title: '트러블슈팅', sum: '소리가 안 나거나 하울링이 나는 상황에서 원인을 찾고 복구하는 연습을 합니다.', tabs: ['tab7', 'tabFeedback', 'tabCheck', 'tabTips'], img: 'jack_strip.jpg', imgPos: '30% 50%' }
+  ];
+  function tabName(tab) { var b = document.querySelector('.tab-btn[data-tab="' + tab + '"] span'); return b ? b.textContent.trim() : tab; }
+  function modList() { var M = window.STA_MODULES || {}; return Object.keys(M).map(function (k) { return M[k]; }).filter(function (m) { return m.status === 'ready'; }); }
+  function modStatus(id) { return window.STAModules ? STAModules.status(id) : 'new'; }
+  function modPct(id) {
+    var c = window.STAModules && STAModules.counts(id); if (!c) return 0;
+    var n = c.learnN + c.pracN + c.quizN; return n ? Math.round((c.learn + c.prac + c.quiz) / n * 100) : 0;
+  }
+  function bar(pct, done) { return '<span class="ui-bar' + (done ? ' ui-bar--done' : '') + '" role="presentation"><i style="width:' + Math.max(0, Math.min(100, pct)) + '%"></i></span>'; }
+  function minTxt(n) { return n >= 60 ? '약 ' + (Math.round(n / 30) / 2) + '시간' : '약 ' + n + '분'; }
+
+  function catCard(c) {
+    var P = (window.STA_PATHS || []).find(function (p) { return p.id === c.path; });
+    var title = P ? P.title : c.title, sum = P ? P.sum : c.sum, body = '', meta = '', cta = '';
+    if (P) {
+      var ms = (P.modules || []).map(function (id) { return (window.STA_MODULES || {})[id]; }).filter(Boolean);
+      var done = ms.filter(function (m) { return modStatus(m.id) === 'done'; }).length;
+      var started = ms.some(function (m) { return modStatus(m.id) !== 'new'; });
+      var mins = ms.reduce(function (a, m) { return a + (m.minutes || 0); }, 0);
+      var STT = { done: '완료', doing: '진행 중' };
+      body = '<ul class="hm-cat__list" aria-label="과정 순서">' + ms.map(function (m) { var s2 = modStatus(m.id);
+        return '<li><button type="button" data-module="' + esc(m.id) + '"><span class="no">' + String(m.no).padStart(2, '0') + '</span>' + esc(m.title) + (STT[s2] ? '<span class="st ' + s2 + '">' + STT[s2] + '</span>' : '') + '</button></li>'; }).join('') + '</ul>';
+      meta = '<div class="hm-cat__meta"><span>' + ms.length + '개 과정 · ' + minTxt(mins) + '</span><span>완료 <b>' + done + '</b> / ' + ms.length + '</span></div>' + bar(ms.length ? done / ms.length * 100 : 0, done === ms.length && ms.length);
+      cta = '<button type="button" class="ui-btn ui-btn--primary ui-btn--block" data-path="' + esc(P.id) + '">' + (done === ms.length && ms.length ? '복습하기' : started ? '이어서 학습하기' : '학습 시작하기') + ARROW + '</button>';
+    } else {
+      body = '<ul class="hm-cat__list">' + c.tabs.map(function (t) { return '<li><button type="button" data-mgo-tab="' + t + '">' + esc(tabName(t)) + '</button></li>'; }).join('') + '</ul>';
+      meta = '<div class="hm-cat__meta"><span>실습 ' + c.tabs.length + '개</span></div>';
+      cta = '<button type="button" class="ui-btn ui-btn--secondary ui-btn--block" data-mgo-tab="' + c.tabs[0] + '">' + esc(tabName(c.tabs[0])) + ' 열기' + ARROW + '</button>';
+    }
+    return '<article class="hm-cat" data-cat="' + c.id + '"><div class="hm-cat__img"><img src="' + esc(c.img) + '" alt="" loading="lazy"' + (c.imgPos ? ' style="object-position:' + c.imgPos + '"' : '') + '><span class="hm-cat__ico">' + svgIco(c.id) + '</span></div>' +
+      '<div class="hm-cat__body"><h3 class="hm-cat__title">' + esc(title) + '</h3><p class="hm-cat__sum">' + esc(sum) + '</p>' + body +
+      '<div class="hm-cat__foot">' + meta + cta + '</div></div></article>';
+  }
+  function itemCard(o) {   // o = { attr, img|thumb, kicker, title, pct?, step? }
+    var th = o.img ? '<img src="' + esc(o.img) + '" alt="" loading="lazy">' : thumbHtml(o.thumb || 'flow');
+    return '<button type="button" class="hm-item" ' + o.attr + '><span class="hm-item__thumb">' + th + (o.step ? '<span class="hm-item__step">' + o.step + '</span>' : '') + '</span>' +
+      '<span class="hm-item__body"><span class="hm-item__kicker">' + esc(o.kicker) + '</span><span class="hm-item__title">' + esc(o.title) + '</span>' +
+      (o.pct != null ? '<span class="hm-item__prog">' + bar(o.pct) + '<span>' + o.pct + '%</span></span>' : '') + '</span></button>';
+  }
+  function nextSection(doing, doingL) {
+    var pathTitle = function (m) { var P = (window.STA_PATHS || []).find(function (p) { return p.id === m.path; }); return P ? P.title : ''; };
+    if (doing.length || doingL.length) {
+      var items = doing.map(function (m) { return itemCard({ attr: 'data-module="' + esc(m.id) + '"', img: m.img, thumb: 'eq', kicker: pathTitle(m) + ' · ' + String(m.no).padStart(2, '0'), title: m.title, pct: modPct(m.id) }); })
+        .concat(doingL.map(function (l) { var s = st(l.id); return itemCard({ attr: 'data-lesson="' + esc(l.id) + '"', thumb: l.thumb, kicker: '기초 이론', title: l.title, pct: Math.round(s.seen.length / 5 * 100) }); }));
+      return '<section class="hm-sec" id="homeNext"><div class="hm-sec__head"><h2>진행 중인 학습</h2><p>시작한 과정을 이어서 학습하세요.</p></div><div class="hm-next">' + items.slice(0, 4).join('') + '</div></section>';
+    }
+    var firstL = lessonById('signal-flow'), mic = (window.STA_MODULES || {}).mic, rec = [];
+    if (firstL && firstL.status === 'ready') rec.push({ attr: 'data-lesson="signal-flow"', thumb: firstL.thumb, kicker: '기초 이론 · ' + minTxt(firstL.minutes), title: firstL.title });
+    if (mic && mic.status === 'ready') rec.push({ attr: 'data-module="mic"', img: mic.img, kicker: '하드웨어 이해 · 01', title: mic.title });
+    rec.push({ attr: 'data-mgo-tab="tab1"', img: 'vi10p.jpg', kicker: '실습', title: tabName('tab1') });
+    rec.push({ attr: 'data-mgo-tab="tab6"', img: 'console_strip.jpg', kicker: '실습', title: tabName('tab6') });
+    return '<section class="hm-sec" id="homeNext"><div class="hm-sec__head"><h2>처음이라면 이 순서로 시작하세요</h2><p>신호 흐름 → 장비 → 실습 순서로 배우면 이해가 빨라요.</p></div><div class="hm-next">' +
+      rec.map(function (o, i) { o.step = i + 1; return itemCard(o); }).join('') + '</div></section>';
+  }
   function renderHome() {
     var root = $('tabHome'); if (!root) return;
     var ready = LESSONS.filter(function (l) { return l.status === 'ready'; });
     var doneN = ready.filter(function (l) { return st(l.id).done; }).length;
-    var mods = Object.keys(window.STA_MODULES || {}).map(function (k) { return STA_MODULES[k]; }).filter(function (m) { return m.status === 'ready'; });
-    var modDone = window.STAModules ? mods.filter(function (m) { return STAModules.status(m.id) === 'done'; }).length : 0;
+    var mods = modList();
+    var modDone = mods.filter(function (m) { return modStatus(m.id) === 'done'; }).length;
+    var doing = mods.filter(function (m) { return modStatus(m.id) === 'doing'; });
+    var doingL = ready.filter(function (l) { return status(l) === 'doing'; });
+    var total = ready.length + mods.length, pct = total ? Math.round((doneN + modDone) / total * 100) : 0;
+    var started = doing.length || doingL.length || doneN || modDone;
+    var cta = doing.length ? '<button type="button" class="ui-btn ui-btn--primary" data-module="' + esc(doing[0].id) + '">이어서 학습하기 · ' + esc(doing[0].title) + ARROW + '</button>'
+      : '<button type="button" class="ui-btn ui-btn--primary" data-path="hardware">' + (started ? '학습 계속하기' : '학습 시작하기') + ARROW + '</button>';
     root.innerHTML =
-      '<section class="home-hero"><div class="home-hero__bg">' + heroSvg() + '</div><div class="home-hero__text">' +
-      '<h1>교회 음향팀을 위한<br>실습 중심 교육 플랫폼</h1><p>장비를 배우고, 직접 조작하고, 소리를 들어<br>실제 현장에서 바로 사용할 수 있는 음향 교육을 경험하세요.</p>' +
-      '<div class="home-hero__stats"><span class="home-hero__stat">기초 이론 <b>' + doneN + '</b> / ' + ready.length + ' 완료</span><span class="home-hero__stat">학습 모듈 <b>' + modDone + '</b> / ' + mods.length + ' 완료</span></div></div>' +
-      '<div class="home-hero__script" aria-hidden="true">Better Sound<br>Better Ministry</div></section>' +
-      (window.STAModules ? STAModules.homeHtml() : '') +   /* 하드웨어 이해 · 믹싱 스킬 · 통합 실전 훈련 */
-      '<section class="home-sec" id="homeTheory"><div class="home-sec-head"><h2>기초 이론</h2><span class="mod-home-sub">학습 과정을 시작하기 전에 먼저 보면 좋은 짧은 레슨이에요.</span></div><div class="home-cards">' + LESSONS.map(cardLesson).join('') + '</div></section>' +
-      '<section class="home-sec" id="homeAdv"><div class="home-sec-head"><h2>심화 주제</h2><span class="mod-home-sub">더 깊이 알고 싶은 주제를, 그 내용을 다루는 과정으로 바로 열어요.</span></div><div class="home-cards">' + ADV.map(cardAdvOpen).join('') + '</div></section>';
+      '<section class="hm-hero" aria-labelledby="homeTitle"><div class="hm-hero__media" aria-hidden="true"><img src="cl5_top.jpg" alt=""></div>' +
+      '<div class="hm-hero__text"><p class="hm-hero__eyebrow">Better Sound, Better Ministry</p>' +
+      '<h1 id="homeTitle">교회 음향팀을 위한<br>실습 중심 교육 플랫폼</h1>' +
+      '<p class="hm-hero__lead">장비를 배우고, 직접 조작하고, 소리를 들으며 실제 예배 현장에서 바로 쓸 수 있는 음향 운영을 익힙니다.</p>' +
+      '<div class="hm-hero__cta">' + cta + '<button type="button" class="ui-btn ui-btn--on-dark" data-mgo-tab="tabIntro">음향의 중요성 읽기</button></div></div>' +
+      '<aside class="hm-me" aria-label="나의 학습 현황"><div class="hm-me__head"><div class="ui-ring" style="--p:' + pct + '"><span>' + pct + '%</span></div><div><h2>나의 학습 현황</h2><p>' + (started ? '완료한 레슨·과정 기준' : '아직 시작 전이에요') + '</p></div></div>' +
+      '<div class="hm-me__rows"><div class="hm-me__row"><span>기초 이론</span><b>' + doneN + ' / ' + ready.length + '</b>' + bar(ready.length ? doneN / ready.length * 100 : 0) + '</div>' +
+      '<div class="hm-me__row"><span>학습 모듈</span><b>' + modDone + ' / ' + mods.length + '</b>' + bar(mods.length ? modDone / mods.length * 100 : 0) + '</div>' +
+      '<div class="hm-me__row"><span>진행 중</span><b>' + (doing.length + doingL.length) + '개</b></div></div>' +
+      '<p class="hm-me__note">기록은 이 브라우저에만 저장돼요.</p></aside></section>' +
+      nextSection(doing, doingL) +
+      '<section class="hm-sec" id="modHome"><div class="hm-sec__head"><h2>전체 학습 과정</h2><p>분야를 골라 시작하세요. 각 과정은 이론 → 실습 → 확인 문제로 이어져요.</p></div><div class="hm-cats">' + HOME_CATS.map(catCard).join('') + '</div></section>' +
+      '<section class="hm-sec home-sec" id="homeTheory"><div class="hm-sec__head"><h2>기초 이론</h2><p>학습 과정을 시작하기 전에 먼저 보면 좋은 짧은 레슨이에요.</p></div><div class="home-cards">' + LESSONS.map(cardLesson).join('') + '</div></section>' +
+      '<section class="hm-sec home-sec" id="homeAdv"><div class="hm-sec__head"><h2>심화 주제</h2><p>더 깊이 알고 싶은 주제를, 그 내용을 다루는 과정으로 바로 열어요.</p></div><div class="home-cards">' + ADV.map(cardAdvOpen).join('') + '</div></section>';
   }
 
   /* ------------------------------------------------------------- 레슨 화면 */
