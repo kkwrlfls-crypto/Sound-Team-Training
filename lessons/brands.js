@@ -250,7 +250,7 @@
   function tierMediaHtml(b, t) {
     if (!t.img) return placeholderHtml(b, t);
     return '<figure class="brd-tier__fig"><div class="brd-img"><img src="' + esc(t.img) + '" alt="' + esc(b.name + ' ' + t.model) + '" loading="lazy" decoding="async" data-tierimg="' + esc(t.id) + '"></div>' +
-      (t.credit ? '<figcaption>사진: ' + esc(t.credit) + '</figcaption>' : '') + '</figure>';
+      (t.credit ? '<figcaption>사진: ' + (t.creditUrl ? '<a href="' + esc(t.creditUrl) + '" target="_blank" rel="noopener">' + esc(t.credit) + '</a>' : esc(t.credit)) + '</figcaption>' : '') + '</figure>';
   }
   function tiersHtml(b) {
     var tiers = b.tiers || [];
