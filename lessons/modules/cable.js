@@ -121,26 +121,27 @@
       t(6, 12, '교회 확성 실습 장비로 본 신호 레벨과 케이블', { size: 11, fill: C.sub, anchor: 'start' }), '마이크·라인·스피커 레벨에 따른 케이블 경로');
   };
 
-  // 5) 아날로그와 디지털 연결 · 네트워크 오디오 (3층)
+  // 5) 아날로그와 디지털 연결 · 네트워크 오디오 (2026-10-23: 3층 구성 대신 일반적인 예시)
   V.cableNetwork = function () {
     var an = C.teal, dn = C.blue, ae = C.purple, sp = C.spk;
+    var multi = ''; for (var k = 0; k < 8; k++) multi += '<path d="M110 ' + (40 + k * 4) + ' H170" stroke="' + an + '" stroke-width="1.6"/>';
     return svg(600, 300,
-      box(6, 36, 104, 44, '무대 판넬', '마이크·악기 입력') +
-      box(170, 30, 150, 58, 'Rio3224-D2', '앰프 랙 · 입출력 장치', { fill: '#eef2ff', stroke: '#c7d2fe' }) +
-      box(380, 38, 100, 40, '네트워크 스위치', '', { size: 11 }) +
-      box(510, 30, 84, 58, 'CL5', '방송실 콘솔', { fill: '#eef2ff', stroke: '#c7d2fe' }) +
-      box(380, 112, 100, 42, 'ULX-D', '무선 수신기') + box(510, 112, 84, 42, '강대상', '마이크') +
-      arrow(110, 58, 170, 58, an, { w: 3 }) + t(140, 50, 'XLR', { size: 10, weight: 800, fill: an }) +
-      '<path d="M320 52 H380 M480 58 H510" stroke="' + dn + '" stroke-width="4"/>' + t(350, 44, 'Dante', { size: 10, weight: 800, fill: dn }) + t(495, 50, '랜선', { size: 10, fill: dn }) +
-      '<path d="M430 112 V78" stroke="' + dn + '" stroke-width="4"/>' + t(436, 100, 'Dante', { size: 10, fill: dn, anchor: 'start' }) +
-      arrow(552, 112, 552, 88, an, { w: 3 }) + t(558, 106, 'XLR', { size: 10, fill: an, anchor: 'start' }) +
-      '<path d="M245 30 V14 H552 V30" stroke="' + dn + '" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/>' + t(398, 10, 'Secondary — 예비 길 (이중화로 쓸 때, 별도 네트워크)', { size: 10, fill: dn }) +
-      t(350, 72, 'Primary', { size: 10, fill: dn, weight: 700 }) +
-      arrow(245, 88, 245, 186, ae, { w: 3 }) + t(252, 132, 'AES/EBU', { size: 10.5, weight: 800, fill: ae, anchor: 'start' }) + t(252, 147, '디지털 · 한 가닥 2채널', { size: 10, fill: ae, anchor: 'start' }) +
-      box(170, 186, 150, 48, 'd&amp;b 40D · 10D', '파워앰프') + box(410, 186, 140, 48, '스피커', 'Vi10P 등 (패시브)') +
-      '<path d="M320 210 H402" stroke="' + sp + '" stroke-width="6"/><path d="M410 210 l-10 -7 v14z" fill="' + sp + '"/>' + t(365, 200, '스피커 케이블', { size: 10, fill: sp }) +
-      '<g font-size="10">' + [[an, 'XLR 아날로그', 0], [dn, 'Dante (랜선)', 1], [ae, 'AES/EBU 디지털', 2], [sp, '스피커 레벨', 3]].map(function (l) { var x = 10 + l[2] * 148; return '<path d="M' + x + ' 262 h24" stroke="' + l[0] + '" stroke-width="' + (l[2] === 3 ? 6 : 3) + '"/>' + t(x + 30, 266, l[1], { size: 10.5, anchor: 'start', fill: C.ink }); }).join('') + '</g>' +
-      t(594, 290, '단순화한 그림 「예시」 · 스위치·이중화 구성은 현장에서 확인', { size: 10, fill: C.sub, anchor: 'end' }), '3층 본당의 아날로그·디지털 연결과 Dante 네트워크');
+      t(6, 14, '아날로그 — 채널마다 케이블 한 가닥', { size: 11, weight: 800, fill: an, anchor: 'start' }) +
+      box(6, 30, 104, 44, '무대', '마이크·악기 32개') + multi + t(140, 86, '멀티 케이블 32가닥', { size: 10, fill: an }) +
+      box(170, 30, 110, 44, '아날로그 콘솔', '') +
+      t(320, 14, '디지털 — 랜선 한 가닥에 수십 채널', { size: 11, weight: 800, fill: dn, anchor: 'start' }) +
+      box(320, 30, 104, 44, '스테이지박스', '무대에서 디지털로') +
+      '<path d="M424 52 H490" stroke="' + dn + '" stroke-width="4"/>' + t(457, 44, '랜선 1가닥', { size: 10, weight: 800, fill: dn }) + t(457, 66, 'Dante 등', { size: 10, fill: dn }) +
+      box(490, 30, 104, 44, '디지털 콘솔', '방송실') +
+      '<path d="M300 100 H594" stroke="#e2e8f0" stroke-width="1"/>' +
+      t(6, 124, '디지털 콘솔에서 스피커까지 (예시)', { size: 11, weight: 800, fill: C.ink, anchor: 'start' }) +
+      box(6, 140, 120, 48, '디지털 콘솔', '') +
+      arrow(126, 164, 214, 164, ae, { w: 3 }) + t(170, 156, 'AES/EBU', { size: 10.5, weight: 800, fill: ae }) + t(170, 182, '한 가닥 2채널', { size: 10, fill: ae }) +
+      box(214, 140, 130, 48, '디지털 앰프', 'DSP 내장') +
+      '<path d="M344 164 H424" stroke="' + sp + '" stroke-width="6"/><path d="M432 164 l-10 -7 v14z" fill="' + sp + '"/>' + t(388, 154, '스피커 케이블', { size: 10, fill: sp }) +
+      box(432, 140, 120, 48, '패시브 스피커', '') +
+      '<g font-size="10">' + [[an, 'XLR 아날로그', 0], [dn, '네트워크 오디오(랜선)', 1], [ae, 'AES/EBU 디지털', 2], [sp, '스피커 레벨', 3]].map(function (l) { var x = 10 + l[2] * 148; return '<path d="M' + x + ' 236 h24" stroke="' + l[0] + '" stroke-width="' + (l[2] === 3 ? 6 : 3) + '"/>' + t(x + 30, 240, l[1], { size: 10.5, anchor: 'start', fill: C.ink }); }).join('') + '</g>' +
+      t(594, 280, '단순화한 예시 그림이에요. 실제 구성은 교회마다 달라요.', { size: 10, fill: C.sub, anchor: 'end' }), '아날로그 연결과 디지털 네트워크 연결 비교');
   };
 
   // 6) 케이블 관리와 고장 진단 — 테스터 · 오버-언더
@@ -265,8 +266,8 @@
     el.innerHTML = '<div class="sim-cable">' +
       '<section class="sim-cable-card"><h4>① 알맞은 케이블 고르기</h4><p class="sim-cable-lead">교회 확성 실습 장비의 세 연결이에요. 각 연결에 맞는 케이블을 고르면 그림에 신호 레벨이 표시돼요.</p>' +
         '<div data-role="rig"></div><div class="sim-cable-slots">' + slotHtml('A') + slotHtml('B') + slotHtml('C') + '</div></section>' +
-      '<section class="sim-cable-card"><h4>② 긴 케이블의 험 — 언밸런스와 밸런스</h4><p class="sim-cable-lead">케이블이 길수록, 전원선 가까이 지날수록 「웅-」 하는 험(60 Hz 전기 잡음)이 더 많이 들어와요. 밸런스로 바꾸면 콜드 선의 뒤집힌 신호 덕분에 받는 쪽에서 험이 지워져요.</p>' +
-        '<div class="sim-cable-hum"><div><div class="sim-cable-scope"><canvas data-role="scope" aria-label="핫·콜드 선과 받는 쪽 파형"></canvas></div><p class="sim-note">파형: 위에서부터 핫(+) 선, 콜드(−) 선, 입력이 받은 소리. 옅은 빨간 선이 그 줄에 섞인 험이에요. 세 줄은 같은 배율로 그리고, 배율은 자동으로 맞춰요. (교육용 근사)</p></div>' +
+      '<section class="sim-cable-card"><h4>② 긴 케이블의 험 — 언밸런스와 밸런스</h4><p class="sim-cable-lead">케이블이 길수록, 전원선 가까이 지날수록 「웅-」 하는 험(60 Hz 전기 잡음)이 더 많이 들어와요. 밸런스(XLR)는 같은 신호를 「정상」과 「뒤집은」 두 가닥으로 보내서, 받는 쪽에서 둘을 빼 험을 지워요. 종류를 바꿔 아래 그림을 비교해 보세요.</p>' +
+        '<div class="sim-cable-hum"><div><div class="sim-cable-scope"><canvas data-role="scope" aria-label="핫·콜드 선과 받는 쪽 파형"></canvas></div><p class="sim-note">매끈한 물결 = 소리 신호, 잘게 떨리는 부분 = 케이블에 들어온 잡음(험)이에요. 밸런스는 두 선에 <b>같은 잡음</b>이 들어오고 신호만 서로 반대라서, 받는 쪽에서 빼면 잡음은 사라지고 신호는 2배가 돼요. (이해를 돕는 그림)</p></div>' +
           '<div class="sim-cable-ctl"><div class="sim-cable-seg" role="radiogroup" aria-label="케이블 종류"><label><input type="radio" name="simCableType" value="unbal" checked>언밸런스 (TS)</label><label><input type="radio" name="simCableType" value="bal">밸런스 (XLR)</label></div>' +
             '<label class="sim-range"><span>케이블 길이 <b data-out="len"></b></span><input type="range" min="1" max="50" step="1" data-sim="len" aria-label="케이블 길이(m)"></label>' +
             '<label class="sim-switch"><input type="checkbox" data-sim="parallel"><span>전원선과 나란히 깔기</span></label>' +
@@ -335,31 +336,51 @@
       var tt = S.audio && actx && nodes ? (actx.currentTime - nodes.start) % vox.dur : ((performance.now() - S.t0) / 1000) % vox.dur;
       return vox.env[Math.floor(tt / vox.blk) % vox.env.length] || 0;
     }
-    function sizeScope() { var w = cv.parentNode.clientWidth || 500, h = 200; cv.style.height = h + 'px'; cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    function sizeScope() { var w = cv.parentNode.clientWidth || 500, h = 264; cv.style.height = h + 'px'; cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    /* 2026-10-23: 파형을 개념 그림으로 단순화 — 신호는 느린 매끈한 물결, 잡음은 잘게 떨리는 주황 물결. 움직이지 않고 조작할 때만 바뀜.
+       밸런스: 두 선에 「같은」 잡음이 들어오고 신호는 서로 반대 → 받는 쪽에서 빼면(핫 − 콜드) 잡음은 0, 신호는 2배 */
     function drawScope() {
       var W = cv.width / dpr, Hh = cv.height / dpr; if (!W) return;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, Hh); ctx.fillStyle = '#0b1220'; ctx.fillRect(0, 0, W, Hh);
-      var H = hum(), A = 0.5 * Math.max(0.04, envNow()), N = 0.5 * Math.pow(10, H.unbal / 20), bal = S.type === 'bal', t0 = performance.now() / 1000 * 0.15;
-      var band = Hh / 3, target = Math.max(0.08, A + N * 1.3); S.fs = S.fs ? S.fs * 0.92 + target * 0.08 : target;   // 화면 배율은 자동 (크기 비교는 같은 배율의 세 줄끼리)
-      var scale = band * 0.45 / S.fs;
-      function sig(tt) { return A * (0.7 * Math.sin(2 * Math.PI * 220 * tt) + 0.3 * Math.sin(2 * Math.PI * 440 * tt + 1)); }
-      function hm(tt) { return N * (Math.sin(2 * Math.PI * 60 * tt) + 0.55 * Math.sin(2 * Math.PI * 120 * tt) + 0.4 * Math.sin(2 * Math.PI * 180 * tt)) / 1.6; }
-      var rows = [['핫 (+) 선', '#f87171', function (tt) { return sig(tt) + hm(tt); }],
-        ['콜드 (−) 선', '#60a5fa', bal ? function (tt) { return -sig(tt) + hm(tt) * (1 - EPS); } : null],
-        ['입력이 받은 소리' + (bal ? ' (핫 − 콜드)' : ''), '#4ade80', bal ? function (tt) { return sig(tt) + hm(tt) * EPS / 2; } : function (tt) { return sig(tt) + hm(tt); }]];
+      var H = hum(), bal = S.type === 'bal';
+      var nk = clamp(0.1 + (H.unbal + 50) / 44 * 0.55, 0.1, 0.65);   // 케이블에 들어온 잡음 크기(그림용): 길수록·전원선 옆일수록 커짐
+      var band = Hh / 3, amp = band * 0.2, x0 = 118, xw = W - x0 - 12;
+      function sig(u) { return Math.sin(2 * Math.PI * 2.5 * u); }
+      function nz(u) { return 0.6 * Math.sin(2 * Math.PI * 31 * u) + 0.4 * Math.sin(2 * Math.PI * 47 * u + 1.3); }
+      var rows = bal ? [
+        ['핫 (+) 선', '신호 + 잡음', '#f87171', function (u) { return sig(u); }, 1],
+        ['콜드 (−) 선', '뒤집힌 신호 + 같은 잡음', '#60a5fa', function (u) { return -sig(u); }, 1],
+        ['받는 쪽', '핫 − 콜드 = 신호 2배, 잡음 0', '#4ade80', function (u) { return 2 * sig(u); }, 0]
+      ] : [
+        ['신호선', '신호 + 잡음', '#f87171', function (u) { return sig(u); }, 1],
+        null,
+        ['받는 쪽', '잡음이 그대로 남아요', '#fbbf24', function (u) { return sig(u); }, 1]
+      ];
       rows.forEach(function (r, i) {
-        var yc = band * i + band / 2 + 6;
-        ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, yc); ctx.lineTo(W, yc); ctx.stroke();
-        ctx.fillStyle = '#94a3b8'; ctx.font = '11px sans-serif'; ctx.textAlign = 'left'; ctx.fillText(r[0], 8, band * i + 14);
-        if (!r[2]) { ctx.fillStyle = '#64748b'; ctx.fillText('없음 — 언밸런스는 신호선 1가닥 + 그라운드(실드)', 8, yc + 4); return; }
-        // 험 성분만 옅게 (빨간 줄)
-        ctx.strokeStyle = 'rgba(248,113,113,0.35)'; ctx.lineWidth = 3; ctx.beginPath();
-        var hk = i === 2 && bal ? EPS / 2 : (i === 1 ? 1 - EPS : 1);
-        for (var x = 0; x <= W; x += 2) { var tt = t0 + x / W * 0.05, y = yc - clamp(hm(tt) * hk * scale, -band * 0.48, band * 0.48); if (x) ctx.lineTo(x, y); else ctx.moveTo(x, y); } ctx.stroke();
-        ctx.strokeStyle = r[1]; ctx.lineWidth = 1.6; ctx.beginPath();
-        for (var x2 = 0; x2 <= W; x2 += 1.5) { var t2 = t0 + x2 / W * 0.05, y2 = yc - clamp(r[2](t2) * scale, -band * 0.48, band * 0.48); if (x2) ctx.lineTo(x2, y2); else ctx.moveTo(x2, y2); } ctx.stroke();
+        var top = band * i, yc = top + band / 2 + 8;
+        if (i) { ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, top); ctx.lineTo(W, top); ctx.stroke(); }
+        ctx.textAlign = 'left';
+        if (!r) { ctx.fillStyle = '#94a3b8'; ctx.font = '700 12px sans-serif'; ctx.fillText('콜드 선 없음', 10, top + 20);
+          ctx.fillStyle = '#64748b'; ctx.font = '12px sans-serif'; ctx.fillText('언밸런스는 신호선 1가닥 + 그라운드(실드)뿐이라 잡음을 지울 방법이 없어요', 10, yc + 4); return; }
+        ctx.fillStyle = r[2]; ctx.font = '800 13px sans-serif'; ctx.fillText(r[0], 10, yc - 4);
+        ctx.fillStyle = '#94a3b8'; ctx.font = '11px sans-serif'; wrapText(r[1], 10, yc + 12, x0 - 16, 13);
+        ctx.strokeStyle = '#1e293b'; ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.moveTo(x0, yc); ctx.lineTo(x0 + xw, yc); ctx.stroke(); ctx.setLineDash([]);
+        if (bal && i === 2) {   // 지워진 잡음을 옅은 점선으로 보여 줌
+          ctx.strokeStyle = 'rgba(251,146,60,0.45)'; ctx.setLineDash([2, 3]); ctx.lineWidth = 1; ctx.beginPath();
+          for (var xa = 0; xa <= xw; xa += 1.5) { var ua = xa / xw, ya = yc + band * 0.36 - nz(ua) * nk * amp; if (xa) ctx.lineTo(x0 + xa, ya); else ctx.moveTo(x0 + xa, ya); } ctx.stroke(); ctx.setLineDash([]);
+          ctx.fillStyle = 'rgba(251,146,60,0.8)'; ctx.font = '10px sans-serif'; ctx.textAlign = 'right'; ctx.fillText('지워진 잡음', x0 + xw, yc + band * 0.36 - nk * amp - 6); ctx.textAlign = 'left';
+        }
+        ctx.strokeStyle = r[2]; ctx.lineWidth = 2.2; ctx.beginPath();
+        for (var x = 0; x <= xw; x += 1) { var u = x / xw, y = yc - (r[3](u) + r[4] * nz(u) * nk) * amp; if (x) ctx.lineTo(x0 + x, y); else ctx.moveTo(x0 + x, y); } ctx.stroke();
+        if (r[4]) {   // 같은 잡음이 들어온 곳 표시(주황 띠)
+          ctx.fillStyle = 'rgba(251,146,60,0.9)'; ctx.font = '700 10px sans-serif'; ctx.textAlign = 'right'; ctx.fillText('잡음 ' + (nk >= 0.45 ? '큼' : nk >= 0.25 ? '보통' : '작음'), x0 + xw, top + 14); ctx.textAlign = 'left';
+        }
       });
+      if (bal) {   // 빼기 표시
+        ctx.fillStyle = '#e2e8f0'; ctx.font = '800 16px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('−', x0 - 10, band * 1.5 - 6); ctx.fillText('=', x0 - 10, band * 2 + 6); ctx.textAlign = 'left';
+      }
     }
+    function wrapText(txt, x, y, maxW, lh) { var line = '', yy = y; txt.split(' ').forEach(function (w) { var test = line ? line + ' ' + w : w; if (ctx.measureText(test).width > maxW && line) { ctx.fillText(line, x, yy); line = w; yy += lh; } else line = test; }); if (line) ctx.fillText(line, x, yy); }
     function loop() { if (!alive) return; raf = requestAnimationFrame(loop); drawScope(); }
     function applyAudio() {
       if (!nodes) return; var H = hum(), N = 0.5 * Math.pow(10, H.unbal / 20), tt = actx.currentTime, bal = S.type === 'bal';
@@ -473,7 +494,7 @@
         ['밸런스 (평형)', '같은 신호를 핫·콜드 두 선에 반대 극성으로 실어 보내고, 받는 쪽에서 두 선의 차이만 꺼내 잡음을 지우는 방식이에요.'],
         ['언밸런스 (불평형)', '신호선 1가닥과 그라운드(실드)로 보내는 방식이에요. 들어온 잡음이 그대로 남아서 짧은 거리에 써요.'],
         ['공통 모드 제거', '두 선에 똑같이(같은 극성으로) 들어온 잡음을 받는 쪽에서 빼서 없애는 원리예요. 밸런스 연결의 핵심이에요.'],
-        ['Dante (네트워크 오디오)', '랜선(이더넷) 한 가닥으로 수십 채널의 디지털 오디오를 보내는 방식이에요. 3층 Rio3224-D2 와 CL5 가 이것으로 연결돼요.'],
+        ['Dante (네트워크 오디오)', '랜선(이더넷) 한 가닥으로 수십 채널의 디지털 오디오를 보내는 방식이에요. 디지털 콘솔과 무대 스테이지박스를 이을 때 많이 써요.'],
         ['AES/EBU (AES3)', '케이블 한 가닥에 디지털 오디오 2채널을 보내는 규격이에요. XLR 모양 커넥터와 110 Ω 디지털 케이블을 써요.']
       ],
       points: [
@@ -486,7 +507,7 @@
     theory: [
       { title: '커넥터 종류와 흐르는 신호', visual: 'cableConnectors',
         body: '케이블은 끝의 <b>커넥터</b>로 구분해요. XLR·TS·TRS 는 작은 <b>아날로그 신호</b>, speakON 은 앰프에서 스피커로 가는 <b>큰 전력</b>, RJ45(랜선)는 <b>디지털 네트워크 오디오</b>, 전원 케이블은 장비에 <b>전기</b>를 줘요. 커넥터마다 흐르는 것이 달라서, 연결하기 전에 「이 단자에서 무엇이 나오고 무엇이 들어가는지」를 먼저 확인해요.',
-        more: '<ul><li><b>XLR</b>: 마이크, 콘솔 메인 출력, 앰프 입력처럼 마이크·라인 신호에 써요. 보통 <b>출력 쪽이 수(핀), 입력 쪽이 암(구멍)</b>이라 신호 방향을 알기 쉬워요. 잠금 장치(PUSH 버튼)를 누르고 빼요.</li><li><b>TS·TRS</b>: 모양이 거의 같아서 헷갈려요. 플러그 끝의 검은 띠가 1개면 TS, 2개면 TRS 예요. MG12XU 의 CH5–12 LINE 단자에는 「UNBAL」이라고 적혀 있어요(패널 표기).</li><li><b>speakON</b>: 꽂고 오른쪽으로 돌려 잠가요. Crown XLi1500 은 speakON 과 바인딩 포스트 출력이 있어요(제조사 자료).</li><li><b>RJ45 · etherCON</b>: etherCON 은 랜선 커넥터를 금속 잠금 케이스로 감싼 것이에요. CL5 와 Rio3224-D2 의 Dante 단자가 etherCON 이에요(제조사 자료).</li><li><b>전원 케이블</b>: 220V 가 흐르는 위험한 선이에요. 접지 핀을 떼거나 접지 없는 어댑터로 바꿔 험을 없애려 하면 <b>감전 위험</b>이 있어 절대 하지 않아요.</li></ul>',
+        more: '<ul><li><b>XLR</b>: 마이크, 콘솔 메인 출력, 앰프 입력처럼 마이크·라인 신호에 써요. 보통 <b>출력 쪽이 수(핀), 입력 쪽이 암(구멍)</b>이라 신호 방향을 알기 쉬워요. 잠금 장치(PUSH 버튼)를 누르고 빼요.</li><li><b>TS·TRS</b>: 모양이 거의 같아서 헷갈려요. 플러그 끝의 검은 띠가 1개면 TS, 2개면 TRS 예요. MG12XU 의 CH5–12 LINE 단자에는 「UNBAL」이라고 적혀 있어요(패널 표기).</li><li><b>speakON</b>: 꽂고 오른쪽으로 돌려 잠가요. Crown XLi1500 은 speakON 과 바인딩 포스트 출력이 있어요(제조사 자료).</li><li><b>RJ45 · etherCON</b>: etherCON 은 랜선 커넥터를 금속 잠금 케이스로 감싼 것이에요. 무대용 디지털 콘솔·스테이지박스의 네트워크 단자에 많이 써요.</li><li><b>전원 케이블</b>: 220V 가 흐르는 위험한 선이에요. 접지 핀을 떼거나 접지 없는 어댑터로 바꿔 험을 없애려 하면 <b>감전 위험</b>이 있어 절대 하지 않아요.</li></ul>',
         check: { q: 'Crown 파워앰프의 출력을 ZX1 패시브 스피커에 연결할 때 쓰는 케이블은?', options: [
           { t: 'speakON 스피커 케이블', ok: true, why: '맞아요. 앰프의 큰 출력(스피커 레벨)을 보내는 전용 케이블이에요.' },
           { t: 'XLR 마이크 케이블', why: 'XLR 은 마이크·라인 신호용이에요. 스피커 레벨에는 쓰지 않아요.' },
@@ -513,11 +534,11 @@
           { t: 'GAIN 을 최소로 내리면 괜찮아요', why: 'GAIN 을 내려도 입력 회로에 이미 큰 전력이 들어가요.' },
           { t: 'PAD 를 켜면 괜찮아요', why: 'PAD 는 라인 레벨 정도의 큰 신호를 줄이는 것이지 스피커 레벨용이 아니에요.' }] } },
       { title: '아날로그와 디지털 연결 · 네트워크 오디오', visual: 'cableNetwork',
-        body: '아날로그 케이블은 보통 한 가닥에 <b>한 채널</b>을 보내요. 디지털 연결은 소리를 숫자로 바꿔 보내서 한 가닥에 여러 채널을 보낼 수 있어요. <b>AES/EBU</b> 는 XLR 모양 케이블 한 가닥에 2채널, <b>Dante</b> 는 랜선 한 가닥에 수십 채널이에요. 3층은 무대 판넬의 마이크·악기가 <b>Rio3224-D2</b> 에 들어가 <b>Dante 랜선으로 방송실 CL5</b> 에 가고, CL5 의 출력은 다시 Rio 를 거쳐 <b>AES/EBU 로 d&amp;b 앰프</b>에 가요.',
-        more: '<ul><li><b>Rio3224-D2</b> (제조사 자료): 마이크/라인 입력 32, 라인 출력 16, AES/EBU 출력 8채널, Dante Primary·Secondary 단자(etherCON, Cat5e). 팬텀 전원은 채널마다 소프트웨어로 켜고 꺼요.</li><li><b>CL5</b> (제조사 자료): Dante 로 64채널 입력·64채널 출력, Primary·Secondary 단자.</li><li><b>Primary / Secondary</b>: 같은 소리를 두 네트워크로 동시에 보내는 <b>이중화(예비 길)</b>예요. 한쪽이 끊겨도 다른 쪽으로 소리가 이어져요. Audinate 는 Secondary 단자를 장비를 이어 붙이는(데이지 체인) 용도로 쓰지 말라고 안내해요. 이중화로 쓸 때는 Primary 와 Secondary 를 서로 다른 스위치(별도 네트워크)로 구성해요.</li><li><b>운영 규칙</b>: 예배 중에는 Dante 랜선·네트워크 스위치를 뽑거나 끄지 않아요. 그 길로 다니는 모든 채널이 한꺼번에 끊기고, 다시 꽂아도 연결이 다시 잡히는 동안 소리가 나지 않아요. 랜선은 Cat5e 이상, 한 구간은 이더넷 규격상 최대 100 m 예요. 일반 인터넷 공유기·사무실 네트워크에 함부로 연결하지 않아요.</li><li>AES/EBU 는 110 Ω 디지털 전용 케이블을 권장해요. 디지털 연결은 조금 약해져도 깨끗하다가, 한계를 넘으면 갑자기 끊기거나 「틱」 소리가 나요(아날로그는 점점 나빠져요).</li></ul>',
+        body: '아날로그 케이블은 보통 한 가닥에 <b>한 채널</b>을 보내요. 디지털 연결은 소리를 숫자로 바꿔 보내서 한 가닥에 여러 채널을 보낼 수 있어요. <b>AES/EBU</b> 는 XLR 모양 케이블 한 가닥에 2채널, <b>Dante</b> 는 랜선 한 가닥에 수십 채널이에요. 예를 들어 무대의 <b>스테이지박스</b>가 마이크 신호를 디지털로 바꾸면, 굵은 멀티 케이블 대신 <b>랜선 한 가닥</b>으로 방송실 디지털 콘솔까지 보낼 수 있어요.',
+        more: '<ul><li><b>스테이지박스</b>: 무대에 두는 입출력 장치예요. 마이크 프리앰프와 디지털 변환기가 들어 있어서, 마이크 신호를 무대에서 바로 디지털로 바꿔 보내요. 팬텀 전원·GAIN 은 보통 콘솔에서 원격으로 조절해요.</li><li><b>Primary / Secondary</b>: 같은 소리를 두 네트워크로 동시에 보내는 <b>이중화(예비 길)</b>예요. 한쪽이 끊겨도 다른 쪽으로 소리가 이어져요. Audinate 는 Secondary 단자를 장비를 이어 붙이는(데이지 체인) 용도로 쓰지 말라고 안내해요. 이중화로 쓸 때는 Primary 와 Secondary 를 서로 다른 스위치(별도 네트워크)로 구성해요.</li><li><b>운영 규칙</b>: 예배 중에는 Dante 랜선·네트워크 스위치를 뽑거나 끄지 않아요. 그 길로 다니는 모든 채널이 한꺼번에 끊기고, 다시 꽂아도 연결이 다시 잡히는 동안 소리가 나지 않아요. 랜선은 Cat5e 이상, 한 구간은 이더넷 규격상 최대 100 m 예요. 일반 인터넷 공유기·사무실 네트워크에 함부로 연결하지 않아요.</li><li>AES/EBU 는 110 Ω 디지털 전용 케이블을 권장해요. 디지털 연결은 조금 약해져도 깨끗하다가, 한계를 넘으면 갑자기 끊기거나 「틱」 소리가 나요(아날로그는 점점 나빠져요).</li></ul>',
         check: { q: '예배 중 방송실 네트워크 스위치의 랜선 하나가 쓰지 않는 선처럼 보여요. 어떻게 할까요?', options: [
-          { t: '예배 중에는 건드리지 않고, 끝난 뒤 담당자와 확인한다', ok: true, why: '맞아요. Dante 랜선이라면 무대 입력 수십 채널이 한꺼번에 끊길 수 있어요.' },
-          { t: '쓰지 않는 선 같으니 뽑아 정리한다', why: 'Rio ↔ CL5 Dante 선이면 판넬 입력이 모두 사라져요.' },
+          { t: '예배 중에는 건드리지 않고, 끝난 뒤 담당자와 확인한다', ok: true, why: '맞아요. 네트워크 오디오 랜선이라면 무대 입력 수십 채널이 한꺼번에 끊길 수 있어요.' },
+          { t: '쓰지 않는 선 같으니 뽑아 정리한다', why: '스테이지박스 ↔ 콘솔 선이면 무대 입력이 모두 사라져요.' },
           { t: '잠깐 뽑았다가 바로 다시 꽂으면 괜찮다', why: '다시 꽂아도 Dante 연결이 다시 잡히는 동안 소리가 끊겨요.' }] } },
       { title: '케이블 관리와 고장 진단', visual: 'cableCare',
         body: '소리가 끊기거나 「지직」거리면 케이블부터 의심해요. 흔한 원인은 <b>단선</b>(속선이 끊김)과 <b>접촉 불량</b>(커넥터 안 납땜이 떨어지거나 핀이 더러움)이에요. <b>케이블 테스터</b>에 양쪽 끝을 꽂으면 1·2·3번 핀이 각각 이어졌는지 불빛으로 보여 줘요. 케이블은 <b>오버-언더</b>로 감아 꼬이지 않게 보관해요.',
@@ -540,7 +561,7 @@
       ],
       links: [
         { title: '확성 시스템의 기본 · 3D 실습 ③', text: 'XLR·speakON·전원 케이블로 MG12XU → Crown → ZX1 패시브 스피커를 직접 연결해 봐요.', go: { tab: 'tab1', card: 's3' } },
-        { title: '3층 음향 시스템 · Rio 신호 따라가기', text: '무대 입력이 Dante 랜선으로 방송실 CL5 까지 가고, AES/EBU 로 앰프에 가는 길을 3D 로 봐요.', go: { tab: 'tab2', trace: 'stagebox' } }
+        { title: 'MG12XU 실습 · 장비 연결', text: '마이크·악기·스피커를 MG12XU 의 단자에 케이블로 직접 연결해 봐요.', go: { tab: 'tab6' } }
       ]
     },
     quiz: [
@@ -556,9 +577,9 @@
         { t: 'LINE 입력', ok: true, why: '맞아요. 콘솔 출력은 라인 레벨이에요.' },
         { t: 'MIC 입력', why: '라인 레벨은 마이크 입력에는 너무 커서 찌그러질 수 있어요.' },
         { t: '어디든 같아요', why: '입력마다 받는 신호 크기가 달라요.' }] },
-      { q: '3층 예배 중 무대 판넬의 마이크·악기가 한꺼번에 모두 안 들려요. 방송실 CL5 로 바로 들어오는 강대상 마이크는 잘 들려요. 가장 먼저 의심할 곳은?', options: [
-        { t: 'Rio 와 CL5 를 잇는 Dante 연결(랜선·스위치·전원)', ok: true, why: '맞아요. 판넬 입력은 Rio 를 거쳐 Dante 로 오고, 강대상 마이크는 이 길을 지나지 않아요.' },
-        { t: '강대상 마이크 케이블', why: '강대상 마이크는 잘 들리고 있어요. 문제는 여러 채널이 함께 지나는 길이에요.' },
+      { q: '무대 스테이지박스와 디지털 콘솔을 랜선으로 연결한 교회예요. 예배 중 무대 마이크·악기가 한꺼번에 모두 안 들리는데, 콘솔에 바로 꽂은 마이크는 잘 들려요. 가장 먼저 의심할 곳은?', options: [
+        { t: '스테이지박스와 콘솔을 잇는 네트워크(랜선·스위치·전원)', ok: true, why: '맞아요. 무대 입력은 모두 그 길로 오고, 콘솔에 바로 꽂은 마이크는 그 길을 지나지 않아요.' },
+        { t: '콘솔에 바로 꽂은 마이크 케이블', why: '그 마이크는 잘 들리고 있어요. 문제는 여러 채널이 함께 지나는 길이에요.' },
         { t: '마이크마다 하나씩 케이블 불량', why: '모든 채널이 동시에 끊겼다면 공통으로 지나는 길을 먼저 봐요.' }] },
       { q: '예배가 끝나고 XLR 케이블을 정리할 때 알맞은 방법은?', options: [
         { t: '커넥터를 잡고 뽑아 오버-언더로 감는다', ok: true, why: '맞아요. 선이 꼬이지 않고 속선도 상하지 않아요.' },
@@ -572,7 +593,7 @@
     deeper: [
       { title: 'DI 박스', text: '기타·키보드처럼 언밸런스 출력을 멀리 보낼 때, DI 박스로 밸런스 마이크 레벨 신호로 바꿔 콘솔 MIC 입력에 넣어요.', more: 'GND LIFT(그라운드 리프트) 스위치가 있는 DI 는 험(그라운드 루프)을 줄이는 데도 써요. 전원 플러그의 접지를 끊어 험을 없애는 것은 감전 위험이 있어 절대 하지 않아요.' },
       { title: '그라운드 루프와 험', text: '장비들이 서로 다른 콘센트·접지에 연결되면 그라운드 사이로 전류가 돌아 60 Hz 「웅-」 험이 생길 수 있어요.', more: '음향 장비는 가능하면 같은 전원 계통에서 받고, 신호 케이블은 밸런스로 연결하고, 전원선과는 직각으로 교차시켜요. 원인을 모를 때는 장비를 하나씩 빼 보며 험이 사라지는 곳을 찾아요.' },
-      { title: 'Dante 를 더 알고 싶다면', text: 'Dante Controller 프로그램에서 어떤 장비의 어느 채널이 어디로 갈지(라우팅)를 정해요. 3층에서는 설정을 바꾸기 전에 꼭 담당자와 확인해요.', more: 'Dante 장비들은 기준 시계(클럭) 역할을 하는 장비 하나에 시간을 맞춰 움직여요. 네트워크 설정을 함부로 바꾸면 여러 채널이 한꺼번에 끊길 수 있어요.' }
+      { title: '디지털 케이블', text: '디지털 케이블은 소리를 숫자(0과 1)로 바꿔 보내요. 한 가닥에 여러 채널을 실을 수 있고, 거리가 길어도 소리가 나빠지지 않아요. 대표적인 종류는 AES/EBU, 네트워크 오디오(랜선), MADI, 광케이블이에요.', more: '<ul><li><b>AES/EBU (AES3)</b>: XLR 모양 커넥터, 한 가닥에 2채널. 일반 마이크 케이블이 아니라 110 Ω 디지털 전용 케이블을 써요.</li><li><b>네트워크 오디오 (Dante 등)</b>: 랜선(Cat5e·Cat6) 한 가닥에 수십~수백 채널. 한 구간 최대 100 m, 더 멀면 네트워크 스위치나 광케이블로 이어요.</li><li><b>MADI</b>: 동축(BNC) 케이블이나 광케이블 한 가닥에 최대 64채널. 방송·대형 공연장에서 많이 써요.</li><li><b>광케이블 (ADAT · TOSLINK)</b>: 빛으로 보내 전기 잡음이 없어요. ADAT 은 한 가닥에 8채널이에요. 심하게 꺾으면 안에 유리·플라스틱 심이 상해요.</li><li><b>아날로그와 다른 점</b>: 아날로그는 조금씩 나빠지지만(잡음이 늘어남), 디지털은 깨끗하다가 한계를 넘으면 <b>갑자기 끊기거나 「틱」 소리</b>가 나요. 그래서 규격에 맞는 케이블과 길이를 지키는 것이 중요해요.</li><li>디지털 장비끼리는 <b>같은 기준 시계(클럭)</b>에 맞춰 움직여야 해요. 클럭이 맞지 않으면 「틱틱」 잡음이 생겨요.</li></ul>' }
     ],
     sources: [
       { t: 'Yamaha R Series(2세대) 사양 — Rio3224-D2 입출력·AES/EBU·Dante 단자', url: 'https://in.yamaha.com/en/products/proaudio/interfaces/r_series_adda_2/specs.html' },

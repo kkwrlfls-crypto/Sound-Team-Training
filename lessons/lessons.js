@@ -149,7 +149,7 @@
   function nextSection(doing, doingL) {
     var pathTitle = function (m) { var P = (window.STA_PATHS || []).find(function (p) { return p.id === m.path; }); return P ? P.title : ''; };
     if (doing.length || doingL.length) {
-      var items = doing.map(function (m) { return itemCard({ attr: 'data-module="' + esc(m.id) + '"', img: m.img, thumb: 'eq', kicker: pathTitle(m) + ' · ' + String(m.no).padStart(2, '0'), title: m.title, pct: modPct(m.id) }); })
+      var items = doing.map(function (m) { return itemCard({ attr: 'data-module="' + esc(m.id) + '"', img: (window.STA_THUMBS || {})[m.id] || m.img, thumb: 'eq', kicker: pathTitle(m) + ' · ' + String(m.no).padStart(2, '0'), title: m.title, pct: modPct(m.id) }); })
         .concat(doingL.map(function (l) { var s = st(l.id); return itemCard({ attr: 'data-lesson="' + esc(l.id) + '"', thumb: l.thumb, kicker: '기초 이론', title: l.title, pct: Math.round(s.seen.length / 5 * 100) }); }));
       return '<section class="hm-sec" id="homeNext"><div class="hm-sec__head"><h2>진행 중인 학습</h2><p>시작한 과정을 이어서 학습하세요.</p></div><div class="hm-next">' + items.slice(0, 4).join('') + '</div></section>';
     }
@@ -237,7 +237,7 @@
       return '<div class="lsn-deep-item"><b>' + esc(d.title) + '</b><p>' + esc(d.text) + '</p>' + (d.more ? '<details><summary>자세히 보기</summary><div>' + d.more + '</div></details>' : '') + '</div>';
     }).join('') + '</div>' +
       (nextL ? '<p class="lsn-p" style="margin-top:14px">다음 레슨: <button type="button" class="lsn-theory-link" data-lesson="' + nextL.id + '">' + esc(nextL.title) + ' →</button></p>' : '') +
-      (l.sources && l.sources.length ? '<div class="lsn-src">근거 자료: ' + l.sources.map(function (x) { return '<a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.t) + '</a>'; }).join(' · ') + '</div>' : '') + '</section>';
+      '</section>';   /* 2026-10-23: 근거 자료 줄은 화면에서 뺌 */
     var panelOf = sec.panel;
     root.innerHTML =
       '<nav class="lsn-crumb" aria-label="위치"><button type="button" data-home="1">홈</button><span>›</span><span>' + esc(l.level) + '</span><span>›</span><b>' + esc(l.title) + '</b></nav>' +
@@ -320,8 +320,8 @@
 
   /* ------------------------------------------------------------- 실습 화면·커리큘럼에 이론 연결 */
   // 2026-10-21: 실습 탭 머리에 다는 관련 이론·모듈 (모든 모듈 개방에 맞춰 넓힘)
-  var TAB_MODULES = { tab1: ['mic', 'cable', 'amp', 'speaker'], tab6: ['console', 'gain-structure', 'eq'], tab2: ['cable', 'console', 'amp', 'speaker'], tab5: ['console', 'gain-structure', 'compressor'], tab7: ['cable', 'console'], tab3: ['eq', 'compressor', 'fx-space'] };
-  var TAB_LESSONS = { tab1: ['signal-flow'], tab2: ['signal-flow'], tab7: ['signal-flow'], tab6: ['gain-fader', 'hpf-eq', 'aux-monitor'], tab5: ['gain-fader', 'aux-monitor'], tab3: ['hpf-eq'] };
+  var TAB_MODULES = { tab1: ['mic', 'cable', 'amp', 'speaker'], tab6: ['console', 'gain-structure', 'eq'], tab2: ['cable', 'console', 'amp', 'speaker'], tab5: ['console', 'gain-structure', 'compressor'], tab7: ['cable', 'console'] };   /* 2026-10-23: Ear Training 탭의 관련 모듈 링크는 뺌 */
+  var TAB_LESSONS = { tab1: ['signal-flow'], tab2: ['signal-flow'], tab7: ['signal-flow'], tab6: ['gain-fader', 'hpf-eq', 'aux-monitor'], tab5: ['gain-fader', 'aux-monitor'] };
   function theoryLinks(ids) {
     return ids.map(function (id) {
       var l = lessonById(id); if (!l) return '';

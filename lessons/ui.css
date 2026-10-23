@@ -581,3 +581,19 @@ button[onclick^="reset"], button[onclick*="Reset"],
   .mod-go__it { grid-template-columns: 76px minmax(0, 1fr); }
   .mod-go__th { width: 76px; height: 60px; }
 }
+
+/* 메뉴 맨 아래 「사진 출처」 (2026-10-23) */
+.site-header .tab-nav .nav-credits { align-self: flex-start; margin: 14px 0 0 12px; padding: 4px 0; border: 0; background: none; color: var(--sta-navy-ink-2); font: inherit; font-size: 0.72rem; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.site-header .tab-nav .nav-credits:hover { color: #fff; }
+.site-header .tab-nav .nav-credits:focus-visible { outline: 2px solid var(--sta-cyan-bright); outline-offset: 2px; }
+/* 문장마다 줄바꿈(2026-10-23) */
+.mod-paras > p { margin: 0 0 0.5em; }
+.mod-paras > p:last-child { margin-bottom: 0; }
+div.mod-p.mod-paras { margin: 0 0 12px; }
+/* 장비 브랜드 알아보기 — 실습 묶음 밖의 따로 있는 메뉴(2026-10-23) */
+.site-header .tab-nav > .tab-btn[data-tab="tabBrands"]:not(.tab-sub) { margin-top: 12px; color: #e6edf6; font-weight: 800; }
+/* 믹싱 과정 영상 — 빈 탭 */
+.mixvid-empty { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 48px 20px; border: 1.5px dashed var(--sta-line-strong); border-radius: var(--sta-r-lg); background: var(--sta-surface-2); text-align: center; color: var(--sta-ink-2); }
+.mixvid-empty svg { width: 44px; height: 44px; color: var(--sta-ink-3); }
+.mixvid-empty b { font-size: 1rem; color: var(--sta-ink); }
+.mixvid-empty span { font-size: 0.86rem; }

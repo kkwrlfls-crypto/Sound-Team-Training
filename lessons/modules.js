@@ -23,7 +23,8 @@
     tabFeedback: ['하울링 제어 훈련', '링아웃으로 하울링 주파수를 찾아 깎고, 예배 중 갑자기 나는 하울링에 바르게 대응해 봅니다.', ''],
     tabCheck: ['자가 진단 기준표', '방송실 모니터링·스피커 지향각·룸 어쿠스틱 등 우리 시스템을 항목별로 진단하고 개선 순서를 정합니다.', 'img/modules/hw_speaker.jpg'],
     tabTips: ['실전 꿀팁', '책에는 잘 나오지 않는 현장 노하우를 상황별로 모았어요.', 'img/modules/hw_mic.jpg'],
-    tab3: ['Ear Training', '볼륨 변화, 대역별 소리, 밸런스를 귀로 훈련합니다.', '']
+    tab3: ['Ear Training', '볼륨 변화, 대역별 소리, 밸런스를 귀로 훈련합니다.', ''],
+    tabMixVideo: ['믹싱 과정 영상', '실제로 믹싱하는 과정을 영상으로 보며 배워요. (영상 준비 중)', 'img/modules/mix_eq.jpg']
   };
   /* 썸네일 사진 출처 (Wikimedia Commons 사진은 라이선스에 따라 저작자 표시) */
   var IMG_CREDITS = {
@@ -34,8 +35,9 @@
     'img/modules/hw_speaker.jpg': { t: '사진: 3층에 설치된 d&b 서브우퍼 · E8 · Vi10P (제조사 제품 사진)' },
     'img/modules/mg12xu_full.jpg': { t: '사진: 「MG12XU 실습」 화면의 콘솔 (Yamaha 제품 사진 + 실습용 페이더)' }
   };
-  var IMG_R = { 'img/modules/mg12xu_full.jpg': 1754 / 1862 };   // 사진 가로÷세로 (그 밖의 장비 사진은 1200×900)
-  function creditHtml(img) { var c = IMG_CREDITS[img]; if (!c) return ''; return '<p class="mod-credit">' + (c.url ? '<a href="' + esc(c.url) + '" target="_blank" rel="noopener">' + esc(c.t) + '</a>' : esc(c.t)) + '</p>'; }
+  var IMG_R = { 'img/modules/mg12xu_full.jpg': 1754 / 1862, 'img/modules/crown_xli1500.jpg': 1600 / 817, 'img/modules/ev_zxa1.jpg': 1160 / 900 };   // 사진 가로÷세로 (그 밖의 장비 사진은 1200×900)
+  window.STA_IMG_CREDITS = IMG_CREDITS;   // 2026-10-23: 화면의 출처 줄은 없애고, 메뉴 맨 아래 「사진 출처」 창에서만 보여 줌(lessons/ui.js)
+  function creditHtml() { return ''; }
   var view = { path: null, mod: null, tab: 'overview', fig: 'photo' }, sim = null, viewer = null, backTo = null;
 
   function $(id) { return document.getElementById(id); }
@@ -64,6 +66,7 @@
   function lessonDone(id) { try { var a = JSON.parse(localStorage.getItem('soundTrainerLessons_v1')) || {}; return !!(a[id] && a[id].done); } catch (e) { return false; } }
   function minutesTxt(n) { return n >= 60 ? '약 ' + (Math.round(n / 30) / 2) + '시간' : '약 ' + n + '분'; }
   function thumb(m) {
+    var th = (window.STA_THUMBS || {})[m.id]; if (th) return '<img src="' + esc(th) + '" alt="" loading="lazy">';
     if (m.img) return '<img src="' + esc(m.img) + '" alt="" loading="lazy"' + (m.imgPos ? ' style="object-position:' + m.imgPos + '"' : '') + '>';
     var k = m.thumb || 'eq', art = {
       eq: '<path d="M20 120 C70 120 80 60 120 60 S170 105 210 92 S270 52 300 52" fill="none" stroke="#22d3ee" stroke-width="5"/>',
@@ -183,7 +186,7 @@
     return '<figure class="mod-fig" style="--fig-bg:' + esc((h && h.bg) || '#0b1626') + '">' +
       '<div class="mod-fig__stage"><img src="' + esc(img) + '" alt="' + esc(m.title) + ' 장비 사진" style="height:' + (100 / v[2]).toFixed(2) + '%;top:' + (-v[1] / v[2] * 100).toFixed(2) + '%;left:' + ((0.5 - v[0] * k) * 100).toFixed(2) + '%">' +
       (pts.length ? '<svg class="mod-fig__lines" viewBox="0 0 1600 1000" preserveAspectRatio="none" aria-hidden="true">' + lines + '</svg>' + marks + labels : '') + '</div>' +
-      (pts.length ? '<ol class="mod-fig__legend">' + legend + '</ol>' : '') + ((tools || IMG_CREDITS[img]) ? '<div class="mod-fig__foot">' + tools + creditHtml(img) + '</div>' : '') + '</figure>';
+      (pts.length ? '<ol class="mod-fig__legend">' + legend + '</ol>' : '') + (tools ? '<div class="mod-fig__foot">' + tools + '</div>' : '') + '</figure>';
   }
   function heroHtml(m) {
     var s = st(m.id);
@@ -195,7 +198,7 @@
   function tabOverview(m) {
     var o = m.overview, g = (GL[m.id] || {}), h = g.hero || {}, links = m.practice.links || [];
     var showVis = VIS[o.model] && !(h.vis === o.model);
-    return '<div class="mod-ov"><div class="mod-ov__main"><section class="mod-box mod-concept"><h2 class="mod-box__h">' + mi('bulb') + '핵심 개념</h2><p class="mod-lead">' + o.lead + '</p>' +
+    return '<div class="mod-ov"><div class="mod-ov__main"><section class="mod-box mod-concept"><h2 class="mod-box__h">' + mi('bulb') + '핵심 개념</h2><div class="mod-lead mod-paras">' + paras(o.lead) + '</div>' +
       (g.glance ? '<div class="mod-glance" aria-label="한눈에 보기"><h3>한눈에 보기</h3><dl>' + g.glance.map(function (x) { return '<div class="mod-gl"><dt>' + esc(x[0]) + '</dt><dd>' + esc(x[1]) + '</dd></div>'; }).join('') + '</dl></div>' : '') +
       '<h3 class="mod-h3">주요 용어 <small>눌러서 뜻 보기</small></h3><div class="mod-terms">' + o.terms.map(function (t2) { return '<details class="mod-term"><summary>' + esc(t2[0]) + '</summary><p>' + esc(t2[1]) + '</p></details>'; }).join('') + '</div>' +
       (showVis ? '<div class="mod-visual">' + VIS[o.model]() + '</div>' : '') + '</section></div>' +
@@ -211,14 +214,14 @@
       m.theory.map(function (x, i) {
         var ok = s.checks[i] === okIdx(x.check);
         return '<section class="mod-sec" id="modSec' + i + '"><h2 class="mod-sec__h"><span class="lsn-num">' + (i + 1) + '</span>' + esc(x.title) + (ok ? '<span class="mod-tick">✓</span>' : '') + '</h2>' +
-          (x.visual && VIS[x.visual] ? '<div class="mod-visual">' + VIS[x.visual]() + '</div>' : '') + '<p class="mod-p">' + x.body + '</p>' +
+          (x.visual && VIS[x.visual] ? '<div class="mod-visual">' + VIS[x.visual]() + '</div>' : '') + '<div class="mod-p mod-paras">' + paras(x.body) + '</div>' +
           (x.more ? '<details class="mod-more"><summary>더 알아보기</summary><div>' + x.more + '</div></details>' : '') +
           qHtml(x.check, i, s.checks[i], 'mcheck') + '</section>';
       }).join('') + '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="practice">실습하기 →</button></div>';
   }
   function tabPractice(m) {
     var p = m.practice, s = st(m.id), c = counts(m);
-    return '<p class="mod-lead">' + esc(p.lead) + '</p><div class="mod-simwrap"><div class="mod-sim" data-role="sim"></div>' +
+    return '<div class="mod-lead mod-paras">' + paras(esc(p.lead)) + '</div><div class="mod-simwrap"><div class="mod-sim" data-role="sim"></div>' +
       '<aside class="mod-tasks"><h3>실습 과제 <small>' + c.prac + '/' + c.pracN + '</small></h3><ol>' + p.tasks.map(function (t2) { var d = !!s.tasks[t2.id];
         return '<li class="' + (d ? 'done' : '') + '" data-task="' + t2.id + '"><span class="mod-task__ck">' + (d ? '✓' : '') + '</span><div><b>' + esc(t2.title) + '</b><p>' + esc(t2.text) + '</p></div></li>'; }).join('') + '</ol>' +
       (c.pracDone ? '<div class="mod-okline">🎉 실습 과제를 모두 마쳤어요. <b>실습 완료</b>!</div>' : '<p class="mod-small">과제는 실습 화면의 상태로 자동 확인돼요. 버튼을 누르기만 해서는 완료되지 않아요.</p>') + '</aside></div>' +
@@ -237,10 +240,23 @@
     return '<p class="mod-lead">배운 원리를 실제 문제 상황에 적용해 보세요.</p><div class="mod-links">' + m.missions.map(function (x, i) { return '<button type="button" class="mod-link mission" data-mgo="missions:' + i + '"><b>🎯 ' + esc(x.title) + '</b><span>' + esc(x.text) + '</span><em>미션 열기 →</em></button>'; }).join('') + '</div>' +
       '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="deeper">심화 학습 →</button></div>';
   }
+  /* 2026-10-23 가독성: 긴 글을 문장마다 줄을 바꿔 보여 줌(태그 안에서는 자르지 않음) */
+  function paras(h) {
+    h = String(h || ''); var out = [], cur = '', depth = 0;
+    for (var i = 0; i < h.length; i++) {
+      var ch = h[i];
+      if (ch === '<') { var end = h.indexOf('>', i); if (end < 0) { cur += h.slice(i); break; } var tag = h.slice(i, end + 1); cur += tag; i = end; if (!/\/>$/.test(tag) && !/^<br/i.test(tag)) depth += tag[1] === '/' ? -1 : 1; continue; }
+      cur += ch;
+      if (depth <= 0 && /[.!?]/.test(ch) && h[i + 1] === ' ' && /[요다죠까]$/.test(cur.slice(0, -1))) { out.push(cur.trim()); cur = ''; }
+    }
+    if (cur.trim()) out.push(cur.trim());
+    return out.map(function (x) { return '<p>' + x + '</p>'; }).join('');
+  }
+  function rich(x) { return /<\/?(b|ul|li|br|i|small)\b/.test(x || '') ? x : esc(x); }   // 2026-10-23: 데이터에 <b>·<ul> 이 있으면 그대로
   function tabDeeper(m) {
     var p = pathById(m.path), ids = p.modules, i = ids.indexOf(m.id), next = ids.slice(i + 1).map(function (id) { return MODS[id]; }).find(function (x) { return x && x.status === 'ready'; });
-    return '<div class="lsn-deep">' + m.deeper.map(function (d) { return '<div class="lsn-deep-item"><b>' + esc(d.title) + '</b><p>' + esc(d.text) + '</p>' + (d.more ? '<details><summary>자세히 보기</summary><div>' + esc(d.more) + '</div></details>' : '') + '</div>'; }).join('') + '</div>' +
-      creditHtml(m.img) + (m.sources && m.sources.length ? '<div class="lsn-src">근거 자료: ' + m.sources.map(function (x) { return '<a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.t) + '</a>'; }).join(' · ') + '</div>' : '') +
+    return '<div class="lsn-deep">' + m.deeper.map(function (d) { return '<div class="lsn-deep-item"><b>' + esc(d.title) + '</b><p>' + rich(d.text) + '</p>' + (d.more ? '<details><summary>자세히 보기</summary><div>' + rich(d.more) + '</div></details>' : '') + '</div>'; }).join('') + '</div>' +
+      
       '<div class="mod-next">' + (next ? '<button type="button" class="btn mod-cta" data-module="' + next.id + '">다음 과정: ' + esc(next.title) + ' →</button>' : '<button type="button" class="btn mod-cta" data-path="' + p.id + '">' + esc(p.title) + ' 과정 목록 →</button>') + '</div>';
   }
   function renderModule() {

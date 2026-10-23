@@ -120,6 +120,8 @@
     '.brd-tier__fig { margin: 0; }',
     '.brd-img, .brd-ph { position: relative; aspect-ratio: 4 / 3; width: 100%; border-radius: 7px; background: #f3f6f9; border: 1px solid #e8edf3; overflow: hidden; }',
     '.brd-img img { display: block; width: 100%; height: 100%; object-fit: contain; }',
+    '.brd-others { margin: 12px 0 0; padding: 10px 12px; border-radius: 10px; background: var(--sta-surface-2, #f7f9fc); border: 1px solid var(--sta-line, #e0e7f0); font-size: 0.84rem; line-height: 1.6; color: var(--sta-ink-2, #4b5c74); word-break: keep-all; }',
+    '.brd-others b { color: var(--sta-ink, #0f1f33); margin-right: 4px; }',
     '.brd-tier__fig figcaption { margin-top: 3px; font-size: 0.62rem; line-height: 1.35; color: #7a8aa0; overflow-wrap: anywhere; }',
     '.brd-ph { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 6px; text-align: center; }',
     '.brd-ph svg { width: 34%; max-width: 44px; height: auto; color: #a8b6c7; }',
@@ -205,6 +207,8 @@
 
   /* ---------------------------------------------------------------- 아이콘 */
   var ICON = {
+    connector: '<circle cx="12" cy="12" r="8.5"/><circle cx="9" cy="10" r="1.2"/><circle cx="15" cy="10" r="1.2"/><circle cx="12" cy="15" r="1.2"/><path d="M12 3.5V2"/>',
+    cable: '<path d="M3 17c3 0 3-10 6-10s3 10 6 10 3-10 6-10"/><rect x="1.5" y="15" width="3" height="5" rx="1"/><rect x="19.5" y="4" width="3" height="5" rx="1"/>',
     mic: '<rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/>',
     wireless: '<rect x="8.5" y="2.5" width="5" height="7" rx="2.5"/><path d="M9.3 9.5 10 21h2l.7-11.5"/><path d="M16.5 4.2a5 5 0 0 1 0 6.6M19.2 2.2a8.5 8.5 0 0 1 0 10.6"/>',
     console: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7.5 8v9M12 8v9M16.5 8v9"/><path d="M6 13h3M10.5 10h3M15 15h3"/>',
@@ -250,15 +254,16 @@
   function tierMediaHtml(b, t) {
     if (!t.img) return placeholderHtml(b, t);
     return '<figure class="brd-tier__fig"><div class="brd-img"><img src="' + esc(t.img) + '" alt="' + esc(b.name + ' ' + t.model) + '" loading="lazy" decoding="async" data-tierimg="' + esc(t.id) + '"></div>' +
-      (t.credit ? '<figcaption>사진: ' + (t.creditUrl ? '<a href="' + esc(t.creditUrl) + '" target="_blank" rel="noopener">' + esc(t.credit) + '</a>' : esc(t.credit)) + '</figcaption>' : '') + '</figure>';
+      '</figure>';   /* 2026-10-23: 사진 아래 출처 줄은 뺌(메뉴 맨 아래 「사진 출처」에 모음) */
   }
   function tiersHtml(b) {
     var tiers = b.tiers || [];
     if (!tiers.length) return '';
     var by = {}; tiers.forEach(function (t) { by[t.tier] = t; });
-    var h = '<ul class="brd-tiers" aria-label="' + esc(b.name) + ' 대표 제품: 엔트리 · 중급 · 하이엔드">';
+    var TL = (CAT[b.cat] && CAT[b.cat].tierLabels) || TIER_LABEL;   // 2026-10-23: 커넥터·케이블은 종류별 칸
+    var h = '<ul class="brd-tiers" aria-label="' + esc(b.name) + ' 대표 제품: ' + TIER_ORDER.map(function (lv) { return esc(TL[lv]); }).join(' · ') + '">';
     TIER_ORDER.forEach(function (lv) {
-      var t = by[lv], lab = '<span class="brd-lvl brd-lvl--' + lv + '">' + esc(TIER_LABEL[lv]) + '</span>';
+      var t = by[lv], lab = '<span class="brd-lvl brd-lvl--' + lv + '">' + esc(TL[lv]) + '</span>';
       if (!t) { h += '<li class="brd-tier is-empty" data-tier="' + lv + '">' + lab + '<p>이 단계 제품 없음</p></li>'; return; }
       h += '<li class="brd-tier' + (t.ours ? ' is-ours' : '') + '" data-tier="' + lv + '" data-tierid="' + esc(t.id) + '">' +
         '<div class="brd-tier__media">' + tierMediaHtml(b, t) + '</div>' +
@@ -313,7 +318,10 @@
     el.innerHTML = '<section class="brd-cat" data-catpanel="' + c.id + '" aria-labelledby="brd-cat-h">' +
       '<div class="brd-cat__main"><div class="brd-cat__ico">' + ico(c.icon) + '</div><div><h2 id="brd-cat-h">' + esc(c.title) + '</h2><p>' + esc(c.intro) + '</p>' +
       '<div class="brd-cat__mods">' + c.modules.map(function (m) { return '<button type="button" class="brd-modlink" data-module="' + esc(m.id) + '">📘 ' + esc(m.label) + ' 열기</button>'; }).join('') + '</div></div></div>' +
-      '<div class="brd-cat__look"><h3>고를 때 이것을 봐요</h3><ul>' + c.look.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div></section>';
+      '<div class="brd-cat__look"><h3>고를 때 이것을 봐요</h3><ul>' + c.look.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>' +
+      (c.others ? '<p class="brd-others"><b>기타 브랜드</b> ' + esc(c.others) + '</p>' : '') + '</section>';
+    var lg = root.querySelector('[data-brdlegend]'), TL = c.tierLabels || TIER_LABEL;   // 칸 이름 안내도 분류에 맞춰
+    if (lg) lg.innerHTML = '<span class="brd-legend__lvls" aria-hidden="true">' + TIER_ORDER.map(function (lv) { return '<span class="brd-lvl brd-lvl--' + lv + '">' + esc(TL[lv]) + '</span>'; }).join('') + '</span><span>' + esc(c.tierLegend || D.tierLegend || '') + '</span>';
   }
 
   function renderGrid() {
@@ -402,9 +410,8 @@
         '<section class="brd-sec" aria-labelledby="brd-p-h"><h2 id="brd-p-h">💡 브랜드보다 중요한 것</h2><p>좋은 브랜드를 아는 것도 도움이 되지만, 실제로 장비를 고르고 쓸 때는 아래 네 가지가 더 중요해요.</p>' +
           '<ul class="brd-princ">' + D.principles.map(function (p) { return '<li><b>' + esc(p.t) + '</b><span>' + esc(p.d) + '</span></li>'; }).join('') + '</ul></section>' +
         '<section class="brd-sec" aria-labelledby="brd-q-h"><h2 id="brd-q-h">🧩 브랜드 퀴즈</h2><p>위에서 본 내용으로 풀어 봐요. 답을 고르고 「정답 확인」을 누르면 설명이 나와요.</p><div class="brd-quiz"></div></section>' +
-        '<section class="brd-sec" aria-labelledby="brd-s-h"><h2 id="brd-s-h">📚 출처와 확인 날짜</h2><div class="brd-srcwrap"></div></section>' +
       '</div>';
-    renderChips(); renderCat(); renderGrid(); renderQuiz(); renderSources();
+    renderChips(); renderCat(); renderGrid(); renderQuiz();   /* 2026-10-23: 출처 칸은 화면에서 뺌 */
   }
 
   function refresh() {

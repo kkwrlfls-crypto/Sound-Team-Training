@@ -69,7 +69,7 @@
       '<p class="chk-guide">항목마다 우리 시스템 상태를 「양호 · 주의 · 개선 필요 · 해당 없음」 중에서 골라요. 「점검 방법」을 펼치면 확인하는 방법과 고치는 방법이 나와요. 기록은 이 브라우저에만 저장돼요.</p>' +
       secs.map(sectionHtml).join('') +
       '<section class="chk-prio-wrap"><h3>🔧 개선 우선순위</h3><div data-role="ckPrio">' + priorityHtml() + '</div></section>' +
-      '<p class="lsn-src chk-src">근거 자료: ' + CHECK.sources.map(function (x) { return '<a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.t) + '</a>'; }).join(' · ') + '</p>';
+      '';   /* 2026-10-23: 근거 자료 줄은 화면에서 뺌 */
   }
   function refreshCheck(id) {
     var art = $('chk-' + id), it = allItems().find(function (x) { return x.it.id === id; });

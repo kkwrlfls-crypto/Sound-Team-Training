@@ -44,6 +44,23 @@
     return svg(600, 208, b, '액티브 스피커와 패시브 스피커의 구조');
   };
 
+  /* 2026-10-23: 풀레인지 · 2웨이 · 3웨이 구조 비교 */
+  V.spkWays = function () {
+    var b = '', COL = { lo: C.teal, mid: C.violet, hi: C.amber, full: C.blue };
+    function drv(cx, cy, r, col, lab) { return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="#1f2937" stroke="' + col + '" stroke-width="3"/><circle cx="' + cx + '" cy="' + cy + '" r="' + (r * 0.35) + '" fill="#4b5563"/>' + (lab ? t(cx + r + 8, cy + 4, lab, { size: 10.5, anchor: 'start', fill: col, weight: 700 }) : ''); }
+    function horn(cx, cy, col, lab) { return '<path d="M' + (cx - 22) + ' ' + (cy - 12) + 'H' + (cx + 22) + 'L' + (cx + 10) + ' ' + (cy + 12) + 'H' + (cx - 10) + 'Z" fill="#1f2937" stroke="' + col + '" stroke-width="3"/><circle cx="' + cx + '" cy="' + cy + '" r="4" fill="#9ca3af"/>' + (lab ? t(cx + 30, cy + 4, lab, { size: 10.5, anchor: 'start', fill: col, weight: 700 }) : ''); }
+    function band(x, y, w, parts) { var s2 = '', xx = x; parts.forEach(function (p2) { var ww = w * p2[0]; s2 += '<rect x="' + xx + '" y="' + y + '" width="' + ww + '" height="14" fill="' + p2[1] + '" fill-opacity=".85"/>'; xx += ww; }); return s2 + '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="14" fill="none" stroke="' + C.line + '"/>' + t(x, y + 28, '저음', { size: 9.5, fill: C.sub, anchor: 'start' }) + t(x + w, y + 28, '고음', { size: 9.5, fill: C.sub, anchor: 'end' }); }
+    // 풀레인지
+    b += box(14, 30, 170, 196, C.bg, C.line) + t(99, 52, '풀레인지 (1웨이)', { size: 13, weight: 800 }) + box(64, 66, 70, 96, '#e5e7eb', '#9ca3af', 8) + drv(99, 114, 24, COL.full) + band(34, 178, 130, [[1, COL.full]]);
+    // 2웨이
+    b += box(214, 30, 170, 196, '#ecfeff', C.teal) + t(299, 52, '2웨이', { size: 13, weight: 800, fill: C.teal }) + box(244, 62, 70, 104, '#e5e7eb', '#9ca3af', 8) + horn(279, 80, COL.hi, '고음') + drv(279, 130, 26, COL.lo, '저음') + band(234, 178, 130, [[0.55, COL.lo], [0.45, COL.hi]]);
+    // 3웨이
+    b += box(414, 30, 172, 196, '#f5f3ff', C.violet) + t(500, 52, '3웨이', { size: 13, weight: 800, fill: C.violet }) + box(444, 60, 70, 108, '#e5e7eb', '#9ca3af', 8) + horn(479, 74, COL.hi, '고음') + drv(479, 104, 13, COL.mid, '중음') + drv(479, 142, 21, COL.lo, '저음') + band(434, 178, 132, [[0.4, COL.lo], [0.33, COL.mid], [0.27, COL.hi]]);
+    b += t(8, 16, '드라이버마다 잘하는 대역을 나눠 맡아요 · 나누는 일은 크로스오버가 해요', { size: 11, fill: C.sub, anchor: 'start' });
+    b += t(300, 250, '예: EV ZXA1 = 2웨이 (8인치 우퍼 + 1인치 고음 드라이버, 1.8 kHz 에서 나눔 · 제조사 자료)', { size: 10.5, fill: C.ink });
+    return svg(600, 260, b, '풀레인지, 2웨이, 3웨이 스피커 구조 비교');
+  };
+
   V.spkDrivers = function () {
     var x0 = 50, x1 = 580, y0 = 34, y1 = 180, fx = logx(x0, x1, 20, 20000), fy = function (d) { return y0 + (6 - d) / 36 * (y1 - y0); }, fc = 1800;
     var g = [20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000].map(function (f) { return '<path d="M' + fx(f).toFixed(1) + ' ' + y0 + 'V' + y1 + '" stroke="' + C.line + '"/>' + t(fx(f), y1 + 15, f >= 1000 ? (f / 1000) + 'k' : f, { size: 10, fill: C.sub }); }).join('') +
@@ -154,8 +171,8 @@
   var MODELS = {
     zxa1: { name: 'EV ZXA1-90 · ZX1-90', h: 90, v: 50 },
     zx1rot: { name: 'ZX1-90 혼을 돌림', h: 50, v: 90 },
-    yi7p: { name: 'd&b Yi7P', h: 75, v: 40 },
-    vi10p: { name: 'd&b Vi10P', h: 110, v: 40 }
+    yi7p: { name: '좁은 커버리지', h: 75, v: 40 },
+    vi10p: { name: '넓은 커버리지', h: 110, v: 40 }
   };
   var ROOM = { W: 16, H: 12, stage: 3, hgt: 2.5 };
   var SEATS = []; (function () { for (var j = 0; j < 6; j++) for (var i = 0; i < 6; i++) SEATS.push({ x: 5 + 1.8 * j, y: 2 + 1.6 * i, row: j }); })();
@@ -210,7 +227,7 @@
 
   function speakerRoom(el, opts) {
     opts = opts || {}; injectCss();
-    var S = { scene: 'cover', model: 'zxa1', sx: 1.0, sy: 1.0, aim: 0, tilt: 20, sel: 35,
+    var S = { scene: 'cover', model: 'zxa1', sx: 1.0, sy: 1.0, aim: 0, tilt: 20, sel: 35, hgt: 2.5, sawLow: false,
       mx: 1.9, my: 1.34, listener: 16, delayMs: 0, delLvl: 0, polarity: 'normal', delayOn: true, sawRev: false, src: 'leadVox', done: {}, audio: false };
     var scenes = [['cover', '① 객석 커버리지', '메인 스피커 겨누기'], ['monitor', '② 모니터와 피드백', '카디오이드 마이크와 모니터'], ['delay', '③ 딜레이 맞추기', '도착 시간·콤 필터·극성']];
     el.innerHTML =
@@ -219,12 +236,14 @@
         // ① 커버리지
         '<div class="sim-speaker-pane" data-pane="cover"><div class="sim-speaker-body">' +
           '<div class="sim-speaker-view"><canvas class="sim-speaker-cv" data-cv="cover" aria-label="위에서 본 예배실: 단상(왼쪽)의 메인 스피커와 좌석 36개의 레벨 지도"></canvas>' +
+            '<canvas class="sim-speaker-cv" data-cv="side" aria-label="옆에서 본 예배실: 스피커 높이와 세로 커버리지, 줄마다 앉은 사람"></canvas>' +
             '<div class="sim-speaker-legend"><span><i style="background:#16a34a"></i>평균 ±3 dB</span><span><i style="background:#f59e0b"></i>3–6 dB 큼</span><span><i style="background:#dc2626"></i>6 dB 넘게 큼</span><span><i style="background:#60a5fa"></i>3–6 dB 작음</span><span><i style="background:#1e3a8a"></i>6 dB 넘게 작음</span></div>' +
             '<div class="sim-hint">스피커(단상 위 검은 상자)를 끌어 옮기고, 노란 손잡이를 끌어 방향을 돌리세요. 좌석을 누르면 그 자리 소리를 들어요.</div></div>' +
           '<div class="sim-side">' +
             '<div class="sim-box"><h4>스피커 <small>커버리지: 제조사 자료</small></h4><div class="sim-speaker-models">' + Object.keys(MODELS).map(function (k) { var m = MODELS[k]; return '<label class="sim-type"><input type="radio" name="simSpkModel" value="' + k + '"' + (k === S.model ? ' checked' : '') + '><span><b>' + esc(m.name) + '</b><small>가로 ' + m.h + '° × 세로 ' + m.v + '°</small></span></label>'; }).join('') + '</div></div>' +
             '<div class="sim-box"><h4>겨누기</h4><label class="sim-range"><span>방향 (가로) <output data-out="aim"></output></span><input type="range" min="-90" max="90" step="1" data-sim="aim" aria-label="스피커 가로 방향"></label>' +
-              '<label class="sim-range"><span>아래로 숙이기 (세로) <output data-out="tilt"></output></span><input type="range" min="0" max="30" step="1" data-sim="tilt" aria-label="스피커 아래로 숙이는 각도"></label>' +
+              '<label class="sim-range"><span>아래로 숙이기 (세로) <output data-out="tilt"></output></span><input type="range" min="0" max="45" step="1" data-sim="tilt" aria-label="스피커 아래로 숙이는 각도"></label>' +
+              '<label class="sim-range"><span>스피커 높이 (바닥에서) <output data-out="hgt"></output></span><input type="range" min="1.8" max="6" step="0.1" data-sim="hgt" aria-label="스피커 높이(바닥에서, m)"></label>' +
               '<div class="sim-btns"><button type="button" class="sim-btn" data-sim="resetCover">처음 위치</button></div></div>' +
             '<div class="sim-box sim-read" data-role="readCover"></div>' +
           '</div></div></div>' +
@@ -249,7 +268,7 @@
         '<div class="sim-box"><h4>소리</h4><div class="sim-btns"><button type="button" class="sim-btn sim-play" data-sim="play" style="flex:1 1 160px">🔊 소리 켜기</button>' + [['leadVox', '보컬'], ['keysLR', '키보드']].map(function (m) { return '<label class="sim-type" style="flex:0 0 auto"><input type="radio" name="simSpkSrc" value="' + m[0] + '"' + (m[0] === S.src ? ' checked' : '') + '><span><b>' + m[1] + '</b></span></label>'; }).join('') + '</div><p class="sim-note" data-role="srcnote">녹음을 불러오는 중…</p></div>' +
       '</div>';
     var q = function (s) { return el.querySelector(s); };
-    var cvs = { cover: q('[data-cv=cover]'), monitor: q('[data-cv=monitor]'), delay: q('[data-cv=delay]'), graph: q('[data-cv=graph]') };
+    var cvs = { cover: q('[data-cv=cover]'), side: q('[data-cv=side]'), monitor: q('[data-cv=monitor]'), delay: q('[data-cv=delay]'), graph: q('[data-cv=graph]') };
     var ctxs = {}; Object.keys(cvs).forEach(function (k) { ctxs[k] = cvs[k].getContext('2d'); });
     var dpr = Math.min(2, window.devicePixelRatio || 1), px = { cover: 1, monitor: 1, delay: 1 }, alive = true, stem = null, actx = null, nodes = null, R = {};
 
@@ -259,11 +278,12 @@
       var vals = lv.map(function (o) { return o.L; }), mx = Math.max.apply(null, vals), mn = Math.min.apply(null, vals), sorted = vals.slice().sort(function (a, b) { return a - b; }), med = (sorted[17] + sorted[18]) / 2;
       var front = 0, back = 0; SEATS.forEach(function (s, i) { if (s.row === 0) front += vals[i] / 6; if (s.row === 5) back += vals[i] / 6; });
       var outside = lv.filter(function (o) { return o.th > m.h / 2; }).length;
-      return { m: m, lv: lv, max: mx, min: mn, spread: mx - mn, med: med, front: front, back: back, outside: outside };
+      var rowsIn = 0; for (var rj = 0; rj < 6; rj++) { var dxr = 5 + 1.8 * rj - S.sx, elr = Math.atan2(S.hgt, dxr) * 180 / Math.PI; if (Math.abs(elr - S.tilt) <= m.v / 2) rowsIn++; }
+      return { m: m, lv: lv, max: mx, min: mn, spread: mx - mn, med: med, front: front, back: back, outside: outside, rowsIn: rowsIn };
     }
     function seatLevel(x, y, m) {
-      var dx = x - S.sx, dy = y - S.sy, flat = Math.hypot(dx, dy), r = Math.hypot(flat, ROOM.hgt);
-      var th = Math.abs(wrap(Math.atan2(dy, dx) * 180 / Math.PI - S.aim)), el2 = Math.atan2(ROOM.hgt, flat) * 180 / Math.PI, tv = Math.abs(el2 - S.tilt);
+      var dx = x - S.sx, dy = y - S.sy, flat = Math.hypot(dx, dy), r = Math.hypot(flat, S.hgt);
+      var th = Math.abs(wrap(Math.atan2(dy, dx) * 180 / Math.PI - S.aim)), el2 = Math.atan2(S.hgt, flat) * 180 / Math.PI, tv = Math.abs(el2 - S.tilt);
       var dh = th > 90 ? -30 : dirLoss(th, m.h / 2), dv = dirLoss(tv, m.v / 2);
       return { L: -db20(r) + dh + dv, r: r, th: th, tv: tv, off: Math.max(th / (m.h / 2), tv / (m.v / 2)) };
     }
@@ -285,6 +305,8 @@
     function check() {
       var c = R.cover, m = R.mon, d = R.del;
       if (c && c.spread <= 6) hit('cover');
+      if (S.hgt + 1.2 <= 2.0) S.sawLow = true;
+      if (c && S.sawLow && S.hgt + 1.2 >= 3.5 && c.rowsIn === 6 && c.spread <= 6) hit('height');
       if (m && m.risk === 'low' && m.ds <= 2.0) hit('monitor');
       if (d && d.aligned) hit('delay');
       if (d && d.aligned && S.polarity === 'reversed') S.sawRev = true;
@@ -303,7 +325,7 @@
       for (var i = 0; i < N; i++) for (var j = 0; j < M; j++) { var x = ROOM.stage + (i + 0.5) * cw, y = (j + 0.5) * chh, L = seatLevel(x, y, m).L; c.fillStyle = devColor(L - cc.med); c.globalAlpha = 0.28; c.fillRect((ROOM.stage + i * cw) * p, j * chh * p, cw * p + 1, chh * p + 1); }
       c.globalAlpha = 1;
       c.fillStyle = '#cbd5e1'; c.fillRect(0, 0, ROOM.stage * p, g.h); c.fillStyle = '#475569'; c.font = 'bold 12px sans-serif'; c.textAlign = 'center'; c.fillText('단상', ROOM.stage * p / 2, g.h - 10);
-      c.fillStyle = '#64748b'; c.font = '11px sans-serif'; c.textAlign = 'right'; c.fillText('예배실 16 m × 12 m · 스피커 높이: 귀보다 2.5 m 위', g.w - 8, g.h - 8);
+      c.fillStyle = '#64748b'; c.font = '11px sans-serif'; c.textAlign = 'right'; c.fillText('예배실 16 m × 12 m · 스피커 높이 ' + fx(S.hgt + 1.2, 1) + ' m (귀보다 ' + fx(S.hgt, 1) + ' m 위)', g.w - 8, g.h - 8);
       // 커버리지 선 (가로 ±반각)
       var a = S.aim * Math.PI / 180, hh = m.h / 2 * Math.PI / 180, L2 = ROOM.W * 1.6 * p, P = { x: S.sx * p, y: S.sy * p };
       c.save(); c.beginPath(); c.rect(0, 0, g.w, g.h); c.clip();
@@ -382,22 +404,48 @@
       var dt = d.dt / 1000, first = true; for (var f = f0; f <= f1; f *= 1.01) { var wv = 2 * Math.PI * f * dt, re = 1 + d.s * d.g * Math.cos(wv), im = -d.s * d.g * Math.sin(wv), v = clamp(10 * Math.log10(Math.max(1e-6, re * re + im * im)), -24, 8); if (first) { c.moveTo(FX(f), FY(v)); first = false; } else c.lineTo(FX(f), FY(v)); }
       c.stroke();
     }
-    function drawAll() { if (S.scene === 'cover') drawCover(); if (S.scene === 'monitor') drawMon(); if (S.scene === 'delay') drawDelay(); }
+    /* 2026-10-23: 옆에서 본 모습 — 스피커 높이·숙이기와 세로 커버리지, 줄마다 앉은 사람(귀 높이 1.2 m) */
+    function drawSide() {
+      var HM = 6.6, g = prep('side', HM / ROOM.W), c = g.c, p = g.w / ROOM.W, cc = R.cover, m = cc.m, Y = function (h) { return g.h - 16 - h * (g.h - 26) / HM; }, X = function (x) { return x * p; };
+      c.fillStyle = '#f8fafc'; c.fillRect(0, 0, g.w, g.h);
+      c.fillStyle = '#e2e8f0'; c.fillRect(0, Y(0), g.w, g.h - Y(0)); c.fillStyle = '#cbd5e1'; c.fillRect(0, Y(0.4), X(ROOM.stage), Y(0) - Y(0.4));
+      c.fillStyle = '#475569'; c.font = 'bold 11px sans-serif'; c.textAlign = 'left'; c.fillText('옆에서 본 모습 · 세로 커버리지 ±' + (m.v / 2) + '°', 8, 16);
+      var spH = S.hgt + 1.2, P = { x: X(S.sx), y: Y(spH) }, tl = S.tilt * Math.PI / 180, hv = m.v / 2 * Math.PI / 180, L = g.w * 2;
+      var sx2 = (g.h - 26) / HM / p;   // 가로·세로 축척 비(같게 그리면 1)
+      function ray(a) { return { x: P.x + L * Math.cos(a), y: P.y + L * Math.sin(a) * sx2 }; }
+      c.save(); c.beginPath(); c.rect(0, 0, g.w, Y(0)); c.clip();
+      var a1 = ray(tl - hv), a2 = ray(tl + hv), a0 = ray(tl);
+      c.fillStyle = 'rgba(14,116,144,0.12)'; c.beginPath(); c.moveTo(P.x, P.y); c.lineTo(a1.x, a1.y); c.lineTo(a2.x, a2.y); c.closePath(); c.fill();
+      c.setLineDash([6, 5]); c.strokeStyle = '#0e7490'; c.lineWidth = 1.6; c.beginPath(); c.moveTo(P.x, P.y); c.lineTo(a1.x, a1.y); c.moveTo(P.x, P.y); c.lineTo(a2.x, a2.y); c.stroke(); c.setLineDash([]);
+      c.strokeStyle = 'rgba(15,39,71,.45)'; c.lineWidth = 1.2; c.beginPath(); c.moveTo(P.x, P.y); c.lineTo(a0.x, a0.y); c.stroke(); c.restore();
+      for (var j = 0; j < 6; j++) {
+        var x = 5 + 1.8 * j, el = Math.atan2(S.hgt, x - S.sx) * 180 / Math.PI, inside = Math.abs(el - S.tilt) <= m.v / 2, col = inside ? '#16a34a' : '#f59e0b';
+        c.strokeStyle = col; c.lineWidth = 3; c.beginPath(); c.moveTo(X(x), Y(0)); c.lineTo(X(x), Y(0.95)); c.stroke();
+        c.fillStyle = col; c.beginPath(); c.arc(X(x), Y(1.2), Math.max(4, 0.16 * p), 0, Math.PI * 2); c.fill();
+        c.fillStyle = '#475569'; c.font = '10px sans-serif'; c.textAlign = 'center'; c.fillText((j + 1) + '줄', X(x), g.h - 3);
+      }
+      c.save(); c.translate(P.x, P.y); c.rotate(Math.atan2(Math.sin(tl) * sx2, Math.cos(tl))); c.fillStyle = '#111827'; c.fillRect(-0.35 * p, -0.25 * p, 0.45 * p, 0.5 * p); c.fillStyle = '#e5e7eb'; c.fillRect(0.06 * p, -0.17 * p, 0.06 * p, 0.34 * p); c.restore();
+      c.strokeStyle = '#94a3b8'; c.lineWidth = 1; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(P.x, P.y); c.lineTo(P.x, Y(0)); c.stroke(); c.setLineDash([]);
+      c.fillStyle = '#0f2747'; c.font = 'bold 11px sans-serif'; c.textAlign = 'left'; c.fillText(fx(spH, 1) + ' m', P.x + 6, (P.y + Y(0)) / 2);
+      c.fillStyle = '#64748b'; c.font = '10px sans-serif'; c.textAlign = 'right'; c.fillText('초록 = 세로 커버리지 안 · 주황 = 밖 (앉은 귀 높이 1.2 m)', g.w - 6, 16);
+    }
+    function drawAll() { if (S.scene === 'cover') { drawCover(); drawSide(); } if (S.scene === 'monitor') drawMon(); if (S.scene === 'delay') drawDelay(); }
 
     /* ---- 글 ---- */
     function row(a, b, cls) { return '<div class="sim-row"><span>' + a + '</span><b class="' + (cls || '') + '">' + b + '</b></div>'; }
     function readCover() {
       var c = R.cover, o = c.lv[S.sel], sel = SEATS[S.sel], ok = c.spread <= 6, mid = c.spread <= 9;
-      q('[data-out=aim]').textContent = sgn(S.aim, 0) + '°'; q('[data-out=tilt]').textContent = S.tilt + '°';
-      q('[data-sim=aim]').value = S.aim; q('[data-sim=tilt]').value = S.tilt;
+      q('[data-out=aim]').textContent = sgn(S.aim, 0) + '°'; q('[data-out=tilt]').textContent = S.tilt + '°'; q('[data-out=hgt]').textContent = fx(S.hgt + 1.2, 1) + ' m';
+      q('[data-sim=aim]').value = S.aim; q('[data-sim=tilt]').value = S.tilt; q('[data-sim=hgt]').value = fx(S.hgt + 1.2, 1);
       q('[data-role=readCover]').innerHTML = '<h4>결과 <small>교육용 근사 · 반사음 없음</small></h4>' +
         row('좌석 레벨 차이 (최대 − 최소)', fx(c.spread, 1) + ' dB', ok ? 'ok' : mid ? 'warn' : 'bad') +
         row('앞줄 평균 − 뒷줄 평균', sgn(c.front - c.back, 1) + ' dB') +
         row('가로 커버리지 밖 좌석', c.outside + '석', c.outside ? 'warn' : 'ok') +
+        row('세로 커버리지 안에 든 줄', c.rowsIn + ' / 6줄', c.rowsIn === 6 ? 'ok' : 'warn') +
         row('듣는 자리 (' + (sel.row + 1) + '번째 줄)', sgn(o.L - c.max, 1) + ' dB · 거리 ' + fx(o.r, 1) + ' m') +
         row('축에서 벗어난 각도', '가로 ' + fx(o.th, 0) + '° · 세로 ' + fx(o.tv, 0) + '°', o.off > 1 ? 'warn' : '') +
         '<div class="sim-speaker-verdict ' + (ok ? 'ok' : mid ? 'warn' : 'bad') + '">' + (ok ? '좋아요. 모든 좌석이 6 dB 안에서 고르게 들려요.' : c.front - c.back > 4 ? '앞줄이 너무 커요. 스피커를 더 뒤쪽(뒷줄)으로 겨누거나 덜 숙여 보세요.' : c.outside ? '커버리지 밖 좌석이 있어요. 방향을 객석 가운데로 돌리거나 더 넓은 스피커를 골라 보세요.' : '자리마다 차이가 커요. 위치·방향·기울기를 바꿔 보세요.') + '</div>' +
-        '<p class="sim-note">거리 2배 → −6 dB, 커버리지 경계 → −6 dB 로 계산했어요. 축에서 벗어난 자리는 고음이 줄어 먹먹하게 들려요.</p>';
+        '<p class="sim-note">거리 2배 → −6 dB, 커버리지 경계 → −6 dB 로 계산했어요. 축에서 벗어난 자리는 고음이 줄어 먹먹하게 들려요. 스피커가 낮으면 앞줄이 뒷줄보다 훨씬 가까워져 앞뒤 차이가 커지고, 높이면 거리 차가 줄어요. 대신 높일수록 더 숙여야 앞줄이 세로 커버리지 안에 들어와요.</p>';
     }
     function readMon() {
       var m = R.mon, rk = { low: ['ok', '낮음'], mid: ['warn', '보통'], high: ['bad', '높음 (하울링 위험)'] }[m.risk], hear = m.ds <= 2.0;
@@ -488,13 +536,13 @@
     function downMon(e) { var p = pt(cvs.monitor, e), k = px.monitor; if (Math.hypot(p.x - S.mx * k, p.y - S.my * k) < Math.max(22, 0.4 * k)) { drag = 'mon'; cvs.monitor.setPointerCapture(e.pointerId); e.preventDefault(); } }
     function moveMon(e) { if (drag !== 'mon') return; var p = pt(cvs.monitor, e), k = px.monitor; S.mx = clamp(p.x / k, 0.3, STG.W - 0.3); S.my = clamp(p.y / k, 0.3, STG.H - 0.3); update(); }
     function up() { drag = null; }
-    function onInput(e) { var tg = e.target, k = tg.getAttribute('data-sim'); if (k === 'aim') S.aim = +tg.value; else if (k === 'tilt') S.tilt = +tg.value; else if (k === 'delayMs') S.delayMs = +tg.value; else if (k === 'listener') S.listener = +tg.value; else if (k === 'delLvl') S.delLvl = +tg.value; else return; update(); }
+    function onInput(e) { var tg = e.target, k = tg.getAttribute('data-sim'); if (k === 'aim') S.aim = +tg.value; else if (k === 'tilt') S.tilt = +tg.value; else if (k === 'hgt') S.hgt = clamp(+tg.value - 1.2, 0.6, 4.8); else if (k === 'delayMs') S.delayMs = +tg.value; else if (k === 'listener') S.listener = +tg.value; else if (k === 'delLvl') S.delLvl = +tg.value; else return; update(); }
     function onChange(e) { var tg = e.target; if (tg.name === 'simSpkModel') { S.model = tg.value; update(); } else if (tg.name === 'simSpkPol') { S.polarity = tg.value; update(); } else if (tg.getAttribute('data-sim') === 'delayOn') { S.delayOn = tg.checked; update(); } else if (tg.name === 'simSpkSrc') { S.src = tg.value; load(S.src); } }
     function onClick(e) {
       var sc = e.target.closest('[data-scene]'); if (sc) { S.scene = sc.getAttribute('data-scene'); update(); return; }
       var b = e.target.closest('button[data-sim]'); if (!b) return; var k = b.getAttribute('data-sim');
       if (k === 'play') { if (S.audio) stopAudio(); else startAudio(); setPlayBtn(); }
-      if (k === 'resetCover') { S.sx = 1.0; S.sy = 1.0; S.aim = 0; S.tilt = 20; S.model = 'zxa1'; update(); }
+      if (k === 'resetCover') { S.sx = 1.0; S.sy = 1.0; S.aim = 0; S.tilt = 20; S.hgt = 2.5; S.model = 'zxa1'; update(); }
       if (k === 'resetMon') { S.mx = 1.9; S.my = 1.34; update(); }
     }
     cvs.cover.addEventListener('pointerdown', downCover); cvs.cover.addEventListener('pointermove', moveCover); cvs.cover.addEventListener('pointerup', up); cvs.cover.addEventListener('pointercancel', up);
@@ -508,7 +556,7 @@
         cvs.cover.removeEventListener('pointerdown', downCover); cvs.cover.removeEventListener('pointermove', moveCover); cvs.cover.removeEventListener('pointerup', up); cvs.cover.removeEventListener('pointercancel', up);
         cvs.monitor.removeEventListener('pointerdown', downMon); cvs.monitor.removeEventListener('pointermove', moveMon); cvs.monitor.removeEventListener('pointerup', up); cvs.monitor.removeEventListener('pointercancel', up);
         el.removeEventListener('input', onInput); el.removeEventListener('change', onChange); el.removeEventListener('click', onClick); el.innerHTML = ''; },
-      state: function () { var c = R.cover, m = R.mon, d = R.del; return { scene: S.scene, model: S.model, sx: S.sx, sy: S.sy, aim: S.aim, tilt: S.tilt, sel: S.sel, spread: c.spread, frontMinusBack: c.front - c.back, outside: c.outside,
+      state: function () { var c = R.cover, m = R.mon, d = R.del; return { scene: S.scene, model: S.model, sx: S.sx, sy: S.sy, aim: S.aim, tilt: S.tilt, height: S.hgt + 1.2, rowsIn: c.rowsIn, sel: S.sel, spread: c.spread, frontMinusBack: c.front - c.back, outside: c.outside,
         mx: S.mx, my: S.my, margin: m.margin, risk: m.risk, monAngle: m.w.ang, ds: m.ds, listener: S.listener, delayMs: S.delayMs, delLvl: S.delLvl, polarity: S.polarity, delayOn: S.delayOn, tMain: d.tm, tDelay: d.td, dt: d.dt, need: d.need, aligned: d.aligned,
         audio: S.audio, ready: !!stem, synthetic: !!(stem && stem.synthetic), done: Object.keys(S.done) }; },
       set: function (o) {
@@ -516,7 +564,7 @@
         if (o.scene && /^(cover|monitor|delay)$/.test(o.scene)) S.scene = o.scene;
         if (o.model && MODELS[o.model]) S.model = o.model;
         if (o.sx != null) S.sx = clamp(+o.sx, 0.4, ROOM.stage - 0.2); if (o.sy != null) S.sy = clamp(+o.sy, 0.4, ROOM.H - 0.4);
-        if (o.aim != null) S.aim = clamp(+o.aim, -90, 90); if (o.tilt != null) S.tilt = clamp(+o.tilt, 0, 30);
+        if (o.aim != null) S.aim = clamp(+o.aim, -90, 90); if (o.tilt != null) S.tilt = clamp(+o.tilt, 0, 45); if (o.height != null) S.hgt = clamp(+o.height - 1.2, 0.6, 4.8);
         if (o.sel != null) S.sel = clamp(Math.round(+o.sel), 0, SEATS.length - 1);
         if (o.mx != null) S.mx = clamp(+o.mx, 0.3, STG.W - 0.3); if (o.my != null) S.my = clamp(+o.my, 0.3, STG.H - 0.3);
         if (o.listener != null) S.listener = clamp(+o.listener, 13, 24); if (o.delLvl != null) S.delLvl = clamp(Math.round(+o.delLvl), -12, 6); if (o.delayMs != null) S.delayMs = clamp(+o.delayMs, 0, 80);
@@ -533,17 +581,17 @@
   /* ------------------------------------------------------------------ 모듈 데이터 */
   var MODS = window.STA_MODULES = window.STA_MODULES || {}, stub = MODS.speaker || {};
   MODS.speaker = {
-    id: 'speaker', path: stub.path || 'hardware', no: stub.no || 5, status: 'ready', level: stub.level || '중급', minutes: stub.minutes || 30, img: stub.img || 'img/modules/hw_speaker.jpg',
+    id: 'speaker', path: stub.path || 'hardware', no: stub.no || 5, status: 'ready', level: stub.level || '중급', minutes: stub.minutes || 30, img: 'img/modules/ev_zxa1.jpg',   /* 2026-10-23: 3층 d&b 사진 → 확성 실습의 EV ZXA1 */
     title: stub.title || '스피커', sub: stub.sub || '전기 신호를 다시 소리로 바꾸는 장치',
     overview: {
       lead: '스피커는 앰프가 키운 전기 신호로 콘(진동판)을 움직여 다시 소리로 바꾸는 장치예요. <b>액티브·패시브</b>에 따라 연결 방법이 다르고, 소리를 어느 방향으로 얼마나 넓게 보내는지(<b>지향성·커버리지</b>), 그리고 <b>어디에 두고 어디로 겨누는지</b>가 회중석의 소리와 피드백을 결정해요.',
       terms: [
         ['액티브 스피커', '앰프가 스피커 안에 들어 있어서 전원과 라인 신호만 연결하면 소리가 나요. 예: EV ZXA1'],
-        ['패시브 스피커', '앰프가 없어서 파워앰프의 스피커 출력(speakON)을 받아야 소리가 나요. 예: EV ZX1, d&b E8·Yi7P·Vi10P'],
+        ['패시브 스피커', '앰프가 없어서 파워앰프의 스피커 출력(speakON)을 받아야 소리가 나요. 예: EV ZX1'],
         ['우퍼 · 고음 드라이버', '스피커 안에서 저음을 맡는 큰 드라이버가 우퍼, 고음을 맡는 작은 드라이버가 고음 드라이버(트위터)예요.'],
         ['크로스오버', '소리를 주파수대로 나눠 저음은 우퍼로, 고음은 고음 드라이버로 보내는 회로예요.'],
         ['커버리지 각도', '스피커가 소리를 고르게 보내는 범위예요. 보통 정면보다 6 dB 작아지는 지점까지의 각도(예: 가로 90° × 세로 50°)로 적어요.'],
-        ['서브우퍼', '아주 낮은 저음(대략 100 Hz 아래)만 맡는 스피커예요. 3층 본당에는 단상 옆 바닥에 있어요.'],
+        ['서브우퍼', '아주 낮은 저음(대략 100 Hz 아래)만 맡는 스피커예요. 보통 바닥에 두고 메인 스피커와 함께 써요.'],
         ['딜레이(필) 스피커', '메인 소리가 약한 곳을 보강하는 스피커예요. 메인 소리가 도착하는 시간에 맞춰 신호를 늦춰서 보내요.'],
         ['극성', '같은 신호에 스피커 콘이 앞으로 나가는지 뒤로 들어가는지의 방향이에요. 두 스피커의 극성이 반대면 겹치는 곳에서 소리가 상쇄돼요.']
       ],
@@ -557,42 +605,49 @@
     theory: [
       { title: '액티브 스피커와 패시브 스피커', visual: 'spkActivePassive',
         body: '<b>액티브</b> 스피커는 앰프와 크로스오버가 안에 들어 있어서 전원과 라인(또는 마이크) 신호만 연결하면 돼요. <b>패시브</b> 스피커는 앰프가 없어서 파워앰프의 스피커 출력을 speakON 케이블로 받아야 해요. 겉모습이 비슷해도 연결 방법은 완전히 달라요.',
-        more: '<ul><li><b>EV ZXA1 (제조사 자료)</b>: 액티브, 8" 우퍼 + 1" 고음 드라이버, 내장 Class D 바이앰프 800 W, 최대 음압 126 dB, 무게 8.6 kg.</li><li><b>EV ZX1 (제조사 자료)</b>: 패시브, 8Ω, 200 W 연속 · 400 W 프로그램 · 800 W 피크, speakON(NL4) 단자.</li><li>교회 확성 실습: 3D 실습 ①·② 는 ZXA1, ③ 은 Crown XLi1500 + ZX1 구성이에요.</li><li>3층 본당의 d&amp;b 스피커(메인 Vi10P, 천장 Yi7P, 기둥 E8 등)는 모두 패시브이고, d&amp;b 앰프 40D·10D 로 구동해요(설치 자료). 제조사는 이 스피커들을 「전용 호환 컨트롤러 앰프로만 구동」하도록 안내해요(제조사 자료).</li><li>액티브 스피커는 전원을 켜고 끄는 순서도 중요해요. 콘솔을 먼저 켜고 스피커는 마지막에 켜요.</li></ul>',
+        more: '<ul><li><b>EV ZXA1 (제조사 자료)</b>: 액티브, 8" 우퍼 + 1" 고음 드라이버, 내장 Class D 바이앰프 800 W, 최대 음압 126 dB, 무게 8.6 kg.</li><li><b>EV ZX1 (제조사 자료)</b>: 패시브, 8Ω, 200 W 연속 · 400 W 프로그램 · 800 W 피크, speakON(NL4) 단자.</li><li>교회 확성 실습: 3D 실습 ①·② 는 ZXA1, ③ 은 Crown XLi1500 + ZX1 구성이에요.</li><li>액티브 스피커는 전원을 켜고 끄는 순서도 중요해요. 콘솔을 먼저 켜고 스피커는 마지막에 켜요.</li></ul>',
         check: { q: '액티브 스피커 ZXA1 에서 소리가 나려면 무엇을 연결해야 할까요?', options: [
           { t: '전원, 그리고 라인(또는 마이크) 신호', ok: true, why: '맞아요. 앰프가 안에 있어서 전원과 신호만 있으면 돼요.' },
           { t: '파워앰프의 speakON 출력', why: 'speakON 출력은 패시브 스피커용이에요. ZXA1 의 입력에 앰프 출력을 넣으면 안 돼요.' },
           { t: '신호 없이 전원만', why: '전원만으로는 소리가 나지 않아요. 콘솔이나 마이크의 신호가 필요해요.' }] } },
+      { title: '스피커의 기본 구조 — 풀레인지 · 2웨이 · 3웨이', visual: 'spkWays',
+        body: '스피커 통(인클로저) 안에는 소리를 내는 <b>드라이버</b>가 들어 있어요. 드라이버 하나로 모든 소리를 내면 <b>풀레인지(1웨이)</b>, 저음용 <b>우퍼</b>와 고음용 <b>고음 드라이버(트위터)</b>로 나누면 <b>2웨이</b>, 여기에 중음용 <b>미드레인지</b>를 더하면 <b>3웨이</b>예요. 나눌수록 드라이버마다 잘하는 대역만 맡아서 더 크고 깨끗한 소리를 낼 수 있지만, 구조가 복잡해지고 값이 올라가요. 소리를 대역별로 나눠 각 드라이버에 보내는 것이 <b>크로스오버</b>예요.',
+        more: '<ul><li><b>풀레인지 (1웨이)</b>: 작은 드라이버 하나. 천장·벽 안내 방송 스피커처럼 말소리 위주로 써요. 아주 낮은 저음과 아주 높은 고음은 약해요.</li><li><b>2웨이</b>: 가장 흔한 구조예요. 예: EV ZXA1 은 8인치 우퍼 + 1인치 고음 드라이버이고 1.8 kHz 에서 나눠요(제조사 자료).</li><li><b>3웨이</b>: 저음·중음·고음 세 드라이버, 크로스오버가 두 곳이에요(예: 약 500 Hz 와 3 kHz — 모델마다 달라요). 큰 메인 스피커나 스튜디오 모니터에서 볼 수 있어요.</li><li><b>패시브 크로스오버와 바이앰프</b>: 패시브 스피커는 통 안의 부품(코일·콘덴서)으로 나누고, 액티브 스피커는 앰프 앞에서 나눈 뒤 드라이버마다 따로 앰프를 붙이기도 해요(바이앰프). ZXA1 의 내장 앰프가 바이앰프예요.</li><li><b>서브우퍼</b>를 더하면 시스템 전체로는 아주 낮은 저음 대역 하나가 더 생겨요.</li><li>우퍼와 고음 드라이버를 한 축에 겹쳐 넣은 <b>동축형</b>은 심화 학습에서 다뤄요.</li></ul>',
+        check: { q: '8인치 우퍼 하나와 1인치 고음 드라이버 하나가 들어 있는 스피커는?', options: [
+          { t: '2웨이', ok: true, why: '맞아요. 저음과 고음 두 대역으로 나눠요.' },
+          { t: '3웨이', why: '3웨이는 저음·중음·고음 세 드라이버가 있어요.' },
+          { t: '풀레인지', why: '풀레인지는 드라이버 하나로 모든 대역을 내요.' }] } },
       { title: '드라이버와 주파수 응답', visual: 'spkDrivers',
         body: '한 개의 드라이버로 낮은 소리부터 높은 소리까지 모두 잘 내기는 어려워요. 그래서 큰 <b>우퍼</b>는 저음을, 작은 <b>고음 드라이버</b>(트위터)는 고음을 맡고, <b>크로스오버</b>가 소리를 주파수대로 나눠 보내요. <b>주파수 응답</b>은 스피커가 어느 범위의 소리를 얼마나 고르게 내는지 보여 줘요.',
-        more: '<ul><li><b>ZXA1 (제조사 자료)</b>: 주파수 응답 60 Hz–20 kHz (−3 dB), 범위 48 Hz–20 kHz (−10 dB), 크로스오버 1.8 kHz (24 dB/oct).</li><li><b>ZX1 (제조사 자료)</b>: 60 Hz–20 kHz (−3 dB), 크로스오버 1.7 kHz.</li><li><b>d&amp;b E8 (제조사 자료)</b>: 8"/1" 동축 드라이버(두 드라이버가 한 축에 겹쳐 있음), 62 Hz–18 kHz (−5 dB).</li><li>더 낮은 저음(킥드럼·베이스)은 <b>서브우퍼</b>가 맡아요. ZXA1 에는 서브우퍼와 함께 쓸 때 켜는 <b>100 Hz 하이패스 필터</b> 스위치가 있어요(제조사 자료).</li><li>「−3 dB」「−10 dB」는 범위의 끝을 어디서 잘랐는지를 뜻해요. 기준이 다르면 숫자를 바로 비교하기 어려워요.</li></ul>',
+        more: '<ul><li><b>ZXA1 (제조사 자료)</b>: 주파수 응답 60 Hz–20 kHz (−3 dB), 범위 48 Hz–20 kHz (−10 dB), 크로스오버 1.8 kHz (24 dB/oct).</li><li><b>ZX1 (제조사 자료)</b>: 60 Hz–20 kHz (−3 dB), 크로스오버 1.7 kHz.</li><li>더 낮은 저음(킥드럼·베이스)은 <b>서브우퍼</b>가 맡아요. ZXA1 에는 서브우퍼와 함께 쓸 때 켜는 <b>100 Hz 하이패스 필터</b> 스위치가 있어요(제조사 자료).</li><li>「−3 dB」「−10 dB」는 범위의 끝을 어디서 잘랐는지를 뜻해요. 기준이 다르면 숫자를 바로 비교하기 어려워요.</li></ul>',
         check: { q: '스피커 안의 크로스오버가 하는 일은?', options: [
           { t: '소리를 크게 키운다', why: '소리를 키우는 것은 앰프의 일이에요.' },
           { t: '소리를 주파수대로 나눠 우퍼와 고음 드라이버로 보낸다', ok: true, why: '맞아요. ZXA1 은 1.8 kHz 에서 나눠요(제조사 자료).' },
           { t: '두 스피커의 도착 시간을 맞춘다', why: '도착 시간을 맞추는 것은 딜레이의 일이에요.' }] } },
       { title: '지향성과 커버리지, 설치 방향', visual: 'spkCoverage',
         body: '스피커는 주로 앞쪽으로 소리를 보내요. <b>커버리지 각도</b>는 정면보다 약 6 dB 작아지는 경계까지의 각도로, 「가로 × 세로」로 적어요(예: 90° × 50°). 회중석 전체가 이 범위 안에 들어오게 <b>위치·방향·기울기</b>를 정해요. 거리가 2배가 되면 약 6 dB 작아지므로, <b>뒷줄 쪽으로 겨누면</b> 가까운 앞줄은 축에서 벗어나 조금 작아지고 먼 뒷줄은 정면으로 받아서 앞뒤 차이가 줄어요.',
-        more: '<ul><li><b>EV ZXA1-90 · ZX1-90 (제조사 자료)</b>: 90° × 50°. ZX1-90 은 혼을 돌려 50° × 90° 로도 쓸 수 있어요.</li><li><b>d&amp;b (제조사 자료)</b>: E8 90° × 50°(돌려서 50° × 90°), Yi7P 75° × 40°, Vi10P 110° × 40°. 세 모델 모두 혼을 돌릴 수 있어요.</li><li>고음일수록 지향성이 좁아지고 저음은 넓게 퍼지는 편이에요. 그래서 커버리지 밖에서는 소리가 작아질 뿐 아니라 고음이 줄어 먹먹하게 들려요.</li><li>벽·천장을 직접 겨누면 반사음이 늘어 말소리가 흐려져요. 소리는 사람(귀 높이)을 향하게 해요.</li><li>스피커를 높이 두면 앞줄과 뒷줄의 거리 차가 줄어 고르게 들려요. 스탠드·매달기 장비의 허용 하중과 안전 수칙을 꼭 지켜요.</li></ul>',
+        more: '<ul><li><b>EV ZXA1-90 · ZX1-90 (제조사 자료)</b>: 90° × 50°. ZX1-90 은 혼을 돌려 50° × 90° 로도 쓸 수 있어요.</li><li>고음일수록 지향성이 좁아지고 저음은 넓게 퍼지는 편이에요. 그래서 커버리지 밖에서는 소리가 작아질 뿐 아니라 고음이 줄어 먹먹하게 들려요.</li><li>벽·천장을 직접 겨누면 반사음이 늘어 말소리가 흐려져요. 소리는 사람(귀 높이)을 향하게 해요.</li><li><b>높이와 상하 각도</b>: 스피커를 높이 두면 앞줄과 뒷줄의 거리 차가 줄어 고르게 들려요. 대신 높일수록 아래로 더 숙여야 앞줄이 세로 커버리지 안에 들어와요. 너무 숙이면 뒷줄이, 덜 숙이면 앞줄이 빠져요.</li><li>스탠드·매달기 장비의 허용 하중과 안전 수칙을 꼭 지켜요.</li></ul>',
         check: { q: '회중석 앞줄은 너무 크고 뒷줄은 작게 들려요. 알맞은 방법은?', options: [
           { t: '스피커를 조금 더 뒷줄 쪽으로 겨누고(덜 숙이고), 가능하면 높이를 올린다', ok: true, why: '맞아요. 앞줄은 축에서 벗어나 조금 작아지고, 뒷줄은 정면으로 받아 앞뒤 차이가 줄어요.' },
           { t: '스피커를 앞줄 바로 앞으로 옮긴다', why: '앞줄이 더 가까워져 앞뒤 차이가 더 커져요.' },
           { t: '스피커를 천장 쪽으로 향하게 한다', why: '천장 반사음이 늘어 말소리가 흐려져요.' }] } },
       { title: '입력 단자와 연결', visual: 'spkInputs',
         body: '스피커 뒷면 단자를 보면 연결 방법을 알 수 있어요. 액티브 ZXA1 에는 <b>XLR 마이크 입력</b>, <b>XLR/TRS 콤보 라인 입력</b>, 다음 스피커로 보내는 <b>XLR 링크 출력</b>이 있어요. 패시브 ZX1 에는 <b>speakON(NL4) 단자</b>가 있어 앰프의 스피커 출력을 받아요.',
-        more: '<ul><li><b>ZXA1 (제조사 자료)</b>: 게인 조절이 있는 XLR 마이크 입력, XLR/TRS 콤보 라인 입력, XLR 링크 출력, 100 Hz 하이패스 스위치, Power On · Limit 표시등.</li><li>콘솔의 출력(라인 레벨)은 ZXA1 의 <b>라인 입력</b>에 넣어요. 마이크 입력에 넣으면 너무 커서 찌그러지기 쉬워요.</li><li><b>d&amp;b (제조사 자료)</b>: E8 은 speakON NLT4, Yi7P·Vi10P 는 speakON NL4 2개와 나사 단자대가 있어요.</li><li><b>절대 금지</b>: 앰프의 스피커 출력을 액티브 스피커의 XLR/TRS 입력에 연결하지 마세요. 반대로 콘솔 라인 출력을 패시브 스피커에 연결해도 소리가 거의 나지 않아요.</li><li>패시브 스피커를 링크 단자로 이어 여러 대를 달면 앰프 입장에서는 병렬 연결이라 임피던스가 낮아져요(「앰프」 모듈 참고).</li></ul>',
+        more: '<ul><li><b>ZXA1 (제조사 자료)</b>: 게인 조절이 있는 XLR 마이크 입력, XLR/TRS 콤보 라인 입력, XLR 링크 출력, 100 Hz 하이패스 스위치, Power On · Limit 표시등.</li><li>콘솔의 출력(라인 레벨)은 ZXA1 의 <b>라인 입력</b>에 넣어요. 마이크 입력에 넣으면 너무 커서 찌그러지기 쉬워요.</li><li><b>절대 금지</b>: 앰프의 스피커 출력을 액티브 스피커의 XLR/TRS 입력에 연결하지 마세요. 반대로 콘솔 라인 출력을 패시브 스피커에 연결해도 소리가 거의 나지 않아요.</li><li>패시브 스피커를 링크 단자로 이어 여러 대를 달면 앰프 입장에서는 병렬 연결이라 임피던스가 낮아져요(「앰프」 모듈 참고).</li></ul>',
         check: { q: 'MG12XU 의 STEREO OUT 을 ZXA1 에 연결할 때 알맞은 단자는?', options: [
           { t: 'XLR/TRS 콤보 라인 입력', ok: true, why: '맞아요. 콘솔 출력은 라인 레벨이라 라인 입력으로 넣어요.' },
           { t: '게인이 있는 XLR 마이크 입력', why: '라인 신호는 마이크 입력에 너무 커서 찌그러지기 쉬워요.' },
           { t: 'speakON 단자', why: 'ZXA1 에는 speakON 입력이 없어요. speakON 은 패시브 스피커와 앰프 사이에 써요.' }] } },
       { title: '메인·모니터·서브우퍼와 피드백', visual: 'spkStage',
         body: '<b>메인</b> 스피커는 회중석을, <b>모니터</b> 스피커는 단상 위 사람을, <b>서브우퍼</b>는 아주 낮은 저음을 맡아요. 피드백을 줄이려면 메인 스피커는 <b>마이크보다 앞(회중석 쪽)</b>에 두고 마이크를 향하지 않게 하고, 모니터는 마이크가 <b>소리를 가장 덜 받는 방향</b>(카디오이드는 바로 뒤)에 둬요.',
-        more: '<ul><li>마이크와 스피커가 가까울수록, 마이크가 스피커를 향할수록 피드백이 쉽게 나요.</li><li>모니터 소리는 필요한 만큼만 — 크게 할수록 피드백 여유가 줄어요.</li><li>3층 본당(설치 자료): 메인 Vi10P L/R 은 단상 앞 위쪽에 매달려 회중석을 향하고, 서브우퍼(V-SUB)는 단상 옆 바닥, 바닥 모니터(MAX2)는 단상 앞에서 단상 쪽을 향해 있어요.</li><li>저음은 사방으로 넓게 퍼져서 마이크 뒤쪽에서도 들어가요. 보컬 채널은 HPF 로 불필요한 저음을 줄여요.</li></ul>',
+        more: '<ul><li>마이크와 스피커가 가까울수록, 마이크가 스피커를 향할수록 피드백이 쉽게 나요.</li><li>모니터 소리는 필요한 만큼만 — 크게 할수록 피드백 여유가 줄어요.</li><li>저음은 사방으로 넓게 퍼져서 마이크 뒤쪽에서도 들어가요. 보컬 채널은 HPF 로 불필요한 저음을 줄여요.</li></ul>',
         check: { q: '카디오이드 보컬 마이크의 바닥 모니터는 어디에 두는 것이 가장 좋을까요?', options: [
           { t: '보컬 앞쪽 바닥, 마이크 꼬리(뒤쪽) 방향에서 보컬을 향하게', ok: true, why: '맞아요. 카디오이드는 바로 뒤(180°)를 가장 적게 받아요.' },
           { t: '보컬 뒤에서 마이크 정면을 향하게', why: '마이크 정면은 가장 잘 받는 방향이라 피드백이 바로 나요.' },
           { t: '마이크 바로 옆(90°)', why: '옆에서는 정면보다 약 6 dB 만 줄어서 피드백에 약해요.' }] } },
       { title: '스피커의 지향성 및 시스템 튜닝 기초', visual: 'spkTuning',
         body: '여러 스피커가 함께 일하는 시스템은 ① 스피커마다 <b>맡을 구역</b>을 커버리지 각도로 나누고, ② 멀리 있는 <b>딜레이(필) 스피커</b>는 메인 소리가 도착하는 시간에 맞춰 <b>딜레이</b>를 주고, ③ 모든 스피커의 <b>극성</b>을 같게 하고, ④ 마지막으로 <b>시스템 EQ</b>로 방과 스피커의 음색을 다듬어요.',
-        more: '<ul><li><b>딜레이 시간</b> ≈ 두 소리의 거리 차 ÷ 343 m/s(약 20 °C). 1 m ≈ 2.9 ms, 10 m ≈ 29 ms.</li><li>딜레이 스피커 소리가 메인보다 <b>살짝 늦게</b>(대략 0–10 ms) 도착하게 맞추면 소리가 무대 쪽에서 들리는 느낌이 남아요(선행음 효과). 먼저 도착하면 소리가 천장·기둥에서 나는 것처럼 들리고, 30–50 ms 넘게 어긋나면 메아리처럼 들려요.</li><li>같은 소리가 조금 어긋나 겹치면 특정 주파수가 비는 <b>콤 필터</b>가 생겨요. 그래서 딜레이 스피커는 메인이 약해지는 구역만 맡게 겨누고 레벨을 맞춰요.</li><li>3층 예: 3D 설치 좌표로 재 보면 메인 Vi10P 에서 천장 Yi7P 까지 약 15 m(≈ 43 ms), 기둥 E8 까지 약 28 m(≈ 80 ms) 떨어져 있어요. 실제 딜레이 값은 측정해서 정하고 앰프 설정에 저장돼 있어요(마음대로 바꾸지 않기).</li><li><b>극성</b>: speakON 의 +와 −가 바뀌면 극성이 뒤집혀요. 같은 구역을 덮는 두 스피커(또는 메인과 서브우퍼)의 극성이 반대면 저음부터 크게 상쇄돼요.</li><li><b>시스템 EQ</b>: 측정 마이크와 핑크 노이즈로 보고 들으며 큰 문제부터 고치고, 올리기보다 깎기를 먼저 해요. 겨누기·배치로 고칠 문제를 EQ 로 덮지 않아요. d&amp;b 10D·40D 에는 채널마다 16밴드 EQ 2개와 최대 10초 딜레이가 들어 있어요(제조사 자료).</li></ul>',
+        more: '<ul><li><b>딜레이 시간</b> ≈ 두 소리의 거리 차 ÷ 343 m/s(약 20 °C). 1 m ≈ 2.9 ms, 10 m ≈ 29 ms.</li><li>딜레이 스피커 소리가 메인보다 <b>살짝 늦게</b>(대략 0–10 ms) 도착하게 맞추면 소리가 무대 쪽에서 들리는 느낌이 남아요(선행음 효과). 먼저 도착하면 소리가 천장·기둥에서 나는 것처럼 들리고, 30–50 ms 넘게 어긋나면 메아리처럼 들려요.</li><li>같은 소리가 조금 어긋나 겹치면 특정 주파수가 비는 <b>콤 필터</b>가 생겨요. 그래서 딜레이 스피커는 메인이 약해지는 구역만 맡게 겨누고 레벨을 맞춰요.</li><li>실제 딜레이 값은 측정해서 정하고, 정한 값은 프로세서나 앰프 설정에 저장해 두고 함부로 바꾸지 않아요.</li><li><b>극성</b>: speakON 의 +와 −가 바뀌면 극성이 뒤집혀요. 같은 구역을 덮는 두 스피커(또는 메인과 서브우퍼)의 극성이 반대면 저음부터 크게 상쇄돼요.</li><li><b>시스템 EQ</b>: 측정 마이크와 핑크 노이즈로 보고 들으며 큰 문제부터 고치고, 올리기보다 깎기를 먼저 해요. 겨누기·배치로 고칠 문제를 EQ 로 덮지 않아요.</li></ul>',
         check: { q: '메인에서 17 m, 딜레이 스피커에서 3 m 떨어진 자리예요. 딜레이 스피커 신호를 대략 얼마나 늦춰야 할까요?', options: [
           { t: '약 41 ms (거리 차 14 m ÷ 343 m/s)', ok: true, why: '맞아요. 14 ÷ 343 ≈ 0.041 초 = 약 41 ms 예요. 여기에 몇 ms 를 더 늦춰 메인보다 살짝 늦게 오게 하기도 해요.' },
           { t: '약 14 ms', why: '거리(m)를 그대로 ms 로 쓰면 안 돼요. 1 m 에 약 2.9 ms 예요.' },
@@ -600,16 +655,17 @@
     ],
     practice: {
       kind: 'speakerRoom',
-      lead: '세 장면에서 스피커를 다뤄요. ① 예배실을 위에서 보며 메인 스피커의 위치·방향·기울기를 맞춰 자리마다 고르게 들리게 하고, ② 단상에서 카디오이드 마이크와 모니터의 자리를 잡아 피드백을 줄이고, ③ 딜레이 스피커의 시간을 맞춰요. 「소리 켜기」로 자리별 소리와 콤 필터·메아리를 들을 수 있어요.',
-      note: '커버리지 각도(ZXA1-90·ZX1-90 90°×50°, Yi7P 75°×40°, Vi10P 110°×40°)는 제조사 자료이고, 레벨 지도·피드백 여유·고음 감소·콤 필터는 역제곱 법칙과 단순한 지향성 모델로 계산한 교육용 근사예요. 반사음은 계산에 넣지 않았어요.',
+      lead: '세 장면에서 스피커를 다뤄요. ① 예배실을 위와 옆에서 보며 메인 스피커의 위치·방향·높이·숙이는 각도를 맞춰 자리마다 고르게 들리게 하고, ② 단상에서 카디오이드 마이크와 모니터의 자리를 잡아 피드백을 줄이고, ③ 딜레이 스피커의 시간을 맞춰요. 「소리 켜기」로 자리별 소리와 콤 필터·메아리를 들을 수 있어요.',
+      note: '커버리지 각도 90°×50°(ZXA1-90·ZX1-90)는 제조사 자료이고, 「넓은·좁은 커버리지」는 비교용 예시예요. 레벨 지도·피드백 여유·고음 감소·콤 필터는 역제곱 법칙과 단순한 지향성 모델로 계산한 교육용 근사예요. 반사음은 계산에 넣지 않았어요.',
       tasks: [
         { id: 'cover', title: '객석 고르게 덮기', text: '① 장면에서 메인 스피커를 옮기고 겨눠, 좌석 레벨 차이(가장 큰 자리 − 가장 작은 자리)를 6 dB 이하로 만드세요.' },
+        { id: 'height', title: '높이와 상하 각도', text: '① 장면에서 스피커를 바닥 2 m 이하로 낮춰 앞뒤 차이가 커지는 것을 본 뒤, 3.5 m 이상으로 올리고 숙이기를 맞춰 6줄 모두 세로 커버리지 안 + 좌석 레벨 차이 6 dB 이하로 만드세요.' },
         { id: 'monitor', title: '모니터 자리 잡기', text: '② 장면에서 모니터를 끌어 「피드백 위험: 낮음」을 만들고, 보컬과의 거리는 2 m 이내로 두세요.' },
         { id: 'delay', title: '딜레이 시간 맞추기', text: '③ 장면에서 딜레이 스피커 소리가 메인보다 0–10 ms 늦게 도착하도록 딜레이를 맞추세요.' },
         { id: 'polarity', title: '극성 확인', text: '시간을 맞춘 상태에서 딜레이 스피커 극성을 「반대」로 바꿔 저음 상쇄를 확인한 뒤, 다시 「정상」으로 돌려놓으세요.' }
       ],
       links: [
-        { title: '3층 음향 시스템 · 천장 딜레이 스피커', text: '10D 앰프에서 천장 Yi7P 딜레이 스피커로 가는 길을 봐요.', go: { tab: 'tab2', trace: 'y7p_L' } },
+        { title: '장비 브랜드 알아보기 · 스피커', text: '현장에서 자주 만나는 스피커 브랜드와 대표 제품을 살펴봐요.', go: { tab: 'tabBrands' } },
         { title: '확성 시스템의 기본 · 3D 실습 ①', text: 'SM58S 를 ZXA1 액티브 스피커에 바로 연결해 소리를 내 봐요.', go: { tab: 'tab1', card: 's1' } }
       ]
     },
@@ -640,9 +696,9 @@
       { title: '확성 시스템의 기본 · 3D 실습 ③', text: '패시브 ZX1 을 Crown XLi1500 의 speakON 출력에 연결해 소리를 내 봐요.', go: { tab: 'tab1', card: 's3' } }
     ],
     deeper: [
-      { title: '스피커 높이와 매달기', text: '스피커를 높이 둘수록 앞줄과 뒷줄의 거리 차가 줄어 고르게 들려요. 대신 앞줄이 커버리지 아래로 빠지지 않게 기울기를 맞춰요.', more: '스탠드(폴 마운트)는 제조사 허용 무게와 높이를 지키고, 다리를 넓게 펴서 넘어지지 않게 해요. 스피커를 매다는 일은 정해진 리깅 포인트와 안전 와이어를 쓰는 전문 작업이에요.' },
-      { title: '커버리지를 나눠 맡기기', text: '넓은 공간은 스피커 한 대로 덮기보다 메인 + 천장·기둥 딜레이 스피커처럼 구역을 나눠 맡겨요. 3층 본당이 그렇게 설치되어 있어요.', more: '구역이 겹치는 곳에서는 콤 필터가 생기기 쉬워서, 각 스피커의 커버리지 경계가 겹치는 폭을 줄이고 시간과 레벨을 맞춰요.' },
-      { title: '측정으로 튜닝하기', text: '시스템 튜닝은 측정 마이크와 분석 소프트웨어로 여러 자리의 소리를 재며 해요. 귀로 듣는 확인도 꼭 함께 해요.', more: '한 자리에만 맞춘 EQ 는 다른 자리를 나쁘게 만들 수 있어요. 여러 자리를 재서 공통된 문제를 고치고, 튜닝 뒤 설정은 저장하고 기록해 둬요.' }
+      { title: '포인트 소스 vs 라인 어레이', text: '<b>포인트 소스</b>는 한 점에서 소리가 퍼져 나가는 일반 스피커예요. 거리가 2배가 되면 약 6 dB 작아져요. <b>라인 어레이</b>는 여러 통을 세로로 길게 이어 매달아 하나의 긴 소리 줄처럼 동작하게 만든 스피커예요. 세로로는 좁게 모아 멀리 보내고, 가로로는 넓게 퍼뜨려요.', more: '<ul><li><b>포인트 소스</b>: 설치가 쉽고 작은·중간 크기 예배실에 알맞아요. 앞줄과 뒷줄의 크기 차이가 커지기 쉬워서 높이와 각도를 잘 맞춰야 해요.</li><li><b>라인 어레이</b>: 통마다 각도를 조금씩 다르게 꺾어(커브) 앞줄부터 뒷줄까지 고르게 덮어요. 가까운 거리에서는 거리가 2배가 될 때 6 dB 보다 적게 줄어들어 멀리까지 고르게 가요. 크고 깊은 공간·야외에 써요.</li><li>라인 어레이는 각도·매달기 설계를 제조사 프로그램으로 계산하고, 전문 리깅이 필요해요. 작은 공간에서는 오히려 포인트 소스가 나을 때가 많아요.</li><li>요즘은 작은 통을 세로로 쌓은 <b>컬럼(기둥형) 스피커</b>도 많이 써요. 말소리 전달이 좋고 눈에 덜 띄어 예배실·강당에 잘 맞아요.</li></ul>' },
+      { title: '동축형 스피커와 웨지 모니터', text: '<b>동축형</b>은 고음 드라이버를 우퍼 한가운데 같은 축에 겹쳐 넣은 2웨이 스피커예요. 소리가 한 점에서 나와 가까이에서 들어도 저음과 고음이 잘 어울리고, 통을 작게 만들 수 있어요. <b>웨지(Wedge)</b>는 바닥에 놓고 단상 위 사람을 비스듬히 향하게 만든 쐐기 모양의 모니터 스피커예요.', more: '<ul><li><b>동축형의 장점</b>: 듣는 위치가 조금 바뀌어도 음색이 고르고, 가까운 거리(모니터·천장·필 스피커)에 잘 맞아요. 통이 작아 눈에 덜 띄어요.</li><li><b>웨지 모니터</b>: 보통 바닥에서 약 30–60° 각도로 사람의 귀를 향하게 놓여요. 마이크가 소리를 가장 덜 받는 방향(카디오이드는 바로 뒤)에 두고, 필요한 만큼만 크게 해요.</li><li>많은 웨지 모니터가 동축형이에요. 가까이에서 노래하는 사람에게 고르게 들리게 하려는 이유예요.</li><li>요즘은 바닥 모니터 대신 <b>인이어 모니터</b>를 쓰는 팀도 있어요. 무대 소리가 줄어 피드백도 줄지만, 귀를 보호하려면 볼륨을 적당히 해요.</li></ul>' },
+      { title: '스피커 튜닝이 필요한 이유', text: '같은 스피커라도 방의 크기·벽 재질·설치 위치에 따라 소리가 완전히 달라져요. 벽·천장 반사로 특정 저음이 부풀거나, 스피커 여러 대가 겹치는 곳에서 소리가 비거나, 먼 자리의 소리가 늦게 도착해요. <b>튜닝</b>은 이런 문제를 측정하고 고쳐서 모든 자리에서 고르고 또렷하게 들리게 하는 작업이에요.', more: '<ul><li><b>순서</b>: ① 위치·높이·각도(겨누기)를 먼저 맞추고 ② 스피커 사이 레벨과 딜레이(도착 시간)를 맞추고 ③ 극성을 확인하고 ④ 마지막에 시스템 EQ 로 다듬어요. EQ 로 겨누기 문제를 덮지 않아요.</li><li><b>측정</b>: 측정 마이크와 분석 프로그램으로 여러 자리를 재요. 한 자리에만 맞춘 EQ 는 다른 자리를 나쁘게 만들 수 있어요.</li><li><b>효과</b>: 말씀이 또렷해지고, 피드백 전에 낼 수 있는 음량(여유)이 늘고, 자리마다 크기와 음색 차이가 줄어요.</li><li><b>마지막은 귀로</b>: 측정한 뒤에는 잘 아는 음악과 실제 말소리로 여러 자리를 걸으며 들어 확인해요. 튜닝한 설정은 저장하고 기록해 둬요.</li></ul>' }
     ],
     sources: [
       { t: 'Electro-Voice ZxA1-90 엔지니어링 데이터 시트(제조사)', url: 'https://www.fullcompass.com/common/files/24805-ElectroVoiceZxA190BDatasheet.pdf' },

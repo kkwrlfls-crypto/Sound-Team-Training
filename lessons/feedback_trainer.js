@@ -532,9 +532,6 @@
         '<label class="fbt-vol">전체 소리 크기 <input type="range" min="0" max="100" step="1" value="' + S.vol + '" data-fbt="vol" aria-label="전체 소리 크기"><b data-out="vol">' + S.vol + ' %</b></label>' +
         '<p class="fbt-sound__msg" data-out="soundmsg"></p></div>' +
       '<div data-role="body"></div>' +
-      '<p class="fbt-src">근거 자료: <a href="https://www.shure.com/en-US/insights/feedback-fact-and-fiction" target="_blank" rel="noopener">Shure 「Feedback: Fact and Fiction」</a>(링아웃 때 울리는 주파수를 약 3 dB 씩 깎기 · 열린 마이크가 2배가 될 때마다 약 3 dB 손해) · ' +
-        '<a href="https://www.shure.com/en-us/insights/how-to-control-feedback-in-a-sound-system/" target="_blank" rel="noopener">Shure 「How to Control Feedback in a Sound System」</a>(마이크 뒤쪽을 모니터로 · 그릴 감싸 쥐기 금지 · 주파수대별 하울링 소리) · ' +
-        '<a href="https://en.wikipedia.org/wiki/Gain_before_feedback" target="_blank" rel="noopener">Wikipedia 「Gain before feedback」</a>(마이크 거리 절반 ≈ +6 dB). 화면의 dB 숫자와 반응 모델은 교육용 근사예요.</p>' +
       '</div>';
     root.addEventListener('click', onClick);
     root.addEventListener('input', onInput);
