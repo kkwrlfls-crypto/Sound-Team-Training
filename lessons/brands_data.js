@@ -147,11 +147,11 @@ window.STA_BRANDS = {
         { id: 'mic-shure-entry', tier: 'entry', model: 'SM58 (SM58S)', family: 'SM 시리즈',
           text: '카디오이드 다이내믹 보컬 마이크. SM58S 는 손잡이에 ON/OFF 스위치가 달린 버전이에요.',
           url: 'https://www.shure.com/en-US/products/microphones/sm58?variant=SM58S',
-          img: 'img/brands/mic-shure-entry.jpg', credit: 'Nicolas Esposito from France, CC BY 2.0 (Wikimedia Commons)', creditUrl: 'https://commons.wikimedia.org/wiki/File:Micro_Shure_SM58.jpg', ours: true, discontinued: false },
+          img: "https://products.shureweb.eu/shure_product_db/product_main_images/files/31e/242/4b-/setcard/8f8ab8329c1107e0758c041654d7cc30.jpeg", credit: "Shure 공식 웹사이트 이미지", creditUrl: "https://www.shure.com/en-US/products/microphones/sm58?variant=SM58S", ours: true, discontinued: false },
         { id: 'mic-shure-mid', tier: 'mid', model: 'Beta 58A', family: 'Beta 시리즈',
           text: '지향성이 더 좁은 슈퍼카디오이드 다이내믹 — 큰 무대 소리 속에서 목소리를 따로 잡을 때.',
           url: 'https://www.shure.com/en-US/products/microphones/beta_58a',
-          img: 'img/brands/mic-shure-mid.jpg', credit: 'Geheimnisträgerin, CC BY-SA 3.0 (Wikimedia Commons)', creditUrl: 'https://commons.wikimedia.org/wiki/File:ShureBeta58A.jpg', ours: false, discontinued: false },
+          img: "https://products.shureweb.eu/shure_product_db/product_main_images/files/304/6c7/1b-/setcard/6ae20df360e613eae4581a188d076e5e.jpeg", credit: "Shure 공식 웹사이트 이미지", creditUrl: "https://www.shure.com/en-US/products/microphones/beta_58a", ours: false, discontinued: false },
         { id: 'mic-shure-high', tier: 'high', model: 'KSM9', family: 'KSM 시리즈',
           text: '무대용 콘덴서 보컬 마이크. 카디오이드·슈퍼카디오이드를 스위치로 골라요(팬텀 전원 필요).',
           url: 'https://www.shure.com/en-US/products/microphones/ksm9',
@@ -225,11 +225,11 @@ window.STA_BRANDS = {
         { id: 'mic-akg-mid', tier: 'mid', model: 'C214', family: '콘덴서 마이크',
           text: '대형 진동판 카디오이드 콘덴서 — 보컬·어쿠스틱 악기 녹음과 수음.',
           url: 'https://www.akg.com/microphones/condenser-microphones/C214.html',
-          img: 'img/brands/mic-akg-mid.jpg', credit: 'Lucasbosch, CC BY-SA 3.0 (Wikimedia Commons)', creditUrl: 'https://commons.wikimedia.org/wiki/File:AKG_C214_Condenser_microphone.jpg', ours: false, discontinued: false },
+          img: "https://www.akg.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwd51609ac/AKG_c214.png?sw=1000&sh=1000", credit: "AKG 공식 웹사이트 이미지", creditUrl: "https://www.akg.com/microphones/condenser-microphones/C214.html", ours: false, discontinued: false },
         { id: 'mic-akg-high', tier: 'high', model: 'C414 XLII', family: 'C414',
           text: '지향성 패턴 9가지를 고를 수 있는 대형 진동판 콘덴서 — 피아노·성가대·악기.',
           url: 'https://www.akg.com/microphones/condenser-microphones/C414+XLII.html',
-          img: 'img/brands/mic-akg-high.jpg', credit: 'Branko Radovanović, CC BY-SA 4.0 (Wikimedia Commons) · 사진은 C414 B-XL II', creditUrl: 'https://commons.wikimedia.org/wiki/File:AKG_C414_B-XL_II_20150412_DSC_0320.JPG', ours: false, discontinued: false }
+          img: "https://www.akg.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dw56d937a9/AKG_c414_xlII.png?sw=1000&sh=1000", credit: "AKG 공식 웹사이트 이미지", creditUrl: "https://www.akg.com/C414+XLII.html", ours: false, discontinued: false }
       ] },
     { id: 'neumann-mic', cat: 'mic', name: 'Neumann', ko: '노이만', country: '독일',
       identity: '독일 베를린에 있는 마이크 회사로, 1991년부터 Sennheiser 그룹 회사예요.',
@@ -251,7 +251,7 @@ window.STA_BRANDS = {
         { id: 'mic-neumann-high', tier: 'high', model: 'U 87 Ai', family: '스튜디오 마이크',
           text: '지향성을 고를 수 있는 대형 진동판 스튜디오 콘덴서 — 녹음실·방송.',
           url: 'https://www.neumann.com/en-us/products/microphones/u-87-ai',
-          img: 'img/brands/mic-neumann-high.jpg', credit: 'Michael Rhys, CC BY 2.0 (Wikimedia Commons)', creditUrl: 'https://commons.wikimedia.org/wiki/File:Neumann_U87_microphone_20050905.jpg', ours: false, discontinued: false }
+          img: "https://assets.sennheiser.com/assets/U-87-Ai-Frontal_Neumann-Studio-Microphone_G.jpg/Zz0xNzY0NzUwYWU3YzYxMWYwYWE5OGVhNTViNWQyZmI4Ng==?width=1600&format=webp&quality=80", credit: "Neumann 공식 웹사이트 이미지", creditUrl: "https://www.neumann.com/en/products/microphones/u-87-ai", ours: false, discontinued: false }
       ] },
     { id: 'dpa-mic', cat: 'mic', name: 'DPA Microphones', ko: '디피에이', country: '덴마크',
       identity: '덴마크 알레뢰드(Allerød)에 있는 마이크 회사예요.',
@@ -273,7 +273,7 @@ window.STA_BRANDS = {
         { id: 'mic-dpa-high', tier: 'high', model: 'd:facto 4018V', family: 'd:facto',
           text: '무대·투어용 슈퍼카디오이드 콘덴서 보컬 마이크.',
           url: 'https://www.dpamicrophones.com/microphones/handheld/4018v?variant=14',
-          img: 'img/brands/mic-dpa-high.jpg', credit: 'Nikolai Beier, CC BY-SA 4.0 (Wikimedia Commons) · 사진은 d:facto 보컬 마이크(유선, 첫 버전)', creditUrl: 'https://commons.wikimedia.org/wiki/File:DPA_dfacto_Vocal_wired_first_edition.jpg', ours: false, discontinued: false }
+          img: "https://www.dpamicrophones.com/media/ooyekjt1/4018-vh-b-dpa-dfacto-4018v-mic-wired-dpa-handle-supercardioid-black.jpg?rmode=max&width=1000&height=1000&v=1dd62110dc58f00&hmac=cd8fad9f0b6fe72e3516363387edb088747cc495b6dabc8237a2b5cc6aba1416", credit: "DPA 공식 웹사이트 이미지", creditUrl: "https://www.dpamicrophones.com/microphones/handheld/4018v?variant=14", ours: false, discontinued: false }
       ] },
 
     /* ===== 무선 마이크 ===== */
@@ -300,7 +300,7 @@ window.STA_BRANDS = {
         { id: 'wireless-shure-high', tier: 'high', model: 'Axient Digital (예: AD4Q 수신기)', family: 'Axient Digital',
           text: '대형 공연·방송용 상위 디지털 무선 시스템.',
           url: 'https://www.shure.com/en-US/products/wireless-systems/axient_digital',
-          img: 'img/brands/wireless-shure-high.jpg', credit: 'Monoklon, CC BY 4.0 (Wikimedia Commons) · 사진은 AD4Q 수신기와 무선 마이크', creditUrl: 'https://commons.wikimedia.org/wiki/File:AD4Q_Shure.jpg', ours: false, discontinued: false }
+          img: "https://products.shureweb.eu/shure_product_db/product_main_images/files/6fd/720/d4-/setcard/9fac1eac2df87b1e7ecdac443a200928.jpeg", credit: "Shure 공식 웹사이트 이미지 · 사진은 AD4Q 수신기", creditUrl: "https://www.shure.com/en-US/products/wireless-systems/axient_digital/ad4q", ours: false, discontinued: false }
       ] },
     { id: 'sennheiser-wl', cat: 'wireless', name: 'Sennheiser', ko: '젠하이저', country: '독일',
       identity: '독일의 가족 경영 음향 회사로, 무선 마이크 시스템을 폭넓게 만들어요.',
@@ -417,7 +417,7 @@ window.STA_BRANDS = {
         { id: 'console-allenheath-mid', tier: 'mid', model: 'SQ-6', family: 'SQ',
           text: '중형 디지털 믹서 — 교회·공연장에서 자주 만나요.',
           url: 'https://www.allen-heath.com/hardware/sq/sq-6/',
-          img: null, credit: null, ours: false, discontinued: false },
+          img: "https://www.allen-heath.com/content/uploads/2023/06/SQ-6-Front-High-1024x683.jpg.webp", credit: "Allen & Heath 공식 웹사이트 이미지", creditUrl: "https://www.allen-heath.com/hardware/sq/sq-6/", ours: false, discontinued: false },
         { id: 'console-allenheath-high', tier: 'high', model: 'dLive (예: S5000)', family: 'dLive',
           text: '제조사가 대표(flagship) 플랫폼으로 소개하는 대형 디지털 믹싱 시스템.',
           url: 'https://www.allen-heath.com/hardware/dlive-series/',
@@ -442,7 +442,7 @@ window.STA_BRANDS = {
         { id: 'console-midas-mid', tier: 'mid', model: 'M32 LIVE', family: 'M32',
           text: '40입력 디지털 콘솔 — M32 계열의 라이브용 모델.',
           url: 'https://www.midasconsoles.com/en/products/0603-aeo',
-          img: 'img/brands/console-midas-mid.jpg', credit: 'Promote365 .xyz (266925), CC0 (Wikimedia Commons)', creditUrl: 'https://commons.wikimedia.org/wiki/File:MIDAS_M32_(2018-01-18_by_Promote365_.xyz_@pexels_813517).jpg', ours: false, discontinued: false },
+          img: "https://cdn-media.empowertribe.com/88b7019edb6a4da19acbf5407a5d6caa/Image_MI_0603-AEO_M32-LIVE_Front_XL.png", credit: "Midas 공식 웹사이트 이미지", creditUrl: "https://www.midasconsoles.com/en/products/0603-aeo", ours: false, discontinued: false },
         { id: 'console-midas-high', tier: 'high', model: 'HD96-24', family: 'Heritage-D',
           text: '144입력 채널, 21인치 터치 화면의 대형 공연용 디지털 콘솔.',
           url: 'https://www.midasconsoles.com/en/products/0603-AED',
@@ -463,11 +463,11 @@ window.STA_BRANDS = {
         { id: 'console-behringer-entry', tier: 'entry', model: 'XR18', family: 'X AIR',
           text: '태블릿·컴퓨터로 조작하는 18입력 소형 디지털 믹서.',
           url: 'https://www.behringer.com/en/products/0605-AAD',
-          img: 'img/brands/console-behringer-entry.jpg', credit: 'Pete Brown from Gambrills, MD, USA, CC BY 2.0 (Wikimedia Commons) · 사진은 X AIR 시리즈(XR18 포함)', creditUrl: 'https://commons.wikimedia.org/wiki/File:Behringer_X_AIR_series_-_XR12,_XR18,_X18_with_tablet,_XR16_-_2015_NAMM_Show.jpg', ours: false, discontinued: false },
+          img: "https://cdn-media.empowertribe.com/499c524b397f63bcad0c9a2c5959f14e/Image_BE_0605-AAD_XR18_Media-Front.webp", credit: "Behringer 공식 웹사이트 이미지", creditUrl: "https://www.behringer.com/en/products/0605-AAD", ours: false, discontinued: false },
         { id: 'console-behringer-mid', tier: 'mid', model: 'X32', family: 'X32',
           text: '교회·소규모 공연장에서 자주 만나는 32채널 디지털 콘솔.',
           url: 'https://www.behringer.com/en/products/0603-ACE',
-          img: 'img/brands/console-behringer-mid.jpg', credit: '작자 미상, CC0 (Wikimedia Commons)', creditUrl: 'https://commons.wikimedia.org/wiki/File:Behringer_X32_Digital_Mixer_in_operation_-_angled_(2017-07-21_17.23.52_@pxhere_174508).jpg', ours: false, discontinued: false },
+          img: "https://cdn-media.empowertribe.com/e5ba63fb0e6f4e69a1626c5811115e16/Image_BE_0603-ACE_X32_Top_XL.png", credit: "Behringer 공식 웹사이트 이미지", creditUrl: "https://www.behringer.com/en/products/0603-ACE", ours: false, discontinued: false },
         { id: 'console-behringer-high', tier: 'high', model: 'WING', family: 'WING',
           text: 'X32 다음 세대 — 48채널, 터치 화면. 이 브랜드의 상위 모델이에요.',
           url: 'https://www.behringer.com/en/products/0603-AEN',
@@ -487,7 +487,7 @@ window.STA_BRANDS = {
         { id: 'console-soundcraft-entry', tier: 'entry', model: 'Signature Plus 12', family: 'Signature Plus',
           text: '12채널 아날로그 믹서 — Lexicon 이펙트·USB-C 오디오 인터페이스 내장. 이전 Signature 12 는 단종됐어요.',
           url: 'https://www.soundcraft.com/en-US/products/signature-plus-12',
-          img: 'img/brands/console-soundcraft-entry.jpg', credit: 'Kazuhisa OTSUBO from Tokyo, Japan, CC BY 2.0 (Wikimedia Commons) · 사진은 Signature 12 MTK', creditUrl: 'https://commons.wikimedia.org/wiki/File:Soundcraft_Signature_12_MTK_analog_mixer_with_14in_12out_audio_interface_-_2016_Gakki_Fair_(2016-11-04_by_Kazuhisa_OTSUBO).jpg', ours: false, discontinued: false },
+          img: "https://adn.harmanpro.com/productattachment/14437/product_attachment/x_large_2x-195c276192b9d0b5315f93e550999169.webp", credit: "Soundcraft 공식 웹사이트 이미지", creditUrl: "https://www.soundcraft.com/en-US/products/signature-plus-12", ours: false, discontinued: false },
         { id: 'console-soundcraft-mid', tier: 'mid', model: 'Ui24R', family: 'Ui 시리즈',
           text: '24채널 디지털 믹서 — 태블릿 등으로 무선 조작, USB 멀티트랙 녹음.',
           url: 'https://www.soundcraft.com/en-US/products/ui24r',
@@ -515,7 +515,7 @@ window.STA_BRANDS = {
         { id: 'console-digico-high', tier: 'high', model: 'Quantum 852', family: 'Quantum',
           text: '엔진 두 개로 384채널을 다루는 대형 콘솔 — 제조사 대표 모델.',
           url: 'https://digico.biz/consoles/quantum852/',
-          img: 'img/brands/console-digico-high.jpg', credit: 'TurnOnTheNight, CC BY-SA 4.0 (Wikimedia Commons)', creditUrl: 'https://commons.wikimedia.org/wiki/File:DiGiCo_Quantum_852_Digital_Mixing_Console_20250726120254.jpg', ours: false, discontinued: false }
+          img: "https://digico.biz/wp-content/uploads/2020/01/Untitled-2-1200x750.jpg", credit: "DiGiCo 공식 웹사이트 이미지", creditUrl: "https://digico.biz/consoles/quantum852/", ours: false, discontinued: false }
       ] },
     { id: 'avid-console', cat: 'console', name: 'Avid', ko: '아비드', country: '미국',
       identity: '녹음 프로그램 Pro Tools 로 알려진 회사로, 본사는 미국 매사추세츠주 벌링턴에 있어요.',
@@ -529,7 +529,7 @@ window.STA_BRANDS = {
         { id: 'console-avid-high', tier: 'high', model: 'VENUE | S6L', family: 'VENUE | S6L',
           text: '공연·방송용 모듈형 라이브 콘솔 — Pro Tools 와 연동돼요.',
           url: 'https://www.avid.com/products/venue-s6l-system/features',
-          img: 'img/brands/console-avid-high.jpg', credit: 'Basshag, CC BY-SA 4.0 (Wikimedia Commons) · 콘솔 앞 엔지니어 사진', creditUrl: 'https://commons.wikimedia.org/wiki/File:Greg_Price_S6L.jpg', ours: false, discontinued: false }
+          img: "https://edge.sitecorecloud.io/avidtech-d6a2e9a9/media/images/venue-s6l-system/avid-venue-s6l-48d-digital-mixer-broadcast-large-concerts.jpg?h=600&iar=0&w=1200", credit: "Avid 공식 웹사이트 이미지 · 사진은 S6L-48D 콘솔", creditUrl: "https://www.avid.com/products/venue-s6l-system/features", ours: false, discontinued: false }
       ] },
 
     /* ===== 파워앰프 ===== */
@@ -816,7 +816,7 @@ window.STA_BRANDS = {
         { id: 'speaker-nexo-mid', tier: 'mid', model: 'GEO M10', family: 'GEO M 시리즈',
           text: '소형 라인 어레이 — 극장·교회·행사.',
           url: 'https://www.nexo-sa.com/systems/geo-m10/overview/',
-          img: null, credit: null, ours: false, discontinued: false },
+          img: "https://www.nexo-sa.com/wp-content/uploads/GEO-M10-module-pic-1200x476.jpg", credit: "NEXO 공식 웹사이트 이미지 · 사진은 GEO M10 모듈", creditUrl: "https://www.nexo-sa.com/products/geo-m1012/", ours: false, discontinued: false },
         { id: 'speaker-nexo-high', tier: 'high', model: 'STM M46', family: 'STM 시리즈',
           text: '모듈을 조합해 쓰는 투어용 라인 어레이.',
           url: 'https://www.nexo-sa.com/products/stm-m46-main-module/',
@@ -836,7 +836,7 @@ window.STA_BRANDS = {
         { id: 'speaker-martin-entry', tier: 'entry', model: 'Blackline X12', family: 'BlacklineX',
           text: '12인치 2웨이 패시브 — 이동·설치 겸용.',
           url: 'https://martin-audio.com/products/loudspeakers/blacklinex12',
-          img: null, credit: null, ours: false, discontinued: false },
+          img: "https://static.martin-audio.com/img/products/mobile/blacklineX12-side.jpg", credit: "Martin Audio 공식 웹사이트 이미지", creditUrl: "https://martin-audio.com/products/loudspeakers/blacklinex12", ours: false, discontinued: false },
         { id: 'speaker-martin-mid', tier: 'mid', model: 'TORUS T1230', family: 'TORUS',
           text: '곡률이 일정한(constant curvature) 어레이 — 중형 공연장·설치.',
           url: 'https://martin-audio.com/products/loudspeakers/t1230',
