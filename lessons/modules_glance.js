@@ -186,9 +186,9 @@ window.STA_LESSON_GLANCE = {
 
 /* 2026-10-23: 믹싱 스킬 과정 썸네일 — 실습용 MG12XU 사진에서 그 과정에 해당하는 부분을 크게 잘라 씀 */
 window.STA_THUMBS = {
-  'gain-structure': 'img/modules/mix_gain.jpg',
-  eq: 'img/modules/mix_eq.jpg',
-  gate: 'img/modules/mix_gate.jpg',
-  compressor: 'img/modules/mix_comp.jpg',
-  'fx-space': 'img/modules/mix_fx.jpg'
+  'gain-structure': 'img/modules/mix2_gain.jpg',
+  eq: 'img/modules/mix2_eq.jpg',
+  gate: 'img/modules/mix2_gate.jpg',
+  compressor: 'img/modules/mix2_comp.jpg',
+  'fx-space': 'img/modules/mix2_fx.jpg'
 };

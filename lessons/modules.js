@@ -23,8 +23,8 @@
     tabFeedback: ['하울링 제어 훈련', '링아웃으로 하울링 주파수를 찾아 깎고, 예배 중 갑자기 나는 하울링에 바르게 대응해 봅니다.', ''],
     tabCheck: ['자가 진단 기준표', '방송실 모니터링·스피커 지향각·룸 어쿠스틱 등 우리 시스템을 항목별로 진단하고 개선 순서를 정합니다.', 'img/modules/hw_speaker.jpg'],
     tabTips: ['실전 꿀팁', '책에는 잘 나오지 않는 현장 노하우를 상황별로 모았어요.', 'img/modules/hw_mic.jpg'],
-    tab3: ['Ear Training', '볼륨 변화, 대역별 소리, 밸런스를 귀로 훈련합니다.', ''],
-    tabMixVideo: ['믹싱 과정 영상', '실제로 믹싱하는 과정을 영상으로 보며 배워요. (영상 준비 중)', 'img/modules/mix_eq.jpg']
+    tab3: ['Ear Training', '볼륨 변화, 대역별 소리, 밸런스를 귀로 훈련합니다.', 'img/modules/mix2_ear.jpg'],
+    tabMixVideo: ['믹싱 과정 영상', '실제로 믹싱하는 과정을 영상으로 보며 배워요. (영상 준비 중)', 'img/modules/mix2_video.jpg']
   };
   /* 썸네일 사진 출처 (Wikimedia Commons 사진은 라이선스에 따라 저작자 표시) */
   var IMG_CREDITS = {

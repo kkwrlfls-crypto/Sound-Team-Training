@@ -24,13 +24,13 @@
   /* =========================================================================== 그림 */
   var V = window.STAVisuals = window.STAVisuals || {};
 
-  // 1) 입력과 출력 — MG12XU 뒷면 단자 + CL5
+  // 1) 입력과 출력 — MG12XU 입출력 단자(종류별로 모은 단순화 그림)
   V.consoleIO = function () {
     function combo(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="14" fill="#1f2937"/><circle cx="' + x + '" cy="' + y + '" r="5" fill="#64748b"/>' + [[-6, -5], [6, -5], [0, 8]].map(function (p) { return '<circle cx="' + (x + p[0]) + '" cy="' + (y + p[1]) + '" r="1.8" fill="#cbd5e1"/>'; }).join(''); }
     function xlrF(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="14" fill="#1f2937"/>' + [[-6, -4], [6, -4], [0, 7]].map(function (p) { return '<circle cx="' + (x + p[0]) + '" cy="' + (y + p[1]) + '" r="2.4" fill="#cbd5e1"/>'; }).join(''); }
     function xlrM(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="14" fill="#334155"/>' + [[-6, -4], [6, -4], [0, 7]].map(function (p) { return '<circle cx="' + (x + p[0]) + '" cy="' + (y + p[1]) + '" r="2.4" fill="#fbbf24"/>'; }).join(''); }
     function jack(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="9" fill="#cbd5e1" stroke="#64748b" stroke-width="1.5"/><circle cx="' + x + '" cy="' + y + '" r="4" fill="#111827"/>'; }
-    var s = '<rect x="4" y="4" width="592" height="176" rx="12" fill="#0f172a"/>' + t(14, 22, 'MG12XU 뒷면 단자 (패널 표기 기준 단순화 · CH9–12 의 RCA·USB 선택은 윗면)', { size: 11, fill: '#cbd5e1', anchor: 'start' });
+    var s = '<rect x="4" y="4" width="592" height="176" rx="12" fill="#0f172a"/>' + t(14, 22, 'MG12XU 입력·출력 단자 — 실제 배치가 아니라 종류별로 모아 단순화한 그림', { size: 11, fill: '#cbd5e1', anchor: 'start' });
     // 입력
     s += '<rect x="12" y="30" width="318" height="142" rx="8" fill="none" stroke="' + C.cyan + '" stroke-dasharray="4 3"/>' + t(170, 46, '입력', { size: 11, fill: C.cyan, weight: 800 });
     [0, 1, 2, 3].forEach(function (i) { var x = 32 + i * 38; s += t(x, 66, String(i + 1), { size: 10, fill: '#e2e8f0', weight: 700 }) + combo(x, 86) + '<rect x="' + (x - 13) + '" y="110" width="12" height="9" rx="1.5" fill="#94a3b8"/><rect x="' + (x + 1) + '" y="110" width="12" height="9" rx="1.5" fill="#64748b"/>'; });
@@ -49,7 +49,7 @@
     s += '<rect x="4" y="190" width="592" height="66" rx="12" fill="' + C.bg + '" stroke="' + C.line + '"/>' +
       t(16, 214, '입력 = 소리가 들어오는 곳 · 출력 = 소리가 나가는 곳', { size: 12, weight: 800, anchor: 'start' }) +
       t(16, 238, '출력끼리·입력끼리 이으면 소리가 안 나고, 스피커 출력을 입력에 꽂으면 장비가 망가질 수 있어요', { size: 11, fill: C.sub, anchor: 'start' });
-    return svg(600, 262, s, 'MG12XU 뒷면 입력·출력 단자');
+    return svg(600, 262, s, 'MG12XU 입력·출력 단자 (종류별 단순화 그림)');
   };
 
   // 2) 프리앰프·PAD·HPF·팬텀
@@ -458,8 +458,8 @@
     },
     theory: [
       { title: '입력과 출력 — 콘솔의 단자', visual: 'consoleIO',
-        body: '콘솔 뒷면은 크게 <b>입력</b>(마이크·악기·장비가 들어오는 곳)과 <b>출력</b>(스피커·모니터·녹음으로 나가는 곳)으로 나뉘어요. MG12XU 는 CH1–4 가 마이크와 라인을 함께 받는 <b>콤보 단자</b>, CH5–8 은 MIC(XLR)와 LINE 이 따로, CH9–12 는 스테레오 LINE 이에요. 출력은 메인(STEREO OUT), AUX SEND, GROUP OUT, MONITOR OUT, PHONES 가 있어요.',
-        more: '<ul><li><b>MG12XU (제조사 자료)</b>: STEREO OUT 은 XLR·폰 단자 밸런스, 기준 +4 dBu(최대 +24 dBu). AUX SEND·GROUP OUT·MONITOR OUT 은 폰 단자(임피던스 밸런스), 기준 +4 dBu. CH9–12 LINE 은 −10 dBu 기준이고, 9/10·11/12 에는 RCA 단자와 USB 입력 선택도 있어요.</li><li>입력은 신호가 들어오는 곳, 출력은 나가는 곳이에요. 출력끼리, 입력끼리 연결하면 소리가 나지 않고, 스피커 출력을 입력에 넣으면 장비가 망가질 수 있어요.</li><li>다른 콘솔도 이름만 조금 다를 뿐 <b>MAIN(메인)·AUX(모니터)·GROUP·REC(녹음)</b> 같은 출력이 있어요. 처음 보는 콘솔은 뒷면 단자 이름부터 읽어 보세요.</li></ul>',
+        body: '콘솔의 단자는 크게 <b>입력</b>(마이크·악기·장비가 들어오는 곳)과 <b>출력</b>(스피커·모니터·녹음으로 나가는 곳)으로 나뉘어요. MG12XU 는 CH1–4 가 마이크와 라인을 함께 받는 <b>콤보 단자</b>, CH5–8 은 MIC(XLR)와 LINE 이 따로, CH9–12 는 스테레오 LINE 이에요. 출력은 메인(STEREO OUT), AUX SEND, GROUP OUT, MONITOR OUT, PHONES 가 있어요.',
+        more: '<ul><li><b>MG12XU (제조사 자료)</b>: STEREO OUT 은 XLR·폰 단자 밸런스, 기준 +4 dBu(최대 +24 dBu). AUX SEND·GROUP OUT·MONITOR OUT 은 폰 단자(임피던스 밸런스), 기준 +4 dBu. CH9–12 LINE 은 −10 dBu 기준이고, 9/10·11/12 에는 RCA 단자와 USB 입력 선택도 있어요.</li><li>입력은 신호가 들어오는 곳, 출력은 나가는 곳이에요. 출력끼리, 입력끼리 연결하면 소리가 나지 않고, 스피커 출력을 입력에 넣으면 장비가 망가질 수 있어요.</li><li>다른 콘솔도 이름만 조금 다를 뿐 <b>MAIN(메인)·AUX(모니터)·GROUP·REC(녹음)</b> 같은 출력이 있어요. 처음 보는 콘솔은 단자 옆에 적힌 이름부터 읽어 보세요. 단자가 윗면에 있는 콘솔도, 뒷면에 있는 콘솔도 있어요.</li></ul>',
         check: { q: 'MG12XU 에 키보드의 스테레오 출력(라인 레벨, L·R)을 꽂으려고 해요. 알맞은 곳은?', options: [
           { t: 'CH9/10 같은 스테레오 LINE 입력', ok: true, why: '맞아요. 라인 레벨 스테레오 신호는 스테레오 LINE 입력(L·R)에 꽂아요.' },
           { t: 'STEREO OUT 단자', why: 'STEREO OUT 은 메인 믹스가 나가는 출력이에요. 입력이 아니에요.' },

@@ -240,6 +240,7 @@
       '.sim-cable-hum{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:12px;align-items:start}',
       '.sim-cable-scope{border-radius:10px;background:#0b1220;overflow:hidden}',
       '.sim-cable-scope canvas{display:block;width:100%}',
+      '.sim-cable-steps{margin:10px 0 0;padding:0 0 0 20px;display:grid;gap:5px;font-size:.84rem;line-height:1.6;color:var(--sta-ink-2,#4b5c74);word-break:keep-all}',
       '.sim-cable-ctl{display:grid;gap:8px}',
       '.sim-cable-seg{display:flex;gap:6px;flex-wrap:wrap}',
       '.sim-cable-seg label{flex:1 1 110px;display:flex;gap:6px;align-items:center;padding:6px 8px;border:1px solid var(--sta-line,#d6dee8);border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer}',
@@ -266,8 +267,8 @@
     el.innerHTML = '<div class="sim-cable">' +
       '<section class="sim-cable-card"><h4>① 알맞은 케이블 고르기</h4><p class="sim-cable-lead">교회 확성 실습 장비의 세 연결이에요. 각 연결에 맞는 케이블을 고르면 그림에 신호 레벨이 표시돼요.</p>' +
         '<div data-role="rig"></div><div class="sim-cable-slots">' + slotHtml('A') + slotHtml('B') + slotHtml('C') + '</div></section>' +
-      '<section class="sim-cable-card"><h4>② 긴 케이블의 험 — 언밸런스와 밸런스</h4><p class="sim-cable-lead">케이블이 길수록, 전원선 가까이 지날수록 「웅-」 하는 험(60 Hz 전기 잡음)이 더 많이 들어와요. 밸런스(XLR)는 같은 신호를 「정상」과 「뒤집은」 두 가닥으로 보내서, 받는 쪽에서 둘을 빼 험을 지워요. 종류를 바꿔 아래 그림을 비교해 보세요.</p>' +
-        '<div class="sim-cable-hum"><div><div class="sim-cable-scope"><canvas data-role="scope" aria-label="핫·콜드 선과 받는 쪽 파형"></canvas></div><p class="sim-note">매끈한 물결 = 소리 신호, 잘게 떨리는 부분 = 케이블에 들어온 잡음(험)이에요. 밸런스는 두 선에 <b>같은 잡음</b>이 들어오고 신호만 서로 반대라서, 받는 쪽에서 빼면 잡음은 사라지고 신호는 2배가 돼요. (이해를 돕는 그림)</p></div>' +
+      '<section class="sim-cable-card"><h4>② 긴 케이블의 험 — 언밸런스와 밸런스</h4><p class="sim-cable-lead">케이블이 길수록, 전원선 가까이 지날수록 「웅-」 하는 험(60 Hz 전기 잡음)이 더 많이 들어와요. 밸런스(XLR·TRS)는 핫(+)·콜드(−)·그라운드 세 가닥으로 같은 신호를 「그대로」와 「뒤집은」 모양으로 함께 보내고, 받는 쪽에서 콜드를 다시 뒤집어 더해 잡음을 지워요. 「언밸런스 / 밸런스」 단추로 종류를 바꿔 그림을 비교해 보세요.</p>' +
+        '<div class="sim-cable-hum"><div><div class="sim-cable-scope"><canvas data-role="scope" aria-label="밸런스·언밸런스 케이블로 신호와 잡음이 지나가는 그림"></canvas></div><div data-role="steps"></div><p class="sim-note">매끈한 물결 = 소리 신호, 잘게 떨리는 주황 물결 = 케이블에 들어온 잡음이에요. 밸런스가 소리 자체를 더 좋게 만드는 것은 아니고, 길거나 잡음이 많은 곳에서 잡음을 막아 줘요. (이해를 돕는 그림)</p></div>' +
           '<div class="sim-cable-ctl"><div class="sim-cable-seg" role="radiogroup" aria-label="케이블 종류"><label><input type="radio" name="simCableType" value="unbal" checked>언밸런스 (TS)</label><label><input type="radio" name="simCableType" value="bal">밸런스 (XLR)</label></div>' +
             '<label class="sim-range"><span>케이블 길이 <b data-out="len"></b></span><input type="range" min="1" max="50" step="1" data-sim="len" aria-label="케이블 길이(m)"></label>' +
             '<label class="sim-switch"><input type="checkbox" data-sim="parallel"><span>전원선과 나란히 깔기</span></label>' +
@@ -336,48 +337,97 @@
       var tt = S.audio && actx && nodes ? (actx.currentTime - nodes.start) % vox.dur : ((performance.now() - S.t0) / 1000) % vox.dur;
       return vox.env[Math.floor(tt / vox.blk) % vox.env.length] || 0;
     }
-    function sizeScope() { var w = cv.parentNode.clientWidth || 500, h = 264; cv.style.height = h + 'px'; cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
-    /* 2026-10-23: 파형을 개념 그림으로 단순화 — 신호는 느린 매끈한 물결, 잡음은 잘게 떨리는 주황 물결. 움직이지 않고 조작할 때만 바뀜.
-       밸런스: 두 선에 「같은」 잡음이 들어오고 신호는 서로 반대 → 받는 쪽에서 빼면(핫 − 콜드) 잡음은 0, 신호는 2배 */
+    function sizeScope() { var w = cv.parentNode.clientWidth || 500, h = w < 520 ? 400 : 380; cv.style.height = h + 'px'; cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    /* 2026-10-24: 밸런스·언밸런스 그림을 「신호가 지나가는 길」로 다시 그림
+       (참고: rasantekaudio.com — Balanced vs Unbalanced Audio 의 전송 그림과 설명 순서)
+       위: 보내는 쪽 → 케이블(핫 + · 콜드 − · 그라운드) → 가운데 잡음 구역에서 두 선에 같은 잡음 → 받는 쪽
+       아래: 받는 쪽에서 일어나는 일 — 핫(신호+잡음) + 뒤집은 콜드(신호−잡음) = 신호 2배, 잡음 0
+       움직이지 않는 그림이고, 길이·전원선 옆 깔기를 바꾸면 잡음 크기만 바뀌어요. */
+    var FONT = 'Pretendard, system-ui, sans-serif', lastSteps = '';
+    function stepsHtml(bal) {
+      return bal ? '<ol class="sim-cable-steps"><li><b>나눠 보내기</b> — 같은 소리를 <b style="color:#0e7490">핫(+)</b>에는 그대로, <b style="color:#7c3aed">콜드(−)</b>에는 뒤집어서 보내요. 그라운드(실드)는 따로 있어요.</li>' +
+          '<li><b>잡음은 똑같이</b> — 두 선이 나란히 꼬여 붙어 있어서, 전원선·조명에서 오는 잡음이 두 선에 <b>같은 모양</b>으로 들어와요.</li>' +
+          '<li><b>다시 뒤집어 더하기</b> — 받는 쪽에서 콜드를 한 번 더 뒤집으면 신호는 핫과 같은 모양이 되고, 잡음은 반대 모양이 돼요.</li>' +
+          '<li><b>결과</b> — 둘을 더하면 반대 모양인 잡음은 서로 지워지고, 같은 모양인 신호는 2배가 돼요.</li></ol>'
+        : '<ol class="sim-cable-steps"><li><b>한 가닥으로 보내기</b> — 언밸런스(TS·RCA)는 신호선 1가닥과 그라운드(실드)뿐이에요.</li>' +
+          '<li><b>잡음이 섞임</b> — 지나가는 길에 들어온 잡음이 신호와 한데 섞여요.</li>' +
+          '<li><b>지울 방법이 없음</b> — 비교할 짝(콜드 선)이 없어서, 받는 쪽은 무엇이 신호이고 무엇이 잡음인지 구분하지 못해요.</li>' +
+          '<li><b>그래서</b> — 케이블이 길수록, 전원선 가까이 지날수록 잡음이 커져요. 짧고 조용한 연결에는 언밸런스도 충분해요.</li></ol>';
+    }
     function drawScope() {
       var W = cv.width / dpr, Hh = cv.height / dpr; if (!W) return;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, Hh); ctx.fillStyle = '#0b1220'; ctx.fillRect(0, 0, W, Hh);
-      var H = hum(), bal = S.type === 'bal';
-      var nk = clamp(0.1 + (H.unbal + 50) / 44 * 0.55, 0.1, 0.65);   // 케이블에 들어온 잡음 크기(그림용): 길수록·전원선 옆일수록 커짐
-      var band = Hh / 3, amp = band * 0.2, x0 = 118, xw = W - x0 - 12;
-      function sig(u) { return Math.sin(2 * Math.PI * 2.5 * u); }
-      function nz(u) { return 0.6 * Math.sin(2 * Math.PI * 31 * u) + 0.4 * Math.sin(2 * Math.PI * 47 * u + 1.3); }
-      var rows = bal ? [
-        ['핫 (+) 선', '신호 + 잡음', '#f87171', function (u) { return sig(u); }, 1],
-        ['콜드 (−) 선', '뒤집힌 신호 + 같은 잡음', '#60a5fa', function (u) { return -sig(u); }, 1],
-        ['받는 쪽', '핫 − 콜드 = 신호 2배, 잡음 0', '#4ade80', function (u) { return 2 * sig(u); }, 0]
-      ] : [
-        ['신호선', '신호 + 잡음', '#f87171', function (u) { return sig(u); }, 1],
-        null,
-        ['받는 쪽', '잡음이 그대로 남아요', '#fbbf24', function (u) { return sig(u); }, 1]
-      ];
-      rows.forEach(function (r, i) {
-        var top = band * i, yc = top + band / 2 + 8;
-        if (i) { ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, top); ctx.lineTo(W, top); ctx.stroke(); }
-        ctx.textAlign = 'left';
-        if (!r) { ctx.fillStyle = '#94a3b8'; ctx.font = '700 12px sans-serif'; ctx.fillText('콜드 선 없음', 10, top + 20);
-          ctx.fillStyle = '#64748b'; ctx.font = '12px sans-serif'; ctx.fillText('언밸런스는 신호선 1가닥 + 그라운드(실드)뿐이라 잡음을 지울 방법이 없어요', 10, yc + 4); return; }
-        ctx.fillStyle = r[2]; ctx.font = '800 13px sans-serif'; ctx.fillText(r[0], 10, yc - 4);
-        ctx.fillStyle = '#94a3b8'; ctx.font = '11px sans-serif'; wrapText(r[1], 10, yc + 12, x0 - 16, 13);
-        ctx.strokeStyle = '#1e293b'; ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.moveTo(x0, yc); ctx.lineTo(x0 + xw, yc); ctx.stroke(); ctx.setLineDash([]);
-        if (bal && i === 2) {   // 지워진 잡음을 옅은 점선으로 보여 줌
-          ctx.strokeStyle = 'rgba(251,146,60,0.45)'; ctx.setLineDash([2, 3]); ctx.lineWidth = 1; ctx.beginPath();
-          for (var xa = 0; xa <= xw; xa += 1.5) { var ua = xa / xw, ya = yc + band * 0.36 - nz(ua) * nk * amp; if (xa) ctx.lineTo(x0 + xa, ya); else ctx.moveTo(x0 + xa, ya); } ctx.stroke(); ctx.setLineDash([]);
-          ctx.fillStyle = 'rgba(251,146,60,0.8)'; ctx.font = '10px sans-serif'; ctx.textAlign = 'right'; ctx.fillText('지워진 잡음', x0 + xw, yc + band * 0.36 - nk * amp - 6); ctx.textAlign = 'left';
-        }
-        ctx.strokeStyle = r[2]; ctx.lineWidth = 2.2; ctx.beginPath();
-        for (var x = 0; x <= xw; x += 1) { var u = x / xw, y = yc - (r[3](u) + r[4] * nz(u) * nk) * amp; if (x) ctx.lineTo(x0 + x, y); else ctx.moveTo(x0 + x, y); } ctx.stroke();
-        if (r[4]) {   // 같은 잡음이 들어온 곳 표시(주황 띠)
-          ctx.fillStyle = 'rgba(251,146,60,0.9)'; ctx.font = '700 10px sans-serif'; ctx.textAlign = 'right'; ctx.fillText('잡음 ' + (nk >= 0.45 ? '큼' : nk >= 0.25 ? '보통' : '작음'), x0 + xw, top + 14); ctx.textAlign = 'left';
-        }
+      var H = hum(), bal = S.type === 'bal', narrow = W < 520;
+      var nk = clamp(0.25 + (H.unbal + 50) / 44 * 0.75, 0.25, 1);   // 잡음 크기(그림용): 길수록·전원선 옆일수록 커짐
+      var nkTxt = nk >= 0.75 ? '큼' : nk >= 0.45 ? '보통' : '작음';
+      var stepsEl = q('[data-role=steps]'); if (stepsEl && lastSteps !== S.type) { stepsEl.innerHTML = stepsHtml(bal); lastSteps = S.type; }
+      var HOT = '#22d3ee', COLD = '#a78bfa', GND = '#94a3b8', NZ = '#fb923c', OK = '#4ade80', BAD = '#fbbf24';
+      function sig(u, cyc) { return Math.sin(2 * Math.PI * (cyc || 3) * u); }
+      function nz(u) { return 0.62 * Math.sin(2 * Math.PI * 23 * u + 0.4) + 0.38 * Math.sin(2 * Math.PI * 41 * u + 1.7); }
+      function txt(s, x, y, o) { o = o || {}; ctx.fillStyle = o.c || '#e2e8f0'; ctx.font = (o.w || 400) + ' ' + (o.s || 12) + 'px ' + FONT; ctx.textAlign = o.a || 'left'; ctx.fillText(s, x, y); }
+      function wrapC(s, cx, y, maxW, lh, o) { o = o || {}; ctx.font = (o.w || 400) + ' ' + (o.s || 12) + 'px ' + FONT; var words = s.split(' '), line = '', yy = y; words.forEach(function (w) { var tst = line ? line + ' ' + w : w; if (ctx.measureText(tst).width > maxW && line) { txt(line, cx, yy, o); line = w; yy += lh; } else line = tst; }); if (line) txt(line, cx, yy, o); return yy; }
+      function rbox(x, y, w, h, r, fill, stroke) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); if (fill) { ctx.fillStyle = fill; ctx.fill(); } if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1.2; ctx.stroke(); } }
+      function arrow(x, y, col) { ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 8, y - 5); ctx.lineTo(x - 8, y + 5); ctx.closePath(); ctx.fill(); }
+      function trace(x1, x2, base, f, col, lw, dash) { ctx.strokeStyle = col; ctx.lineWidth = lw || 2; ctx.setLineDash(dash || []); ctx.beginPath(); for (var x = x1; x <= x2; x += 1) { var y = base - f(x); if (x === x1) ctx.moveTo(x, y); else ctx.lineTo(x, y); } ctx.stroke(); ctx.setLineDash([]); }
+
+      /* ---------- 위: 신호가 지나가는 길 ---------- */
+      var bw = narrow ? 58 : clamp(W * 0.14, 62, 104), top = 30, bot = 196;
+      var sx = 10, rx = W - 10 - bw, xs = sx + bw + 8, xe = rx - 6;
+      rbox(sx, top + 10, bw, bot - top - 20, 10, '#111a2e', '#334155'); rbox(rx, top + 10, bw, bot - top - 20, 10, '#111a2e', '#334155');
+      txt('보내는 쪽', sx + bw / 2, top + 34, { a: 'center', w: 800, s: narrow ? 11 : 12 }); wrapC(narrow ? '콘솔·마이크' : '콘솔·마이크 출력', sx + bw / 2, top + 52, bw - 10, 14, { a: 'center', s: 10.5, c: '#94a3b8' });
+      txt('받는 쪽', rx + bw / 2, top + 34, { a: 'center', w: 800, s: narrow ? 11 : 12 });
+      wrapC(bal ? (narrow ? '콜드를 뒤집어 더함' : '콜드를 다시 뒤집어 핫과 더해요') : (narrow ? '그대로 받음' : '들어온 그대로 받아요'), rx + bw / 2, top + 52, bw - 10, 14, { a: 'center', s: 10.5, c: bal ? OK : BAD });
+      var zx1 = xs + (xe - xs) * 0.38, zx2 = xs + (xe - xs) * 0.62;
+      ctx.fillStyle = 'rgba(251,146,60,0.10)'; ctx.fillRect(zx1, top + 8, zx2 - zx1, bot - top - 16);
+      ctx.strokeStyle = 'rgba(251,146,60,0.55)'; ctx.setLineDash([4, 4]); ctx.lineWidth = 1; ctx.strokeRect(zx1, top + 8, zx2 - zx1, bot - top - 16); ctx.setLineDash([]);
+      txt(narrow ? (bal ? '⚡ 두 선에 같은 잡음' : '⚡ 잡음') : '⚡ 잡음이 들어오는 곳', (zx1 + zx2) / 2, top - 2, { a: 'center', w: 800, s: 11, c: NZ });
+      txt((narrow ? '' : '(전원선·조명 등) ') + '잡음 ' + nkTxt, (zx1 + zx2) / 2, bot + 12, { a: 'center', s: 10.5, c: NZ });
+      txt(S.len + ' m ' + (bal ? '밸런스 (XLR)' : '언밸런스 (TS)'), xs, 14, { s: 11, w: 700, c: '#cbd5e1' });
+      var A = 11, nA = 6 * nk;
+      function ramp(x) { return clamp((x - zx1) / (zx2 - zx1), 0, 1); }
+      var rows = bal ? [[top + 38, narrow ? '핫 (+)' : '핫 (+) · 원래 신호', HOT, 1], [top + 92, narrow ? '콜드 (−) · 뒤집음' : '콜드 (−) · 뒤집은 신호', COLD, -1], [bot - 22, narrow ? '그라운드' : '그라운드 (실드)', GND, 0]]
+                     : [[top + 38, narrow ? '신호선' : '신호선 · 원래 신호', HOT, 1], [top + 92, null, null, null], [bot - 22, narrow ? '그라운드' : '그라운드 (실드)', GND, 0]];
+      rows.forEach(function (r) {
+        var y = r[0];
+        if (!r[1]) { ctx.strokeStyle = '#334155'; ctx.setLineDash([3, 6]); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(xs, y); ctx.lineTo(xe, y); ctx.stroke(); ctx.setLineDash([]); txt(narrow ? '콜드 선 없음' : '콜드 선 없음 — 언밸런스는 짝이 되는 선이 없어요', xs + 4, y - 8, { s: 10.5, c: '#64748b' }); return; }
+        txt(r[1], xs + 2, y - 15, { s: 10.5, w: 700, c: r[2] });
+        if (!r[3]) { trace(xs, xe - 6, y, function () { return 0; }, r[2], 2); arrow(xe, y, r[2]); return; }
+        trace(xs, xe - 6, y, function (x) { var u = (x - xs) / (xe - xs); return A * r[3] * sig(u, 4) + nA * ramp(x) * nz(u); }, r[2], 2.2);
+        arrow(xe, y, r[2]);
       });
-      if (bal) {   // 빼기 표시
-        ctx.fillStyle = '#e2e8f0'; ctx.font = '800 16px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('−', x0 - 10, band * 1.5 - 6); ctx.fillText('=', x0 - 10, band * 2 + 6); ctx.textAlign = 'left';
+      if (bal && !narrow) {   // 같은 잡음이 두 선에 똑같이
+        txt('두 선에 같은 잡음', (zx1 + zx2) / 2, top + 66, { a: 'center', s: 10.5, w: 700, c: NZ });
+        txt('뒤집기', rx - 4, top + 92 + 18, { a: 'right', s: 10, w: 700, c: COLD });
+      }
+
+      /* ---------- 아래: 받는 쪽에서 일어나는 일 ---------- */
+      var y0 = bot + 30; ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, y0 - 8); ctx.lineTo(W, y0 - 8); ctx.stroke();
+      txt('받는 쪽에서 일어나는 일', 12, y0 + 10, { w: 800, s: 12.5 });
+      var opW = narrow ? 18 : 26, pTop = y0 + 22, pH = Hh - pTop - 10, pw = (W - 20 - 2 * opW) / 3;
+      function panel(i, title, col, f, nf, nLab) {
+        var x = 10 + i * (pw + opW); rbox(x, pTop, pw, pH, 9, '#111a2e', '#1e293b');
+        var ty = wrapC(title, x + pw / 2, pTop + 17, pw - 10, 13, { a: 'center', s: narrow ? 10 : 11, w: 700, c: col });
+        var mid = Math.max(ty + 34, pTop + pH * 0.48), x1 = x + 8, x2 = x + pw - 8;
+        if (f) trace(x1, x2, mid, function (xx) { return f((xx - x1) / (x2 - x1)); }, col, 2.2);
+        var ny = pTop + pH - 24;
+        if (nf) { trace(x1, x2, ny, function (xx) { return nf((xx - x1) / (x2 - x1)); }, NZ, 1.4, nf === true ? [3, 3] : null); }
+        if (nLab) txt(nLab, x + pw / 2, pTop + pH - 6, { a: 'center', s: 10, c: NZ });
+      }
+      function op(i, s) { txt(s, 10 + (i + 1) * pw + i * opW + opW / 2, pTop + pH * 0.5 + 6, { a: 'center', w: 800, s: 18 }); }
+      var a2 = 10;
+      if (bal) {
+        panel(0, '핫: 신호 + 잡음', HOT, function (u) { return a2 * sig(u, 2) + nA * nz(u); }, function (u) { return nA * nz(u); }, '잡음 (+)');
+        op(0, '+');
+        panel(1, '콜드를 뒤집으면: 신호 − 잡음', COLD, function (u) { return a2 * sig(u, 2) - nA * nz(u); }, function (u) { return -nA * nz(u); }, '잡음 (−) 반대 모양');
+        op(1, '=');
+        panel(2, '결과: 신호 2배 · 잡음 0', OK, function (u) { return 2 * a2 * sig(u, 2); }, function () { return 0; }, '잡음이 지워짐');
+      } else {
+        panel(0, '신호선: 신호 + 잡음', HOT, function (u) { return a2 * sig(u, 2) + nA * nz(u); }, function (u) { return nA * nz(u); }, '잡음');
+        op(0, '→');
+        panel(1, '결과: 잡음이 그대로 남아요', BAD, function (u) { return a2 * sig(u, 2) + nA * nz(u); }, function (u) { return nA * nz(u); }, '잡음 그대로');
+        op(1, '✕');
+        var x3 = 10 + 2 * (pw + opW); rbox(x3, pTop, pw, pH, 9, '#111a2e', '#1e293b');
+        wrapC('뺄 짝(콜드 선)이 없어서 잡음만 골라 지울 수 없어요', x3 + pw / 2, pTop + 24, pw - 14, 15, { a: 'center', s: narrow ? 10.5 : 11.5, c: '#cbd5e1' });
       }
     }
     function wrapText(txt, x, y, maxW, lh) { var line = '', yy = y; txt.split(' ').forEach(function (w) { var test = line ? line + ' ' + w : w; if (ctx.measureText(test).width > maxW && line) { ctx.fillText(line, x, yy); line = w; yy += lh; } else line = test; }); if (line) ctx.fillText(line, x, yy); }

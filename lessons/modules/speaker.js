@@ -238,7 +238,7 @@
           '<div class="sim-speaker-view"><canvas class="sim-speaker-cv" data-cv="cover" aria-label="위에서 본 예배실: 단상(왼쪽)의 메인 스피커와 좌석 36개의 레벨 지도"></canvas>' +
             '<canvas class="sim-speaker-cv" data-cv="side" aria-label="옆에서 본 예배실: 스피커 높이와 세로 커버리지, 줄마다 앉은 사람"></canvas>' +
             '<div class="sim-speaker-legend"><span><i style="background:#16a34a"></i>평균 ±3 dB</span><span><i style="background:#f59e0b"></i>3–6 dB 큼</span><span><i style="background:#dc2626"></i>6 dB 넘게 큼</span><span><i style="background:#60a5fa"></i>3–6 dB 작음</span><span><i style="background:#1e3a8a"></i>6 dB 넘게 작음</span></div>' +
-            '<div class="sim-hint">스피커(단상 위 검은 상자)를 끌어 옮기고, 노란 손잡이를 끌어 방향을 돌리세요. 좌석을 누르면 그 자리 소리를 들어요.</div></div>' +
+            '<div class="sim-hint">스피커(단상 위 검은 상자)를 끌어 옮기고, 노란 손잡이를 끌어 방향을 돌리세요. 좌석을 누르면 그 자리의 레벨과 거리를 볼 수 있어요.</div></div>' +
           '<div class="sim-side">' +
             '<div class="sim-box"><h4>스피커 <small>커버리지: 제조사 자료</small></h4><div class="sim-speaker-models">' + Object.keys(MODELS).map(function (k) { var m = MODELS[k]; return '<label class="sim-type"><input type="radio" name="simSpkModel" value="' + k + '"' + (k === S.model ? ' checked' : '') + '><span><b>' + esc(m.name) + '</b><small>가로 ' + m.h + '° × 세로 ' + m.v + '°</small></span></label>'; }).join('') + '</div></div>' +
             '<div class="sim-box"><h4>겨누기</h4><label class="sim-range"><span>방향 (가로) <output data-out="aim"></output></span><input type="range" min="-90" max="90" step="1" data-sim="aim" aria-label="스피커 가로 방향"></label>' +
@@ -265,7 +265,7 @@
               '<label class="sim-switch"><input type="checkbox" data-sim="delayOn" checked><span>딜레이 스피커 켜기 (꺼서 비교)</span></label></div>' +
             '<div class="sim-box sim-read" data-role="readDel"></div>' +
           '</div></div></div>' +
-        '<div class="sim-box"><h4>소리</h4><div class="sim-btns"><button type="button" class="sim-btn sim-play" data-sim="play" style="flex:1 1 160px">🔊 소리 켜기</button>' + [['leadVox', '보컬'], ['keysLR', '키보드']].map(function (m) { return '<label class="sim-type" style="flex:0 0 auto"><input type="radio" name="simSpkSrc" value="' + m[0] + '"' + (m[0] === S.src ? ' checked' : '') + '><span><b>' + m[1] + '</b></span></label>'; }).join('') + '</div><p class="sim-note" data-role="srcnote">녹음을 불러오는 중…</p></div>' +
+        /* 2026-10-24: 「소리 켜기」(자리별 소리 듣기)는 요청으로 뺌 — 그림·계산·과제는 그대로 */
       '</div>';
     var q = function (s) { return el.querySelector(s); };
     var cvs = { cover: q('[data-cv=cover]'), side: q('[data-cv=side]'), monitor: q('[data-cv=monitor]'), delay: q('[data-cv=delay]'), graph: q('[data-cv=graph]') };
@@ -549,7 +549,7 @@
     cvs.monitor.addEventListener('pointerdown', downMon); cvs.monitor.addEventListener('pointermove', moveMon); cvs.monitor.addEventListener('pointerup', up); cvs.monitor.addEventListener('pointercancel', up);
     el.addEventListener('input', onInput); el.addEventListener('change', onChange); el.addEventListener('click', onClick);
     var ro = window.ResizeObserver ? new ResizeObserver(function () { drawAll(); }) : null; if (ro) ro.observe(el); else window.addEventListener('resize', drawAll);
-    update(); load(S.src);
+    update();   // 2026-10-24: 녹음 불러오기·소리 재생 없음
 
     return {
       destroy: function () { alive = false; stopAudio(); if (actx && actx.close) { try { actx.close(); } catch (e) { /* noop */ } } if (ro) ro.disconnect(); else window.removeEventListener('resize', drawAll);
@@ -558,7 +558,7 @@
         el.removeEventListener('input', onInput); el.removeEventListener('change', onChange); el.removeEventListener('click', onClick); el.innerHTML = ''; },
       state: function () { var c = R.cover, m = R.mon, d = R.del; return { scene: S.scene, model: S.model, sx: S.sx, sy: S.sy, aim: S.aim, tilt: S.tilt, height: S.hgt + 1.2, rowsIn: c.rowsIn, sel: S.sel, spread: c.spread, frontMinusBack: c.front - c.back, outside: c.outside,
         mx: S.mx, my: S.my, margin: m.margin, risk: m.risk, monAngle: m.w.ang, ds: m.ds, listener: S.listener, delayMs: S.delayMs, delLvl: S.delLvl, polarity: S.polarity, delayOn: S.delayOn, tMain: d.tm, tDelay: d.td, dt: d.dt, need: d.need, aligned: d.aligned,
-        audio: S.audio, ready: !!stem, synthetic: !!(stem && stem.synthetic), done: Object.keys(S.done) }; },
+        audio: S.audio, ready: true, synthetic: false, done: Object.keys(S.done) }; },
       set: function (o) {
         o = o || {};
         if (o.scene && /^(cover|monitor|delay)$/.test(o.scene)) S.scene = o.scene;
@@ -655,7 +655,7 @@
     ],
     practice: {
       kind: 'speakerRoom',
-      lead: '세 장면에서 스피커를 다뤄요. ① 예배실을 위와 옆에서 보며 메인 스피커의 위치·방향·높이·숙이는 각도를 맞춰 자리마다 고르게 들리게 하고, ② 단상에서 카디오이드 마이크와 모니터의 자리를 잡아 피드백을 줄이고, ③ 딜레이 스피커의 시간을 맞춰요. 「소리 켜기」로 자리별 소리와 콤 필터·메아리를 들을 수 있어요.',
+      lead: '세 장면에서 스피커를 다뤄요. ① 예배실을 위와 옆에서 보며 메인 스피커의 위치·방향·높이·숙이는 각도를 맞춰 자리마다 고르게 들리게 하고, ② 단상에서 카디오이드 마이크와 모니터의 자리를 잡아 피드백을 줄이고, ③ 딜레이 스피커의 시간을 맞춰요.',
       note: '커버리지 각도 90°×50°(ZXA1-90·ZX1-90)는 제조사 자료이고, 「넓은·좁은 커버리지」는 비교용 예시예요. 레벨 지도·피드백 여유·고음 감소·콤 필터는 역제곱 법칙과 단순한 지향성 모델로 계산한 교육용 근사예요. 반사음은 계산에 넣지 않았어요.',
       tasks: [
         { id: 'cover', title: '객석 고르게 덮기', text: '① 장면에서 메인 스피커를 옮기고 겨눠, 좌석 레벨 차이(가장 큰 자리 − 가장 작은 자리)를 6 dB 이하로 만드세요.' },

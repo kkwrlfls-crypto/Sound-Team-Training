@@ -104,7 +104,7 @@
   /* 교회 시스템 실습 · 트러블슈팅은 메뉴의 실습 화면을 묶어 보여 줍니다(메뉴 구성은 그대로). */
   var HOME_CATS = [
     { id: 'hardware', path: 'hardware', img: 'img/modules/hw_mic.jpg' },
-    { id: 'mixing', path: 'mixing', img: 'console_strip.jpg', imgPos: '50% 22%' },
+    { id: 'mixing', path: 'mixing', img: 'img/modules/mix2_path.jpg', imgPos: '50% 50%' },
     { id: 'church', title: '교회 시스템 실습', sum: '본당에 설치된 실제 장비 구성으로 배치·배선하고, 콘솔을 직접 조작해 봅니다.', tabs: ['tab2', 'tab5', 'tab6', 'tab1'], img: 'cl5_top.jpg', imgPos: '50% 70%' },
     { id: 'trouble', title: '트러블슈팅', sum: '소리가 안 나거나 하울링이 나는 상황에서 원인을 찾고 복구하는 연습을 합니다.', tabs: ['tab7', 'tabFeedback', 'tabCheck', 'tabTips'], img: 'jack_strip.jpg', imgPos: '30% 50%' }
   ];

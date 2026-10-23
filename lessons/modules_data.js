@@ -16,7 +16,7 @@ window.STA_PATHS = [
     prereq: ['signal-flow'],
     modules: ['mic', 'cable', 'console', 'amp', 'speaker'],
     practice: ['tab1', 'tab6', 'tab2'], practiceTitle: '장비 연결 실습' },   /* 2026-10-23: 장비 브랜드 알아보기는 실습에서 빼고 따로 있는 메뉴로 */
-  { id: 'mixing', title: '믹싱 스킬', icon: 'fader', img: 'console_strip.jpg',
+  { id: 'mixing', title: '믹싱 스킬', icon: 'fader', img: 'img/modules/mix2_path.jpg',
     sum: '신호 레벨을 관리하고, 음색·다이내믹·공간감을 조절합니다.',
     lead: '신호 레벨을 올바르게 관리하는 것부터 시작해, 음색과 다이내믹, 공간감을 다루는 방법을 익힙니다.',
     route: ['Gain Structure', 'EQ', 'Gate', 'Compressor', '공간계 이펙트'],
@@ -152,7 +152,7 @@ window.STA_MODULES = {
 
   /* ======================================================================= 믹싱 스킬: Gain Structure */
   'gain-structure': {
-    id: 'gain-structure', path: 'mixing', no: 1, status: 'ready', level: '기본', minutes: 45, img: 'console_strip.jpg', imgPos: '50% 20%',
+    id: 'gain-structure', path: 'mixing', no: 1, status: 'ready', level: '기본', minutes: 45, img: 'img/modules/mix2_gain.jpg',
     title: 'Gain Structure', sub: '신호 레벨을 올바르게 관리하기',
     prereq: ['signal-flow', 'gain-fader'],
     overview: {
