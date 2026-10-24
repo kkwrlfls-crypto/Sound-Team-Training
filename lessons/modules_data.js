@@ -12,7 +12,7 @@ window.STA_PATHS = [
     sum: '장비의 구조를 알고, 어떻게 연결되는지 이해합니다.',
     lead: '실제 장비를 식별하고, 구조와 원리를 이해하며, 올바르게 연결할 수 있는 기본기를 다집니다.',
     route: ['마이크', '케이블', '콘솔', '앰프', '스피커'],
-    tip: '소리가 지나가는 순서대로 배우고, 확성 시스템의 기본 · MG12XU 실습으로 실제 연결을 익혀요.',
+    tip: '먼저 아래 기초 이론 레슨으로 신호 흐름을 익히고, 소리가 지나가는 순서대로 배워요. 실제 연결은 메뉴의 「실습」에서 익혀요.',
     prereq: ['signal-flow'],
     modules: ['mic', 'cable', 'console', 'amp', 'speaker'],
     practice: ['tab1', 'tab6', 'tab2'], practiceTitle: '장비 연결 실습' },   /* 2026-10-23: 장비 브랜드 알아보기는 실습에서 빼고 따로 있는 메뉴로 */
@@ -20,7 +20,7 @@ window.STA_PATHS = [
     sum: '신호 레벨을 관리하고, 음색·다이내믹·공간감을 조절합니다.',
     lead: '신호 레벨을 올바르게 관리하는 것부터 시작해, 음색과 다이내믹, 공간감을 다루는 방법을 익힙니다.',
     route: ['Gain Structure', 'EQ', 'Gate', 'Compressor', '공간계 이펙트'],
-    tip: '먼저 「기초 이론」의 GAIN과 페이더 · HPF와 EQ · AUX와 모니터 레슨을 보고 시작하세요.',
+    tip: '먼저 아래 기초 이론 레슨 세 개를 보고 시작하세요. 귀 훈련은 메뉴의 「실습」에 있어요.',
     prereq: ['gain-fader', 'hpf-eq', 'aux-monitor'],
     modules: ['gain-structure', 'eq', 'gate', 'compressor', 'fx-space'],
     practice: ['tab3', 'tabMixVideo'], practiceTitle: '귀 훈련 · 믹싱 영상' },

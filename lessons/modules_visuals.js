@@ -76,7 +76,7 @@
         '<rect x="230" y="40" width="120" height="70" rx="10" fill="#0f2747"/>' + t(290, 72, '콘솔', { size: 14, fill: '#fff', weight: 800 }) + t(290, 92, '+48V ON', { size: 11, fill: '#fde68a' }) +
         '<path d="M350 75 H470" stroke="' + C.ink + '" stroke-width="4"/><path d="M350 66 H470" stroke="' + C.amber + '" stroke-width="2" stroke-dasharray="6 4"/>' + t(410, 56, '전원 →', { size: 11, fill: C.amber }) + t(410, 98, '← 소리 신호', { size: 11, fill: C.blue }) +
         '<rect x="470" y="50" width="90" height="50" rx="25" fill="#334155"/>' + t(515, 80, '콘덴서', { size: 12, fill: '#fff', weight: 700 }) +
-        t(400, 150, '같은 XLR 케이블로 전원과 신호가 함께 다녀요', { size: 12, fill: C.ink }) + t(400, 170, '꽂고 뺄 때는 +48V 를 끄세요 (Shure 안내)', { size: 11, fill: C.red }), '팬텀 전원과 XLR 핀');
+        t(400, 150, '같은 XLR 케이블로 전원과 신호가 함께 다녀요', { size: 12, fill: C.ink }) + t(400, 170, '꽂고 뺄 때는 +48V 를 끄세요', { size: 11, fill: C.red }), '팬텀 전원과 XLR 핀');
     },
     levels: function () {
       var y = function (dbu) { return 180 - (dbu + 70) * 1.9; };

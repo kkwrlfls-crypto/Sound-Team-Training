@@ -49,6 +49,8 @@
 .mod-pre b { font-size: 0.86rem; color: var(--lsn-blue); } .mod-pre span { font-size: 0.74rem; color: #64748b; }
 .mod-pre.done { border-color: var(--sta-ok-line); background: var(--sta-ok-bg); } .mod-pre.done b { color: var(--sta-ok); }
 .mod-pre[aria-disabled="true"] { opacity: 0.6; cursor: default; }
+.mod-prereq--tip { flex-direction: column; gap: 6px; margin-top: 10px; }   /* 2026-10-24: 추천 학습 순서 상자 안 */
+.mod-prereq--tip .mod-pre { min-width: 0; width: 100%; background: var(--sta-surface, #fff); }
 .mod-cards { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
 .mod-card { display: flex; flex-direction: column; padding: 0; overflow: hidden; text-align: left; cursor: pointer; font: inherit; color: inherit; background: var(--sta-surface); border: 1px solid var(--sta-line); border-radius: var(--sta-r); transition: border-color .15s, box-shadow .15s, transform .15s; }
 .mod-card:hover { border-color: #9fb4cc; box-shadow: var(--sta-shadow); transform: translateY(-1px); }

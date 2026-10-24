@@ -117,12 +117,14 @@
       '<section class="mod-phero"><div class="mod-phero__main"><div class="mod-phero__img"><img src="' + esc(p.img) + '" alt=""></div><div class="mod-phero__text"><span class="mod-badge">학습 경로</span><h1 id="modTitle">' + esc(p.title) + '</h1><p>' + esc(p.lead) + '</p>' +
       (pr ? '<div class="mod-phero__prog"><span>' + pr.done + ' / ' + pr.n + ' 완료</span><span class="mod-bar"><i style="width:' + Math.round(pr.done / pr.n * 100) + '%"></i></span><span>' + Math.round(pr.done / pr.n * 100) + '%</span></div>' : '') + '</div></div>' +
       '<aside class="mod-phero__side">' + (p.route ? '<div class="mod-side-box"><h3>학습 경로</h3><div class="mod-route">' + p.route.map(function (r, i) { return (i ? '<i>→</i>' : '') + '<span>' + esc(r) + '</span>'; }).join('') + '</div></div>' : '') +
-      '<div class="mod-side-box tip"><h3>💡 추천 학습 순서</h3><p>' + esc(p.tip || '실습 카드를 차례로 열어 배운 것을 적용해 보세요.') + '</p></div></aside></section>';
-    if (p.prereq) h += '<section class="home-sec"><div class="home-sec-head"><h2>먼저 배울 것 (선수 학습)</h2></div><div class="mod-prereq">' + p.prereq.map(function (id) {
-      var l = lessonById(id); if (!l) return ''; var ready = l.status === 'ready', d = lessonDone(id);
-      return '<button type="button" class="mod-pre' + (d ? ' done' : '') + '" data-lesson="' + l.id + '"' + (ready ? '' : ' aria-disabled="true"') + '><b>' + (d ? '✓ ' : '📘 ') + esc(l.title) + '</b><span>' + (ready ? (d ? '완료' : '기초 이론 레슨 · 약 ' + l.minutes + '분') : '준비 중') + '</span></button>'; }).join('') + '</div></section>';
+      '<div class="mod-side-box tip"><h3>💡 추천 학습 순서</h3><p>' + esc(p.tip || '실습 카드를 차례로 열어 배운 것을 적용해 보세요.') + '</p>' +
+        /* 2026-10-24: 따로 있던 「먼저 배울 것 (선수 학습)」 칸은 이 상자와 겹쳐서 빼고, 레슨 이름을 여기서 바로 열 수 있게 함 */
+        (p.prereq ? '<div class="mod-prereq mod-prereq--tip">' + p.prereq.map(function (id) {
+          var l = lessonById(id); if (!l) return ''; var ready = l.status === 'ready', d = lessonDone(id);
+          return '<button type="button" class="mod-pre' + (d ? ' done' : '') + '" data-lesson="' + l.id + '"' + (ready ? '' : ' aria-disabled="true"') + '><b>' + (d ? '✓ ' : '📘 ') + esc(l.title) + '</b><span>' + (ready ? (d ? '완료' : '기초 이론 레슨 · 약 ' + l.minutes + '분') : '준비 중') + '</span></button>'; }).join('') + '</div>' : '') +
+      '</div></aside></section>';
     if (p.modules) h += '<section class="home-sec"><div class="home-sec-head"><h2>' + esc(p.title) + ' 과정</h2><span class="mod-home-sub">' + (pr ? pr.ready + '개 과정을 지금 배울 수 있어요. 나머지는 같은 구조로 준비 중이에요.' : '') + '</span></div><div class="mod-cards">' + p.modules.map(function (id) { return MODS[id] ? modCard(MODS[id]) : ''; }).join('') + '</div></section>';
-    if (p.practice) h += '<section class="home-sec"><div class="home-sec-head"><h2>' + esc(p.practiceTitle || '실습') + '</h2><span class="mod-home-sub">' + (p.modules ? '과정에서 배운 것을 실제 장비 화면에서 연습해요.' : '') + '</span></div><div class="home-cards">' + p.practice.map(function (tab) { var i = PRACTICE_INFO[tab];
+    if (p.practice && !p.modules) h += '<section class="home-sec"><div class="home-sec-head"><h2>' + esc(p.practiceTitle || '실습') + '</h2><span class="mod-home-sub">' + (p.modules ? '과정에서 배운 것을 실제 장비 화면에서 연습해요.' : '') + '</span></div><div class="home-cards">' + p.practice.map(function (tab) { var i = PRACTICE_INFO[tab];
       return '<button type="button" class="home-card" data-mgo-tab="' + tab + '"><div class="home-card__thumb">' + (i[2] ? '<img src="' + i[2] + '" alt="" loading="lazy">' : thumb({ thumb: 'eq' })) + '</div><div class="home-card__body"><div class="home-card__title">' + esc(i[0]) + '</div><div class="home-card__sum">' + esc(i[1]) + '</div><div class="home-card__meta"><span class="home-tag practice">실습</span></div></div></button>'; }).join('') + '</div></section>';
     h += creditHtml(p.img);
     root.innerHTML = h;
