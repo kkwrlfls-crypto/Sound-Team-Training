@@ -371,7 +371,16 @@
     if (find && view.tab === 'theory') { var sec = Array.prototype.find.call(document.querySelectorAll('#tabModule .mod-sec'), function (x) { return x.querySelector('.mod-sec__h').textContent.indexOf(find) >= 0; });
       if (sec) setTimeout(function () { sec.scrollIntoView({ block: 'start', behavior: 'smooth' }); sec.classList.add('mod-sec--focus'); setTimeout(function () { sec.classList.remove('mod-sec--focus'); }, 2200); }, 80); }
   }
-  function setTab(tab) { view.tab = tab; renderModule(); setHash('module-' + view.mod + (tab !== 'overview' ? '-' + tab : '')); var tb = document.querySelector('#tabModule .mod-tabs'); if (tb && tb.getBoundingClientRect().top < 0) tb.scrollIntoView({ block: 'start' }); }
+  /* 2026-10-24 피드백: 다음 단계로 넘어가도 화면이 아래쪽에 머무는 일이 있었음 → 탭을 바꾸면 항상 탭 줄이 화면 맨 위(상단 바 바로 아래)로 오게 */
+  function scrollToTabs() {
+    var tb = document.querySelector('#tabModule .mod-tabs'); if (!tb) return;
+    var hdr = document.querySelector('.site-header'), off = 0;
+    if (hdr && getComputedStyle(hdr).position === 'sticky') off = hdr.getBoundingClientRect().height;
+    var prev = tb.style.position; tb.style.position = 'static';   // 붙어 있는(sticky) 줄은 붙은 자리가 측정되므로, 잠깐 떼어 원래 자리를 잼
+    var y = tb.getBoundingClientRect().top + window.scrollY - off - 8; tb.style.position = prev;
+    try { window.scrollTo({ top: Math.max(0, y), behavior: 'auto' }); } catch (e) { window.scrollTo(0, Math.max(0, y)); }
+  }
+  function setTab(tab) { view.tab = tab; renderModule(); setHash('module-' + view.mod + (tab !== 'overview' ? '-' + tab : '')); scrollToTabs(); }
   function focusTitle() { var t2 = $('modTitle'); if (t2) { t2.setAttribute('tabindex', '-1'); try { t2.focus({ preventScroll: true }); } catch (e) { /* noop */ } } }
   var hashLock = false;
   function setHash(h) { if (window.STAHistory) { STAHistory.record(); return; } hashLock = true; try { history.replaceState(null, '', '#' + h); } catch (e) { location.hash = h; } setTimeout(function () { hashLock = false; }, 0); }

@@ -351,7 +351,7 @@
     if (t.closest('#lsnBack')) { if (backTo) openLesson(backTo.id, backTo.sec); return; }
     if (t.closest('[data-home]')) { goHome(); return; }
     var stp = t.closest('.lsn-step');
-    if (stp) { var pid = stp.getAttribute('data-panel'); var first = SECS.find(function (x) { return x.panel === pid; }); goSec(first.n, false); return; }
+    if (stp) { var pid = stp.getAttribute('data-panel'); var first = SECS.find(function (x) { return x.panel === pid; }); goSec(first.n, false); var sb = document.querySelector('#tabLesson .lsn-steps'); if (sb) { var hd = document.querySelector('.site-header'), off = hd && getComputedStyle(hd).position === 'sticky' ? hd.getBoundingClientRect().height : 0; window.scrollTo(0, Math.max(0, sb.getBoundingClientRect().top + window.scrollY - off - 8)); } return; }   /* 2026-10-24: 단계를 바꾸면 화면 위로 */
     var ri = t.closest('.lsn-rail-item'); if (ri) { goSec(+ri.getAttribute('data-sec')); return; }
     if (t.closest('#lsnNext')) { if (curSec < 5) goSec(curSec + 1); else goHome(); return; }
     var g = t.closest('.lsn-go'); if (g && cur) { openPractice(cur.practice.steps[+g.getAttribute('data-go')].go); return; }

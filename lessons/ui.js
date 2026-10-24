@@ -77,4 +77,14 @@
   }
   if (window.MutationObserver) new MutationObserver(updateCurrent).observe(nav, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
   updateCurrent();
+
+  /* 2026-10-24 피드백: 긴 화면 아래에서 위로 끌어올리기 힘듦 → 한 화면 넘게 내려가면 오른쪽 아래에 「맨 위로」 버튼 */
+  var topBtn = document.createElement('button'); topBtn.type = 'button'; topBtn.id = 'toTopBtn'; topBtn.setAttribute('aria-label', '맨 위로');
+  topBtn.innerHTML = '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg><span>맨 위로</span>';
+  topBtn.addEventListener('click', function () { try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); } });
+  document.body.appendChild(topBtn);
+  var topTick = false;
+  function updateTop() { topTick = false; topBtn.classList.toggle('show', window.scrollY > Math.max(600, window.innerHeight * 0.8)); }
+  window.addEventListener('scroll', function () { if (!topTick) { topTick = true; requestAnimationFrame(updateTop); } }, { passive: true });
+  updateTop();
 })();
