@@ -20,8 +20,8 @@ window.STA_PATHS = [
     sum: '신호 레벨을 관리하고, 음색·다이내믹·공간감을 조절합니다.',
     lead: '신호 레벨을 올바르게 관리하는 것부터 시작해, 음색과 다이내믹, 공간감을 다루는 방법을 익힙니다.',
     route: ['Gain Structure', 'EQ', 'Gate', 'Compressor', '공간계 이펙트'],
-    tip: '먼저 아래 기초 이론 레슨 세 개를 보고 시작하세요. 귀 훈련은 메뉴의 「실습」에 있어요.',
-    prereq: ['gain-fader', 'hpf-eq', 'aux-monitor'],
+    tip: '먼저 「음향 장비 학습」의 03. 콘솔 과정(게인·페이더·HPF·AUX)을 보고 시작하면 쉬워요. 귀 훈련은 메뉴의 「실습」에 있어요.',
+    prereq: ['signal-flow'],   /* 2026-10-25: GAIN과 페이더·HPF와 EQ·AUX와 모니터 레슨은 콘솔 과정과 겹쳐서 정리 */
     modules: ['gain-structure', 'eq', 'gate', 'compressor', 'fx-space'],
     practice: ['tab3', 'tabMixVideo'], practiceTitle: '귀 훈련 · 믹싱 영상' },
   { id: 'field', title: '통합 실전 훈련', icon: 'bus', img: 'jack_strip.jpg',
@@ -154,7 +154,7 @@ window.STA_MODULES = {
   'gain-structure': {
     id: 'gain-structure', path: 'mixing', no: 1, status: 'ready', level: '기본', minutes: 45, img: 'img/modules/mix2_gain.jpg',
     title: 'Gain Structure', sub: '신호 레벨을 올바르게 관리하기',
-    prereq: ['signal-flow', 'gain-fader'],
+    prereq: ['signal-flow'],
     overview: {
       lead: 'Gain Structure(게인 구조)는 마이크에서 스피커까지 <b>각 단계의 신호 크기를 알맞게 맞추는 것</b>이에요. 첫 단계인 GAIN 을 잘 맞추면 잡음은 적고, 찌그러지기 전까지의 여유(헤드룸)는 넉넉해져요.',
       terms: [

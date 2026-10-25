@@ -413,7 +413,7 @@
   window.STA_MODULES['fx-space'] = {
     id: 'fx-space', path: 'mixing', no: 5, status: 'ready', level: '중급', minutes: 35, thumb: 'reverb',
     title: '공간계 이펙트', sub: 'Reverb 와 Delay 로 공간감 더하기',
-    prereq: ['signal-flow', 'gain-fader'],
+    prereq: ['signal-flow'],
     overview: {
       lead: '큰 공간에서 소리는 벽·바닥·천장에 부딪히며 여러 번 반사된 뒤 귀에 도착해요. <b>리버브</b>는 이런 수많은 반사가 겹친 「울림」을, <b>딜레이</b>는 같은 소리가 일정한 시간 뒤 또렷하게 들리는 「반복」을 만들어요. 콘솔에서는 채널 소리의 일부를 <b>FX 버스로 보내(Send)</b> 이펙터를 지난 효과음(Wet)을 <b>다시 섞어(Return)</b> 공간감을 더해요. 공간감은 소리를 풍성하게 하지만, 많을수록 말은 덜 또렷해져요.',
       terms: [

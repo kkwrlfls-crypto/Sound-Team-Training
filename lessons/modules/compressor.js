@@ -423,7 +423,7 @@
   window.STA_MODULES.compressor = {
     id: 'compressor', path: 'mixing', no: 4, status: 'ready', level: '중급', minutes: 40, thumb: 'comp',
     title: 'Compressor', sub: '음량 편차를 고르게',
-    prereq: ['signal-flow', 'gain-fader'],
+    prereq: ['signal-flow'],
     overview: {
       lead: '컴프레서는 소리가 정해 둔 크기(<b>Threshold</b>)를 넘으면, 넘은 만큼을 정해 둔 비율(<b>Ratio</b>)로 줄여서 큰 소리와 작은 소리의 차이(<b>다이내믹 레인지</b>)를 좁혀 주는 장치예요. 줄어든 만큼은 <b>Makeup Gain</b> 으로 다시 올려, 작은 소리는 잘 들리고 큰 소리는 튀지 않게 만들어요.',
       terms: [

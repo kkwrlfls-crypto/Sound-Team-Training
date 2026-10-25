@@ -467,7 +467,7 @@
   window.STA_MODULES.gate = {
     id: 'gate', path: 'mixing', no: 3, status: 'ready', level: '중급', minutes: 30, thumb: 'gate',
     title: 'Gate', sub: '작은 잡음을 닫아 깨끗하게',
-    prereq: ['signal-flow', 'gain-fader'],
+    prereq: ['signal-flow'],
     overview: {
       lead: '게이트(Gate)는 <b>소리가 정한 크기(Threshold)보다 작으면 채널을 닫아</b> 잡음을 줄이는 도구예요. 말이나 연주가 없는 사이의 「쉬—」 잡음, 다른 악기에서 새어 들어온 소리(블리드)를 줄여요. 하지만 잘못 쓰면 <b>말의 시작과 끝이 잘려</b> 부자연스러워지니, 어디에 쓰고 어디에 쓰지 않을지 아는 것이 중요해요.',
       terms: [

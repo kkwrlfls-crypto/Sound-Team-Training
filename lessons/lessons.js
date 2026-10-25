@@ -85,7 +85,7 @@
   };
   function advWhere(a) { var g = ADV_GO[a.title]; if (!g) return null; if (g.tab) return { g: g, label: '음향 트러블슈팅 실습' }; var m = (window.STA_MODULES || {})[g.module]; return m && m.status === 'ready' ? { g: g, label: '「' + m.title + '」 모듈' } : null; }
   function cardAdvOpen(a, i) {
-    var w = advWhere(a), need = a.need.map(function (id) { var l = lessonById(id); return l ? l.title : id; }).join(', ');
+    var w = advWhere(a), need = a.need.map(function (id) { var l = lessonById(id); if (l) return l.title; var mm = (window.STA_MODULES || {})[id]; return mm ? '「' + mm.title + '」 과정' : id; }).join(', ');
     return '<button type="button" class="home-card home-adv" data-adv="' + i + '"' + (w ? '' : ' aria-disabled="true"') + '><div class="home-card__body"><div class="home-card__title">' + esc(a.title) + '</div>' +
       '<div class="home-card__sum">' + (w ? '이어서 배울 곳: ' + esc(w.label) : '준비 중') + '</div><div class="home-card__sum home-adv__need">먼저 배울 것: ' + esc(need) + '</div><div class="home-card__meta"><span class="home-tag adv">심화 ' + a.level + '단계</span></div></div></button>';
   }
@@ -180,13 +180,13 @@
       '<p class="hm-hero__lead">장비를 배우고, 직접 조작하고, 소리를 들으며 실제 예배 현장에서 바로 쓸 수 있는 음향 운영을 익힙니다.</p>' +
       '<div class="hm-hero__cta">' + cta + '<button type="button" class="ui-btn ui-btn--on-dark" data-mgo-tab="tabIntro">음향의 중요성 읽기</button></div></div>' +
       '<aside class="hm-me" aria-label="나의 학습 현황"><div class="hm-me__head"><div class="ui-ring" style="--p:' + pct + '"><span>' + pct + '%</span></div><div><h2>나의 학습 현황</h2><p>' + (started ? '완료한 레슨·과정 기준' : '아직 시작 전이에요') + '</p></div></div>' +
-      '<div class="hm-me__rows"><div class="hm-me__row"><span>기초 이론</span><b>' + doneN + ' / ' + ready.length + '</b>' + bar(ready.length ? doneN / ready.length * 100 : 0) + '</div>' +
+      '<div class="hm-me__rows"><div class="hm-me__row"><span>신호 흐름 레슨</span><b>' + doneN + ' / ' + ready.length + '</b>' + bar(ready.length ? doneN / ready.length * 100 : 0) + '</div>' +
       '<div class="hm-me__row"><span>학습 모듈</span><b>' + modDone + ' / ' + mods.length + '</b>' + bar(mods.length ? modDone / mods.length * 100 : 0) + '</div>' +
       '<div class="hm-me__row"><span>진행 중</span><b>' + (doing.length + doingL.length) + '개</b></div></div>' +
       '<p class="hm-me__note">기록은 이 브라우저에만 저장돼요.</p></aside></section>' +
       nextSection(doing, doingL) +
       '<section class="hm-sec" id="modHome"><div class="hm-sec__head"><h2>전체 학습 과정</h2><p>분야를 골라 시작하세요. 각 과정은 이론 → 실습 → 확인 문제로 이어져요.</p></div><div class="hm-cats">' + HOME_CATS.map(catCard).join('') + '</div></section>' +
-      '<section class="hm-sec home-sec" id="homeTheory"><div class="hm-sec__head"><h2>기초 이론</h2><p>학습 과정을 시작하기 전에 먼저 보면 좋은 짧은 레슨이에요.</p></div><div class="home-cards">' + LESSONS.map(cardLesson).join('') + '</div></section>' +
+      /* 2026-10-25: 「기초 이론」 칸 삭제 — 남은 레슨(신호 흐름)은 위 「처음이라면」 1번과 음향 장비 학습 경로에서 열어요 */
       '<section class="hm-sec home-sec" id="homeAdv"><div class="hm-sec__head"><h2>심화 주제</h2><p>더 깊이 알고 싶은 주제를, 그 내용을 다루는 과정으로 바로 열어요.</p></div><div class="home-cards">' + ADV.map(cardAdvOpen).join('') + '</div></section>';
   }
 
@@ -321,7 +321,7 @@
   /* ------------------------------------------------------------- 실습 화면·커리큘럼에 이론 연결 */
   // 2026-10-21: 실습 탭 머리에 다는 관련 이론·모듈 (모든 모듈 개방에 맞춰 넓힘)
   var TAB_MODULES = { tab1: ['mic', 'cable', 'amp', 'speaker'], tab6: ['console', 'gain-structure', 'eq'], tab2: ['cable', 'console', 'amp', 'speaker'], tab5: ['console', 'gain-structure', 'compressor'], tab7: ['cable', 'console'] };   /* 2026-10-23: Ear Training 탭의 관련 모듈 링크는 뺌 */
-  var TAB_LESSONS = { tab1: ['signal-flow'], tab2: ['signal-flow'], tab7: ['signal-flow'], tab6: ['gain-fader', 'hpf-eq', 'aux-monitor'], tab5: ['gain-fader', 'aux-monitor'] };
+  var TAB_LESSONS = { tab1: ['signal-flow'], tab2: ['signal-flow'], tab7: ['signal-flow'], tab6: ['signal-flow'], tab5: ['signal-flow'] };   /* 2026-10-25: 콘솔과 겹치는 레슨 3개 정리 */
   function theoryLinks(ids) {
     return ids.map(function (id) {
       var l = lessonById(id); if (!l) return '';
