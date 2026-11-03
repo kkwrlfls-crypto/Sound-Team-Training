@@ -23,7 +23,7 @@
 
   /* ---- 사진 위 위치 (px) ---- */
   var STRIP_IN = [213, 267, 319, 371, 424, 476, 530, 582, 634, 686, 738, 790, 844, 895, 948, 1000];
-  var STRIP_R = [1113, 1165, 1219, 1272, 1324, 1376, 1428, 1480], STRIP_MAIN = 1549;
+  var STRIP_R = [1113, 1165, 1219, 1272, 1324, 1376, 1428, 1480], STRIP_MAIN = 1552;   // 2026-11-04: 사진 확대 실측
   var ROW = { select: 485, solo: 609, lcd: 653, mute: 706, fTop: 772, fBot: 1000, led: [530, 537, 544, 551, 558, 565] };
   var BW = 28, BH = 22;
 
@@ -42,16 +42,16 @@
   var MGS = [['밴드', [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]], ['보컬', [1, 2, 3]], ['설교·사회', [17, 18]], ['성가대', [15, 16]], ['영상', [19, 20]], ['(비어 있음)', []]];
   var EQB = ['LOW', 'LO MID', 'HI MID', 'HIGH'], EQF = [100, 400, 2500, 8000];
   var MENU = [['home', 'HOME'], ['meters', 'METERS'], ['routing', 'ROUTING'], ['setup', 'SETUP'], ['library', 'LIBRARY'], ['effects', 'EFFECTS'], ['mutegrp', 'MUTE GRP'], ['utility', 'UTILITY']];
-  var MENU_Y = [102, 131, 160, 189, 219, 248, 277, 306];
+  var MENU_Y = [102, 130, 160, 190, 218, 248, 278, 306];
   var INFO = { routing: '입력·출력 연결(패치)을 정하는 곳이에요. 잘못 바꾸면 소리가 엉뚱한 곳으로 가니 이 실습에서는 보기만 해요.', setup: '날짜·밝기·네트워크(원격 앱 연결) 같은 콘솔 기본 설정이에요.',
     library: '채널 하나 · 이펙트 설정을 따로 저장하고 불러와요. 콘솔 전체 설정은 SCENES(씬)에서 해요.', effects: '안에 든 이펙터 8대(리버브 · 딜레이 등)를 고르고 조절해요.', utility: '지금 화면의 보조 기능(복사 · 이름 바꾸기 등)이 나와요.' };
   var KN = { // 노브: [px, py, 지름 px, 이름]
-    gain: [200, 198, 32, 'GAIN'], lcf: [338, 198, 32, 'LOW CUT FREQUENCY'], gthr: [192, 337, 32, 'GATE THRESHOLD'], dthr: [338, 337, 32, 'DYNAMICS THRESHOLD'],
-    eqq: [540, 195, 32, 'EQ Q'], eqf: [600, 280, 32, 'EQ FREQ'], eqg: [505, 335, 32, 'EQ GAIN'],
-    s1: [760, 195, 30, 'BUS SEND 1'], s2: [760, 262, 30, 'BUS SEND 2'], s3: [760, 330, 30, 'BUS SEND 3'], s4: [760, 395, 30, 'BUS SEND 4'],
-    mlev: [945, 195, 30, 'MAIN BUS LEVEL'], mpan: [945, 330, 30, 'PAN / BAL'], mon: [1714, 184, 28, 'MONITOR LEVEL'], phn: [1714, 267, 28, 'PHONES LEVEL'], talk: [1825, 267, 28, 'TALK LEVEL']
+    gain: [200, 202, 32, 'GAIN'], lcf: [342, 202, 32, 'LOW CUT FREQUENCY'], gthr: [200, 342, 32, 'GATE THRESHOLD'], dthr: [342, 342, 32, 'DYNAMICS THRESHOLD'],
+    eqq: [553, 202, 32, 'EQ Q'], eqf: [603, 288, 32, 'EQ FREQ'], eqg: [518, 346, 32, 'EQ GAIN'],
+    s1: [778, 198, 30, 'BUS SEND 1'], s2: [778, 266, 30, 'BUS SEND 2'], s3: [778, 334, 30, 'BUS SEND 3'], s4: [778, 400, 30, 'BUS SEND 4'],
+    mlev: [954, 198, 30, 'MAIN BUS LEVEL'], mpan: [954, 334, 30, 'PAN / BAL'], mon: [1712, 182, 28, 'MONITOR LEVEL'], phn: [1712, 268, 28, 'PHONES LEVEL'], talk: [1824, 268, 28, 'TALK LEVEL']
   };
-  var ENC = [1111, 1168, 1225, 1282, 1339, 1397];
+  var ENC = [1110, 1165, 1221, 1278, 1340, 1398];
 
   function injectCss() {
     if (document.getElementById('sta-x32p-css')) return;
@@ -74,7 +74,7 @@
       '.x32p-btn.on.r{background:radial-gradient(circle,#ffe0e0 0,#ff5a5a 55%,#d81b1b 100%);box-shadow:0 0 .9cqw rgba(255,40,40,.8)}',
       '.x32p-btn.on.o{background:radial-gradient(circle,#ffe7cf 0,#ff9a3d 55%,#e36a00 100%);box-shadow:0 0 .9cqw rgba(255,120,0,.85)}',
       '.x32p-btn.dim{opacity:.55;cursor:default}',
-      '.x32p-bl{display:block;font-size:.42cqw;font-weight:900;color:#e5e7eb;letter-spacing:-.01em;line-height:1;white-space:nowrap}.x32p-btn.on .x32p-bl{color:#052e16}',
+      '.x32p-bl{display:block;font-size:.5cqw;font-weight:900;color:#e5e7eb;letter-spacing:-.01em;line-height:1;white-space:nowrap}.x32p-btn.on .x32p-bl{color:#052e16}',
       '.x32p-lcd{position:absolute;border-radius:.2cqw;background:var(--c,#475569);color:#0b0c0e;display:flex;flex-direction:column;justify-content:center;align-items:center;line-height:1.05;box-shadow:inset 0 0 0 .08cqw rgba(0,0,0,.35);pointer-events:none;overflow:hidden}',
       '.x32p-lcd span{font-size:.62cqw;font-weight:800;opacity:.75}.x32p-lcd b{font-size:.78cqw;font-weight:900;white-space:nowrap}',
       '.x32p-lcd.sof{box-shadow:inset 0 0 0 .14cqw #f97316}',
@@ -201,7 +201,7 @@
       var o = { id: id, cx: cx, side: side, i: i };
       o.sel = button(id + '.sel', cx, ROW.select, BW, BH, 'SELECT', 'g');
       o.mtr = mk('div', 'x32p-mtr'); P(cx - 6, (ROW.led[0] + ROW.led[5]) / 2, 8, 44, o.mtr); o.mtr.innerHTML = '<i></i><i></i><i></i><i></i><i></i><i></i>';
-      if (side !== 'main') o.solo = button(id + '.solo', cx, ROW.solo, BW, BH, 'SOLO', 'y'); else { button('main.clearsolo', cx, 559, BW, BH, 'CLEAR SOLO', 'y'); o.solo = button('main.solo', cx, 610, BW, BH, 'SOLO', 'y'); }
+      if (side !== 'main') o.solo = button(id + '.solo', cx, ROW.solo, BW, BH, 'SOLO', 'y'); else { button('main.clearsolo', cx, 562, BW, BH, 'CLEAR SOLO', 'y'); o.solo = button('main.solo', cx, 608, BW, BH, 'SOLO', 'y'); }
       o.lcd = mk('div', 'x32p-lcd'); P(cx, ROW.lcd, 50, 32, o.lcd);
       o.mute = button(id + '.mute', cx, ROW.mute, BW, BH, 'MUTE', 'r');
       o.slot = mk('div', 'x32p-slot', { 'data-slot': id }); P(cx, (ROW.fTop + ROW.fBot) / 2 + 2, 40, ROW.fBot - ROW.fTop + 24, o.slot);
@@ -214,29 +214,29 @@
     STRIP_R.forEach(function (x, i) { addStrip('R' + i, x, 'R', i); });
     addStrip('MAIN', STRIP_MAIN, 'main', 0);
     // 레이어 · SOF
-    [['layer.in1', 160, 705, 'CH 1–16'], ['layer.in2', 160, 760, 'CH 17–32'], ['layer.aux', 160, 815, 'AUX IN / USB · FX RETURNS'], ['layer.busm', 160, 865, 'BUS MASTER']].forEach(function (b) { button(b[0], b[1], b[2], 30, 24, '입력 레이어: ' + b[3], 'g'); });
-    [['layerR.dca', 1064, 718, 'GROUP DCA 1–8'], ['layerR.bus1', 1064, 778, 'BUS 1–8'], ['layerR.bus2', 1064, 832, 'BUS 9–16'], ['layerR.mtx', 1064, 889, 'MATRIX 1–6 / MAIN C']].forEach(function (b) { button(b[0], b[1], b[2], 30, 24, '버스 쪽 레이어: ' + b[3], 'g'); });
-    button('sof', 1064, 499, 30, 24, 'SENDS ON FADER', 'o'); button('daw', 155, 490, 30, 24, 'DAW REMOTE (이 실습에서는 안 씀)', 'y').classList.add('dim');
+    [['layer.in1', 162, 718, 'CH 1–16'], ['layer.in2', 162, 774, 'CH 17–32'], ['layer.aux', 162, 830, 'AUX IN / USB · FX RETURNS'], ['layer.busm', 162, 886, 'BUS MASTER']].forEach(function (b) { button(b[0], b[1], b[2], 28, 23, '입력 레이어: ' + b[3], 'g'); });
+    [['layerR.dca', 1064, 718, 'GROUP DCA 1–8'], ['layerR.bus1', 1064, 774, 'BUS 1–8'], ['layerR.bus2', 1064, 830, 'BUS 9–16'], ['layerR.mtx', 1064, 886, 'MATRIX 1–6 / MAIN C']].forEach(function (b) { button(b[0], b[1], b[2], 28, 23, '버스 쪽 레이어: ' + b[3], 'g'); });
+    button('sof', 1064, 496, 28, 23, 'SENDS ON FADER', 'o'); button('daw', 162, 498, 28, 23, 'DAW REMOTE (이 실습에서는 안 씀)', 'y').classList.add('dim');
     // 채널 스트립 구역 버튼
-    [['p48', 165, 262, '48V (팬텀 전원)', 'y'], ['phase', 225, 262, 'Ø (위상 반전)', 'y'], ['lc', 330, 262, 'LOW CUT', 'y'], ['gate', 190, 400, 'GATE / DUCKER 켜기', 'y'], ['dyn', 335, 400, 'COMP / EXP 켜기', 'y'],
-     ['eqmode', 480, 262, 'EQ MODE', 'y'], ['band3', 670, 225, 'EQ HIGH 밴드 고르기', 'y'], ['band2', 670, 270, 'EQ HIGH MID 밴드 고르기', 'y'], ['band1', 670, 320, 'EQ LOW MID 밴드 고르기', 'y'], ['band0', 670, 365, 'EQ LOW 밴드 고르기', 'y'], ['eq', 505, 400, 'EQUALIZER 켜기', 'y'],
-     ['sb0', 830, 225, 'BUS SENDS 1–4', 'y'], ['sb1', 830, 270, 'BUS SENDS 5–8', 'y'], ['sb2', 830, 320, 'BUS SENDS 9–12', 'y'], ['sb3', 830, 365, 'BUS SENDS 13–16', 'y'],
-     ['mono', 945, 262, 'MONO BUS 로 보내기 (LEVEL 노브 = 모노 버스로 보내는 양)', 'y'], ['lr', 945, 400, 'STEREO BUS(메인) 로 보내기', 'y'],
-     ['monmono', 1714, 346, '모니터 MONO', 'y'], ['dim', 1714, 398, '모니터 DIM', 'y'], ['talka', 1825, 346, 'TALK A', 'y'], ['talkb', 1825, 398, 'TALK B', 'y'],
-     ['sc.prev', 1632, 502, 'SCENES: PREV (앞 씬)', 'y'], ['sc.next', 1680, 502, 'SCENES: NEXT (다음 씬)', 'y'], ['sc.undo', 1733, 502, 'SCENES: UNDO (불러오기 되돌리기)', 'y'], ['sc.go', 1799, 499, 'SCENES: GO (불러오기)', 'g'], ['sc.view', 1855, 510, 'SCENES: VIEW (화면에 씬 목록)', 'y']
-    ].forEach(function (b) { button(b[0], b[1], b[2], b[0] === 'sc.go' ? 38 : b[0] === 'sc.view' ? 18 : BW, b[0] === 'sc.go' ? 30 : b[0] === 'sc.view' ? 14 : BH, b[3], b[4]); });
+    [['p48', 178, 264, '48V (팬텀 전원)', 'y'], ['phase', 232, 264, 'Ø (위상 반전)', 'y'], ['lc', 346, 264, 'LOW CUT', 'y'], ['gate', 204, 412, 'GATE / DUCKER 켜기', 'y'], ['dyn', 342, 412, 'COMP / EXP 켜기', 'y'],
+     ['eqmode', 492, 264, 'EQ MODE', 'y'], ['band3', 686, 226, 'EQ HIGH 밴드 고르기', 'y'], ['band2', 686, 276, 'EQ HIGH MID 밴드 고르기', 'y'], ['band1', 686, 326, 'EQ LOW MID 밴드 고르기', 'y'], ['band0', 686, 376, 'EQ LOW 밴드 고르기', 'y'], ['eq', 518, 412, 'EQUALIZER 켜기', 'y'],
+     ['sb0', 844, 226, 'BUS SENDS 1–4', 'y'], ['sb1', 844, 277, 'BUS SENDS 5–8', 'y'], ['sb2', 844, 326, 'BUS SENDS 9–12', 'y'], ['sb3', 844, 374, 'BUS SENDS 13–16', 'y'],
+     ['mono', 954, 264, 'MONO BUS 로 보내기 (LEVEL 노브 = 모노 버스로 보내는 양)', 'y'], ['lr', 954, 396, 'STEREO BUS(메인) 로 보내기', 'y'],
+     ['monmono', 1714, 348, '모니터 MONO', 'y'], ['dim', 1714, 396, '모니터 DIM', 'y'], ['talka', 1826, 348, 'TALK A', 'y'], ['talkb', 1826, 396, 'TALK B', 'y'],
+     ['sc.prev', 1628, 502, 'SCENES: PREV (앞 씬)', 'y'], ['sc.next', 1678, 502, 'SCENES: NEXT (다음 씬)', 'y'], ['sc.undo', 1732, 502, 'SCENES: UNDO (불러오기 되돌리기)', 'y'], ['sc.go', 1802, 502, 'SCENES: GO (불러오기)', 'g'], ['sc.view', 1858, 520, 'SCENES: VIEW (화면에 씬 목록)', 'y']
+    ].forEach(function (b) { button(b[0], b[1], b[2], b[0] === 'sc.go' ? 38 : b[0] === 'sc.view' ? 18 : BW, b[0] === 'sc.go' ? 34 : b[0] === 'sc.view' ? 14 : BH, b[3], b[4]); });
     btns['sc.view'].classList.remove('y'); btns['sc.view'].classList.add('y');
-    [[1623, 908], [1674, 908], [1623, 953], [1674, 953], [1623, 997], [1674, 997]].forEach(function (p, k) { button('mg' + k, p[0], p[1], 32, 25, 'MUTE GROUP ' + (k + 1) + ' · ' + MGS[k][0], 'r'); });
-    MENU.forEach(function (m, k) { var b = button('menu.' + m[0], 1574, MENU_Y[k], 36, 22, '화면 메뉴: ' + m[1], 'g'); b.innerHTML = '<span class="x32p-bl">' + m[1] + '</span>'; });
-    [['up', 1498, 343], ['down', 1498, 375], ['pgl', 1558, 360], ['pgr', 1591, 360]].forEach(function (b) { button('nav.' + b[0], b[1], b[2], 22, 22, b[0] === 'up' || b[0] === 'down' ? 'LAYER ' + (b[0] === 'up' ? '위' : '아래') + ' (화면 안 이동)' : 'PAGE SELECT ' + (b[0] === 'pgl' ? '◀' : '▶'), 'y'); });
+    [[1624, 906], [1674, 906], [1624, 952], [1674, 952], [1624, 998], [1674, 998]].forEach(function (p, k) { button('mg' + k, p[0], p[1], 32, 25, 'MUTE GROUP ' + (k + 1) + ' · ' + MGS[k][0], 'r'); });
+    MENU.forEach(function (m, k) { var b = button('menu.' + m[0], 1576, MENU_Y[k], 54, 22, '화면 메뉴: ' + m[1], 'g'); b.innerHTML = '<span class="x32p-bl">' + m[1] + '</span>'; });
+    [['up', 1498, 344], ['down', 1498, 378], ['pgl', 1558, 362], ['pgr', 1590, 362]].forEach(function (b) { button('nav.' + b[0], b[1], b[2], 22, 22, b[0] === 'up' || b[0] === 'down' ? 'LAYER ' + (b[0] === 'up' ? '위' : '아래') + ' (화면 안 이동)' : 'PAGE SELECT ' + (b[0] === 'pgl' ? '◀' : '▶'), 'y'); });
     // 미터: 프리앰프(입력) · 다이내믹스(GR)
-    var pm = mk('div', 'x32p-mtr'); P(272, 199, 12, 60, pm); pm.innerHTML = '<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>';
-    var gm = mk('div', 'x32p-mtr'); P(270, 344, 10, 60, gm); gm.innerHTML = '<i></i><i></i><i></i><i></i><i></i><i></i>';
+    var pm = mk('div', 'x32p-mtr'); P(274, 203, 10, 62, pm); pm.innerHTML = '<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>';
+    var gm = mk('div', 'x32p-mtr'); P(274, 346, 10, 44, gm); gm.innerHTML = '<i></i><i></i><i></i><i></i><i></i><i></i>';
     // 메인 미터(화면 옆)
-    var mm = mk('div', 'x32p-pmtr'); P(1473, 210, 80, 132, mm); mm.innerHTML = '<div data-mm="0"></div><div data-mm="1"></div><div data-mm="2"></div>';
+    var mm = mk('div', 'x32p-pmtr'); P(1472, 208, 66, 136, mm); mm.innerHTML = '<div data-mm="0"></div><div data-mm="1"></div><div data-mm="2"></div>';
     mm.querySelectorAll('div').forEach(function (d) { for (var i = 0; i < 24; i++) d.appendChild(document.createElement('i')); });
     // 화면
-    var scr = mk('div', 'x32p-scr'); P(1092, 104, 311, 191, scr, false);
+    var scr = mk('div', 'x32p-scr'); P(1088, 102, 316, 188, scr, false);
     // 노브
     function knob(id, d, title, get, set, step) {
       var k = mk('div', 'x32p-knob', { tabindex: '0', role: 'slider', 'aria-label': title, 'data-tip': title, 'data-k': id }); var R = 64; P(d[0], d[1], R, R, k);
