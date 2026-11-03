@@ -103,20 +103,22 @@
     var b = '';
     function xlr(x, y, lab, col) { return '<circle cx="' + x + '" cy="' + y + '" r="15" fill="#fff" stroke="' + (col || C.ink) + '" stroke-width="2"/><circle cx="' + (x - 5) + '" cy="' + (y - 4) + '" r="2" fill="' + C.ink + '"/><circle cx="' + (x + 5) + '" cy="' + (y - 4) + '" r="2" fill="' + C.ink + '"/><circle cx="' + x + '" cy="' + (y + 5) + '" r="2" fill="' + C.ink + '"/>' + t(x, y + 30, lab, { size: 10.5, weight: 700, fill: col || C.ink }); }
     function nl4(x, y, lab) { return '<circle cx="' + x + '" cy="' + y + '" r="16" fill="#fff" stroke="' + C.red + '" stroke-width="2.4"/><circle cx="' + x + '" cy="' + y + '" r="6" fill="none" stroke="' + C.red + '" stroke-width="1.6"/>' + t(x, y + 31, lab, { size: 10.5, weight: 700, fill: C.red }); }
-    b += box(8, 24, 330, 164, '#1f2328', '#0b0d10') + t(173, 44, 'ZXA1 뒷면 (액티브)', { size: 13, weight: 800, fill: '#fff' });
-    b += '<g>' + box(18, 56, 310, 120, '#f8fafc', null, 8) + '</g>';
-    b += xlr(54, 92, 'MIC IN', C.blue) + '<circle cx="54" cy="148" r="10" fill="#9ca3af"/>' + t(54, 172, 'MIC 게인', { size: 9.5, fill: C.sub });
-    b += xlr(120, 92, 'LINE IN', C.teal) + t(120, 136, 'XLR/TRS 콤보', { size: 9.5, fill: C.sub });
+    b += box(8, 24, 330, 190, '#1f2328', '#0b0d10') + t(173, 44, 'ZXA1 뒷면 (액티브)', { size: 13, weight: 800, fill: '#fff' });
+    b += '<g>' + box(18, 56, 310, 146, '#f8fafc', null, 8) + '</g>';
+    b += xlr(54, 92, 'MIC IN', C.blue) + xlr(120, 92, 'LINE IN', C.teal) + t(120, 136, 'XLR/TRS 콤보', { size: 9.5, fill: C.sub });
+    // 2026-11-03: 노브 두 개 — MIC 는 마이크 입력만, MASTER 는 MIC·LINE 둘 다에 걸리는 전체 음량 (제조사 설명서)
+    b += '<circle cx="54" cy="162" r="10" fill="#9ca3af"/>' + t(54, 184, 'MIC', { size: 9.5, fill: C.ink, weight: 700 }) + t(54, 196, '마이크만', { size: 9, fill: C.sub });
+    b += '<circle cx="156" cy="162" r="10" fill="#374151"/>' + t(156, 184, 'MASTER', { size: 9.5, fill: C.ink, weight: 700 }) + t(156, 196, 'MIC+LINE 전체', { size: 9, fill: C.sub });
     b += xlr(186, 92, 'LINK OUT', C.ink) + t(186, 136, '다음 스피커로', { size: 9.5, fill: C.sub });
     b += box(236, 76, 34, 18, '#fff', C.ink, 4) + t(253, 108, '100 Hz', { size: 9.5, fill: C.ink, weight: 700 }) + t(253, 120, 'HPF', { size: 9.5, fill: C.sub });
     b += '<circle cx="296" cy="80" r="5" fill="#60a5fa"/>' + t(296, 96, 'POWER', { size: 9, fill: C.sub }) + '<circle cx="296" cy="110" r="5" fill="#ef4444"/>' + t(296, 126, 'LIMIT', { size: 9, fill: C.sub });
     b += box(236, 140, 76, 26, '#e5e7eb', C.sub, 4) + t(274, 157, '전원 (AC)', { size: 10, fill: C.ink, weight: 700 });
-    b += box(350, 24, 242, 164, C.bg, C.line) + t(471, 44, 'ZX1 뒷면 (패시브)', { size: 13, weight: 800 });
+    b += box(350, 24, 242, 190, C.bg, C.line) + t(471, 44, 'ZX1 뒷면 (패시브)', { size: 13, weight: 800 });
     b += nl4(420, 98, 'speakON') + nl4(522, 98, 'speakON') + '<path d="M436 98H506" stroke="' + C.red + '" stroke-dasharray="4 3"/>' + t(471, 90, '병렬', { size: 10, fill: C.red });
     b += t(471, 152, '하나는 앰프에서 받고,', { size: 11 }) + t(471, 168, '하나는 다음 스피커로 링크', { size: 11 });
     b += t(8, 14, '단자 종류는 제조사 자료 · 배치는 「예시」(실제 위치와 다를 수 있어요)', { size: 11, fill: C.sub, anchor: 'start' });
-    b += t(300, 206, '⚠ 앰프의 스피커 출력을 ZXA1 의 XLR/TRS 입력에 연결하면 안 돼요', { size: 11.5, fill: C.red, weight: 800 });
-    return svg(600, 214, b, '액티브와 패시브 스피커의 입력 단자');
+    b += t(300, 232, '⚠ 앰프의 스피커 출력을 ZXA1 의 XLR/TRS 입력에 연결하면 안 돼요', { size: 11.5, fill: C.red, weight: 800 });
+    return svg(600, 240, b, '액티브와 패시브 스피커의 입력 단자');
   };
 
   V.spkStage = function () {
@@ -632,8 +634,8 @@
           { t: '스피커를 앞줄 바로 앞으로 옮긴다', why: '앞줄이 더 가까워져 앞뒤 차이가 더 커져요.' },
           { t: '스피커를 천장 쪽으로 향하게 한다', why: '천장 반사음이 늘어 말소리가 흐려져요.' }] } },
       { title: '입력 단자와 연결', visual: 'spkInputs',
-        body: '스피커 뒷면 단자를 보면 연결 방법을 알 수 있어요. 액티브 ZXA1 에는 <b>XLR 마이크 입력</b>, <b>XLR/TRS 콤보 라인 입력</b>, 다음 스피커로 보내는 <b>XLR 링크 출력</b>이 있어요. 패시브 ZX1 에는 <b>speakON(NL4) 단자</b>가 있어 앰프의 스피커 출력을 받아요.',
-        more: '<ul><li><b>ZXA1 (제조사 자료)</b>: 게인 조절이 있는 XLR 마이크 입력, XLR/TRS 콤보 라인 입력, XLR 링크 출력, 100 Hz 하이패스 스위치, Power On · Limit 표시등.</li><li>콘솔의 출력(라인 레벨)은 ZXA1 의 <b>라인 입력</b>에 넣어요. 마이크 입력에 넣으면 너무 커서 찌그러지기 쉬워요.</li><li><b>절대 금지</b>: 앰프의 스피커 출력을 액티브 스피커의 XLR/TRS 입력에 연결하지 마세요. 반대로 콘솔 라인 출력을 패시브 스피커에 연결해도 소리가 거의 나지 않아요.</li><li>패시브 스피커를 링크 단자로 이어 여러 대를 달면 앰프 입장에서는 병렬 연결이라 임피던스가 낮아져요(「앰프」 모듈 참고).</li></ul>',
+        body: '스피커 뒷면 단자를 보면 연결 방법을 알 수 있어요. 액티브 ZXA1 에는 <b>XLR 마이크 입력</b>, <b>XLR/TRS 콤보 라인 입력</b>, 다음 스피커로 보내는 <b>XLR 링크 출력</b>이 있어요. 노브는 두 개예요. <b>MASTER</b>는 스피커 전체 음량이라 마이크 입력과 라인 입력 <b>둘 다</b>에 걸리고, <b>MIC</b>는 마이크 입력만 따로 조절해요. 패시브 ZX1 에는 <b>speakON(NL4) 단자</b>가 있어 앰프의 스피커 출력을 받아요.',
+        more: '<ul><li><b>ZXA1 (제조사 자료)</b>: 게인 조절이 있는 XLR 마이크 입력, XLR/TRS 콤보 라인 입력, XLR 링크 출력(MIC+LINE 합), 100 Hz 하이패스 스위치, Power On · Limit 표시등.</li><li><b>MASTER 노브</b>는 제조사 설명서에 「라인 입력과 마이크 입력의 음량에 모두 영향」을 준다고 되어 있어요. 콘솔을 라인 입력에 연결해 쓸 때는 MASTER 를 0 ~ +6 dB 사이에 두라고 권해요. 그래서 MASTER 를 내리면 콘솔에서 보낸 소리도 같이 작아져요. <b>MIC 노브</b>는 MASTER 와 별개로 마이크 입력만 조절해요.</li><li>콘솔의 출력(라인 레벨)은 ZXA1 의 <b>라인 입력</b>에 넣어요. 마이크 입력에 넣으면 너무 커서 찌그러지기 쉬워요.</li><li><b>절대 금지</b>: 앰프의 스피커 출력을 액티브 스피커의 XLR/TRS 입력에 연결하지 마세요. 반대로 콘솔 라인 출력을 패시브 스피커에 연결해도 소리가 거의 나지 않아요.</li><li>패시브 스피커를 링크 단자로 이어 여러 대를 달면 앰프 입장에서는 병렬 연결이라 임피던스가 낮아져요(「앰프」 모듈 참고).</li></ul>',
         check: { q: 'MG12XU 의 STEREO OUT 을 ZXA1 에 연결할 때 알맞은 단자는?', options: [
           { t: 'XLR/TRS 콤보 라인 입력', ok: true, why: '맞아요. 콘솔 출력은 라인 레벨이라 라인 입력으로 넣어요.' },
           { t: '게인이 있는 XLR 마이크 입력', why: '라인 신호는 마이크 입력에 너무 커서 찌그러지기 쉬워요.' },
@@ -703,6 +705,7 @@
       { title: '스피커 튜닝이 필요한 이유', text: '같은 스피커라도 방의 크기·벽 재질·설치 위치에 따라 소리가 완전히 달라져요. 벽·천장 반사로 특정 저음이 부풀거나, 스피커 여러 대가 겹치는 곳에서 소리가 비거나, 먼 자리의 소리가 늦게 도착해요. <b>튜닝</b>은 이런 문제를 측정하고 고쳐서 모든 자리에서 고르고 또렷하게 들리게 하는 작업이에요.', more: '<ul><li><b>순서</b>: ① 위치·높이·각도(겨누기)를 먼저 맞추고 ② 스피커 사이 레벨과 딜레이(도착 시간)를 맞추고 ③ 극성을 확인하고 ④ 마지막에 시스템 EQ 로 다듬어요. EQ 로 겨누기 문제를 덮지 않아요.</li><li><b>측정</b>: 측정 마이크와 분석 프로그램으로 여러 자리를 재요. 한 자리에만 맞춘 EQ 는 다른 자리를 나쁘게 만들 수 있어요.</li><li><b>효과</b>: 말씀이 또렷해지고, 피드백 전에 낼 수 있는 음량(여유)이 늘고, 자리마다 크기와 음색 차이가 줄어요.</li><li><b>마지막은 귀로</b>: 측정한 뒤에는 잘 아는 음악과 실제 말소리로 여러 자리를 걸으며 들어 확인해요. 튜닝한 설정은 저장하고 기록해 둬요.</li></ul>' }
     ],
     sources: [
+      { t: 'Electro-Voice ZxA1-90/100 사용설명서 — MASTER(마이크·라인 입력 음량에 모두 영향) · MIC(마스터와 별개) · MASTER OUT · WITH SUB/FULLRANGE', url: 'https://cellphone.manualsonline.com/manuals/mfg/electrovoice/zxa190.html?p=9' },
       { t: 'Electro-Voice ZxA1-90 엔지니어링 데이터 시트(제조사)', url: 'https://www.fullcompass.com/common/files/24805-ElectroVoiceZxA190BDatasheet.pdf' },
       { t: 'Electro-Voice ZX1 제품 페이지(제조사)', url: 'https://products.electrovoice.com/la/en/zx1' },
       { t: 'd&b audiotechnik E8 설계 사양(제조사)', url: 'https://www.dbaudio.com/assets/products/downloads/architectural-specifications/dbaudio-arch-specs-e8-en.txt' },
