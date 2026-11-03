@@ -98,9 +98,9 @@ window.STA_GLANCE = {
       ['DCA', '여러 채널 페이더를 한 번에 움직이는 리모컨 페이더'],
       ['씬(Scene)', '콘솔 설정 전체를 저장했다가 한 번에 불러오는 것']
     ],
-    hero: { img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Behringer_X32_%281%29.jpg/1280px-Behringer_X32_%281%29.jpg', bg: '#2a2418', view: [0.46, 0.04, 0.9], pts: [
+    hero: { img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Behringer_X32_%281%29.jpg/1280px-Behringer_X32_%281%29.jpg', bg: '#2a2418', view: [0.512, -0.06, 1.12], pts: [
       [0.250, 0.220, 'l', 0.16, '채널 스트립', 'SELECT 한 채널의 GAIN·+48V·LOW CUT·GATE·COMP·EQ 노브'],
-      [0.138, 0.560, 'l', 0.46, '입력 레이어 버튼', 'CH 1–16 · 17–32 · AUX IN/USB/FX RTN · BUS MASTER'],
+      [0.138, 0.560, 'l', 0.40, '입력 레이어 버튼', 'CH 1–16 · 17–32 · AUX IN/USB/FX RTN · BUS MASTER'],
       [0.300, 0.620, 'l', 0.80, '입력 페이더 16개', 'SELECT · MUTE · 이름표(LCD) · 모터 페이더'],
       [0.585, 0.150, 'r', 0.10, '컬러 화면 · 화면 버튼', '7인치 화면 · HOME · METERS · ROUTING · SETUP …'],
       [0.774, 0.335, 'r', 0.30, 'SCENES', '설정 전체를 저장하고 불러오는 곳'],
