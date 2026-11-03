@@ -200,10 +200,10 @@
       zchips = '<div class="mod-zchips" role="group" aria-label="기능부 이름 — 누르면 사진에 위치와 설명이 나와요">' + Object.keys(Z.secs).map(function (key) { return '<button type="button" data-zsec="' + key + '" aria-pressed="false">' + esc(Z.secs[key][0]) + '</button>'; }).join('') + '</div>';
     }
     return '<figure class="mod-fig' + (Z ? ' mod-fig--zones' : '') + '" style="--fig-bg:' + esc((h && h.bg) || '#0b1626') + '">' +
-      '<div class="mod-fig__stage"><img src="' + esc(img) + '" alt="' + esc(m.title) + ' 장비 사진" style="height:' + (100 / v[2]).toFixed(2) + '%;top:' + (-v[1] / v[2] * 100).toFixed(2) + '%;left:' + ((0.5 - v[0] * k) * 100).toFixed(2) + '%">' +
-      (pts.length ? '<svg class="mod-fig__lines" viewBox="0 0 1600 1000" preserveAspectRatio="none" aria-hidden="true">' + lines + '</svg>' + marks + labels : '') + zones + '</div>' +
+      '<div class="mod-fig__stage">' + (Z ? '<div class="mod-zoomwrap">' : '') + '<img src="' + esc(img) + '" alt="' + esc(m.title) + ' 장비 사진" style="height:' + (100 / v[2]).toFixed(2) + '%;top:' + (-v[1] / v[2] * 100).toFixed(2) + '%;left:' + ((0.5 - v[0] * k) * 100).toFixed(2) + '%">' +
+      (pts.length ? '<svg class="mod-fig__lines" viewBox="0 0 1600 1000" preserveAspectRatio="none" aria-hidden="true">' + lines + '</svg>' + marks + labels : '') + zones + (Z ? '</div>' : '') + '</div>' +
       (pts.length ? '<ol class="mod-fig__legend">' + legend + '</ol>' : '') + zchips +
-      (tools || Z ? '<div class="mod-fig__foot">' + tools + (Z ? '<span class="mod-zhint">사진의 구역에 마우스를 올리면 그 부분의 기능 설명이 나와요. 휴대폰은 구역이나 위의 이름을 눌러요.</span>' : '') + '</div>' : '') + '</figure>';
+      (tools || Z ? '<div class="mod-fig__foot">' + tools + (Z ? '<span class="mod-zhint">구역에 마우스를 올리면 기능 설명이 나와요. 구역(또는 위의 이름)을 누르면 그 부분이 크게 확대되고, 한 번 더 누르면 원래대로 돌아와요.</span>' : '') + '</div>' : '') + '</figure>';
   }
   function heroHtml(m) {
     var s = st(m.id);
@@ -310,10 +310,23 @@
   }
   function destroySim() { if (sim) { try { sim.destroy(); } catch (e) { /* noop */ } sim = null; } }
   /* 기능부 설명 말풍선 (사진 구역 · 이름 단추 공용) */
-  var zb = null, zPinned = null, zCur = null, zEl = null;
+  var zb = null, zPinned = null, zCur = null, zEl = null, zZoomEl = null, zTimer = 0;
+  /* 2026-11-04: 구역을 누르면 그 부분으로 확대(움직이며), 같은 구역을 한 번 더 누르면 원래 보기로 */
+  function zZoom(el) {
+    var wrap = document.querySelector('#tabModule .mod-zoomwrap'); if (!wrap) return; zZoomEl = el || null;
+    if (!el) { wrap.style.transform = ''; wrap.style.setProperty('--zs', 1); wrap.classList.remove('zoomed'); return; }
+    var L = parseFloat(el.style.left) / 100, T = parseFloat(el.style.top) / 100, W = parseFloat(el.style.width) / 100, H = parseFloat(el.style.height) / 100;
+    var sc = Math.max(1.25, Math.min(3, 0.78 / W, 0.78 / H));
+    var tx = Math.min(0, Math.max(1 - sc, 0.5 - sc * (L + W / 2))), ty = Math.min(0, Math.max(1 - sc, 0.5 - sc * (T + H / 2)));
+    wrap.style.transform = 'translate(' + (tx * 100).toFixed(3) + '%,' + (ty * 100).toFixed(3) + '%) scale(' + sc.toFixed(3) + ')'; wrap.style.setProperty('--zs', sc.toFixed(3)); wrap.classList.add('zoomed');
+  }
+  function zAfterMove() {   // 확대 움직임이 끝난 뒤 말풍선 자리 다시 잡기
+    if (!zb) return; zb.style.visibility = 'hidden'; clearTimeout(zTimer);
+    zTimer = setTimeout(function () { if (zb) { zb.style.visibility = ''; zPlace(); } }, window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 560);
+  }
   function zSecs() { var m = MODS[view.mod], h = m && (GL[m.id] || {}).hero; return (h && h.zones && h.zones.secs) || {}; }
   function zHide(force) {
-    if (zPinned && !force) return; zPinned = null; zCur = null; zEl = null; if (zb) zb.style.display = 'none';
+    if (zPinned && !force) return; zPinned = null; zCur = null; zEl = null; if (zb) zb.style.display = 'none'; if (zZoomEl) zZoom(null);
     document.querySelectorAll('#tabModule .mod-zone').forEach(function (d) { d.classList.remove('hl', 'main'); });
     document.querySelectorAll('#tabModule .mod-zchips button').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
   }
@@ -333,10 +346,8 @@
     var rr = el.getBoundingClientRect(); if (rr.top < 70 || rr.bottom > window.innerHeight - 20) el.scrollIntoView({ block: 'center' });   // 이름 단추로 열 때: 구역이 화면 밖이면 먼저 보이게
     document.querySelectorAll('#tabModule .mod-zone').forEach(function (z) { var me = z.getAttribute('data-zsec') === sec; z.classList.toggle('hl', me); z.classList.toggle('main', me && z === el); });
     document.querySelectorAll('#tabModule .mod-zchips button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-zsec') === sec)); });
-    var part = el.getAttribute && el.getAttribute('data-zpart');
-    zb.innerHTML = '<button type="button" class="mod-zbub__x" aria-label="설명 닫기">×</button><b></b><p></p>' + (all.length > 1 ? '<small></small>' : '');
+    zb.innerHTML = '<button type="button" class="mod-zbub__x" aria-label="설명 닫기">×</button><b></b><p></p>';   // 2026-11-04: 「지금 가리킨 곳 · 같은 기능 N곳」 문구는 뺌
     zb.querySelector('b').textContent = d[0]; zb.querySelector('p').textContent = d[1];
-    if (all.length > 1) zb.querySelector('small').textContent = (part ? '지금 가리킨 곳: ' + part + ' · ' : '') + '같은 기능 ' + all.length + '곳을 함께 표시했어요';
     zb.style.display = 'block'; zPlace();
   }
   document.addEventListener('mouseover', function (e) { if (zPinned) return; var z = e.target.closest && e.target.closest('#tabModule .mod-zone'); if (z) zShow(z.getAttribute('data-zsec'), z); });
@@ -346,12 +357,16 @@
     if (t.closest('.mod-zbub__x')) { zHide(true); return; }
     if (t.closest('.mod-zbub')) return;
     var z = t.closest('#tabModule .mod-zone, #tabModule .mod-zchips [data-zsec]');
-    if (z) { var sec = z.getAttribute('data-zsec'); if (zPinned === sec && z.classList.contains('mod-zone')) { zHide(true); return; } zPinned = sec; zShow(sec, z.classList.contains('mod-zone') ? z : null); return; }
+    if (z) {
+      var sec = z.getAttribute('data-zsec'), tz = z.classList.contains('mod-zone') ? z : document.querySelector('#tabModule .mod-zone[data-zsec="' + sec + '"]');
+      if (zPinned === sec && zZoomEl === tz) { zHide(true); return; }   // 한 번 더 누르면 원래 보기
+      zPinned = sec; zShow(sec, tz); zZoom(tz); zAfterMove(); return;
+    }
     if (zPinned) zHide(true);
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && zb && zb.style.display === 'block') zHide(true); });
   window.addEventListener('scroll', zPlace, { passive: true }); window.addEventListener('resize', zPlace);
-  window.STAZones = { show: function (sec) { zPinned = sec; zShow(sec); return !!zEl; }, hide: function () { zHide(true); }, state: function () { return { sec: zCur, pinned: zPinned, open: !!(zb && zb.style.display === 'block') }; } };
+  window.STAZones = { show: function (sec) { zPinned = sec; zShow(sec); return !!zEl; }, hide: function () { zHide(true); }, state: function () { var w = document.querySelector('#tabModule .mod-zoomwrap'); return { sec: zCur, pinned: zPinned, open: !!(zb && zb.style.display === 'block'), zoom: w ? +(getComputedStyle(w).getPropertyValue('--zs') || 1) : 1, zoomed: !!zZoomEl }; } };
 
   /* 학습 개요의 3D 장비 보기 — 사이트의 3D 모델 파일(assets3d/*_model.js)을 그대로 씀. dir = 카메라 방향 */
   var MODEL3D = {
