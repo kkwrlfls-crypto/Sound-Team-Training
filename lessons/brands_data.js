@@ -24,7 +24,7 @@ window.STA_BRANDS = {
 
   categories: [
     { id: 'mic', title: '마이크(유선)', short: '마이크', icon: 'mic',
-      modules: [{ id: 'mic', label: '마이크 모듈' }],
+      modules: [{ id: 'mic', label: '유선 마이크 과정' }],
       intro: '유선 마이크는 브랜드마다 주력 분야가 달라요. 라이브 보컬용 다이내믹 마이크가 강한 회사도 있고, 스튜디오용 콘덴서나 몸에 붙이는 작은 마이크가 강한 회사도 있어요.',
       look: ['다이내믹인지 콘덴서인지 (콘덴서는 팬텀 전원 필요)', '지향성 — 카디오이드·슈퍼카디오이드·무지향', '용도 — 보컬, 악기, 설교용 헤드셋·핀마이크, 성가대', '현장에서 떨어뜨려도 버티는 내구성'],
       sources: [
@@ -43,7 +43,7 @@ window.STA_BRANDS = {
         { t: 'DPA 제품군 (d:fine·d:screet·4099·성가대용) — CCI Solutions', u: 'https://shop.ccisolutions.com/StoreFront/category/dpa-microphones' }
       ] },
     { id: 'wireless', title: '무선 마이크', short: '무선 마이크', icon: 'wireless',
-      modules: [{ id: 'mic', label: '마이크 모듈' }],
+      modules: [{ id: 'mic-wireless', label: '무선 마이크 과정' }, { id: 'mic', label: '유선 마이크 과정' }],
       intro: '무선 마이크는 마이크 소리만큼 「전파」가 중요해요. 브랜드와 시리즈마다 쓰는 주파수 대역, 디지털 방식, 동시에 쓸 수 있는 채널 수, 배터리 관리 방법이 달라요.',
       look: ['국내에서 쓸 수 있는 주파수 대역인지, 국내 전파 인증(KC)을 받은 정식 유통 제품인지', '디지털/아날로그 방식과 동시에 쓸 채널 수', '배터리 — 건전지인지 충전식인지, 남은 양이 수신기에 보이는지', '수신기 출력 — 아날로그(XLR)만인지, Dante 같은 네트워크 출력도 있는지'],
       sources: [
@@ -80,7 +80,7 @@ window.STA_BRANDS = {
         { t: 'Avid NAMM 2026 (VENUE | S6L 시연) — SVG', u: 'https://www.sportsvideo.org/2026/01/14/namm-2026-avid-powers-art-of-sound-with-immersive-intelligent-and-integrated-audio-tools/' }
       ] },
     { id: 'amp', title: '파워앰프', short: '파워앰프', icon: 'amp',
-      modules: [{ id: 'amp', label: '앰프 모듈' }],
+      modules: [{ id: 'amp', label: '아날로그 앰프 과정' }, { id: 'amp-digital', label: '디지털 앰프 과정' }],
       intro: '파워앰프는 「얼마나 큰 힘을 몇 채널로 내는지」가 기본이고, 브랜드에 따라 스피커 전용 설정(프리셋), 네트워크 원격 감시, 설치용·투어용 구분이 달라요. 어떤 스피커 회사는 자기 스피커에 맞춘 전용 앰프를 함께 만들어요.',
       look: ['출력(W)과 스피커 임피던스(Ω)가 맞는지', '채널 수 — 2채널, 4채널, 8채널', '스피커 회사 전용 설정이 필요한지 (전용 앰프)', '설치용(랙 고정·원격 감시)인지 이동·투어용인지'],
       sources: [
@@ -102,7 +102,7 @@ window.STA_BRANDS = {
         { t: 'd&b D40 이동용 앰프 — 제조사', u: 'https://www.dbaudio.com/global/en/products/amplifiers/d40/' }
       ] },
     { id: 'speaker', title: '스피커(라이브·설치용)', short: '스피커', icon: 'speaker',
-      modules: [{ id: 'speaker', label: '스피커 모듈' }],
+      modules: [{ id: 'speaker-passive', label: '패시브 스피커 과정' }, { id: 'speaker', label: '액티브 스피커 과정' }],
       intro: '스피커 브랜드는 대형 공연용 라인 어레이부터 예배당에 고정하는 설치용, 들고 다니는 파워드 스피커까지 주력 분야가 달라요. 같은 브랜드 안에서도 시리즈마다 용도가 뚜렷하게 나뉘어요.',
       look: ['공간 크기와 소리가 퍼지는 각도(커버리지)', '앰프 내장(파워드)인지, 따로 앰프가 필요한(패시브) 것인지', '설치용(고정·색상 맞춤)인지 이동용인지', '전용 앰프·소프트웨어로 설정하는 시스템인지'],
       sources: [
@@ -128,7 +128,7 @@ window.STA_BRANDS = {
         { t: 'Focusrite 그룹의 Martin Audio 인수 — Focusrite', u: 'https://us.focusrite.com/articles/the-focusrite-group-announces-the-acquisition-of-martin-audio-ltd/' }
       ] },
     { id: 'connector', title: '커넥터', short: '커넥터', icon: 'connector',
-      modules: [{ id: 'cable', label: '케이블 모듈' }],
+      modules: [{ id: 'cable', label: '아날로그 케이블 과정' }],
       tierLabels: { entry: 'XLR', mid: '폰 (TS·TRS)', high: '그 밖의 대표 제품' },
       tierLegend: '커넥터는 엔트리·중급·하이엔드 대신 종류(XLR · 폰 · 그 밖의 대표 제품)로 나눠서 대표 제품을 보여 줘요.',
       intro: '커넥터는 케이블 끝에 달려 장비와 장비를 이어 주는 「플러그」예요. 잘 만든 커넥터는 잘 빠지지 않고, 오래 써도 접촉 불량이 적어요.',
@@ -145,7 +145,7 @@ window.STA_BRANDS = {
         { t: 'Switchcraft ProAudio 600/700/800/900 개요 (PDF)', u: 'https://www.switchcraft.com/assets/1/27/600_700_702_800_900_product_overview.pdf?6954=' }
       ] },
     { id: 'cable', title: '케이블', short: '케이블', icon: 'cable',
-      modules: [{ id: 'cable', label: '케이블 모듈' }],
+      modules: [{ id: 'cable', label: '아날로그 케이블 과정' }, { id: 'cable-digital', label: '디지털 케이블 과정' }],
       tierLabels: { entry: '마이크 케이블', mid: '멀티 · 디지털', high: '스피커 케이블' },
       tierLegend: '케이블은 엔트리·중급·하이엔드 대신 용도(마이크 · 멀티/디지털 · 스피커)로 나눠서 대표 제품을 보여 줘요.',
       intro: '케이블은 마이크·악기·스피커의 소리를 실어 나르는 길이에요. 좋은 케이블은 잡음이 적고, 자주 감고 풀어도 잘 끊어지지 않아요.',

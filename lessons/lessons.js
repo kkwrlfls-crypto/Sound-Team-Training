@@ -320,7 +320,7 @@
 
   /* ------------------------------------------------------------- 실습 화면·커리큘럼에 이론 연결 */
   // 2026-10-21: 실습 탭 머리에 다는 관련 이론·모듈 (모든 모듈 개방에 맞춰 넓힘)
-  var TAB_MODULES = { tab1: ['mic', 'cable', 'amp', 'speaker'], tab6: ['console', 'gain-structure', 'eq'], tab2: ['cable', 'console-digital', 'amp', 'speaker'], tab5: ['console-digital', 'gain-structure', 'compressor'], tab7: ['cable', 'console'] };   /* 2026-10-23: Ear Training 탭의 관련 모듈 링크는 뺌 */
+  var TAB_MODULES = { tab1: ['mic', 'cable', 'amp', 'speaker'], tab6: ['console', 'gain-structure', 'eq'], tab2: ['cable-digital', 'console-digital', 'amp-digital', 'speaker-passive'],   /* 2026-11-04: 3층(Dante · d&b 디지털 앰프 · 패시브 스피커) */  tab5: ['console-digital', 'gain-structure', 'compressor'], tab7: ['cable', 'console'] };   /* 2026-10-23: Ear Training 탭의 관련 모듈 링크는 뺌 */
   var TAB_LESSONS = { tab1: ['signal-flow'], tab2: ['signal-flow'], tab7: ['signal-flow'], tab6: ['signal-flow'], tab5: ['signal-flow'] };   /* 2026-10-25: 콘솔과 겹치는 레슨 3개 정리 */
   function theoryLinks(ids) {
     return ids.map(function (id) {

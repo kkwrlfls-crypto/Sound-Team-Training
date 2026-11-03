@@ -583,8 +583,8 @@
   /* ------------------------------------------------------------------ 모듈 데이터 */
   var MODS = window.STA_MODULES = window.STA_MODULES || {}, stub = MODS.speaker || {};
   MODS.speaker = {
-    id: 'speaker', path: stub.path || 'hardware', no: stub.no || 5, status: 'ready', level: stub.level || '중급', minutes: stub.minutes || 30, img: 'img/modules/ev_zxa1.jpg',   /* 2026-10-23: 3층 d&b 사진 → 확성 실습의 EV ZXA1 */
-    title: stub.title || '스피커', sub: stub.sub || '전기 신호를 다시 소리로 바꾸는 장치',
+    id: 'speaker', path: stub.path || 'hardware', no: stub.no || 5, noLabel: '05-2', status: 'ready', level: stub.level || '중급', minutes: stub.minutes || 30, img: 'img/modules/ev_zxa1.jpg',   /* 2026-10-23: 3층 d&b 사진 → 확성 실습의 EV ZXA1 */
+    title: '액티브 스피커', sub: '앰프가 안에 든 스피커 — EV ZXA1 · 커버리지 · 설치',
     overview: {
       lead: '스피커는 앰프가 키운 전기 신호로 콘(진동판)을 움직여 다시 소리로 바꾸는 장치예요. <b>액티브·패시브</b>에 따라 연결 방법이 다르고, 소리를 어느 방향으로 얼마나 넓게 보내는지(<b>지향성·커버리지</b>), 그리고 <b>어디에 두고 어디로 겨누는지</b>가 회중석의 소리와 피드백을 결정해요.',
       terms: [
