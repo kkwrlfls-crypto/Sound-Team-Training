@@ -36,20 +36,20 @@
   V.psSystem = function () {
     var s = '';
     // 줄 1 — 일반 패시브
-    s += t(8, 18, '① 일반 패시브 시스템 (예: 확성 실습 ③ — XLi1500 + ZX1)', { size: 11, weight: 800, anchor: 'start', fill: C.sub });
+    s += t(8, 18, '1. 일반 패시브 시스템 (예: 확성 실습 3 — XLi1500 + ZX1)', { size: 11, weight: 800, anchor: 'start', fill: C.sub });
     s += blk(8, 40, 72, 40, '콘솔', '라인 신호', C.ink) + arrow(80, 60, 108, 60, C.blue);
     s += blk(110, 34, 112, 52, '파워앰프', '힘을 키움', C.red, '#fef2f2');
     s += arrow(222, 60, 314, 60, C.red, 3.2) + t(268, 52, '스피커 레벨', { size: 9.5, fill: C.red, weight: 700 }) + t(268, 76, 'speakON', { size: 9, fill: C.sub });
-    s += box(316, 28, 276, 64, C.bg, C.ink, 10) + t(586, 42, '패시브 스피커 (통)', { size: 9.5, fill: C.sub, anchor: 'end' });
+    s += box(316, 28, 276, 64, C.bg, C.ink, 10) + t(592, 20, '패시브 스피커 (통)', { size: 9.5, fill: C.sub, anchor: 'end', weight: 700 });
     s += blk(326, 42, 112, 40, '패시브 크로스오버', '코일 · 콘덴서', C.violet, '#f5f3ff');
     s += arrow(438, 54, 466, 50, C.violet, 1.8) + arrow(438, 70, 466, 76, C.violet, 1.8);
     s += blk(468, 38, 116, 22, '우퍼 (저음)', '', C.teal) + blk(468, 64, 116, 22, '고음 드라이버', '', C.amber);
     // 줄 2 — d&b 3층
-    s += t(8, 122, '② 3층 d&b 시스템 — 앰프 안의 「스피커 설정」 + 통 안의 패시브 크로스오버가 한 세트', { size: 11, weight: 800, anchor: 'start', fill: C.teal });
+    s += t(8, 124, '2. 3층 d&b 시스템 — 앰프의 「스피커 설정」 + 통 안의 크로스오버가 한 세트', { size: 11, weight: 800, anchor: 'start', fill: C.teal });
     s += blk(8, 150, 72, 40, '콘솔', '라인 신호', C.ink) + arrow(80, 170, 108, 170, C.blue);
     s += box(110, 136, 112, 68, '#ecfeff', C.teal, 6) + t(166, 154, 'd&b 40D', { size: 11.5, weight: 800, fill: C.teal }) + t(166, 170, '설정: Vi10P', { size: 9.5, fill: C.ink, weight: 700 }) + t(166, 184, 'EQ · CUT/HFA', { size: 9, fill: C.sub }) + t(166, 197, '보호 · 딜레이', { size: 9, fill: C.sub });
     s += arrow(222, 170, 314, 170, C.red, 3.2) + t(268, 162, '스피커 레벨', { size: 9.5, fill: C.red, weight: 700 }) + t(268, 186, '스피커 케이블', { size: 9, fill: C.sub });
-    s += box(316, 132, 276, 78, C.bg, C.teal, 10) + t(586, 146, 'Vi10P (3웨이 패시브)', { size: 9.5, fill: C.teal, anchor: 'end', weight: 700 });
+    s += box(316, 132, 276, 78, C.bg, C.teal, 10) + t(592, 124, 'Vi10P (3웨이 패시브)', { size: 9.5, fill: C.teal, anchor: 'end', weight: 700 });
     s += blk(326, 152, 112, 44, '패시브 크로스오버', '통 안 부품', C.violet, '#f5f3ff');
     s += arrow(438, 162, 466, 156, C.violet, 1.6) + arrow(438, 174, 466, 174, C.violet, 1.6) + arrow(438, 186, 466, 192, C.violet, 1.6);
     s += blk(468, 148, 116, 16, '저음 2 × 10"', '', C.teal) + blk(468, 167, 116, 16, '중음 8"', '', C.violet) + blk(468, 186, 116, 16, '고음 1.4"', '', C.amber);
@@ -89,7 +89,7 @@
     s += '<rect x="' + xw(200) + '" y="28" width="' + (xw(400) - xw(200)) + '" height="176" fill="' + C.green + '" fill-opacity=".09"/>';
     [0, 200, 400, 600, 800, 1000].forEach(function (w) { s += '<path d="M' + xw(w) + ' 28V204" stroke="' + C.line + '" stroke-dasharray="3 3"/>' + t(xw(w), 218, w + ' W', { size: 9.5, fill: C.sub }); });
     [['연속 (AES · RMS)', 200, C.teal, '200 W — 오래 견디는 힘 (기준)'], ['프로그램', 400, C.blue, '400 W = 연속 × 2 (+3 dB)'], ['피크', 800, C.violet, '800 W = 연속 × 4 (+6 dB) · 아주 짧게']].forEach(function (r, i) {
-      var y = 36 + i * 30; s += t(x0 - 8, y + 15, r[0], { size: 10.5, weight: 700, anchor: 'end' }) + box(x0, y, xw(r[1]) - x0, 20, r[2], null, 4) + t(xw(r[1]) + 6, y + 14, r[3], { size: 9.5, fill: r[2], anchor: 'start', weight: 700 });
+      var y = 36 + i * 30, inside = i === 2; s += t(x0 - 8, y + 15, r[0], { size: 10.5, weight: 700, anchor: 'end' }) + box(x0, y, xw(r[1]) - x0, 20, r[2], null, 4) + t(inside ? xw(r[1]) - 8 : xw(r[1]) + 6, y + 14, r[3], { size: 9.5, fill: inside ? '#fff' : r[2], anchor: inside ? 'end' : 'start', weight: 700 });
     });
     s += t(x0 - 8, 146, '앰프 (8 Ω)', { size: 10.5, weight: 700, anchor: 'end' });
     [[100, '100 W 예시', C.red, '✗ 작아서 자주 클리핑'], [330, 'XLi1500 330 W', C.green, '✓ 연속 ~ 2배 사이'], [900, '브리지 900 W', C.amber, '⚠ 너무 큼']].forEach(function (a, i) {
@@ -104,13 +104,13 @@
     var s = '', x0 = 54, x1 = 410, y0 = 26, y1 = 190, L = 60, xl = function (m) { return x0 + m / L * (x1 - x0); }, yd = function (d) { return y0 + (-d) / 2 * (y1 - y0); };
     [0, 10, 20, 30, 40, 50, 60].forEach(function (m) { s += '<path d="M' + xl(m) + ' ' + y0 + 'V' + y1 + '" stroke="' + C.line + '"/>' + t(xl(m), y1 + 14, m + ' m', { size: 9.5, fill: C.sub }); });
     [0, -0.5, -1, -1.5, -2].forEach(function (d) { s += '<path d="M' + x0 + ' ' + yd(d) + 'H' + x1 + '" stroke="' + (d === -0.5 ? C.red : C.line) + '"' + (d === -0.5 ? ' stroke-width="1.6" stroke-dasharray="6 4"' : '') + '/>' + t(x0 - 6, yd(d) + 4, d === 0 ? '0' : '−' + Math.abs(d), { size: 9.5, fill: C.sub, anchor: 'end' }); });
-    s += t(x1, yd(-0.5) - 5, '−0.5 dB 목표', { size: 9.5, fill: C.red, anchor: 'end', weight: 700 });
+    s += t(x0 + 6, yd(-0.5) + 14, '−0.5 dB 목표', { size: 9.5, fill: C.red, anchor: 'start', weight: 700 });
     [16, 14, 12, 10].forEach(function (g) { var d = ''; for (var m = 0; m <= L; m += 1) { var v = Math.max(-2, cableCalc(g, m, 8).loss); d += (m ? 'L' : 'M') + xl(m).toFixed(1) + ' ' + yd(v).toFixed(1); }
       var end = Math.max(-2, cableCalc(g, L, 8).loss); s += '<path d="' + d + '" fill="none" stroke="' + GCOL[g] + '" stroke-width="2.6"/>' + t(x1 + 4, yd(end) + 4, g + ' AWG', { size: 9.5, fill: GCOL[g], anchor: 'start', weight: 800 }); });
     s += t(x0, 16, '8 Ω 스피커 한 대 · 케이블 손실(dB) — 공식으로 계산한 근사', { size: 10.5, fill: C.sub, anchor: 'start', weight: 700 });
     // 오른쪽: 계산 방법
     var bx = 462; s += box(bx, 22, 134, 196, C.bg, C.line, 8);
-    [['① 왕복 저항', 700], ['= 2 × 길이 × Ω/m', 400], ['② 손실 (dB)', 700], ['= 20·log(R ÷', 400], ['   (R + 왕복 저항))', 400], ['③ 댐핑 팩터', 700], ['≈ R ÷ 왕복 저항', 400], ['목표: 손실 −0.5 dB', 700], ['이내 · DF 20 이상', 700]].forEach(function (r, i) { s += t(bx + 8, 42 + i * 20, r[0], { size: 10, anchor: 'start', weight: r[1], fill: i >= 7 ? C.red : C.ink }); });
+    [['1) 왕복 저항', 700], ['= 2 × 길이 × Ω/m', 400], ['2) 손실 (dB)', 700], ['= 20·log(R ÷', 400], ['   (R + 왕복 저항))', 400], ['3) 댐핑 팩터', 700], ['≈ R ÷ 왕복 저항', 400], ['목표: 손실 −0.5 dB', 700], ['이내 · DF 20 이상', 700]].forEach(function (r, i) { s += t(bx + 8, 42 + i * 20, r[0], { size: 10, anchor: 'start', weight: r[1], fill: i >= 7 ? C.red : C.ink }); });
     s += t(300, 226, 'R = 스피커 공칭 임피던스 · AWG 숫자가 작을수록 굵어요 (12 AWG ≈ 3.3 mm², 14 AWG ≈ 2.1 mm²)', { size: 10, fill: C.sub });
     return svg(600, 234, s, '케이블 굵기와 길이에 따른 손실, 계산 방법');
   };
@@ -128,7 +128,7 @@
     s += t(154, 196, '핀 위치는 단순화한 그림이에요', { size: 9, fill: C.sub });
     var bx = 304, rows = [['풀레인지 패시브 (Vi10P · Y7P)', '1+ / 1−', C.ink], ['d&b 4선 케이블의 2± 핀', '액티브 서브우퍼용', C.violet], ['바이앰프 모드 (예: QSC AP)', '저음 1± · 고음 2±', C.blue], ['NL2 플러그 → NL4 소켓', '✓ 1± 로 연결', C.green], ['NL4 플러그 → NL2 소켓', '✗ 맞지 않음', C.red]];
     s += box(bx, 8, 290, 168, C.bg, C.line, 8);
-    rows.forEach(function (r, i) { var y = 32 + i * 30; s += t(bx + 10, y, r[0], { size: 10.5, anchor: 'start', weight: 700 }) + t(bx + 280, y + 14, r[1], { size: 10.5, anchor: 'end', weight: 800, fill: r[2] }) + (i < rows.length - 1 ? '<path d="M' + (bx + 10) + ' ' + (y + 22) + 'H' + (bx + 280) + '" stroke="#e2e8f0"/>' : ''); });
+    rows.forEach(function (r, i) { var y = 34 + i * 32; s += t(bx + 10, y, r[0], { size: 10, anchor: 'start', weight: 700 }) + t(bx + 280, y, r[1], { size: 10, anchor: 'end', weight: 800, fill: r[2] }) + (i < rows.length - 1 ? '<path d="M' + (bx + 10) + ' ' + (y + 14) + 'H' + (bx + 280) + '" stroke="#e2e8f0"/>' : ''); });
     s += box(304, 186, 290, 40, '#fef2f2', '#fecaca', 8) + t(449, 204, '+ ↔ − 가 바뀌면 극성 반대', { size: 11, weight: 800, fill: C.red }) + t(449, 219, '같은 구역을 덮는 스피커끼리 저음이 상쇄돼요', { size: 9.5, fill: C.red });
     return svg(600, 234, s, 'speakON NL4 와 NL2 의 핀, 쓰임새와 극성');
   };
@@ -146,14 +146,14 @@
     s += t(151, 206, '바이앰프로 바꾸면 크로스오버를 앰프 앞에서', { size: 9.5, fill: C.sub }) + t(151, 220, '꼭 해 줘야 해요 (고음에 저음이 가면 위험)', { size: 9.5, fill: C.red, weight: 700 });
     // 클리핑
     s += box(304, 6, 290, 222, '#fff', C.line, 10) + t(449, 24, '고음 드라이버가 타는 이유 — 클리핑', { size: 11, weight: 800, fill: C.red });
-    var ox = 318, oy = 80, w = 262, A = 34, cl = 20, d1 = '', d2 = '';
+    var ox = 318, oy = 90, w = 262, A = 32, cl = 19, d1 = '', d2 = '';
     for (var i = 0; i <= 120; i++) { var x = ox + i / 120 * w, v = A * Math.sin(i / 120 * Math.PI * 4); d1 += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + (oy - v).toFixed(1); d2 += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + (oy - Math.max(-cl, Math.min(cl, v * 1.6))).toFixed(1); }
     s += '<path d="M' + ox + ' ' + oy + 'H' + (ox + w) + '" stroke="' + C.line + '"/><path d="' + d1 + '" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/><path d="' + d2 + '" fill="none" stroke="' + C.red + '" stroke-width="2.6"/>';
-    s += t(ox, 46, '회색: 원래 파형 · 빨강: 앰프 한계에서 잘린 파형', { size: 9.5, fill: C.sub, anchor: 'start' });
+    s += t(ox, 44, '회색: 원래 파형 · 빨강: 앰프 한계에서 잘린 파형', { size: 9.5, fill: C.sub, anchor: 'start' });
     // 성분 막대 (모양은 예시)
     var hb = [[1, 34, 30], [3, 0, 10], [5, 0, 6], [7, 0, 4]];
-    s += t(380, 136, '깨끗한 신호', { size: 10, weight: 700, fill: C.sub }) + t(520, 136, '클리핑된 신호', { size: 10, weight: 700, fill: C.red });
-    hb.forEach(function (h, i) { var y0 = 190; s += (h[1] ? box(340 + i * 22, y0 - h[1], 14, h[1], '#94a3b8', null, 2) : '') + box(480 + i * 22, y0 - h[2], 14, h[2], i ? C.amber : C.red, null, 2) + t(347 + i * 22, y0 + 12, (i ? h[0] + '배' : '기본'), { size: 8.5, fill: C.sub }) + t(487 + i * 22, y0 + 12, (i ? h[0] + '배' : '기본'), { size: 8.5, fill: C.sub }); });
+    s += t(380, 144, '깨끗한 신호', { size: 10, weight: 700, fill: C.sub }) + t(520, 144, '클리핑된 신호', { size: 10, weight: 700, fill: C.red });
+    hb.forEach(function (h, i) { var y0 = 194; s += (h[1] ? box(340 + i * 22, y0 - h[1], 14, h[1], '#94a3b8', null, 2) : '') + box(480 + i * 22, y0 - h[2], 14, h[2], i ? C.amber : C.red, null, 2) + t(347 + i * 22, y0 + 12, (i ? h[0] + '배' : '기본'), { size: 8.5, fill: C.sub }) + t(487 + i * 22, y0 + 12, (i ? h[0] + '배' : '기본'), { size: 8.5, fill: C.sub }); });
     s += t(449, 220, '평균 힘 ↑ + 고음 성분 ↑ → 고음 드라이버 과열 (막대는 예시)', { size: 9.5, fill: C.red, weight: 700 });
     return svg(600, 234, s, '바이앰프 모드와 클리핑이 고음 드라이버에 주는 부담');
   };
@@ -289,10 +289,12 @@
 
     /* ------------------------------------------------ 그리기 */
     function T(x, y, s, o) { return t(x, y, s, o); }
-    function sock(p, label, col, sub) { return '<circle cx="' + p.x + '" cy="' + p.y + '" r="17" fill="#0b0f14" stroke="' + (col || '#64748b') + '" stroke-width="2"/><circle cx="' + p.x + '" cy="' + p.y + '" r="7" fill="none" stroke="#475569" stroke-width="2"/>' + T(p.x, p.y + 32, label, { size: 10.5, weight: 800, fill: '#e5e7eb' }) + (sub ? T(p.x, p.y + 45, sub, { size: 9, fill: '#94a3b8' }) : ''); }
-    function cablePath(a, b) { var sag = Math.max(36, Math.abs(a.x - b.x) * 0.22 + Math.abs(a.y - b.y) * 0.1); return 'M' + a.x + ' ' + a.y + 'C' + a.x + ' ' + (a.y + sag) + ' ' + b.x + ' ' + (b.y + sag) + ' ' + b.x + ' ' + b.y; }
+    var LAB = [];   // 단자 이름은 케이블 위에 다시 그림(가려지지 않게)
+    function halo(x, y, s2, o) { return t(x, y, s2, o).replace('<text ', '<text stroke="#111827" stroke-width="3" paint-order="stroke" '); }
+    function sock(p, label, col, sub) { LAB.push(halo(p.x, p.y + 32, label, { size: 10.5, weight: 800, fill: '#e5e7eb' }) + (sub ? halo(p.x, p.y + 45, sub, { size: 9, fill: '#cbd5e1' }) : '')); return '<circle cx="' + p.x + '" cy="' + p.y + '" r="17" fill="#0b0f14" stroke="' + (col || '#64748b') + '" stroke-width="2"/><circle cx="' + p.x + '" cy="' + p.y + '" r="7" fill="none" stroke="#475569" stroke-width="2"/>'; }
+    function cablePath(a, b) { var sag = Math.max(36, Math.abs(a.x - b.x) * 0.22 + Math.abs(a.y - b.y) * 0.1); return 'M' + a.x + ' ' + a.y + 'C' + a.x + ' ' + Math.min(a.y + sag, 374) + ' ' + b.x + ' ' + Math.min(b.y + sag, 374) + ' ' + b.x + ' ' + b.y; }
     function drawWire() {
-      var w = R.w, s = '<rect width="640" height="380" fill="#eef3f8"/>';
+      var w = R.w, s = '<rect width="640" height="380" fill="#eef3f8"/>'; LAB = [];
       // 앰프
       s += box(14, 22, 200, 176, '#1f2937', '#0b0f14', 10) + T(114, 42, '실습 파워앰프 (예시)', { size: 12, weight: 800, fill: '#fff' }) + T(114, 60, '정격 8 Ω · 4 Ω — 4 Ω 미만 금지', { size: 9.5, fill: '#fbbf24', weight: 700 });
       [['ch1', w.ch1], ['ch2', w.ch2]].forEach(function (c) { var p = PORTS[c[0]], st = c[1], col = w.short ? '#ef4444' : !st.n ? '#64748b' : st.ok ? '#22c55e' : '#ef4444';
@@ -315,6 +317,7 @@
         s += '<path d="' + cablePath(a, b) + '" fill="none" stroke="#0f172a" stroke-width="8" stroke-linecap="round" opacity=".35"/><path d="' + cablePath(a, b) + '" fill="none" stroke="' + c.col + '" stroke-width="5.5" stroke-linecap="round"/>';
         c.ends.forEach(function (e, ei) { var p = endPos(e), on = drag && drag.type === 'plug' && drag.ci === ci && drag.ei === ei;
           s += '<g data-drag="plug"><circle cx="' + p.x + '" cy="' + p.y + '" r="' + (on ? 14 : 12) + '" fill="' + c.col + '" stroke="#0f172a" stroke-width="2.4"/><circle cx="' + p.x + '" cy="' + p.y + '" r="4" fill="#0f172a" opacity=".55"/></g>'; }); });
+      s += LAB.join('');
       if (drag && drag.type === 'plug') { var near = nearPort(drag.pt, drag.ci, drag.ei); if (near) s += '<circle cx="' + PORTS[near].x + '" cy="' + PORTS[near].y + '" r="24" fill="none" stroke="#22d3ee" stroke-width="3" stroke-dasharray="5 4"/>'; }
       return s;
     }
@@ -344,7 +347,7 @@
       var s = '<rect width="640" height="300" fill="#fff"/>', x0 = 70, x1 = 560, y0 = 30, y1 = 214, L = 60, xl = function (m) { return x0 + m / L * (x1 - x0); }, yd = function (d) { return y0 + Math.min(2, -d) / 2 * (y1 - y0); };
       [0, 10, 20, 30, 40, 50, 60].forEach(function (m) { s += '<path d="M' + xl(m) + ' ' + y0 + 'V' + y1 + '" stroke="#e2e8f0"/>' + T(xl(m), y1 + 14, m + ' m', { size: 10, fill: C.sub }); });
       [0, -0.5, -1, -1.5, -2].forEach(function (d) { s += '<path d="M' + x0 + ' ' + yd(d) + 'H' + x1 + '" stroke="' + (d === -0.5 ? C.red : '#e2e8f0') + '"' + (d === -0.5 ? ' stroke-dasharray="6 4" stroke-width="1.6"' : '') + '/>' + T(x0 - 6, yd(d) + 4, d === 0 ? '0 dB' : '−' + Math.abs(d), { size: 10, fill: C.sub, anchor: 'end' }); });
-      s += T(x1, yd(-0.5) - 5, '목표 −0.5 dB', { size: 10, fill: C.red, anchor: 'end', weight: 700 }) + T(x0, 18, '부하 ' + S.R + ' Ω · 굵기별 케이블 손실 (교육용 계산)', { size: 11, fill: C.sub, anchor: 'start', weight: 700 });
+      s += T(x0 + 6, yd(-0.5) + 15, '목표 −0.5 dB', { size: 10, fill: C.red, anchor: 'start', weight: 700 }) + T(x0, 18, '부하 ' + S.R + ' Ω · 굵기별 케이블 손실 (교육용 계산)', { size: 11, fill: C.sub, anchor: 'start', weight: 700 });
       GAUGES.forEach(function (g) { var d = '', sel = g.g === S.gauge; for (var m = 0; m <= L; m++) { var v = cableCalc(g.g, m, S.R).loss; d += (m ? 'L' : 'M') + xl(m).toFixed(1) + ' ' + yd(v).toFixed(1); }
         var lv = cableCalc(g.g, L, S.R).loss; s += '<path d="' + d + '" fill="none" stroke="' + GCOL[g.g] + '" stroke-width="' + (sel ? 4 : 1.6) + '" opacity="' + (sel ? 1 : 0.55) + '"/>' + T(x1 + 6, yd(lv) + 4, g.g + (sel ? ' AWG ◀' : ''), { size: sel ? 11 : 9.5, fill: GCOL[g.g], anchor: 'start', weight: sel ? 800 : 600 }); });
       var c = R.c, x = xl(S.len), y = yd(c.loss), ok = c.loss > -0.5;
@@ -361,7 +364,7 @@
       [0, 200, 400, 600, 800, 1000].forEach(function (w) { s += '<path d="M' + xw(w) + ' 24V220" stroke="#e2e8f0"/>' + T(xw(w), 236, w + ' W', { size: 10, fill: C.sub }); });
       [['연속 (AES)', SPK.cont, C.teal], ['프로그램', SPK.prog, C.blue], ['피크', SPK.peak, C.violet]].forEach(function (r, i) { var y = 34 + i * 32;
         s += T(x0 - 8, y + 15, r[0], { size: 11, weight: 700, anchor: 'end' }) + box(x0, y, xw(r[1]) - x0, 22, r[2], null, 4) + T(xw(r[1]) + 6, y + 15, r[1] + ' W', { size: 10.5, weight: 800, fill: r[2], anchor: 'start' }); });
-      s += T(x0 - 8, 160, 'ZX1 정격 ↑', { size: 10, fill: C.sub, anchor: 'end' }) + T(x0 - 8, 196, '앰프 (8 Ω)', { size: 11, weight: 700, anchor: 'end' });
+      s += T(x0 - 8, 196, '앰프 (8 Ω)', { size: 11, weight: 700, anchor: 'end' });
       Object.keys(AMPS).forEach(function (k, i) { var a = AMPS[k], x = xw(a.w), sel = S.amp === k, col = sel ? (k === 'xli' ? C.green : C.red) : '#94a3b8';
         s += '<path d="M' + x + ' 140V214" stroke="' + col + '" stroke-width="' + (sel ? 4 : 2) + '"' + (sel ? '' : ' stroke-dasharray="4 3"') + '/>' + T(x + (i === 2 ? -6 : 6), 176 + i * 14, a.w + ' W' + (sel ? ' ◀ 고름' : ''), { size: sel ? 11.5 : 10, weight: 800, fill: col, anchor: i === 2 ? 'end' : 'start' }); });
       s += T(x0, 254, '앰프 W 는 스피커와 같은 Ω(여기서는 8 Ω) 정격으로 비교해요', { size: 10, fill: C.sub, anchor: 'start' });
@@ -407,7 +410,7 @@
           : verdict('bad', '연속 정격의 4.5배예요. 조금만 실수해도 스피커가 견디는 힘을 크게 넘을 수 있어요. 이런 조합은 리미터·설정으로 확실히 보호할 수 있을 때만 써요.'); }
       q('[data-role=readMatch]').innerHTML = h;
     }
-    var HINT = { wire: '케이블 끝(색 동그라미)을 끌어 단자에 놓으면 꽂혀요. 꽂힌 끝을 끌어내면 빠져요. 판정은 손을 놓을 때 해요.', pins: 'NL4 플러그 뒤쪽 단자예요. 빨강 · 검정 선 끝을 끌어 단자(1+ · 1− · 2+ · 2−)에 놓아요.', cable: '굵기와 부하를 고르고, 아래 동그라미를 끌어 길이를 바꿔요(오른쪽 막대도 돼요). 판정은 손을 놓을 때 해요.', match: '오른쪽에서 앰프를 골라 ZX1 의 정격과 비교해요.' };
+    var HINT = { wire: '케이블 끝(색 동그라미)을 끌어 단자에 놓으면 꽂혀요. 꽂힌 끝을 끌어내면 빠져요. 판정은 손을 놓을 때 해요. (좁은 화면에서는 그림을 옆으로 밀어 볼 수 있어요)', pins: 'NL4 플러그 뒤쪽 단자예요. 빨강 · 검정 선 끝을 끌어 단자(1+ · 1− · 2+ · 2−)에 놓아요.', cable: '굵기와 부하를 고르고, 아래 동그라미를 끌어 길이를 바꿔요(오른쪽 막대도 돼요). 판정은 손을 놓을 때 해요.', match: '오른쪽에서 앰프를 골라 ZX1 의 정격과 비교해요.' };
     function update() {
       calc();
       var vb = VB[S.scene]; svgEl.setAttribute('viewBox', '0 0 ' + vb[0] + ' ' + vb[1]);
