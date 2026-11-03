@@ -66,13 +66,13 @@
       '.x32p-stage{position:relative;aspect-ratio:2000/1200;width:max(100%,940px);container-type:inline-size;user-select:none;-webkit-user-select:none;touch-action:pan-x pan-y}',
       '.x32p-stage>img{position:absolute;left:0;top:0;width:100%;height:auto;pointer-events:none}',
       '.x32p-stage *{box-sizing:border-box}',
-      '.x32p-btn{position:absolute;border:0;border-radius:.28cqw;background:linear-gradient(180deg,#6b6e75,#4b4e55);box-shadow:inset 0 -.12cqw 0 rgba(0,0,0,.45),0 0 0 .06cqw #111;cursor:pointer;padding:0}',
+      '.x32p-btn{position:absolute;border:0;border-radius:.28cqw;background:linear-gradient(180deg,#6b6e75,#4b4e55);box-shadow:inset 0 -.12cqw 0 rgba(0,0,0,.45),0 0 0 .06cqw #111,0 0 0 .3cqw rgba(36,37,40,.96);cursor:pointer;padding:0}',
       '.x32p-btn:hover{filter:brightness(1.18)}',
       '.x32p-btn:focus-visible{outline:.15cqw solid #60a5fa;outline-offset:.08cqw}',
-      '.x32p-btn.on.y{background:radial-gradient(circle,#fff3c4 0,#ffc93a 55%,#e69a00 100%);box-shadow:0 0 .9cqw rgba(255,180,0,.85)}',
-      '.x32p-btn.on.g{background:radial-gradient(circle,#d9ffe9 0,#3dffa0 55%,#10b867 100%);box-shadow:0 0 .9cqw rgba(16,220,120,.8)}',
-      '.x32p-btn.on.r{background:radial-gradient(circle,#ffe0e0 0,#ff5a5a 55%,#d81b1b 100%);box-shadow:0 0 .9cqw rgba(255,40,40,.8)}',
-      '.x32p-btn.on.o{background:radial-gradient(circle,#ffe7cf 0,#ff9a3d 55%,#e36a00 100%);box-shadow:0 0 .9cqw rgba(255,120,0,.85)}',
+      '.x32p-btn.on.y{background:radial-gradient(circle,#fff3c4 0,#ffc93a 55%,#e69a00 100%);box-shadow:0 0 0 .3cqw rgba(36,37,40,.96),0 0 .9cqw rgba(255,180,0,.85)}',
+      '.x32p-btn.on.g{background:radial-gradient(circle,#d9ffe9 0,#3dffa0 55%,#10b867 100%);box-shadow:0 0 0 .3cqw rgba(36,37,40,.96),0 0 .9cqw rgba(16,220,120,.8)}',
+      '.x32p-btn.on.r{background:radial-gradient(circle,#ffe0e0 0,#ff5a5a 55%,#d81b1b 100%);box-shadow:0 0 0 .3cqw rgba(36,37,40,.96),0 0 .9cqw rgba(255,40,40,.8)}',
+      '.x32p-btn.on.o{background:radial-gradient(circle,#ffe7cf 0,#ff9a3d 55%,#e36a00 100%);box-shadow:0 0 0 .3cqw rgba(36,37,40,.96),0 0 .9cqw rgba(255,120,0,.85)}',
       '.x32p-btn.dim{opacity:.55;cursor:default}',
       '.x32p-bl{display:block;font-size:.5cqw;font-weight:900;color:#e5e7eb;letter-spacing:-.01em;line-height:1;white-space:nowrap}.x32p-btn.on .x32p-bl{color:#052e16}',
       '.x32p-lcd{position:absolute;border-radius:.2cqw;background:var(--c,#475569);color:#0b0c0e;display:flex;flex-direction:column;justify-content:center;align-items:center;line-height:1.05;box-shadow:inset 0 0 0 .08cqw rgba(0,0,0,.35);pointer-events:none;overflow:hidden}',
@@ -329,7 +329,7 @@
     }
     function refreshValues() {   // 끄는 중에는 이것만 (요소를 다시 만들지 않음)
       strips.forEach(function (o) { if (!o.inf || o.inf.none) return; var v = o.inf.get(); if (!o.drag) capPos(o, fpos(v)); o.val.textContent = fmt(v); o.cap.setAttribute('aria-valuetext', fmt(v) + ' dB'); });
-      Object.keys(knobs).forEach(knobDraw); scr.innerHTML = scrHtml(); judge(); renderRead();
+      Object.keys(knobs).forEach(knobDraw); scr.innerHTML = scrHtml(); if (!drag) judge(); renderRead();   // 끄는 중에는 과제 판정 안 함 — 손을 뗄 때 판정
     }
     /* ---------- 미터 움직임 */
     function ledSet(box, d, n) {
