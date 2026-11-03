@@ -1,7 +1,7 @@
 /* =============================================================================
    03-2 디지털 콘솔 (Behringer X32 기준) — 2026-11-03
-   - STA_MODULES['console-digital'] (모듈 데이터) + STAVisuals.x32* (그림 6개) + STASims.x32Desk (가상 X32 조작면)
-   - 03-1 아날로그 콘솔(console.js)과 같은 구성: 핵심 개념 · 이론(그림 + 개념 체크) · 실습(자동 확인 과제 5개) · 확인 문제 · 관련 미션 · 심화 학습
+   - STA_MODULES['console-digital'] (모듈 데이터) + STAVisuals.x32* (그림 6개) + 실습은 x32_edit_sim.js(STASims.x32Edit, X32-Edit 스타일)
+   - 03-1 아날로그 콘솔(console.js)과 같은 구성: 핵심 개념 · 이론(그림 + 개념 체크) · 실습(자동 확인 과제 6개) · 확인 문제 · 관련 미션 · 심화 학습
    - 사실(채널·버스·DCA·씬 수 등)은 제조사 자료 기준, 실습 화면은 교육용으로 단순화(실제 X32 는 입력 페이더 16개 · 버스 쪽 8개)
    ============================================================================= */
 (function () {
@@ -108,264 +108,13 @@
     return svg(600, 198, s, '씬과 패치');
   };
 
-  /* =========================================================================== 실습: 가상 X32 조작면 */
-  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
-  var NINF = -Infinity;
-  function psum(arr) { var p = 0; arr.forEach(function (d) { if (isFinite(d)) p += Math.pow(10, d / 10); }); return p > 0 ? 10 * Math.log10(p) : NINF; }
-  function fmt(d) { return !isFinite(d) || d < -90 ? '−∞' : (d > 0 ? '+' : d < 0 ? '−' : '') + Math.abs(d).toFixed(Math.abs(d) < 10 ? 1 : 0); }
-  function fin(d) { return !isFinite(d) ? null : Math.round(d * 10) / 10; }
-  // 페이더: 0–1000 → dB (X32 눈금을 단순화: 750 ≈ 0 dB, 1000 = +10 dB)
-  var FPTS = [[0, NINF], [60, -60], [250, -30], [500, -10], [750, 0], [1000, 10]];
-  function fdb(p) { if (p <= 0) return NINF; for (var i = 1; i < FPTS.length; i++) { var a = FPTS[i - 1], b = FPTS[i]; if (p <= b[0]) { if (a[1] === NINF) return b[1] - (b[0] - p) / (b[0] - a[0]) * 30; return a[1] + (b[1] - a[1]) * (p - a[0]) / (b[0] - a[0]); } } return 10; }
-  function fpos(d) { if (d == null || d === NINF) return 0; for (var i = 1; i < FPTS.length; i++) { var a = FPTS[i - 1], b = FPTS[i]; if (d <= b[1]) { if (a[1] === NINF) return Math.max(1, b[0] - (b[1] - d) / 30 * (b[0] - a[0])); return a[0] + (b[0] - a[0]) * (d - a[1]) / (b[1] - a[1]); } } return 1000; }
-
-  // 교회 예배 예시 채널 (src = GAIN 0 dB 일 때 소리의 가장 큰 순간 입력 레벨 dBFS, 교육용 가정)
-  var CHS = [
-    ['인도자 보컬', 'SM58', -48, 0], ['싱어 1', 'SM58', -50, 0], ['싱어 2', 'SM58', -50, 0], ['어쿠스틱 기타', 'DI', -30, 0],
-    ['건반 L', 'DI', -20, 0], ['건반 R', 'DI', -20, 0], ['베이스', 'DI', -24, 0], ['킥', '드럼 마이크', -38, 0],
-    ['스네어', '드럼 마이크', -36, 0], ['오버헤드', '콘덴서', -44, 1], ['일렉 기타', '앰프 마이크', -40, 0], ['성가대 L', '콘덴서', -46, 1],
-    ['성가대 R', '콘덴서', -46, 1], ['설교 (구즈넥)', '콘덴서', -45, 1], ['사회 (무선)', '무선 수신기', -26, 0], ['노트북 영상', 'USB·라인', -18, 0]
-  ];
-  var DCAS = [['악기', [4, 5, 6, 7, 8, 9, 10, 11]], ['보컬', [1, 2, 3]], ['설교·사회', [14, 15]], ['성가대', [12, 13]]];
-  var BUSES = ['인도자 모니터', '싱어 모니터', '드럼 모니터', '방송·녹음'];
-
-  function injectCss() {
-    if (document.getElementById('sta-mod-x32-css')) return;
-    var st = document.createElement('style'); st.id = 'sta-mod-x32-css';
-    st.textContent = [
-      '.sim-x32{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:12px;align-items:start;min-width:0}',
-      '.sim-x32-desk{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:12px;background:linear-gradient(180deg,#2b313a,#1a1f26);border:1px solid #0f1215;color:#e5e7eb;min-width:0}',
-      '.sim-x32-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:10px}',
-      '.sim-x32-screen{border-radius:8px;background:#0b1220;border:1px solid #334155;padding:10px;min-width:0}',
-      '.sim-x32-screen h5{margin:0 0 4px;font-size:.72rem;color:#93c5fd;letter-spacing:.04em}',
-      '.sim-x32-screen .nm{font-size:1rem;font-weight:800;color:#f8fafc}',
-      '.sim-x32-screen .tg{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:999px;background:#fbbf24;color:#111827;font-size:.7rem;font-weight:800}',
-      '.sim-x32-scenes{display:grid;gap:4px;margin-top:8px}',
-      '.sim-x32-scenes label{display:flex;gap:6px;align-items:center;font-size:.74rem;padding:3px 6px;border-radius:6px;background:rgba(255,255,255,.05);cursor:pointer}',
-      '.sim-x32-scenes label:has(input:checked){background:rgba(147,197,253,.2)}',
-      '.sim-x32-sbtns{display:flex;gap:6px;margin-top:6px}',
-      '.sim-x32-strip{border-radius:8px;background:rgba(255,255,255,.04);border:1px solid #334155;padding:10px;display:grid;gap:8px;min-width:0}',
-      '.sim-x32-strip h5{margin:0;font-size:.72rem;color:#fde68a;letter-spacing:.04em}',
-      '.sim-x32-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}',
-      '.sim-x32-gain{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px;align-items:center;font-size:.74rem}',
-      '.sim-x32-gain input{width:100%;accent-color:#fbbf24}',
-      '.sim-x32-in{position:relative;height:12px;border-radius:6px;background:linear-gradient(90deg,#14532d 0 60%,#713f12 60% 85%,#7f1d1d 85% 100%);overflow:hidden}',
-      '.sim-x32-in i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#22c55e 0,#22c55e 60%,#facc15 60%,#facc15 85%,#ef4444 85%);clip-path:inset(0 var(--cut,100%) 0 0)}',
-      '.sim-x32-in b{position:absolute;top:-1px;width:2px;height:14px;background:#fff;left:var(--pk,0%)}',
-      '.sim-x32-scale{display:flex;justify-content:space-between;font-size:.6rem;color:#94a3b8}',
-      '.sim-x32-btn{min-width:52px;padding:6px 8px;border-radius:6px;border:1px solid #111;background:#4b5563;color:#e5e7eb;font:inherit;font-size:.72rem;font-weight:800;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,.35)}',
-      '.sim-x32-btn[aria-pressed="true"]{background:#fbbf24;color:#111827}',
-      '.sim-x32-btn.red[aria-pressed="true"]{background:#ef4444;color:#fff}',
-      '.sim-x32-btn.sof[aria-pressed="true"]{background:#f97316;color:#111827;box-shadow:0 0 10px rgba(249,115,22,.6)}',
-      '.sim-x32-bot{display:flex;flex-wrap:wrap;gap:12px;align-items:stretch}',
-      '.sim-x32-grp{display:flex;gap:8px;align-items:stretch;flex:0 1 auto;max-width:100%;overflow-x:auto;padding-bottom:4px}',
-      '.sim-x32-grp>*{flex:0 0 auto}',
-      '.sim-x32-layers{display:flex;flex-direction:column;gap:5px;justify-content:flex-start}',
-      '.sim-x32-layers .sim-x32-btn{min-width:74px;font-size:.68rem;padding:6px 4px}',
-      '.sim-x32-fbank{display:flex;gap:4px}',
-      '.sim-x32-fs{display:flex;flex-direction:column;align-items:center;gap:4px;width:52px;padding:5px 2px;border-radius:7px;background:rgba(255,255,255,.04)}',
-      '.sim-x32-fs.sel{background:rgba(251,191,36,.16);outline:1px solid rgba(251,191,36,.55)}',
-      '.sim-x32-fs.sofm{background:rgba(249,115,22,.14)}',
-      '.sim-x32-fs .nm{font-size:.62rem;font-weight:800;text-align:center;line-height:1.15;min-height:2.3em;color:#f8fafc}',
-      '.sim-x32-fs .no{font-size:.6rem;color:#94a3b8}',
-      '.sim-x32-fs .sim-x32-btn{min-width:44px;padding:3px 0;font-size:.62rem}',
-      '.sim-x32-fs input[type=range]{writing-mode:vertical-lr;direction:rtl;width:24px;height:120px;accent-color:#e5e7eb}',
-      '.sim-x32-fs.sofm input[type=range]{accent-color:#f97316}',
-      '.sim-x32-fs b{font-size:.62rem;color:#fde68a;font-variant-numeric:tabular-nums}',
-      '.sim-x32-fs .dca{font-size:.56rem;color:#c4b5fd}',
-      '.sim-x32-main{display:flex;flex-direction:column;align-items:center;gap:4px;width:56px;padding:5px 2px;border-radius:7px;background:rgba(239,68,68,.1)}',
-      '.sim-x32-main .nm{font-size:.66rem;font-weight:800;color:#fecaca}',
-      '.sim-x32-main input[type=range]{writing-mode:vertical-lr;direction:rtl;width:24px;height:120px;accent-color:#ef4444}',
-      '.sim-x32-main b{font-size:.62rem;color:#fde68a}',
-      '.sim-x32-note{font-size:.66rem;color:#94a3b8;margin:0}',
-      '@media (max-width:900px){.sim-x32{grid-template-columns:minmax(0,1fr)}}',
-      '@media (max-width:640px){.sim-x32-top{grid-template-columns:minmax(0,1fr)}}'
-    ].join('\n');
-    document.head.appendChild(st);
-  }
-
-  function x32Desk(el, opts) {
-    opts = opts || {}; injectCss();
-    function initState() {
-      return {
-        ch: CHS.map(function (c, i) {
-          var n = i + 1, gainDef = { 1: 36, 2: 36, 3: 36, 4: 18, 5: 8, 6: 8, 7: 12, 8: 26, 9: 24, 10: 30, 11: 26, 12: 32, 13: 32, 14: 20, 15: 12, 16: 6 }[n];
-          return { gain: gainDef, p48: c[3] && n !== 14, lc: [1, 2, 3, 12, 13, 14, 15].indexOf(n) >= 0, gate: [8, 9].indexOf(n) >= 0, comp: [1, 2, 3, 7, 14].indexOf(n) >= 0, mute: false,
-            fader: n === 14 ? 0 : n === 16 ? -60 : -5, send: [n === 1 ? -60 : n <= 3 ? -8 : -15, n <= 3 ? -4 : -18, n >= 7 && n <= 10 ? -6 : -60, -10] };
-        }),
-        dca: [0, 0, 0, 0], dcaMute: [false, false, false, false], bus: [0, 0, 0, 0], busMute: [false, false, false, false], main: 0, mainMute: false
-      };
-    }
-    var M = initState(), scenes = { '01': JSON.stringify(M), '02': null }, sceneSel = '01';
-    var S = { layer: 0, right: 'dca', sel: 1, sof: -1, dirty: false, sawSof: false, done: {}, frame: 0 };
-    var alive = true, raf = 0;
-
-    function chIn(n) { var c = CHS[n - 1], m = M.ch[n - 1]; if (c[3] && !m.p48) return NINF; return c[2] + m.gain; }   // 입력 미터(dBFS, 가장 큰 순간)
-    function chOut(n) { var m = M.ch[n - 1], d = 0; if (m.mute) return NINF; DCAS.forEach(function (dc, k) { if (dc[1].indexOf(n) >= 0) d += M.dcaMute[k] ? NINF : M.dca[k]; }); var lv = chIn(n) + m.fader + d; return isFinite(lv) ? lv : NINF; }
-    function mainLv() { if (M.mainMute) return NINF; var arr = []; for (var n = 1; n <= 16; n++) arr.push(chOut(n) - 10); return psum(arr) + M.main; }   // 여러 채널 합 (교육용)
-    function busLv(b) { if (M.busMute[b]) return NINF; var arr = []; for (var n = 1; n <= 16; n++) { var m = M.ch[n - 1]; if (m.mute) continue; arr.push(chIn(n) + m.send[b] - 6); } return psum(arr) + M.bus[b]; }   // 모니터 BUS 는 PRE(페이더 앞)
-    function hit(id) { if (S.done[id]) return; S.done[id] = true; if (opts.onTask) opts.onTask(id); }
-    function judge() {
-      var c14 = M.ch[13], in14 = chIn(14);
-      if (S.sel === 14 && c14.p48) hit('p48');
-      if (S.sel === 14 && c14.p48 && in14 >= -18 && in14 <= -6) hit('gain');
-      if (S.sof === 0 && M.ch[0].send[0] >= -10 && S.sawSof) hit('sof');
-      if (M.dca[0] <= -10 && !M.dcaMute[0]) hit('dca');
-    }
-
-    var q = function (s) { return el.querySelector(s); };
-    el.innerHTML = '<div class="sim-x32">' +
-      '<div class="sim-x32-desk" aria-label="가상 X32 조작면 (교육용 단순화)">' +
-        '<div class="sim-x32-top">' +
-          '<div class="sim-x32-screen" data-role="screen"></div>' +
-          '<div class="sim-x32-strip" data-role="strip"></div>' +
-        '</div>' +
-        '<div class="sim-x32-bot"><div class="sim-x32-grp" aria-label="입력 구역">' +
-          '<div class="sim-x32-layers" role="group" aria-label="입력 레이어"><span class="sim-x32-note">입력 레이어</span>' +
-            '<button type="button" class="sim-x32-btn" data-layer="0" aria-pressed="true">CH 1–8</button><button type="button" class="sim-x32-btn" data-layer="1" aria-pressed="false">CH 9–16</button></div>' +
-          '<div class="sim-x32-fbank" data-role="inbank"></div></div><div class="sim-x32-grp" aria-label="버스·DCA 구역">' +
-          '<div class="sim-x32-layers" role="group" aria-label="버스 쪽 레이어"><span class="sim-x32-note">버스 쪽 레이어</span>' +
-            '<button type="button" class="sim-x32-btn" data-right="dca" aria-pressed="true">DCA 1–4</button><button type="button" class="sim-x32-btn" data-right="bus" aria-pressed="false">BUS 1–4</button>' +
-            '<button type="button" class="sim-x32-btn sof" data-sof="1" aria-pressed="false">SENDS ON FADER</button></div>' +
-          '<div class="sim-x32-fbank" data-role="rbank"></div>' +
-          '<div class="sim-x32-main"><span class="nm">MAIN LR</span><button type="button" class="sim-x32-btn red" data-mmute="1" aria-pressed="false">MUTE</button><input type="range" min="0" max="1000" step="1" data-main="1" aria-label="MAIN LR 페이더"><b data-o="main"></b></div>' +
-        '</div></div>' +
-        '<p class="sim-x32-note">실제 X32 는 입력 페이더 16개 · 버스 쪽 8개이고 레이어가 더 많아요. 여기서는 8개 · 4개로 줄였어요.</p>' +
-      '</div>' +
-      '<div class="sim-side"><div class="sim-box sim-read" data-role="read"></div></div>' +
-    '</div>';
-    var screen = q('[data-role=screen]'), strip = q('[data-role=strip]'), inbank = q('[data-role=inbank]'), rbank = q('[data-role=rbank]'), read = q('[data-role=read]');
-
-    function fsHtml(kind, i, name, sub, val, sel, mute, extra, sofm) {
-      return '<div class="sim-x32-fs' + (sel ? ' sel' : '') + (sofm ? ' sofm' : '') + '"><span class="no">' + sub + '</span><span class="nm">' + esc(name) + '</span>' +
-        '<button type="button" class="sim-x32-btn" data-' + kind + 'sel="' + i + '" aria-pressed="' + sel + '" aria-label="' + esc(name) + ' SELECT">SEL</button>' +
-        '<button type="button" class="sim-x32-btn red" data-' + kind + 'mute="' + i + '" aria-pressed="' + mute + '" aria-label="' + esc(name) + ' MUTE">MUTE</button>' +
-        '<input type="range" min="0" max="1000" step="1" data-' + kind + 'f="' + i + '" value="' + Math.round(fpos(val)) + '" aria-label="' + esc(name) + (sofm ? ' 보내는 양' : ' 페이더') + '"><b>' + fmt(val) + '</b>' + (extra || '') + '</div>';
-    }
-    function render() {
-      var base = S.layer * 8;
-      // 입력 페이더
-      var h = '';
-      for (var i = 1; i <= 8; i++) {
-        var n = base + i, m = M.ch[n - 1], sofm = S.sof >= 0, val = sofm ? m.send[S.sof] : m.fader;
-        var dk = DCAS.map(function (d, k) { return d[1].indexOf(n) >= 0 ? 'DCA' + (k + 1) : ''; }).filter(Boolean).join(' ');
-        h += fsHtml('c', n, CHS[n - 1][0], 'CH ' + n, val, S.sel === n, m.mute, '<span class="dca">' + dk + '</span>', sofm);
-      }
-      inbank.innerHTML = h;
-      // 버스 쪽
-      var r = '';
-      for (var k = 0; k < 4; k++) {
-        if (S.right === 'dca') r += fsHtml('d', k, DCAS[k][0], 'DCA ' + (k + 1), M.dca[k], false, M.dcaMute[k], '', false);
-        else r += fsHtml('b', k, BUSES[k], 'BUS ' + (k + 1), M.bus[k], S.sof === k, M.busMute[k], '', false);
-      }
-      rbank.innerHTML = r;
-      el.querySelectorAll('[data-layer]').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-layer') === S.layer)); });
-      el.querySelectorAll('[data-right]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-right') === S.right)); });
-      q('[data-sof]').setAttribute('aria-pressed', String(S.sof >= 0));
-      q('[data-main]').value = Math.round(fpos(M.main)); q('[data-o=main]').textContent = fmt(M.main); q('[data-mmute]').setAttribute('aria-pressed', String(M.mainMute));
-      renderStrip(); renderScreen(); judge(); renderRead();
-    }
-    function renderStrip() {
-      var n = S.sel, m = M.ch[n - 1], c = CHS[n - 1];
-      strip.innerHTML = '<h5>채널 스트립 · 지금 고른 채널: CH ' + n + ' ' + esc(c[0]) + '</h5>' +
-        '<div class="sim-x32-gain"><span>GAIN</span><input type="range" min="0" max="60" step="0.5" data-gain="1" value="' + m.gain + '" aria-label="CH' + n + ' GAIN"><b>' + m.gain.toFixed(1) + ' dB</b></div>' +
-        '<div><div class="sim-x32-in" data-role="inmeter"><i></i><b></b></div><div class="sim-x32-scale"><span>−60</span><span>−18</span><span>−6</span><span>0 dBFS</span></div></div>' +
-        '<div class="sim-x32-row">' +
-          '<button type="button" class="sim-x32-btn" data-tg="p48" aria-pressed="' + m.p48 + '">+48V</button>' +
-          '<button type="button" class="sim-x32-btn" data-tg="lc" aria-pressed="' + m.lc + '">LOW CUT</button>' +
-          '<button type="button" class="sim-x32-btn" data-tg="gate" aria-pressed="' + m.gate + '">GATE</button>' +
-          '<button type="button" class="sim-x32-btn" data-tg="comp" aria-pressed="' + m.comp + '">COMP</button></div>' +
-        '<p class="sim-x32-note">입력: ' + esc(c[1]) + (c[3] ? ' · 콘덴서라 +48V 가 있어야 소리가 나요' : '') + '. 팬텀(+48V)은 채널마다 따로 켜요.</p>';
-    }
-    function renderScreen() {
-      var n = S.sel, c = CHS[n - 1];
-      screen.innerHTML = '<h5>화면 · HOME</h5><div class="nm">CH ' + n + ' · ' + esc(c[0]) + '</div>' +
-        (S.sof >= 0 ? '<span class="tg">SENDS ON FADER · BUS ' + (S.sof + 1) + ' ' + esc(BUSES[S.sof]) + '</span>' : '') +
-        '<h5 style="margin-top:10px">SCENES</h5><div class="sim-x32-scenes" role="radiogroup" aria-label="씬 목록">' +
-        [['01', '주일 1부 예배'], ['02', scenes['02'] ? '저장됨' : '(비어 있음)']].map(function (r) { return '<label><input type="radio" name="simX32Scene" value="' + r[0] + '"' + (sceneSel === r[0] ? ' checked' : '') + '>' + r[0] + ' · ' + esc(r[1]) + '</label>'; }).join('') +
-        '</div><div class="sim-x32-sbtns"><button type="button" class="sim-x32-btn" data-scene="recall">GO (불러오기)</button><button type="button" class="sim-x32-btn" data-scene="save">SAVE (저장)</button></div>' +
-        (S.dirty ? '<p class="sim-x32-note" style="color:#fde68a">불러온 뒤 바뀐 설정이 있어요</p>' : '<p class="sim-x32-note">씬과 같은 상태예요</p>');
-    }
-    function lv(d) { return !isFinite(d) || d < -60 ? '<b class="bad">소리 없음</b>' : '<b class="' + (d > 0 ? 'warn' : 'ok') + '">' + fmt(d) + ' dB</b>'; }
-    function renderRead() {
-      var inn = chIn(S.sel);
-      read.innerHTML = '<h4>지금 상태 <small>교육용 근사</small></h4>' +
-        '<div class="sim-row"><span>고른 채널 입력</span><b>' + (isFinite(inn) ? fmt(inn) + ' dBFS' : '신호 없음') + '</b></div>' +
-        '<div class="sim-row"><span>메인(LR) 회중석</span>' + lv(mainLv()) + '</div>' +
-        BUSES.map(function (b, k) { return '<div class="sim-row"><span>BUS ' + (k + 1) + ' ' + esc(b) + '</span>' + lv(busLv(k)) + '</div>'; }).join('') +
-        '<div class="sim-row"><span>CH1 인도자 보컬 → 메인</span>' + lv(chOut(1)) + '</div>' +
-        '<div class="sim-row"><span>DCA 1 「악기」</span><b>' + fmt(M.dca[0]) + ' dB</b></div>' +
-        '<p class="sim-note">모니터 BUS 1–3 은 PRE(페이더 앞)로 보내요. 그래서 메인 페이더를 움직여도 모니터 크기는 그대로예요.</p>';
-    }
-    function tick() {
-      if (!alive) return; raf = requestAnimationFrame(tick); S.frame++;
-      var bar = el.querySelector('[data-role=inmeter]'); if (!bar) return;
-      var pk = chIn(S.sel), env = 0.55 + 0.45 * Math.abs(Math.sin(S.frame / 23)) * Math.abs(Math.sin(S.frame / 7.3));
-      var now = isFinite(pk) ? pk + 20 * Math.log10(env) : -100, pos = function (d) { return clamp((d + 60) / 60 * 100, 0, 100); };
-      bar.style.setProperty('--cut', (100 - pos(now)) + '%'); bar.style.setProperty('--pk', pos(isFinite(pk) ? pk : -100) + '%');
-    }
-    function changed() { S.dirty = true; }
-    function onInput(e) {
-      var tg = e.target, a;
-      if ((a = tg.getAttribute('data-cf'))) { var n = +a, d = fdb(+tg.value); if (S.sof >= 0) { M.ch[n - 1].send[S.sof] = d; S.sawSof = true; } else M.ch[n - 1].fader = d; S.sel = n; changed(); render(); return; }
-      if ((a = tg.getAttribute('data-df')) != null) { M.dca[+a] = fdb(+tg.value); changed(); render(); return; }
-      if ((a = tg.getAttribute('data-bf')) != null) { M.bus[+a] = fdb(+tg.value); changed(); render(); return; }
-      if (tg.getAttribute('data-main')) { M.main = fdb(+tg.value); changed(); render(); return; }
-      if (tg.getAttribute('data-gain')) { M.ch[S.sel - 1].gain = +tg.value; changed(); var foc = true; render(); if (foc) { var g = q('[data-gain]'); if (g) g.focus(); } }
-    }
-    function onClick(e) {
-      var b = e.target.closest('button'); if (!b || !el.contains(b)) return; var a;
-      if ((a = b.getAttribute('data-layer')) != null) { S.layer = +a; render(); return; }
-      if ((a = b.getAttribute('data-right'))) { S.right = a; if (a === 'dca') S.sof = -1; render(); return; }
-      if (b.getAttribute('data-sof')) { if (S.sof >= 0) S.sof = -1; else { S.right = 'bus'; S.sof = 0; } render(); return; }
-      if ((a = b.getAttribute('data-csel'))) { S.sel = +a; render(); return; }
-      if ((a = b.getAttribute('data-bsel')) != null) { if (S.sof >= 0) S.sof = +a; render(); return; }
-      if (b.getAttribute('data-dsel') != null) return;
-      if ((a = b.getAttribute('data-cmute'))) { M.ch[+a - 1].mute = !M.ch[+a - 1].mute; changed(); render(); return; }
-      if ((a = b.getAttribute('data-dmute')) != null) { M.dcaMute[+a] = !M.dcaMute[+a]; changed(); render(); return; }
-      if ((a = b.getAttribute('data-bmute')) != null) { M.busMute[+a] = !M.busMute[+a]; changed(); render(); return; }
-      if (b.getAttribute('data-mmute')) { M.mainMute = !M.mainMute; changed(); render(); return; }
-      if ((a = b.getAttribute('data-tg'))) { var m = M.ch[S.sel - 1]; m[a] = !m[a]; changed(); render(); return; }
-      if ((a = b.getAttribute('data-scene'))) {
-        if (a === 'save') { scenes[sceneSel] = JSON.stringify(M); S.dirty = false; render(); return; }
-        if (a === 'recall' && scenes[sceneSel]) { var wasDirty = S.dirty; M = JSON.parse(scenes[sceneSel]); fixInf(M); S.dirty = false; if (wasDirty && sceneSel === '01') hit('scene'); render(); }
-      }
-    }
-    function fixInf(o) { o.ch.forEach(function (m) { if (m.fader == null) m.fader = NINF; m.send = m.send.map(function (v) { return v == null ? NINF : v; }); }); ['dca', 'bus'].forEach(function (k) { o[k] = o[k].map(function (v) { return v == null ? NINF : v; }); }); if (o.main == null) o.main = NINF; }
-    function onChange(e) { if (e.target.name === 'simX32Scene') { sceneSel = e.target.value; render(); } }
-    el.addEventListener('input', onInput); el.addEventListener('click', onClick); el.addEventListener('change', onChange);
-    render(); tick();
-
-    return {
-      destroy: function () { alive = false; cancelAnimationFrame(raf); el.removeEventListener('input', onInput); el.removeEventListener('click', onClick); el.removeEventListener('change', onChange); el.innerHTML = ''; },
-      state: function () {
-        return { layer: S.layer, right: S.right, sel: S.sel, sof: S.sof, dirty: S.dirty, ready: true, audio: false,
-          ch14: { p48: M.ch[13].p48, gain: M.ch[13].gain, input: fin(chIn(14)) }, ch1: { fader: fin(M.ch[0].fader), send1: fin(M.ch[0].send[0]), out: fin(chOut(1)) },
-          dca: M.dca.map(fin), main: fin(mainLv()), bus: [0, 1, 2, 3].map(function (k) { return fin(busLv(k)); }), done: Object.keys(S.done) };
-      },
-      // set: 테스트·디버그용 (layer, right, sel, sof, gain(고른 채널), p48(고른 채널), dca:[..], chFader:{n:dB}, send:{n:dB}(지금 SOF 버스), scene:'save'|'recall')
-      set: function (o) {
-        o = o || {};
-        if (o.layer != null) S.layer = o.layer; if (o.right) S.right = o.right; if (o.sel) S.sel = o.sel; if (o.sof != null) S.sof = o.sof;
-        if (o.gain != null) { M.ch[S.sel - 1].gain = o.gain; changed(); } if (o.p48 != null) { M.ch[S.sel - 1].p48 = !!o.p48; changed(); }
-        if (o.dca) { o.dca.forEach(function (v, k) { if (v != null) M.dca[k] = v; }); changed(); }
-        if (o.chFader) { Object.keys(o.chFader).forEach(function (n) { M.ch[n - 1].fader = o.chFader[n]; }); changed(); }
-        if (o.send && S.sof >= 0) { Object.keys(o.send).forEach(function (n) { M.ch[n - 1].send[S.sof] = o.send[n]; }); S.sawSof = true; changed(); }
-        render();
-        if (o.scene) { var b = q('[data-scene=' + o.scene + ']'); if (b) b.click(); }
-        return this.state();
-      }
-    };
-  }
-  window.STASims = window.STASims || {};
-  window.STASims.x32Desk = x32Desk;
+  /* 실습(X32-Edit 스타일 가상 편집 화면)은 lessons/modules/x32_edit_sim.js — 2026-11-03 */
 })();
 
 /* =========================================================================== 모듈 데이터 */
 (function () {
   'use strict';
-  var X32 = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Behringer_X32_%281%29.jpg/1280px-Behringer_X32_%281%29.jpg';
+  var X32 = 'https://cdn-media.empowertribe.com/cdn-cgi/image/width=2000,quality=85,format=auto/e5ba63fb0e6f4e69a1626c5811115e16/Image_BE_0603-ACE_X32_Top_XL.png';   // Behringer 공식 제품 사진(윗면)
   window.STA_MODULES = window.STA_MODULES || {};
   window.STA_MODULES['console-digital'] = {
     id: 'console-digital', path: 'hardware', no: 3, noLabel: '03-2', status: 'ready', level: '중급', minutes: 45, img: X32,
@@ -387,7 +136,7 @@
         '팬텀(+48V)은 <b>채널마다 따로</b> 켜요. 콘덴서 마이크 채널만 켜고, 확인 없이 모두 켜지 않아요.',
         '<b>씬을 불러오면 설정이 한꺼번에 바뀌어요.</b> 예배 중에는 함부로 불러오지 않고, 바꾼 설정은 저장(SAVE)해야 다음 주에도 남아요.'
       ],
-      model: null
+      model: 'x32'
     },
     theory: [
       { title: '아날로그와 무엇이 다를까 — 화면 · SELECT · 공용 노브', visual: 'x32Surface',
@@ -434,15 +183,16 @@
           { t: '전원만 끄지 않으면 그대로 남는다', why: '다른 예배·행사에서 설정이 바뀌면 사라져요. 씬으로 저장해요.' }] } }
     ],
     practice: {
-      kind: 'x32Desk',
-      lead: '가상 X32 조작면이에요. 레이어를 바꿔 채널을 찾고, SELECT 한 채널의 +48V·GAIN 을 맞추고, Sends on Fader 로 모니터를 보내고, DCA 로 악기를 한 번에 줄이고, 씬을 불러와 설정을 되돌려 봐요. 실제 X32 는 입력 페이더 16개 · 버스 쪽 8개인데, 여기서는 8개 · 4개로 줄였어요.',
-      note: '레벨(dB)·미터·페이더 눈금은 교육용 근사예요. 채널 배치와 DCA·BUS 이름은 교회 예배 예시이고, 버튼 이름과 구성은 X32 를 따랐지만 단순화했어요.',
+      kind: 'x32Edit',
+      lead: 'X32-Edit(컴퓨터로 X32 를 조작하는 프로그램)처럼 만든 연습 화면이에요. 위에는 페이지 버튼(HOME · METERS · … · SCENES), 왼쪽에는 고른 채널의 채널 스트립, 가운데에는 Home · Config · Gate · Dyn · EQ · Sends · Main 탭, 아래에는 페이더 뱅크가 있어요. 실제 X32-Edit 는 한 화면에 16채널이 보이는데, 여기서는 8개씩 보여요.',
+      note: '레벨(dB)·미터·페이더 눈금은 교육용 근사예요. 채널 배치와 DCA·BUS·뮤트 그룹 이름은 교회 예배 예시이고, 화면 구성은 X32-Edit 를 따랐지만 단순화했어요.',
       tasks: [
-        { id: 'p48', title: '레이어 바꿔 채널 찾기', text: 'CH 9–16 레이어로 넘겨 설교 마이크(CH 14, 콘덴서)를 SELECT 하고, 채널 스트립의 +48V 를 켜세요.' },
-        { id: 'gain', title: '고른 채널 GAIN 맞추기', text: '설교 마이크의 GAIN 을 맞춰 입력 미터의 흰 선(가장 큰 순간)이 −18 ~ −6 dBFS 사이에 오게 하세요.' },
-        { id: 'sof', title: 'Sends on Fader 로 모니터 보내기', text: 'SENDS ON FADER 를 켜고 BUS 1(인도자 모니터)을 고른 뒤, CH1 인도자 보컬 페이더를 −10 dB 이상으로 올리세요. 메인은 그대로예요.' },
-        { id: 'dca', title: 'DCA 로 악기 한 번에 줄이기', text: 'DCA 1–4 레이어에서 DCA 1 「악기」를 −10 dB 이하로 내리세요. 악기 채널 페이더는 움직이지 않아요.' },
-        { id: 'scene', title: '씬 불러오기로 되돌리기', text: '설정을 바꾼 상태에서 화면의 SCENES 에서 「01 주일 1부 예배」를 고르고 GO 를 눌러 처음 설정으로 되돌리세요.' }
+        { id: 'p48', title: '뱅크 바꿔 채널 찾고 48V 켜기', text: '아래 믹서에서 CH 9–16 뱅크로 넘겨 설교 마이크(CH 14, 콘덴서)의 SEL 을 누르고, Config 탭(또는 왼쪽 채널 스트립)에서 48V 를 켜세요.' },
+        { id: 'gain', title: 'Config 탭에서 GAIN 맞추기', text: '설교 마이크의 GAIN 을 맞춰 입력 미터의 흰 선(가장 큰 순간)이 점선 칸(−18 ~ −6 dBFS) 안에 오게 하세요.' },
+        { id: 'lowcut', title: 'LOW CUT 으로 저음 정리', text: '같은 Config 탭에서 LOW CUT 을 켜고 주파수를 80 ~ 150 Hz 사이로 맞추세요. 구즈넥 마이크의 쿵쿵거리는 잡음이 줄어요.' },
+        { id: 'sof', title: 'Sends on Fader 로 모니터 보내기', text: 'SENDS ON FADER 를 켜고 BUS 1(인도자 모니터)을 고른 뒤, CH 1–8 뱅크에서 CH1 인도자 보컬 페이더를 −10 dB 이상으로 올리세요. 메인은 그대로예요.' },
+        { id: 'dca', title: 'DCA 로 악기 한 번에 줄이기', text: 'SENDS ON FADER 를 끄고 DCA 1–8 뱅크에서 DCA 1 「악기」를 −10 dB 이하로 내리세요. 악기 채널 페이더는 움직이지 않아요.' },
+        { id: 'scene', title: '씬 불러오기로 되돌리기', text: '설정을 바꾼 상태에서 위의 SCENES 페이지를 열고 「01 주일 1부 예배」를 고른 뒤 GO 를 눌러 처음 설정으로 되돌리세요.' }
       ],
       links: [
         { title: 'CL5 콘솔 트레이닝', text: '다른 디지털 콘솔(Yamaha CL5)로 예배 식순에 맞춰 채널을 켜고 DCA 를 다뤄 봐요.', go: { tab: 'tab5' } },
@@ -487,7 +237,7 @@
       { t: 'Behringer X32 User Manual — Scenes 화면 · Safes (ManualsLib)', url: 'https://manualslib.com/manual/453343/Behringer-X32-Digital-Mixer.html?page=63' },
       { t: 'Behringer X-LIVE 확장 카드', url: 'https://www.behringer.com/en/products/0606-ABU' },
       { t: 'Behringer MX-Mix · MX-Q 앱 안내 — Sweetwater', url: 'https://www.sweetwater.com/sweetcare/articles/behringer-mx-mix-and-mx-q-mobile-apps-quickstart-guide/' },
-      { t: '사진: Cjp24, 「Behringer X32 (1)」, CC BY-SA 4.0 — Wikimedia Commons', url: 'https://commons.wikimedia.org/wiki/File:Behringer_X32_(1).jpg' }
+      { t: '사진: Behringer X32 공식 제품 사진 (윗면 · 뒷면 · 옆면) — 3D 모델 배치도 이 사진들을 기준으로 맞춤', url: 'https://www.behringer.com/en/products/0603-ace' }
     ]
   };
 })();

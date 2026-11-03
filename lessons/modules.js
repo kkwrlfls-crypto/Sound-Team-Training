@@ -34,9 +34,9 @@
     'img/modules/hw_amp.jpg': { t: '사진: 3층에 설치된 d&b 40D · 10D 앰프 (제조사 제품 사진)' },
     'img/modules/hw_speaker.jpg': { t: '사진: 3층에 설치된 d&b 서브우퍼 · E8 · Vi10P (제조사 제품 사진)' },
     'img/modules/mg12xu_full.jpg': { t: '사진: 「MG12XU 실습」 화면의 콘솔 (Yamaha 제품 사진 + 실습용 페이더)' },
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Behringer_X32_%281%29.jpg/1280px-Behringer_X32_%281%29.jpg': { t: '사진: Cjp24, 「Behringer X32 (1)」, CC BY-SA 4.0 (Wikimedia Commons)', url: 'https://commons.wikimedia.org/wiki/File:Behringer_X32_(1).jpg' }   /* 2026-11-03: 03-2 디지털 콘솔 */
+    'https://cdn-media.empowertribe.com/cdn-cgi/image/width=2000,quality=85,format=auto/e5ba63fb0e6f4e69a1626c5811115e16/Image_BE_0603-ACE_X32_Top_XL.png': { t: '사진: Behringer X32 공식 제품 사진 (behringer.com 제품 페이지)', url: 'https://www.behringer.com/en/products/0603-ace' }   /* 2026-11-03: 03-2 디지털 콘솔 — 제조사 사이트에서 바로 불러옴 */
   };
-  var IMG_R = { 'img/modules/mg12xu_full.jpg': 1754 / 1862, 'img/modules/crown_xli1500.jpg': 1600 / 817, 'img/modules/ev_zxa1.jpg': 1160 / 900, 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Behringer_X32_%281%29.jpg/1280px-Behringer_X32_%281%29.jpg': 1280 / 725 };   // 사진 가로÷세로 (그 밖의 장비 사진은 1200×900)
+  var IMG_R = { 'img/modules/mg12xu_full.jpg': 1754 / 1862, 'img/modules/crown_xli1500.jpg': 1600 / 817, 'img/modules/ev_zxa1.jpg': 1160 / 900, 'https://cdn-media.empowertribe.com/cdn-cgi/image/width=2000,quality=85,format=auto/e5ba63fb0e6f4e69a1626c5811115e16/Image_BE_0603-ACE_X32_Top_XL.png': 2000 / 1389 };   // 사진 가로÷세로 (그 밖의 장비 사진은 1200×900)
   window.STA_IMG_CREDITS = IMG_CREDITS;   // 2026-10-23: 화면의 출처 줄은 없애고, 메뉴 맨 아래 「사진 출처」 창에서만 보여 줌(lessons/ui.js)
   function creditHtml() { return ''; }
   var view = { path: null, mod: null, tab: 'overview', fig: 'photo' }, sim = null, viewer = null, backTo = null;
@@ -175,7 +175,7 @@
   var FIG_A = 1.6;
   function figHtml(m) {
     var h = (GL[m.id] || {}).hero, d3 = MODEL3D[m.overview.model], is3d = view.fig === '3d' && d3;
-    var tools = d3 ? '<div class="mod-fig__tools" role="group" aria-label="보기 방식"><button type="button" data-mfig="photo" aria-pressed="' + !is3d + '">사진 설명</button><button type="button" data-mfig="3d" aria-pressed="' + !!is3d + '">3D 로 돌려 보기</button></div>' : '';
+    var tools = d3 ? '<div class="mod-fig__tools" role="group" aria-label="보기 방식"><button type="button" data-mfig="photo" aria-pressed="' + !is3d + '">' + (h && h.zones ? '사진 · 기능부 설명' : '사진 설명') + '</button><button type="button" data-mfig="3d" aria-pressed="' + !!is3d + '">3D 로 돌려 보기</button></div>' : '';
     if (is3d) return '<figure class="mod-fig mod-fig--3d"><div class="mod-viewer" data-role="viewer"><div class="mod-viewer__msg">3D 모델을 불러오는 중…</div></div>' +
       '<figcaption class="mod-fig__foot mod-viewer__bar">' + tools + '<span>끌어서 돌려 보기 · ' + esc(d3.label) + '</span>' + (d3.toggle ? '<button type="button" class="sim-btn" data-mviewer="switch">' + esc(d3.toggleTxt) + '</button>' : '') + '</figcaption></figure>';
     if (h && h.vis && VIS[h.vis]) return '<figure class="mod-fig mod-fig--vis"><div class="mod-visual">' + VIS[h.vis]() + '</div>' + (tools ? '<div class="mod-fig__foot">' + tools + '</div>' : '') + '</figure>';
@@ -189,10 +189,21 @@
       labels += '<div class="mod-fig__lb ' + (left ? 'l' : 'r') + '" style="top:' + (p[3] * 100).toFixed(1) + '%"><b><i>' + n + '</i>' + esc(p[4]) + '</b><span>' + esc(p[5]) + '</span></div>';
       legend += '<li><b>' + esc(p[4]) + '</b> — ' + esc(p[5]) + '</li>';
     });
-    return '<figure class="mod-fig" style="--fig-bg:' + esc((h && h.bg) || '#0b1626') + '">' +
+    /* 2026-11-03: 기능부 설명 — 사진 위 구역에 마우스를 올리면(휴대폰은 누르면) 말풍선 설명, 같은 기능 구역은 함께 표시 (MG12XU 실습의 「기능부 설명」과 같은 방식) */
+    var zones = '', zchips = '', Z = h && h.zones;
+    if (Z) {
+      Z.rects.forEach(function (q) {
+        var u0 = q[1] / Z.w, v0 = q[2] / Z.h, u1 = q[3] / Z.w, v1 = q[4] / Z.h, sec = Z.secs[q[0]] || [q[0], ''];
+        zones += '<span class="mod-zone" data-zsec="' + q[0] + '" data-zpart="' + esc(q[5] || '') + '" title="' + esc(sec[0]) + '" style="left:' + ((0.5 + (u0 - v[0]) * k) * 100).toFixed(2) + '%;top:' + ((v0 - v[1]) / v[2] * 100).toFixed(2) +
+          '%;width:' + ((u1 - u0) * k * 100).toFixed(2) + '%;height:' + ((v1 - v0) / v[2] * 100).toFixed(2) + '%"></span>';
+      });
+      zchips = '<div class="mod-zchips" role="group" aria-label="기능부 이름 — 누르면 사진에 위치와 설명이 나와요">' + Object.keys(Z.secs).map(function (key) { return '<button type="button" data-zsec="' + key + '" aria-pressed="false">' + esc(Z.secs[key][0]) + '</button>'; }).join('') + '</div>';
+    }
+    return '<figure class="mod-fig' + (Z ? ' mod-fig--zones' : '') + '" style="--fig-bg:' + esc((h && h.bg) || '#0b1626') + '">' +
       '<div class="mod-fig__stage"><img src="' + esc(img) + '" alt="' + esc(m.title) + ' 장비 사진" style="height:' + (100 / v[2]).toFixed(2) + '%;top:' + (-v[1] / v[2] * 100).toFixed(2) + '%;left:' + ((0.5 - v[0] * k) * 100).toFixed(2) + '%">' +
-      (pts.length ? '<svg class="mod-fig__lines" viewBox="0 0 1600 1000" preserveAspectRatio="none" aria-hidden="true">' + lines + '</svg>' + marks + labels : '') + '</div>' +
-      (pts.length ? '<ol class="mod-fig__legend">' + legend + '</ol>' : '') + (tools ? '<div class="mod-fig__foot">' + tools + '</div>' : '') + '</figure>';
+      (pts.length ? '<svg class="mod-fig__lines" viewBox="0 0 1600 1000" preserveAspectRatio="none" aria-hidden="true">' + lines + '</svg>' + marks + labels : '') + zones + '</div>' +
+      (pts.length ? '<ol class="mod-fig__legend">' + legend + '</ol>' : '') + zchips +
+      (tools || Z ? '<div class="mod-fig__foot">' + tools + (Z ? '<span class="mod-zhint">사진의 구역에 마우스를 올리면 그 부분의 기능 설명이 나와요. 휴대폰은 구역이나 위의 이름을 눌러요.</span>' : '') + '</div>' : '') + '</figure>';
   }
   function heroHtml(m) {
     var s = st(m.id);
@@ -267,7 +278,7 @@
   }
   function renderModule() {
     var root = $('tabModule'), m = MODS[view.mod]; if (!root || !m) return;
-    destroySim(); destroyViewer();
+    destroySim(); destroyViewer(); zHide(true);
     var p = pathById(m.path), c = counts(m), s = status(m), tab = view.tab;
     var body = { overview: tabOverview, theory: tabTheory, practice: tabPractice, quiz: tabQuiz, missions: tabMissions, deeper: tabDeeper }[tab](m);
     /* 2026-10-23: 왼쪽 과정 목록은 사이드 메뉴로 옮김. 머리(제목·정보·진행도) → [핵심 개념 탭] 장비 사진 + 핵심 학습 포인트 → 단계 탭 → 내용 */
@@ -298,6 +309,50 @@
     sim = fn(el, { onTask: function (id) { var s = st(m.id); if (s.tasks[id]) return; s.tasks[id] = true; put(m.id, s); refreshHead(); } });
   }
   function destroySim() { if (sim) { try { sim.destroy(); } catch (e) { /* noop */ } sim = null; } }
+  /* 기능부 설명 말풍선 (사진 구역 · 이름 단추 공용) */
+  var zb = null, zPinned = null, zCur = null, zEl = null;
+  function zSecs() { var m = MODS[view.mod], h = m && (GL[m.id] || {}).hero; return (h && h.zones && h.zones.secs) || {}; }
+  function zHide(force) {
+    if (zPinned && !force) return; zPinned = null; zCur = null; zEl = null; if (zb) zb.style.display = 'none';
+    document.querySelectorAll('#tabModule .mod-zone').forEach(function (d) { d.classList.remove('hl', 'main'); });
+    document.querySelectorAll('#tabModule .mod-zchips button').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+  }
+  function zPlace() {
+    if (!zb || zb.style.display !== 'block' || !zEl) return;
+    var r = zEl.getBoundingClientRect(), bw = zb.offsetWidth, bh = zb.offsetHeight, vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    if (r.bottom < 0 || r.top > vh) { zHide(true); return; }
+    var x = Math.max(8, Math.min(vw - bw - 8, r.left + r.width / 2 - bw / 2)), below = r.bottom + bh + 14 < vh || r.top - bh - 14 < 0, y = below ? r.bottom + 10 : r.top - bh - 10;
+    zb.style.left = x + 'px'; zb.style.top = y + 'px'; zb.classList.toggle('below', below); zb.classList.toggle('above', !below);
+    zb.style.setProperty('--tail-x', Math.max(10, Math.min(bw - 22, r.left + r.width / 2 - x - 6)) + 'px');
+  }
+  function zShow(sec, el) {
+    var d = zSecs()[sec]; if (!d) return;
+    if (!zb) { zb = document.createElement('div'); zb.className = 'mod-zbub'; zb.id = 'modZoneBubble'; zb.setAttribute('role', 'dialog'); zb.setAttribute('aria-live', 'polite'); document.body.appendChild(zb); }
+    var all = document.querySelectorAll('#tabModule .mod-zone[data-zsec="' + sec + '"]'); el = el || all[0]; if (!el) return;
+    zCur = sec; zEl = el;
+    var rr = el.getBoundingClientRect(); if (rr.top < 70 || rr.bottom > window.innerHeight - 20) el.scrollIntoView({ block: 'center' });   // 이름 단추로 열 때: 구역이 화면 밖이면 먼저 보이게
+    document.querySelectorAll('#tabModule .mod-zone').forEach(function (z) { var me = z.getAttribute('data-zsec') === sec; z.classList.toggle('hl', me); z.classList.toggle('main', me && z === el); });
+    document.querySelectorAll('#tabModule .mod-zchips button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-zsec') === sec)); });
+    var part = el.getAttribute && el.getAttribute('data-zpart');
+    zb.innerHTML = '<button type="button" class="mod-zbub__x" aria-label="설명 닫기">×</button><b></b><p></p>' + (all.length > 1 ? '<small></small>' : '');
+    zb.querySelector('b').textContent = d[0]; zb.querySelector('p').textContent = d[1];
+    if (all.length > 1) zb.querySelector('small').textContent = (part ? '지금 가리킨 곳: ' + part + ' · ' : '') + '같은 기능 ' + all.length + '곳을 함께 표시했어요';
+    zb.style.display = 'block'; zPlace();
+  }
+  document.addEventListener('mouseover', function (e) { if (zPinned) return; var z = e.target.closest && e.target.closest('#tabModule .mod-zone'); if (z) zShow(z.getAttribute('data-zsec'), z); });
+  document.addEventListener('mouseout', function (e) { if (zPinned) return; var z = e.target.closest && e.target.closest('#tabModule .mod-zone'), to = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('#tabModule .mod-zone, .mod-zbub'); if (z && !to) zHide(); });
+  document.addEventListener('click', function (e) {
+    var t = e.target; if (!t.closest) return;
+    if (t.closest('.mod-zbub__x')) { zHide(true); return; }
+    if (t.closest('.mod-zbub')) return;
+    var z = t.closest('#tabModule .mod-zone, #tabModule .mod-zchips [data-zsec]');
+    if (z) { var sec = z.getAttribute('data-zsec'); if (zPinned === sec && z.classList.contains('mod-zone')) { zHide(true); return; } zPinned = sec; zShow(sec, z.classList.contains('mod-zone') ? z : null); return; }
+    if (zPinned) zHide(true);
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && zb && zb.style.display === 'block') zHide(true); });
+  window.addEventListener('scroll', zPlace, { passive: true }); window.addEventListener('resize', zPlace);
+  window.STAZones = { show: function (sec) { zPinned = sec; zShow(sec); return !!zEl; }, hide: function () { zHide(true); }, state: function () { return { sec: zCur, pinned: zPinned, open: !!(zb && zb.style.display === 'block') }; } };
+
   /* 학습 개요의 3D 장비 보기 — 사이트의 3D 모델 파일(assets3d/*_model.js)을 그대로 씀. dir = 카메라 방향 */
   var MODEL3D = {
     sm58: { label: '3D 모델(Shure SM58S)', need: 'ShureSM58', dir: [0.5, 0.25, 1], toggleTxt: '스위치 ON/OFF',
@@ -308,6 +363,7 @@
       make: function () { var g = new THREE.Group(), a = SpeakonCable.buildPlug(null, 'plugA'); a.rotation.y = Math.PI; g.add(a); g.rotation.x = 0.25; return g; } },
     mg12xu: { label: '3D 모델(Yamaha MG12XU)', need: 'YamahaMG12XU', dir: [0.15, 1.1, 1], make: function () { return YamahaMG12XU.create(); } },
     crown: { label: '3D 모델(Crown XLi1500)', need: 'CrownXLi1500', dir: [0.45, 0.35, 1], make: function () { return CrownXLi1500.create(); } },
+    x32: { label: '3D 모델(Behringer X32)', need: 'BehringerX32', dir: [0.18, 0.95, 1], make: function () { return BehringerX32.create(); } },   // 2026-11-03: 공식 윗면·뒷면 사진 배치 기준
     zxa1: { label: '3D 모델(EV ZXA1)', need: 'EvZXA1', dir: [0.5, 0.2, 1], make: function () { return EvZXA1.create(); } }
   };
   function mountViewer(def) {

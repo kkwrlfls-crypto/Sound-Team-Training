@@ -604,3 +604,23 @@ div.mod-p.mod-paras { margin: 0 0 12px; }
 #toTopBtn:hover { background: var(--sta-navy-2, #16325c); }
 html.nav-open #toTopBtn { opacity: 0; pointer-events: none; }
 @media (max-width: 1023px) { #toTopBtn span { display: none; } #toTopBtn { width: 44px; padding: 0; justify-content: center; } }
+
+/* 2026-11-03: 기능부 설명(03-2 디지털 콘솔 사진) — 구역에 마우스를 올리면 말풍선, 같은 기능 구역 함께 표시 */
+.mod-zone { position: absolute; box-sizing: border-box; border: 1.5px dashed rgba(255, 255, 255, 0.26); border-radius: 6px; cursor: help; transition: border-color 0.12s, background 0.12s, box-shadow 0.12s; }
+.mod-zone:hover { border-color: rgba(147, 197, 253, 0.85); }
+.mod-zone.hl { border: 2px solid #facc15; background: rgba(250, 204, 21, 0.14); box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.35), 0 0 12px rgba(250, 204, 21, 0.5); }
+.mod-zone.hl.main { background: rgba(250, 204, 21, 0.3); }
+.mod-zchips { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; background: var(--sta-surface); border-top: 1px solid var(--sta-line); }
+.mod-zchips button { border: 1px solid var(--sta-line); background: var(--sta-surface-2); color: var(--sta-ink-2); font: inherit; font-size: 0.74rem; font-weight: 700; padding: 5px 10px; border-radius: 999px; cursor: pointer; }
+.mod-zchips button:hover { border-color: var(--sta-blue); color: var(--sta-ink); }
+.mod-zchips button[aria-pressed="true"] { background: #facc15; border-color: #eab308; color: #1f2937; }
+.mod-zchips button:focus-visible { outline: 2px solid var(--sta-blue); outline-offset: 1px; }
+.mod-zhint { font-size: 0.76rem; color: var(--sta-ink-2); flex: 1 1 240px; min-width: 0; }
+.mod-zbub { position: fixed; z-index: 1200; max-width: min(320px, 88vw); background: #111827; color: #f9fafb; border-radius: 10px; padding: 10px 30px 10px 12px; font-size: 0.82rem; line-height: 1.55; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4); display: none; }
+.mod-zbub::after { content: ''; position: absolute; left: var(--tail-x, 24px); width: 12px; height: 12px; background: #111827; transform: rotate(45deg); }
+.mod-zbub.below::after { top: -6px; } .mod-zbub.above::after { bottom: -6px; }
+.mod-zbub b { display: block; color: #facc15; margin-bottom: 4px; font-size: 0.88rem; }
+.mod-zbub p { margin: 0; }
+.mod-zbub small { display: block; margin-top: 6px; color: #9ca3af; font-size: 0.72rem; }
+.mod-zbub__x { position: absolute; top: 4px; right: 6px; background: none; border: 0; color: #9ca3af; font-size: 1.1rem; line-height: 1; cursor: pointer; padding: 4px; }
+.mod-zbub__x:hover { color: #fff; }
