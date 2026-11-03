@@ -41,6 +41,9 @@
   var view = { path: null, mod: null, tab: 'overview', fig: 'photo' }, sim = null, viewer = null, backTo = null;
 
   function $(id) { return document.getElementById(id); }
+  /* 2026-11-03: 03-1 · 03-2 처럼 나눈 과정은 noLabel 로 표기 */
+  function noTxt(m) { return m.noLabel || String(m.no).padStart(2, '0'); }
+  window.STA_NO_TXT = noTxt;
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function pathById(id) { return PATHS.find(function (p) { return p.id === id; }); }
   function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
@@ -104,7 +107,7 @@
     var s = status(m), soon = s === 'soon', c = counts(m);
     return '<button type="button" class="mod-card' + (soon ? ' soon' : '') + '" data-module="' + m.id + '"' + (soon ? ' aria-disabled="true"' : '') + '>' +
       '<span class="mod-card__thumb">' + thumb(m) + (s === 'done' || s === 'doing' ? '<i class="mod-flag ' + s + '">' + (s === 'done' ? '✓ 완료' : '진행 중') + '</i>' : '') + '</span>' +
-      '<span class="mod-card__body"><b>' + String(m.no).padStart(2, '0') + '. ' + esc(m.title) + '</b><span class="mod-card__sub">' + esc(m.sub) + '</span>' +
+      '<span class="mod-card__body"><b>' + noTxt(m) + '. ' + esc(m.title) + '</b><span class="mod-card__sub">' + esc(m.sub) + '</span>' +
       (soon && m.topics ? '<span class="mod-card__topics">' + m.topics.slice(0, 3).map(esc).join(' · ') + '…</span>' : '') +
       '<span class="mod-card__meta"><span class="home-tag' + (soon ? ' soon' : '') + '">' + (soon ? '준비 중' : esc(m.level)) + '</span><span>⏱ ' + minutesTxt(m.minutes) + '</span></span>' +
       (c ? '<span class="mod-card__prog" title="학습 · 실습 · 이해도">' + dot(c.learnDone, '학습') + dot(c.pracDone, '실습') + dot(c.quizDone, '이해도') + '</span>' : '') + '</span></button>';
@@ -267,8 +270,8 @@
     var p = pathById(m.path), c = counts(m), s = status(m), tab = view.tab;
     var body = { overview: tabOverview, theory: tabTheory, practice: tabPractice, quiz: tabQuiz, missions: tabMissions, deeper: tabDeeper }[tab](m);
     /* 2026-10-23: 왼쪽 과정 목록은 사이드 메뉴로 옮김. 머리(제목·정보·진행도) → [핵심 개념 탭] 장비 사진 + 핵심 학습 포인트 → 단계 탭 → 내용 */
-    root.innerHTML = crumb([[p.title, 'data-path="' + p.id + '"'], [String(m.no).padStart(2, '0') + '. ' + m.title]]) +
-      '<div class="mod-page"><header class="mod-head mod-top"><div class="mod-top__main"><div class="mod-top__title"><h1 id="modTitle">' + String(m.no).padStart(2, '0') + '. ' + esc(m.title) + ' <span class="mod-st ' + s + '">' + STATUS_TXT[s] + '</span></h1><button type="button" class="mod-pathtag" data-path="' + p.id + '">' + esc(p.title) + '</button></div>' +
+    root.innerHTML = crumb([[p.title, 'data-path="' + p.id + '"'], [noTxt(m) + '. ' + m.title]]) +
+      '<div class="mod-page"><header class="mod-head mod-top"><div class="mod-top__main"><div class="mod-top__title"><h1 id="modTitle">' + noTxt(m) + '. ' + esc(m.title) + ' <span class="mod-st ' + s + '">' + STATUS_TXT[s] + '</span></h1><button type="button" class="mod-pathtag" data-path="' + p.id + '">' + esc(p.title) + '</button></div>' +
         '<p class="mod-top__sub">' + esc(m.sub) + '</p><div class="mod-head__meta">' + metaHtml(m, c) + '</div>' +
         (m.prereq ? '<div class="mod-head__pre">먼저 볼 레슨: ' + m.prereq.map(function (id) { var l = lessonById(id); return l ? '<button type="button" class="lsn-theory-link" data-lesson="' + id + '">' + (lessonDone(id) ? '✓ ' : '📘 ') + esc(l.title) + '</button>' : ''; }).join('') + '</div>' : '') +
         '</div><div class="mod-top__prog">' + progHtml(c) + '</div></header>' +
@@ -352,7 +355,7 @@
       nav.appendChild(g);
       (p.modules || []).forEach(function (id) { var m = MODS[id]; if (!m || m.status !== 'ready') return;
         var b = document.createElement('button'); b.type = 'button'; b.className = 'nav-mod'; b.setAttribute('data-module', id);
-        b.innerHTML = '<span class="nav-mod__n" aria-hidden="true">' + NAV_PLAY + '</span><span>' + String(m.no).padStart(2, '0') + '. ' + esc(m.title) + '</span>';
+        b.innerHTML = '<span class="nav-mod__n" aria-hidden="true">' + NAV_PLAY + '</span><span>' + noTxt(m) + '. ' + esc(m.title) + '</span>';
         nav.appendChild(b); });
       if (p.modules && p.practice && p.practice.length) { var lb = document.createElement('div'); lb.className = 'nav-sublabel'; lb.setAttribute('aria-hidden', 'true'); lb.textContent = '실습'; nav.appendChild(lb); }
       (p.practice || []).forEach(function (tab) { var b = nav.querySelector('.tab-btn[data-tab="' + tab + '"]'); if (b) { b.classList.add('tab-sub'); nav.appendChild(b); } });

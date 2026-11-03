@@ -128,7 +128,7 @@
       var mins = ms.reduce(function (a, m) { return a + (m.minutes || 0); }, 0);
       var STT = { done: '완료', doing: '진행 중' };
       body = '<ul class="hm-cat__list" aria-label="과정 순서">' + ms.map(function (m) { var s2 = modStatus(m.id);
-        return '<li><button type="button" data-module="' + esc(m.id) + '"><span class="no">' + String(m.no).padStart(2, '0') + '</span>' + esc(m.title) + (STT[s2] ? '<span class="st ' + s2 + '">' + STT[s2] + '</span>' : '') + '</button></li>'; }).join('') + '</ul>';
+        return '<li><button type="button" data-module="' + esc(m.id) + '"><span class="no">' + (window.STA_NO_TXT ? STA_NO_TXT(m) : String(m.no).padStart(2, '0')) + '</span>' + esc(m.title) + (STT[s2] ? '<span class="st ' + s2 + '">' + STT[s2] + '</span>' : '') + '</button></li>'; }).join('') + '</ul>';
       meta = '<div class="hm-cat__meta"><span>' + ms.length + '개 과정 · ' + minTxt(mins) + '</span><span>완료 <b>' + done + '</b> / ' + ms.length + '</span></div>' + bar(ms.length ? done / ms.length * 100 : 0, done === ms.length && ms.length);
       cta = '<button type="button" class="ui-btn ui-btn--primary ui-btn--block" data-path="' + esc(P.id) + '">' + (done === ms.length && ms.length ? '복습하기' : started ? '이어서 학습하기' : '학습 시작하기') + ARROW + '</button>';
     } else {
@@ -149,7 +149,7 @@
   function nextSection(doing, doingL) {
     var pathTitle = function (m) { var P = (window.STA_PATHS || []).find(function (p) { return p.id === m.path; }); return P ? P.title : ''; };
     if (doing.length || doingL.length) {
-      var items = doing.map(function (m) { return itemCard({ attr: 'data-module="' + esc(m.id) + '"', img: (window.STA_THUMBS || {})[m.id] || m.img, thumb: 'eq', kicker: pathTitle(m) + ' · ' + String(m.no).padStart(2, '0'), title: m.title, pct: modPct(m.id) }); })
+      var items = doing.map(function (m) { return itemCard({ attr: 'data-module="' + esc(m.id) + '"', img: (window.STA_THUMBS || {})[m.id] || m.img, thumb: 'eq', kicker: pathTitle(m) + ' · ' + (window.STA_NO_TXT ? STA_NO_TXT(m) : String(m.no).padStart(2, '0')), title: m.title, pct: modPct(m.id) }); })
         .concat(doingL.map(function (l) { var s = st(l.id); return itemCard({ attr: 'data-lesson="' + esc(l.id) + '"', thumb: l.thumb, kicker: '기초 이론', title: l.title, pct: Math.round(s.seen.length / 5 * 100) }); }));
       return '<section class="hm-sec" id="homeNext"><div class="hm-sec__head"><h2>진행 중인 학습</h2><p>시작한 과정을 이어서 학습하세요.</p></div><div class="hm-next">' + items.slice(0, 4).join('') + '</div></section>';
     }
@@ -320,7 +320,7 @@
 
   /* ------------------------------------------------------------- 실습 화면·커리큘럼에 이론 연결 */
   // 2026-10-21: 실습 탭 머리에 다는 관련 이론·모듈 (모든 모듈 개방에 맞춰 넓힘)
-  var TAB_MODULES = { tab1: ['mic', 'cable', 'amp', 'speaker'], tab6: ['console', 'gain-structure', 'eq'], tab2: ['cable', 'console', 'amp', 'speaker'], tab5: ['console', 'gain-structure', 'compressor'], tab7: ['cable', 'console'] };   /* 2026-10-23: Ear Training 탭의 관련 모듈 링크는 뺌 */
+  var TAB_MODULES = { tab1: ['mic', 'cable', 'amp', 'speaker'], tab6: ['console', 'gain-structure', 'eq'], tab2: ['cable', 'console-digital', 'amp', 'speaker'], tab5: ['console-digital', 'gain-structure', 'compressor'], tab7: ['cable', 'console'] };   /* 2026-10-23: Ear Training 탭의 관련 모듈 링크는 뺌 */
   var TAB_LESSONS = { tab1: ['signal-flow'], tab2: ['signal-flow'], tab7: ['signal-flow'], tab6: ['signal-flow'], tab5: ['signal-flow'] };   /* 2026-10-25: 콘솔과 겹치는 레슨 3개 정리 */
   function theoryLinks(ids) {
     return ids.map(function (id) {

@@ -14,13 +14,13 @@ window.STA_PATHS = [
     route: ['마이크', '케이블', '콘솔', '앰프', '스피커'],
     tip: '먼저 아래 기초 이론 레슨으로 신호 흐름을 익히고, 소리가 지나가는 순서대로 배워요. 실제 연결은 메뉴의 「실습」에서 익혀요.',
     prereq: ['signal-flow'],
-    modules: ['mic', 'cable', 'console', 'amp', 'speaker'],
+    modules: ['mic', 'cable', 'console', 'console-digital', 'amp', 'speaker'],   /* 2026-11-03: 콘솔을 03-1 아날로그 · 03-2 디지털로 나눔 */
     practice: ['tab1', 'tab6', 'tab2'], practiceTitle: '장비 연결 실습' },   /* 2026-10-23: 장비 브랜드 알아보기는 실습에서 빼고 따로 있는 메뉴로 */
   { id: 'mixing', title: '믹싱 스킬', icon: 'fader', img: 'img/modules/mix2_path.jpg',
     sum: '신호 레벨을 관리하고, 음색·다이내믹·공간감을 조절합니다.',
     lead: '신호 레벨을 올바르게 관리하는 것부터 시작해, 음색과 다이내믹, 공간감을 다루는 방법을 익힙니다.',
     route: ['Gain Structure', 'EQ', 'Gate', 'Compressor', '공간계 이펙트'],
-    tip: '먼저 「음향 장비 학습」의 03. 콘솔 과정(게인·페이더·HPF·AUX)을 보고 시작하면 쉬워요. 귀 훈련은 메뉴의 「실습」에 있어요.',
+    tip: '먼저 「음향 장비 학습」의 03-1 아날로그 콘솔 과정(게인·페이더·HPF·AUX)을 보고 시작하면 쉬워요. 귀 훈련은 메뉴의 「실습」에 있어요.',
     prereq: ['signal-flow'],   /* 2026-10-25: GAIN과 페이더·HPF와 EQ·AUX와 모니터 레슨은 콘솔 과정과 겹쳐서 정리 */
     modules: ['gain-structure', 'eq', 'gate', 'compressor', 'fx-space'],
     practice: ['tab3', 'tabMixVideo'], practiceTitle: '귀 훈련 · 믹싱 영상' },

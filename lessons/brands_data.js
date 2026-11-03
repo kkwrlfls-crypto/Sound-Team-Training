@@ -58,7 +58,7 @@ window.STA_BRANDS = {
         { t: '해외직구 무선 마이크 전파 안전성 시험 — 경향신문(2025-11)', u: 'https://www.khan.co.kr/article/202511181442001/' }
       ] },
     { id: 'console', title: '콘솔(믹서)', short: '콘솔', icon: 'console',
-      modules: [{ id: 'console', label: '콘솔 모듈' }, { id: 'gain-structure', label: 'Gain Structure 모듈' }],
+      modules: [{ id: 'console', label: '아날로그 콘솔 과정' }, { id: 'console-digital', label: '디지털 콘솔 과정' }, { id: 'gain-structure', label: 'Gain Structure 모듈' }],
       intro: '콘솔은 기본 원리(GAIN → EQ → 페이더 → 버스)는 같지만, 브랜드마다 화면 구성과 메뉴 이름이 달라요. 한 브랜드에 익숙해지면 같은 브랜드의 다른 모델은 금방 배워요.',
       look: ['필요한 입력·출력(AUX·모니터) 채널 수', '아날로그인지 디지털인지 — 디지털은 씬 저장·불러오기 가능', '지금 쓰는 무대 입출력 장비와 연결 방식(Dante·AES50 등)이 맞는지', '봉사자가 배우기 쉬운지, 교육 자료가 있는지'],
       sources: [
