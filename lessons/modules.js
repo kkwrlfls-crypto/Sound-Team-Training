@@ -34,6 +34,7 @@
     'img/modules/hw_amp.jpg': { t: '사진: 3층에 설치된 d&b 40D · 10D 앰프 (제조사 제품 사진)' },
     'img/modules/hw_speaker.jpg': { t: '사진: 3층에 설치된 d&b 서브우퍼 · E8 · Vi10P (제조사 제품 사진)' },
     'img/modules/mg12xu_full.jpg': { t: '사진: 「MG12XU 실습」 화면의 콘솔 (Yamaha 제품 사진 + 실습용 페이더)' },
+    'https://products.shureweb.eu/cdn-cgi/image/width=900,height=900,format=auto/shure_product_db/product_main_images/files/67c/0a4/37-/original/a63ca7f1e7b45a53c3f11898a7c6280a.webp': { t: '사진: Shure SLX-D+ 무선 마이크 시스템 공식 제품 사진 (shure.com)', url: 'https://www.shure.com/en-ASIA/products/wireless-systems/slxd-plus' },   /* 2026-11-04: 01-2 무선 마이크 카드 */
     'https://cdn-media.empowertribe.com/cdn-cgi/image/width=2000,quality=85,format=auto/e5ba63fb0e6f4e69a1626c5811115e16/Image_BE_0603-ACE_X32_Top_XL.png': { t: '사진: Behringer X32 공식 제품 사진 (behringer.com 제품 페이지)', url: 'https://www.behringer.com/en/products/0603-ace' }   /* 2026-11-03: 03-2 디지털 콘솔 — 제조사 사이트에서 바로 불러옴 */
   };
   var IMG_R = { 'img/modules/mg12xu_full.jpg': 1754 / 1862, 'img/modules/crown_xli1500.jpg': 1600 / 817, 'img/modules/ev_zxa1.jpg': 1160 / 900, 'https://cdn-media.empowertribe.com/cdn-cgi/image/width=2000,quality=85,format=auto/e5ba63fb0e6f4e69a1626c5811115e16/Image_BE_0603-ACE_X32_Top_XL.png': 2000 / 1389 };   // 사진 가로÷세로 (그 밖의 장비 사진은 1200×900)
@@ -71,7 +72,7 @@
   function minutesTxt(n) { return n >= 60 ? '약 ' + (Math.round(n / 30) / 2) + '시간' : '약 ' + n + '분'; }
   function thumb(m) {
     var th = (window.STA_THUMBS || {})[m.id]; if (th) return '<img src="' + esc(th) + '" alt="" loading="lazy">';
-    if (m.img) return '<img src="' + esc(m.img) + '" alt="" loading="lazy"' + (m.imgPos ? ' style="object-position:' + m.imgPos + '"' : '') + '>';
+    if (m.img) return '<img src="' + esc(m.img) + '" alt="" loading="lazy"' + (m.imgPos ? ' style="object-position:' + m.imgPos + '"' : '') + (m.imgFallback ? ' onerror="this.onerror=null;this.src=\'' + esc(m.imgFallback) + '\'"' : '') + '>';   // 2026-11-04: 바깥 사진을 못 불러오면 저장소 사진으로
     var k = m.thumb || 'eq', art = {
       eq: '<path d="M20 120 C70 120 80 60 120 60 S170 105 210 92 S270 52 300 52" fill="none" stroke="#22d3ee" stroke-width="5"/>',
       gate: '<path d="M20 120 H90 V50 H220 V120 H300" fill="none" stroke="#22d3ee" stroke-width="5"/><path d="M20 112 H300" stroke="#94a3b8" stroke-dasharray="6 6"/>',

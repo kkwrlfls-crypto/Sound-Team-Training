@@ -625,7 +625,7 @@
   'use strict';
   window.STA_MODULES = window.STA_MODULES || {};
   window.STA_MODULES['mic-wireless'] = {
-    id: 'mic-wireless', path: 'hardware', no: 1, noLabel: '01-2', status: 'ready', level: '기본', minutes: 40, img: 'img/modules/hw_mic.jpg',   // 썸네일은 01-1 사진을 잠시 같이 씀
+    id: 'mic-wireless', path: 'hardware', no: 1, noLabel: '01-2', status: 'ready', level: '기본', minutes: 40, img: 'https://products.shureweb.eu/cdn-cgi/image/width=900,height=900,format=auto/shure_product_db/product_main_images/files/67c/0a4/37-/original/a63ca7f1e7b45a53c3f11898a7c6280a.webp', imgPos: '50% 55%', imgFallback: 'img/modules/hw_mic.jpg'   /* 2026-11-04: Shure SLX-D+ 공식 제품 사진(사이트에서 바로 불러옴), 실패하면 01-1 사진 */,   // 썸네일은 01-1 사진을 잠시 같이 씀
     title: '무선 마이크', sub: '전파로 소리를 보내는 마이크 — 주파수 · 안테나 · 배터리',
     topics: ['송신기와 수신기', '우리나라 무선마이크 주파수', '스캔 · 혼변조 · 싱크', '다이버시티와 안테나', '송신기 감도와 게인 구조', '예배 전 점검'],
     glanceDraft: {
