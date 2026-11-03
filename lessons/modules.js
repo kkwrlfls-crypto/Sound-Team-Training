@@ -33,9 +33,10 @@
     'img/modules/hw_console.jpg': { t: '사진: 3층에 설치된 Yamaha CL5 (제조사 제품 사진)' },
     'img/modules/hw_amp.jpg': { t: '사진: 3층에 설치된 d&b 40D · 10D 앰프 (제조사 제품 사진)' },
     'img/modules/hw_speaker.jpg': { t: '사진: 3층에 설치된 d&b 서브우퍼 · E8 · Vi10P (제조사 제품 사진)' },
-    'img/modules/mg12xu_full.jpg': { t: '사진: 「MG12XU 실습」 화면의 콘솔 (Yamaha 제품 사진 + 실습용 페이더)' }
+    'img/modules/mg12xu_full.jpg': { t: '사진: 「MG12XU 실습」 화면의 콘솔 (Yamaha 제품 사진 + 실습용 페이더)' },
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Behringer_X32_%281%29.jpg/1280px-Behringer_X32_%281%29.jpg': { t: '사진: Cjp24, 「Behringer X32 (1)」, CC BY-SA 4.0 (Wikimedia Commons)', url: 'https://commons.wikimedia.org/wiki/File:Behringer_X32_(1).jpg' }   /* 2026-11-03: 03-2 디지털 콘솔 */
   };
-  var IMG_R = { 'img/modules/mg12xu_full.jpg': 1754 / 1862, 'img/modules/crown_xli1500.jpg': 1600 / 817, 'img/modules/ev_zxa1.jpg': 1160 / 900 };   // 사진 가로÷세로 (그 밖의 장비 사진은 1200×900)
+  var IMG_R = { 'img/modules/mg12xu_full.jpg': 1754 / 1862, 'img/modules/crown_xli1500.jpg': 1600 / 817, 'img/modules/ev_zxa1.jpg': 1160 / 900, 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Behringer_X32_%281%29.jpg/1280px-Behringer_X32_%281%29.jpg': 1280 / 725 };   // 사진 가로÷세로 (그 밖의 장비 사진은 1200×900)
   window.STA_IMG_CREDITS = IMG_CREDITS;   // 2026-10-23: 화면의 출처 줄은 없애고, 메뉴 맨 아래 「사진 출처」 창에서만 보여 줌(lessons/ui.js)
   function creditHtml() { return ''; }
   var view = { path: null, mod: null, tab: 'overview', fig: 'photo' }, sim = null, viewer = null, backTo = null;
