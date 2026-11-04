@@ -396,7 +396,7 @@
     function readCable() {
       var c = R.c, g = gauge(S.gauge), ok1 = c.loss > -0.5, ok2 = c.df >= 20, h = '<h4>계산 결과 <small>교육용 근사</small></h4>';
       h += row('왕복 길이', (2 * S.len) + ' m') + row('케이블 저항', f2(g.r * 1000) + ' mΩ/m × ' + (2 * S.len) + ' m = ' + f2(c.rc) + ' Ω');
-      h += row('손실', sgnDb(c.loss), ok1 ? 'ok' : 'bad') + row('댐핑 팩터 (케이블만)', isFinite(c.df) ? f1(c.df) : '—', ok2 ? 'ok' : 'warn') + row('스피커에서 열로 사라지는 힘', f1((1 - Math.pow(10, c.loss / 10)) * 100) + ' %');
+      h += row('손실', sgnDb(c.loss), ok1 ? 'ok' : 'bad') + row('댐핑 팩터 (케이블만)', isFinite(c.df) ? f1(c.df) : '—', ok2 ? 'ok' : 'warn') + row('케이블에서 열로 사라져 스피커에 덜 가는 힘', f1((1 - Math.pow(10, c.loss / 10)) * 100) + ' %');
       h += verdict(ok1 && ok2 ? 'ok' : ok1 ? 'warn' : 'bad', ok1 && ok2 ? '손실 0.5 dB 이내, 댐핑 팩터 20 이상이에요.' : ok1 ? '손실은 괜찮지만 댐핑 팩터가 20 보다 작아요. 더 굵은 케이블로 바꿔 보세요.' : '손실이 0.5 dB 를 넘어요. 더 굵은 케이블(AWG 숫자가 작은 것)을 골라요. 아니면 앰프를 스피커 가까이 둬요.');
       if (S.gauge === 10) h += '<p class="sim-note">참고: 10 AWG(약 5.3 mm²)는 일반 speakON 커넥터 NL4FXX-W-L(1.5–4 mm²)에 바로 물리지 않을 수 있어요(심화 학습).</p>';
       q('[data-role=readCable]').innerHTML = h; q('[data-out=len]').textContent = S.len + ' m';
