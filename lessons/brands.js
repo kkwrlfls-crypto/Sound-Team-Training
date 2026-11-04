@@ -387,7 +387,7 @@
     }).join('');
     var nSrc = CATS.reduce(function (n, c) { return n + c.sources.length; }, 0);
     el.innerHTML = '<details class="brd-src"><summary>출처 보기 (분류별 자료 ' + nSrc + '개 · 대표 제품 페이지 ' + nTier + '개)</summary><div class="brd-src__body">' + body + '</div></details>' +
-      '<p class="brd-date">📅 ' + esc(D.dateNote) + ' 로고와 제조사 제품 사진은 상표·저작권 때문에 쓰지 않아요. 사진이 있는 칸은 자유 이용이 허락된 사진(위키미디어 공용 등)을 출처와 함께 넣은 것이고, 사진이 없는 칸은 제조사 페이지에서 볼 수 있어요.</p>';
+      '<p class="brd-date">📅 ' + esc(D.dateNote) + ' 제품 사진은 제조사 공식 웹사이트의 사진을 출처와 함께 보여 줘요. 자유 이용 사진(위키미디어 공용 등)을 쓴 칸도 있어요. 회사 로고는 쓰지 않아요. 사진이 안 보이는 칸은 제조사 페이지에서 볼 수 있어요.</p>';
   }
 
   function renderAll() {

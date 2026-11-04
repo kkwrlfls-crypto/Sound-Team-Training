@@ -143,7 +143,7 @@
         var cls = answered ? (o.ok ? ' ok' : (oi === ans ? ' no' : '')) : '';
         return '<label class="lsn-opt' + cls + '"><input type="radio" name="' + kind + qi + '" value="' + oi + '"' + (answered && oi === ans ? ' checked' : '') + '><span>' + esc(o.t) + (answered && (o.ok || oi === ans) ? '<span class="why">' + (o.ok ? '✓ ' : '✗ ') + esc(o.why) + '</span>' : '') + '</span></label>';
       }).join('') + '</fieldset><div class="lsn-qbar"><button type="button" class="lsn-check" data-' + kind + 'chk="' + qi + '"' + (answered ? '' : ' disabled') + '>' + (answered ? '다시 확인' : '확인') + '</button>' +
-      (answered ? '<span class="lsn-fb ' + (q.options[ans] && q.options[ans].ok ? 'ok">정답입니다!' : 'no">다시 생각해 보세요') + '</span>' : '') + '</div></div>';
+      (answered ? '<span class="lsn-fb ' + (q.options[ans] && q.options[ans].ok ? 'ok">정답이에요!' : 'no">다시 생각해 보세요') + '</span>' : '') + '</div></div>';
   }
   /* ------------------------------------------------------------- 2026-10-23 학습 화면(시안 2): 머리 · 장비 사진 설명 · 핵심 개념 */
   var MI = {   // 메뉴·카드와 같은 선 아이콘
