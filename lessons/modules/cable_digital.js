@@ -150,6 +150,8 @@
 
   /* ================================================================ 그림으로 보기 (2026-11-04 · 교재 대조 때 추가)
      용어용 작은 그림은 가로 360, 이론 · 문제용은 가로 400 — 휴대폰 폭에서도 글자가 읽히게 */
+
+  function svgS() { return svg.apply(null, arguments).replace('<svg class="mod-svg"', '<svg class="mod-svg" style="min-width:0"'); }   // 새 그림은 휴대폰 폭에 맞게 줄어들게(기본 .mod-svg 는 최소 460px)
   function sinePath(x0, x1, yc, amp, cyc) { var d = ''; for (var i = 0; i <= 100; i++) { var u = i / 100; d += (i ? 'L' : 'M') + (x0 + (x1 - x0) * u).toFixed(1) + ' ' + (yc - amp * Math.sin(2 * Math.PI * cyc * u)).toFixed(1); } return d; }
   function steps(x0, x1, yc, amp, cyc, n) { var d = '', w = (x1 - x0) / n; for (var k = 0; k < n; k++) { var y = (yc - amp * Math.sin(2 * Math.PI * cyc * (k + 0.5) / n)).toFixed(1); d += (k ? 'V' + y : 'M' + x0 + ' ' + y) + 'H' + (x0 + (k + 1) * w).toFixed(1); } return d; }
   function box2(x, y, w, h, a, col) { return rect(x, y, w, h, '#fff', col || '#94a3b8', 6) + t(x + w / 2, y + h / 2 + 5, a, { size: 12, weight: 800 }); }
@@ -157,7 +159,7 @@
   // 용어 「샘플레이트 · 비트」: 듬성듬성 재기 vs 촘촘히 재기
   V.dcTermSample = function () {
     function panel(x, n, title, col) { return rect(x, 22, 170, 92, C.bg, C.line, 8) + t(x + 85, 16, title, { size: 13, weight: 800, fill: col }) + '<path d="' + sinePath(x + 8, x + 162, 68, 32, 1) + '" stroke="#cbd5e1" stroke-width="2" fill="none"/>' + '<path d="' + steps(x + 8, x + 162, 68, 32, 1, n) + '" stroke="' + col + '" stroke-width="2.4" fill="none"/>'; }
-    return svg(360, 120, panel(4, 6, '적게 재면 · 거칠어요', C.orange) + panel(186, 24, '많이 재면 · 원래와 비슷', C.blue), '소리를 적게 재면 계단이 거칠고, 많이 재면 원래 모양에 가까워요');
+    return svgS(360, 120, panel(4, 6, '적게 재면 · 거칠어요', C.orange) + panel(186, 24, '많이 재면 · 원래와 비슷', C.blue), '소리를 적게 재면 계단이 거칠고, 많이 재면 원래 모양에 가까워요');
   };
 
   // 용어 「클럭」: 지휘자 한 명 = 마스터
@@ -166,7 +168,7 @@
     var s = person(54, 46, C.purple, 12) + '<path d="M66 54L92 30" stroke="' + C.ink + '" stroke-width="3" stroke-linecap="round"/>' + t(54, 100, '마스터', { size: 13, weight: 800, fill: C.purple }) + t(54, 116, '(지휘자)', { size: 12, fill: C.sub });
     [0, 1, 2].forEach(function (i) { var x = 196 + i * 62; s += person(x, 52, C.teal) + t(x, 104, '따라가요', { size: 12, fill: C.teal }); });
     s += arrow(102, 66, 166, 66, C.purple, 2.6) + t(258, 18, '박자를 정하는 장비는 하나', { size: 13, weight: 800 });
-    return svg(360, 120, s, '지휘자처럼 한 장비(마스터)가 박자를 정하고 나머지는 따라가요');
+    return svgS(360, 120, s, '지휘자처럼 한 장비(마스터)가 박자를 정하고 나머지는 따라가요');
   };
 
   // 이론 1: 나이퀴스트 — 샘플레이트의 절반까지 담아요
@@ -180,7 +182,7 @@
       s += rect(x0, r[3] - 14, X(r[0]) - x0, 18, r[2], null, 4).replace('fill="' + r[2] + '"', 'fill="' + r[2] + '" fill-opacity=".18"') + '<path d="M' + X(r[0]) + ' ' + (r[3] - 18) + 'V' + (r[3] + 8) + '" stroke="' + r[2] + '" stroke-width="2.5"/>' + t(x0 + 8, r[3], r[1], { size: 12, weight: 800, fill: r[2], anchor: 'start' });
     });
     s += t(392, 200, '잰 횟수의 절반까지 담을 수 있어요 (나이퀴스트)', { size: 12, fill: C.sub, anchor: 'end' });
-    return svg(400, 206, s, '48 kHz 로 재면 24 kHz 까지, 44.1 kHz 로 재면 22.05 kHz 까지 담아서 사람 귀 범위를 모두 담아요');
+    return svgS(400, 206, s, '48 kHz 로 재면 24 kHz 까지, 44.1 kHz 로 재면 22.05 kHz 까지 담아서 사람 귀 범위를 모두 담아요');
   };
 
   // 이론 2: 임피던스가 맞으면 쭉, 다르면 되튀어요
@@ -191,7 +193,7 @@
     s += rect(4, 106, 392, 112, '#fef2f2', '#fecaca', 10) + t(14, 128, '✕ 마이크 케이블 (임피던스가 달라요)', { size: 13, weight: 800, fill: C.red, anchor: 'start' });
     s += rect(20, 150, 150, 30, '#ede9fe', C.purple, 6) + rect(170, 154, 150, 22, '#fef3c7', C.amber, 6) + pulses(40, 174, 3, C.purple) + arrow(150, 165, 250, 165, C.purple, 2.4) + arrow(166, 196, 70, 196, C.red, 2.4) + t(118, 212, '일부가 되튀어요', { size: 12, weight: 700, fill: C.red });
     s += t(360, 162, '모서리가', { size: 13, weight: 700, fill: C.red }) + t(360, 180, '무너져요', { size: 13, weight: 700, fill: C.red });
-    return svg(400, 224, s, '임피던스가 맞는 케이블은 신호가 또렷하게 도착하고, 다른 케이블은 경계에서 일부가 되튀어요');
+    return svgS(400, 224, s, '임피던스가 맞는 케이블은 신호가 또렷하게 도착하고, 다른 케이블은 경계에서 일부가 되튀어요');
   };
 
   // 이론 3: 한 가닥에 몇 채널? — 승용차 · 승합차 · 버스 비유
@@ -200,7 +202,7 @@
     function car(y, w, title, sub, cols, rows, col) { var h = 22 + rows * 9; return rect(124, y, w, h, '#fff', col, 10) + seats(136, y + 12, cols, rows, col) + '<circle cx="' + (140) + '" cy="' + (y + h) + '" r="7" fill="#334155"/><circle cx="' + (124 + w - 16) + '" cy="' + (y + h) + '" r="7" fill="#334155"/>' + t(10, y + h / 2, title, { size: 13, weight: 800, fill: col, anchor: 'start' }) + t(10, y + h / 2 + 17, sub, { size: 12, fill: C.sub, anchor: 'start' }); }
     var s = car(10, 60, 'AES/EBU', '2채널', 2, 1, C.purple) + car(66, 130, 'ADAT', '8채널', 8, 1, C.red) + car(122, 236, 'MADI', '최대 64채널', 16, 4, C.teal);
     s += t(392, 232, '케이블 한 가닥 = 차 한 대, 자리 하나 = 채널 하나 (48 kHz 기준)', { size: 11, fill: C.sub, anchor: 'end' });
-    return svg(400, 238, s, '케이블 한 가닥에 싣는 채널 수: AES/EBU 2, ADAT 8, MADI 최대 64');
+    return svgS(400, 238, s, '케이블 한 가닥에 싣는 채널 수: AES/EBU 2, ADAT 8, MADI 최대 64');
   };
 
   // 이론 4: 지터 — 박자가 흔들리면 잰 점이 어긋나요
@@ -212,7 +214,7 @@
     }
     var s = row(84, '○ 고른 박자 → 매끈하게 다시 그려요', C.blue, false) + row(184, '✕ 흔들리는 박자(지터) → 울퉁불퉁 · 클릭', C.red, true);
     s += t(392, 214, '초록 눈금 = 박자(클럭) · 점 = 잰 값 (흔들림은 크게 그렸어요)', { size: 11, fill: C.sub, anchor: 'end' });
-    return svg(400, 220, s, '박자가 고르면 잰 점이 제자리에 오고, 박자가 흔들리면(지터) 점이 어긋나 소리가 나빠져요');
+    return svgS(400, 220, s, '박자가 고르면 잰 점이 제자리에 오고, 박자가 흔들리면(지터) 점이 어긋나 소리가 나빠져요');
   };
 
   // 이론 5: 연결 모양 — 1:1 · 줄줄이 · 별 모양
@@ -223,7 +225,7 @@
     [[290, 50], [378, 50], [290, 160], [378, 160]].forEach(function (p) { s += line(334, 107, p[0], p[1], C.blue, 2.4) + rect(p[0] - 13, p[1] - 10, 26, 20, '#fff', '#94a3b8', 4); });
     s += rect(304, 92, 60, 30, '#dbeafe', C.blue, 6) + t(334, 112, '스위치', { size: 12, weight: 800, fill: C.blue });
     s += t(334, 188, 'Dante (스타)', { size: 12, weight: 700, fill: C.blue });
-    return svg(400, 202, s, '연결 모양: 둘만 바로 잇기(AES50), 줄줄이 잇기(데이지 체인), 스위치를 가운데 둔 별 모양(Dante)');
+    return svgS(400, 202, s, '연결 모양: 둘만 바로 잇기(AES50), 줄줄이 잇기(데이지 체인), 스위치를 가운데 둔 별 모양(Dante)');
   };
 
   // 확인 문제: 120 m 떨어진 S16 (그림을 보고 고르기)
@@ -235,7 +237,7 @@
     [0, 50, 100, 120].forEach(function (m) { s += '<path d="M' + X(m) + ' 90v12" stroke="#475569"/>' + t(X(m), 120, m + ' m', { size: 12, fill: m === 120 ? C.red : C.sub, weight: m >= 100 ? 800 : 500 }); });
     s += rect(X(100) - 2, 22, X(120) - X(100) + 4, 80, '#fee2e2', null, 4).replace('fill="#fee2e2"', 'fill="#fee2e2" fill-opacity=".6"') + t(X(100), 18, '100 m', { size: 12, weight: 800, fill: C.red });
     s += t(200, 146, 'AES50 랜선 한 구간 · Behringer 안내 최대 100 m', { size: 12, fill: C.sub });
-    return svg(400, 152, s, 'X32 와 S16 사이가 120 m 로, AES50 최대 길이 100 m 를 20 m 넘어요');
+    return svgS(400, 152, s, 'X32 와 S16 사이가 120 m 로, AES50 최대 길이 100 m 를 20 m 넘어요');
   };
 })();
 
@@ -712,7 +714,7 @@
           { t: '아무거나 같다', why: '아니에요. 클럭 소스가 틀리면 클릭이 나거나 소리가 안 나요.' }] } },
       { title: '랜선으로 보내는 오디오 — Dante · AES50 · Ultranet · AVB', visual: 'dcLanFamily',
         body: '같은 랜선 · etherCON 이라도 안에 흐르는 <b>규격</b>이 달라요. 그래서 서로 바꿔 꽂으면 동작하지 않아요. <b>Dante</b> 는 이더넷 스위치로 네트워크를 만들어요. 여러 장비가 그 네트워크로 채널을 주고받아요(CL5 ↔ Rio3224-D2). <b>AES50</b> 은 Midas · Behringer 장비끼리 <b>1:1 로 바로</b> 잇는 연결이에요. X32 ↔ S16 처럼 써요. Behringer 는 <b>차폐 Cat-5e · etherCON</b> 케이블만, <b>최대 100 m</b> 까지 쓰라고 안내해요. <b>Ultranet</b> 은 Behringer 의 개인 모니터(P16)용 16채널 연결이에요. 이더넷이 아니라서 스위치에 꽂지 않아요. <b>AVB · Milan</b> 은 IEEE(국제 전기 · 전자 기술 단체) 표준 네트워크 오디오예요. AVB 를 지원하는 스위치가 있어야 해요.',
-        more: '<ul><li><b>X32 뒷면 (제조사 자료)</b>: 랜선 단자가 세 종류 있어요. AES50 A · B 는 S16 이나 다른 X32 계열 장비와 이어요. ULTRANET 은 P16 개인 모니터로 16채널을 보내요. ETHERNET 은 앱 · 컴퓨터로 원격 조작할 때 써요. 모두 랜선 단자라 헷갈리기 쉬워요.</li> <li><b>AES50</b>: 이더넷 케이블의 몸(물리 규격)만 빌려 쓰고, 클럭도 함께 실어 보내요. 일반 네트워크 스위치를 거쳐 나눌 수 없어요. 그래서 장비끼리 바로 이어요. S16 은 AES50 단자가 2개라서 이어 붙일 수도 있어요.</li> <li><b>Ultranet</b>: Ultranet 단자는 다른 Ultranet 단자에만 이어요. 분배기 P16-D 는 랜선으로 P16 8대까지 전원도 함께 보내요. Behringer 는 차폐 Cat-5e 를 권해요.</li> <li><b>Dante</b>: 기가비트 링크 하나로 48 kHz 기준 최대 512채널씩 양방향을 보낼 수 있어요(Yamaha 자료). Cat5e 또는 Cat6 를 써요.</li> <li><b>연결 모양(토폴로지)</b>(교재): 둘만 바로 잇기(1:1, 예: AES50), 줄줄이 잇기(데이지 체인), 스위치를 가운데 두고 별처럼 잇기(스타, 예: Dante)가 있어요. 줄줄이 이으면 중간 하나가 빠질 때 그 뒤가 모두 끊겨요. 별 모양은 가운데 스위치가 가장 중요해요.</li> <li><b>AVB · Milan</b>: 특별한 기능이 있는 스위치가 필요해요. 시간 맞추기(802.1AS)와 대역 예약(802.1Qat · Qav) 기능이에요. Avnu 가 장비와 스위치를 인증해요. 이 과정에서는 이름만 알아 둬요.</li></ul>',
+        more: '<ul><li><b>X32 뒷면 (제조사 자료)</b>: 랜선 단자가 세 종류 있어요. AES50 A · B 는 S16 이나 다른 X32 계열 장비와 이어요. ULTRANET 은 P16 개인 모니터로 16채널을 보내요. ETHERNET 은 앱 · 컴퓨터로 원격 조작할 때 써요. 모두 랜선 단자라 헷갈리기 쉬워요.</li> <li><b>AES50</b>: 이더넷 케이블의 몸(물리 규격)만 빌려 쓰고, 클럭도 함께 실어 보내요. 일반 네트워크 스위치를 거쳐 나눌 수 없어요. 그래서 장비끼리 바로 이어요. S16 은 AES50 단자가 2개라서 이어 붙일 수도 있어요.</li> <li><b>Ultranet</b>: Ultranet 단자는 다른 Ultranet 단자에만 이어요. 분배기 P16-D 는 랜선으로 P16 8대까지 전원도 함께 보내요. Behringer 는 차폐 Cat-5e 를 권해요.</li> <li><b>Dante</b>: 기가비트 링크 하나로 48 kHz 기준 최대 512채널씩 양방향을 보낼 수 있어요(Yamaha 자료). Cat5e 또는 Cat6 를 써요.</li> <li><b>연결 모양(토폴로지)</b>(교재): 세 가지가 있어요. 둘만 바로 잇기(1:1, 예: AES50), 줄줄이 잇기(데이지 체인)예요. 그리고 스위치를 가운데 두고 별처럼 잇기(스타, 예: Dante)예요. 줄줄이 이으면 중간 하나가 빠질 때 그 뒤가 모두 끊겨요. 별 모양은 가운데 스위치가 가장 중요해요.</li> <li><b>AVB · Milan</b>: 특별한 기능이 있는 스위치가 필요해요. 시간 맞추기(802.1AS)와 대역 예약(802.1Qat · Qav) 기능이에요. Avnu 가 장비와 스위치를 인증해요. 이 과정에서는 이름만 알아 둬요.</li></ul>',
         pics: [{ v: 'dcTopo', cap: '장비를 잇는 모양은 세 가지예요. AES50 은 ①처럼 둘을 바로 잇고, Dante 는 ③처럼 <b>스위치를 가운데</b> 두고 여러 장비를 이어요.' }],
         check: { q: 'X32 뒷면 ETHERNET 단자에 S16 의 랜선을 꽂았어요. 어떻게 될까요?', options: [
           { t: '소리가 오지 않아요. S16 은 AES50 A · B 단자에 꽂아야 해요', ok: true, why: '맞아요. ETHERNET 은 원격 조작용이에요. 오디오는 AES50 으로 다녀요.' },

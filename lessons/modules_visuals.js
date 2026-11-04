@@ -248,8 +248,8 @@
 
     /* ===================== 2026-11-04 「그림으로 보기」 — 믹싱 01 Gain Structure ===================== */
     gsTermGain: function () {   // 용어: GAIN — 낮은 층(마이크 레벨)에서 높은 층(라인 레벨)으로
-      return svgS(360, 140, rect(8, 98, 124, 34, { fill: C.teal, op: 0.15, stroke: C.teal }) + t(70, 120, '마이크 레벨', { size: 13, weight: 800, fill: C.teal }) + t(70, 88, '아주 작아요', { size: 12, fill: C.sub }) +
-        rect(228, 28, 124, 34, { fill: C.blue, op: 0.15, stroke: C.blue }) + t(290, 50, '라인 레벨', { size: 13, weight: 800, fill: C.blue }) + t(290, 82, '쓰기 좋은 크기', { size: 12, fill: C.sub }) +
+      return svgS(360, 140, rect(8, 98, 124, 34, { fill: C.teal, op: 0.15, stroke: C.teal }) + t(70, 120, '마이크 레벨', { size: 13, weight: 800, fill: C.teal }) + t(70, 88, '아주 작아요', { size: 13, fill: C.sub }) +
+        rect(228, 28, 124, 34, { fill: C.blue, op: 0.15, stroke: C.blue }) + t(290, 50, '라인 레벨', { size: 13, weight: 800, fill: C.blue }) + t(290, 82, '쓰기 좋은 크기', { size: 13, fill: C.sub }) +
         arw(134, 104, 224, 50, C.teal, 4) + t(218, 118, 'GAIN 이 키워요', { size: 14, weight: 800, fill: C.teal }), 'GAIN: 아주 작은 마이크 신호를 라인 레벨까지 키워요');
     },
     gsTermHeadroom: function () {   // 용어: 헤드룸 — 방 안에서 뛰어도 머리가 안 닿는 여유
@@ -258,14 +258,14 @@
         '<circle cx="' + px + '" cy="78" r="11" fill="#e2e8f0" stroke="' + C.ink + '" stroke-width="2.5"/><path d="M' + px + ' 89 V114 M' + px + ' 114 L' + (px - 12) + ' 136 M' + px + ' 114 L' + (px + 12) + ' 136 M' + (px - 16) + ' 98 L' + px + ' 94 L' + (px + 16) + ' 98" stroke="' + C.ink + '" stroke-width="2.5" fill="none" stroke-linecap="round"/>' +
         arw(132, 50, 132, 28, C.teal, 2.5) + arw(132, 46, 132, 66, C.teal, 2.5) +
         t(204, 29, '천장: 찌그러짐', { size: 13, weight: 700, fill: C.red, anchor: 'start' }) + t(204, 58, '헤드룸', { size: 14, weight: 800, fill: C.teal, anchor: 'start' }) + t(204, 77, '(머리 위 여유)', { size: 13, fill: C.teal, anchor: 'start' }) +
-        t(204, 104, '넉넉해야 뛰어도', { size: 12, fill: C.sub, anchor: 'start' }) + t(204, 120, '천장에 안 닿아요', { size: 12, fill: C.sub, anchor: 'start' }) + t(204, 141, '바닥: 늘 깔린 잡음', { size: 13, fill: C.sub, anchor: 'start' }),
+        t(204, 102, '넉넉해야 뛰어도', { size: 13, fill: C.sub, anchor: 'start' }) + t(204, 119, '천장에 안 닿아요', { size: 13, fill: C.sub, anchor: 'start' }) + t(204, 141, '바닥: 늘 깔린 잡음', { size: 13, fill: C.sub, anchor: 'start' }),
         '헤드룸: 평소 크기와 찌그러지는 천장 사이의 여유');
     },
     gsTermClip: function () {   // 용어: 클리핑 — 파형의 위아래가 잘림
       return svgS(360, 130, rect(4, 4, 170, 122, { fill: '#fff' }) + t(89, 24, '원래 소리', { size: 13, weight: 700 }) + wave(16, 74, 146, 32, 1.5, null, C.teal) +
         rect(186, 4, 170, 122, { fill: '#fff' }) + t(271, 24, '클리핑', { size: 13, weight: 700, fill: C.red }) +
         '<path d="M194 56 H348 M194 92 H348" stroke="' + C.red + '" stroke-width="1.5" stroke-dasharray="4 3"/>' + wave(198, 74, 146, 32, 1.5, 18, C.red) +
-        t(89, 118, '둥근 모양', { size: 12, fill: C.sub }) + t(271, 118, '위아래가 잘려 찌그러져요', { size: 12, fill: C.red }), '클리핑: 소리 모양의 위아래가 잘려 찌그러져요');
+        t(89, 119, '둥근 모양', { size: 13, fill: C.sub }) + t(271, 119, '위아래가 잘려요', { size: 13, fill: C.red }), '클리핑: 소리 모양의 위아래가 잘려 찌그러져요');
     },
     gsTermPfl: function () {   // 용어: PFL — 페이더 앞 소리를 헤드폰 · 미터로 미리
       var bx = function (x, w, s, hot) { return rect(x, 28, w, 34, { fill: hot ? C.teal : '#fff', stroke: hot ? C.teal : C.ink, sw: 2 }) + t(x + w / 2, 50, s, { size: 13, weight: 700, fill: hot ? '#fff' : C.ink }); };
@@ -273,7 +273,7 @@
         '<circle cx="176" cy="45" r="6" fill="' + C.amber + '"/><path d="M176 51 V88" stroke="' + C.amber + '" stroke-width="2.5"/>' +
         '<path d="M160 108 A16 16 0 0 1 192 108" fill="none" stroke="' + C.ink + '" stroke-width="3"/><rect x="155" y="104" width="8" height="14" rx="3" fill="' + C.ink + '"/><rect x="189" y="104" width="8" height="14" rx="3" fill="' + C.ink + '"/>' +
         t(206, 106, '헤드폰 · 미터로', { size: 13, anchor: 'start' }) + t(206, 125, '미리 들어요', { size: 13, anchor: 'start', weight: 700, fill: C.amber }) +
-        t(80, 106, '페이더 위치와', { size: 12, fill: C.sub }) + t(80, 123, '상관없이 들려요', { size: 12, fill: C.sub }), 'PFL: 페이더 앞의 소리를 헤드폰과 미터로 미리 들어요');
+        t(80, 106, '페이더 위치와', { size: 13, fill: C.sub }) + t(80, 124, '상관없이 들려요', { size: 13, fill: C.sub }), 'PFL: 페이더 앞의 소리를 헤드폰과 미터로 미리 들어요');
     },
     gsLevelStairs: function () {   // 이론 1: 계단 비유 — 마이크 → 라인 → 스피커 레벨
       var step = function (x, y, w, col, name, sub) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + (194 - y) + '" fill="' + col + '" fill-opacity=".2" stroke="' + col + '" stroke-width="2"/>' + t(x + w / 2, y + 22, name, { size: 14, weight: 800, fill: col }) + t(x + w / 2, y + 40, sub, { size: 12, fill: C.sub }); };
@@ -289,7 +289,7 @@
         t(50, 136, '돌리면', { size: 12, fill: C.sub }) + t(50, 152, '셋 다 바뀌어요', { size: 12, fill: C.sub }), 'GAIN 을 바꾸면 메인 · 모니터 · 녹음으로 가는 소리가 모두 바뀌어요');
     },
     gsFaderScale: function () {   // 이론 3: 페이더 눈금 간격 — 0 dB 근처가 넓어요(예시)
-      var mk = [['+10', 24], ['+5', 48], ['0', 78], ['−5', 108], ['−10', 134], ['−20', 162], ['−30', 180], ['−40', 192], ['−∞', 204]];
+      var mk = [['+10', 24], ['+5', 48], ['0', 78], ['−5', 108], ['−10', 134], ['−20', 162], ['−30', 182], ['−∞', 204]];
       return svgS(420, 214, '<rect x="64" y="20" width="10" height="188" rx="5" fill="#e2e8f0" stroke="' + C.line + '"/>' + '<rect x="52" y="71" width="34" height="14" rx="3" fill="' + C.ink + '"/>' +
         mk.map(function (m) { return '<path d="M90 ' + m[1] + 'H102" stroke="' + C.sub + '" stroke-width="1.5"/>' + t(108, m[1] + 4, m[0], { size: 12, fill: m[0] === '0' ? C.ink : C.sub, anchor: 'start', weight: m[0] === '0' ? 800 : null }); }).join('') +
         '<path d="M150 48 h-6 v60 h6" stroke="' + C.teal + '" stroke-width="2.5" fill="none"/>' + '<path d="M150 162 h-6 v42 h6" stroke="' + C.amber + '" stroke-width="2.5" fill="none"/>' +

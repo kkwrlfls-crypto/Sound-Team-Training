@@ -142,8 +142,8 @@
 
   /* =========================================================================== 「그림으로 보기」 (2026-11-04)
      - 비유 · 단계 · 전/후 비교 그림. 폭이 좁은 칸(용어 · 나란히 두 그림)에도 들어가게 viewBox 400 안팎, 글자 13 이상
-     - class 는 mod-pic-svg (이론 본문 그림 mod-svg 의 최소 폭 460px 을 쓰지 않음) */
-  function psvg(w, h, body, label) { return '<svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, system-ui, sans-serif" style="display:block;width:100%;max-width:' + w + 'px;height:auto;margin:0 auto">' + body + '</svg>'; }
+     - class 는 mod-pic-svg (최소 폭 = viewBox 의 85% — 휴대폰에서도 글자 13 이 11px 이상으로 보이게, 넘치면 상자 안에서 옆으로 밀어 봐요) */
+  function psvg(w, h, body, label) { return '<svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, system-ui, sans-serif" style="display:block;width:100%;max-width:' + w + 'px;min-width:' + Math.round(w * 0.85) + 'px;height:auto;margin:0 auto">' + body + '</svg>'; }
   function wave(x, y, w, a, cyc, lim) { var d = ''; for (var i = 0; i <= 80; i++) { var v = a * Math.sin(i / 80 * Math.PI * 2 * cyc); if (lim) v = Math.max(-lim, Math.min(lim, v)); d += (i ? 'L' : 'M') + (x + i / 80 * w).toFixed(1) + ' ' + (y - v).toFixed(1); } return d; }
   function mark(x, y, good) { return good ? '<circle cx="' + x + '" cy="' + y + '" r="11" fill="#fff" stroke="' + C.green + '" stroke-width="3.5"/>' : '<path d="M' + (x - 8) + ' ' + (y - 8) + 'L' + (x + 8) + ' ' + (y + 8) + 'M' + (x + 8) + ' ' + (y - 8) + 'L' + (x - 8) + ' ' + (y + 8) + '" stroke="' + C.red + '" stroke-width="4" stroke-linecap="round"/>'; }
   function rr(x, y, w, h, fill, stroke, r) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + (r == null ? 8 : r) + '" fill="' + fill + '"' + (stroke ? ' stroke="' + stroke + '" stroke-width="2"' : '') + '/>'; }

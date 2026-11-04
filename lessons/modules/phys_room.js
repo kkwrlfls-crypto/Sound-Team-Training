@@ -257,6 +257,7 @@
   };
 
   /* =========================================================================== 2026-11-04 「그림으로 보기」 — 용어 · 이론 · 문제에 붙이는 쉬운 그림 */
+  function svgM(w, h, body, label) { return svg(w, h, body, label).replace('<svg class="mod-svg"', '<svg class="mod-svg" style="min-width:0"'); }   // 작은 그림: 휴대폰에서 가로로 밀리지 않게(글자 13 이상)
   function okx(x, y, ok) { return '<circle cx="' + x + '" cy="' + y + '" r="11" fill="' + (ok ? C.green : C.red) + '"/>' + (ok ? '<circle cx="' + x + '" cy="' + y + '" r="5.5" fill="none" stroke="#fff" stroke-width="2.4"/>' : '<path d="M' + (x - 5) + ' ' + (y - 5) + 'l10 10M' + (x + 5) + ' ' + (y - 5) + 'l-10 10" stroke="#fff" stroke-width="2.4"/>'); }
   function spkR(x, y, a) { return '<g transform="translate(' + x + ' ' + y + ') rotate(' + (a || 0) + ')"><rect x="-10" y="-9" width="14" height="18" rx="3" fill="#1e293b"/><path d="M4 -6L12 -11V11L4 6Z" fill="#334155"/></g>'; }
 
@@ -267,10 +268,10 @@
     s += '<defs><linearGradient id="prAlG" x1="0" x2="1"><stop offset="0" stop-color="#e2e8f0"/><stop offset="1" stop-color="#6ee7b7"/></linearGradient></defs><rect x="' + X0 + '" y="52" width="' + (X1 - X0) + '" height="14" rx="7" fill="url(#prAlG)"/>';
     [[0.02, '콘크리트', 0], [0.15, '카펫', 1], [0.5, '커튼', 0], [0.8, '사람 앉은 의자', 1]].forEach(function (m) {
       var x = X(m[0]), up = m[2]; s += '<circle cx="' + f(x) + '" cy="59" r="5" fill="' + C.ink + '"/>' + line(x, up ? 52 : 66, x, up ? 40 : 78, C.ink, 1.4);
-      s += t(x, up ? 35 : 92, m[1] + ' ' + m[0], { size: 12.5, weight: 700, anchor: m[0] < 0.1 ? 'start' : m[0] > 0.7 ? 'end' : 'middle' });
+      s += t(x, up ? 35 : 92, m[1] + ' ' + m[0], { size: 13.5, weight: 700, anchor: m[0] < 0.1 ? 'start' : m[0] > 0.7 ? 'end' : 'middle' });
     });
     s += t(X0, 114, '0 = 다 튕겨요(반사)', { size: 13, weight: 800, fill: C.gray, anchor: 'start' }) + t(X1, 114, '1 = 다 먹어요(흡수)', { size: 13, weight: 800, fill: C.green, anchor: 'end' });
-    return svg(360, 122, s, '흡음률 0 에서 1 까지 자 위에 콘크리트, 카펫, 커튼, 사람 앉은 의자');
+    return svgM(360, 122, s, '흡음률 0 에서 1 까지 자 위에 콘크리트, 카펫, 커튼, 사람 앉은 의자');
   };
 
   /* 용어 「RT60」: 목욕탕 vs 이불 많은 방 */
@@ -283,7 +284,7 @@
       s += '<path d="M' + (x + 16) + ' 66H' + (x + 158) + '" stroke="#e2e8f0"/><path d="' + d + '" fill="none" stroke="' + p[4] + '" stroke-width="1.8"/>';
       s += t(x + 86, 108, p[2], { size: 13, weight: 700 });
     });
-    return svg(360, 120, s, '목욕탕은 소리가 오래 울리고 이불 많은 방은 금방 조용해지는 그림');
+    return svgM(360, 120, s, '목욕탕은 소리가 오래 울리고 이불 많은 방은 금방 조용해지는 그림');
   };
 
   /* 용어 「선행음 효과」: 먼저 온 쪽에서 들려요 */
@@ -291,12 +292,12 @@
     var X0 = 20, X = function (ms) { return X0 + ms * 4.6; };
     var s = t(180, 16, '같은 소리가 두 번 오면?', { size: 13, weight: 800 });
     s += '<path d="M' + X0 + ' 84H' + X(70) + '" stroke="#94a3b8" stroke-width="1.5"/>';
-    s += '<rect x="' + f(X(0) - 4) + '" y="34" width="8" height="50" rx="2" fill="' + C.teal + '"/>' + t(X(0) + 8, 44, '먼저 온 소리', { size: 12.5, weight: 800, fill: C.teal, anchor: 'start' });
-    s += '<rect x="' + f(X(20) - 4) + '" y="50" width="8" height="34" rx="2" fill="' + C.orange + '"/>' + t(X(20) + 8, 62, '20 ms 뒤', { size: 12.5, weight: 800, fill: C.orange, anchor: 'start' });
-    s += '<rect x="' + f(X(50)) + '" y="30" width="' + f(X(70) - X(50)) + '" height="54" fill="#fee2e2" opacity=".7"/>' + t(X(60), 46, '50 ms 넘으면', { size: 12, weight: 700, fill: C.red }) + t(X(60), 62, '메아리', { size: 12, weight: 800, fill: C.red });
-    [0, 20, 50].forEach(function (ms) { s += t(X(ms), 98, ms + ' ms', { size: 12, fill: C.sub }); });
+    s += '<rect x="' + f(X(0) - 4) + '" y="34" width="8" height="50" rx="2" fill="' + C.teal + '"/>' + t(X(0) + 8, 44, '먼저 온 소리', { size: 13.5, weight: 800, fill: C.teal, anchor: 'start' });
+    s += '<rect x="' + f(X(20) - 4) + '" y="50" width="8" height="34" rx="2" fill="' + C.orange + '"/>' + t(X(20) + 8, 62, '20 ms 뒤', { size: 13.5, weight: 800, fill: C.orange, anchor: 'start' });
+    s += '<rect x="' + f(X(50)) + '" y="30" width="' + f(X(70) - X(50)) + '" height="54" fill="#fee2e2" opacity=".7"/>' + t(X(60), 46, '50 ms 넘으면', { size: 13, weight: 700, fill: C.red }) + t(X(60), 62, '메아리', { size: 13, weight: 800, fill: C.red });
+    [0, 20, 50].forEach(function (ms) { s += t(X(ms), 98, ms + ' ms', { size: 13, fill: C.sub }); });
     s += t(180, 116, '귀: 하나로 듣고, 먼저 온 쪽에서 난다고 느껴요', { size: 13, weight: 700 });
-    return svg(360, 122, s, '먼저 온 소리와 20 ms 늦은 소리는 하나로 들리고 50 ms 를 넘으면 메아리');
+    return svgM(360, 122, s, '먼저 온 소리와 20 ms 늦은 소리는 하나로 들리고 50 ms 를 넘으면 메아리');
   };
 
   /* 이론 1: 오목한 면은 소리를 모으고(초점), 볼록 · 울퉁불퉁한 면은 흩어요 */
@@ -309,14 +310,14 @@
       if (!p[1]) {
         s += '<path d="M' + (x + 160) + ' 40Q' + (x + 196) + ' 92 ' + (x + 160) + ' 144" stroke="#64748b" stroke-width="6" fill="none"/>';
         [-36, -18, 0, 18, 36].forEach(function (dy) { var hx = x + 168 - Math.abs(dy) * 0.25; s += line(sx + 12, sy, hx, sy + dy * 1.25, C.orange, 1.6, null, 0.8) + line(hx, sy + dy * 1.25, x + 92, sy + 4, C.red, 1.6, '4 3'); });
-        s += '<circle cx="' + (x + 92) + '" cy="' + (sy + 4) + '" r="9" fill="' + C.red + '" opacity=".85"/>' + t(x + 92, sy + 30, '여기만 커요', { size: 12, weight: 800, fill: C.red, halo: '#fff' });
+        s += '<circle cx="' + (x + 92) + '" cy="' + (sy + 4) + '" r="9" fill="' + C.red + '" opacity=".85"/>' + t(x + 92, sy + 30, '여기만 커요', { size: 13, weight: 800, fill: C.red, halo: '#fff' });
       } else {
         s += '<path d="M' + (x + 166) + ' 40Q' + (x + 146) + ' 92 ' + (x + 166) + ' 144" stroke="#64748b" stroke-width="6" fill="none"/>';
         [-36, -18, 0, 18, 36].forEach(function (dy) { var hx = x + 156 + Math.abs(dy) * 0.12, hy = sy + dy * 1.25, ex = x + 96, ey = sy + dy * 3.2; s += line(sx + 12, sy, hx, hy, C.orange, 1.6, null, 0.8) + arrow(hx, hy, ex, Math.max(40, Math.min(150, ey)), C.green, 1.6); });
       }
       s += t(x + 96, 168, p[3], { size: 13, weight: 800, fill: p[1] ? C.green : C.red }) + okx(x + 176, 22, p[1]);
     });
-    return svg(400, 184, s, '오목한 벽은 소리를 한 곳에 모으고 볼록한 면은 고르게 흩는 그림');
+    return svgM(400, 184, s, '오목한 벽은 소리를 한 곳에 모으고 볼록한 면은 고르게 흩는 그림');
   };
 
   /* 이론 3: 빈 예배당 vs 회중이 찬 예배당 */
@@ -331,7 +332,7 @@
       s += t(x + 96, 156, p[2], { size: 13, weight: 700 });
     });
     s += t(200, 186, '사람과 옷이 소리를 먹어서 잔향(RT60)이 짧아져요', { size: 13, weight: 700, fill: C.ink });
-    return svg(400, 194, s, '빈 예배당은 울림이 길고 회중이 찬 예배당은 울림이 짧은 전후 비교 그림');
+    return svgM(400, 194, s, '빈 예배당은 울림이 길고 회중이 찬 예배당은 울림이 짧은 전후 비교 그림');
   };
 
   /* 이론 4: 마이크를 입 가까이 ○ / 멀리 × */
@@ -343,11 +344,11 @@
       s += '<circle cx="' + (x + 30) + '" cy="58" r="14" fill="#fde68a" stroke="' + C.amber + '" stroke-width="1.5"/>';
       var mx = p[1] ? x + 50 : x + 120; s += '<rect x="' + mx + '" y="53" width="30" height="10" rx="5" fill="#334155"/>' + line(x + 44, 58, mx, 58, C.teal, 1.6, '3 3');
       [[p[1] ? 74 : 30, '목소리(직접음)', C.teal, 92], [30, '방 울림(잔향)', C.purple, 122]].forEach(function (b) {
-        s += t(x + 12, b[3] - 4, b[1], { size: 12, weight: 700, fill: b[2], anchor: 'start' }) + '<rect x="' + (x + 12) + '" y="' + b[3] + '" width="' + (b[0] * 2.2) + '" height="12" rx="3" fill="' + b[2] + '"/>';
+        s += t(x + 12, b[3] - 4, b[1], { size: 13, weight: 700, fill: b[2], anchor: 'start' }) + '<rect x="' + (x + 12) + '" y="' + b[3] + '" width="' + (b[0] * 2.2) + '" height="12" rx="3" fill="' + b[2] + '"/>';
       });
       s += t(x + 96, 166, p[3], { size: 13, weight: 800, fill: p[1] ? C.green : C.red });
     });
-    return svg(400, 184, s, '마이크가 입 가까이 있으면 목소리가 울림보다 훨씬 크고, 멀면 울림에 묻히는 비교 그림');
+    return svgM(400, 184, s, '마이크가 입 가까이 있으면 목소리가 울림보다 훨씬 크고, 멀면 울림에 묻히는 비교 그림');
   };
 
   /* 이론 6: 말이 울려서 안 들릴 때 고치는 순서 */
@@ -356,22 +357,22 @@
     var s = t(200, 16, '말이 울려서 잘 안 들릴 때 — 해 볼 순서', { size: 13.5, weight: 800 });
     steps.forEach(function (st, i) {
       var x = 4 + (i % 2) * 200, y = 28 + Math.floor(i / 2) * 76;
-      s += rect(x, y, 192, 66, '#fff', st[2], 10) + num(x + 20, y + 22, String(i + 1), st[2]) + t(x + 34, y + 27, st[0], { size: 13, weight: 800, fill: st[2], anchor: 'start' }) + t(x + 34, y + 49, st[1], { size: 12, fill: C.sub, anchor: 'start' });
+      s += rect(x, y, 192, 66, '#fff', st[2], 10) + num(x + 20, y + 22, String(i + 1), st[2]) + t(x + 34, y + 27, st[0], { size: 13, weight: 800, fill: st[2], anchor: 'start' }) + t(x + 34, y + 49, st[1], { size: 13, fill: C.sub, anchor: 'start' });
     });
-    return svg(400, 182, s, '스피커 겨누기, 마이크 가까이, 흡음과 확산, 마지막으로 EQ 와 리버브 순서');
+    return svgM(400, 182, s, '스피커 겨누기, 마이크 가까이, 흡음과 확산, 마지막으로 EQ 와 리버브 순서');
   };
 
   /* 확인 문제 3: 뒷벽 메아리 상황 */
   V.prEchoPlan = function () {
     var s = rect(20, 10, 360, 140, '#f8fafc', null, 4) + line(20, 10, 20, 150, C.gray, 4) + line(380, 10, 380, 150, C.red, 6);
-    s += t(28, 24, '강단', { size: 12.5, weight: 800, fill: C.gray, anchor: 'start' }) + t(374, 24, '단단한 뒷벽', { size: 12.5, weight: 800, fill: C.red, anchor: 'end', halo: '#f8fafc' });
+    s += t(28, 24, '강단', { size: 13.5, weight: 800, fill: C.gray, anchor: 'start' }) + t(374, 24, '단단한 뒷벽', { size: 13.5, weight: 800, fill: C.red, anchor: 'end', halo: '#f8fafc' });
     s += spkR(40, 52, 15);
     for (var r = 0; r < 5; r++) for (var c = 0; c < 8; c++) s += '<rect x="' + (110 + c * 30) + '" y="' + (44 + r * 20) + '" width="18" height="8" rx="2" fill="#cbd5e1"/>';
-    s += '<circle cx="128" cy="100" r="8" fill="' + C.blue + '"/>' + t(128, 124, '앞쪽 자리', { size: 12.5, weight: 800, fill: C.blue, halo: '#f8fafc' });
+    s += '<circle cx="128" cy="100" r="8" fill="' + C.blue + '"/>' + t(128, 124, '앞쪽 자리', { size: 13.5, weight: 800, fill: C.blue, halo: '#f8fafc' });
     s += arrow(52, 56, 120, 96, C.teal) + t(84, 92, '①', { size: 13, weight: 800, fill: C.teal });
-    s += arrow(52, 54, 376, 72, C.orange) + arrow(376, 74, 138, 98, C.orange) + t(300, 100, '② 늦게 되돌아와요', { size: 12.5, weight: 800, fill: C.orange, halo: '#f8fafc' });
-    s += t(200, 168, '① 직접음  ② 뒷벽에서 튕겨 온 소리', { size: 12.5, fill: C.sub });
-    return svg(400, 176, s, '강단 스피커 소리가 단단한 뒷벽에서 튕겨 앞쪽 자리로 늦게 되돌아오는 그림');
+    s += arrow(52, 54, 376, 72, C.orange) + arrow(376, 74, 138, 98, C.orange) + t(300, 100, '② 늦게 되돌아와요', { size: 13.5, weight: 800, fill: C.orange, halo: '#f8fafc' });
+    s += t(200, 168, '① 직접음  ② 뒷벽에서 튕겨 온 소리', { size: 13.5, fill: C.sub });
+    return svgM(400, 176, s, '강단 스피커 소리가 단단한 뒷벽에서 튕겨 앞쪽 자리로 늦게 되돌아오는 그림');
   };
 
   /* =========================================================================== 실습: 예배당 평면 (STASims.roomLab) */

@@ -185,6 +185,7 @@
   };
 
   /* =========================================================================== 2026-11-04 「그림으로 보기」 — 용어 · 이론 · 문제에 붙이는 쉬운 그림 */
+  function svgM(w, h, body, label) { return svg(w, h, body, label).replace('<svg class="mod-svg"', '<svg class="mod-svg" style="min-width:0"'); }   // 작은 그림: 휴대폰에서 가로로 밀리지 않게(글자 13 이상)
   function okx(x, y, ok) { return '<circle cx="' + x + '" cy="' + y + '" r="11" fill="' + (ok ? C.green : C.red) + '"/>' + (ok ? '<circle cx="' + x + '" cy="' + y + '" r="5.5" fill="none" stroke="#fff" stroke-width="2.4"/>' : '<path d="M' + (x - 5) + ' ' + (y - 5) + 'l10 10M' + (x + 5) + ' ' + (y - 5) + 'l-10 10" stroke="#fff" stroke-width="2.4"/>'); }
   function drops(x0, x1, y, n, col) { var o = ''; for (var i = 0; i < n; i++) { var x = x0 + (i + 0.5) * (x1 - x0) / n; o += '<path d="M' + (x - 6).toFixed(1) + ' ' + y + 'h9" stroke="' + col + '" stroke-width="3" stroke-linecap="round"/><path d="M' + (x + 6).toFixed(1) + ' ' + y + 'l-5 -4v8z" fill="' + col + '"/>'; } return o; }
 
@@ -198,7 +199,7 @@
       s += '<path d="M' + (x + 66) + ' 96' + (p[4] > 100 ? 'q48 -6 86 24' : 'q12 -1 18 18') + '" stroke="' + C.blue + '" stroke-width="4" fill="none" stroke-linecap="round"/>';
       s += t(x + 29, top - 6, p[2], { size: 13, weight: 800, fill: C.blue }) + t(x + 84, 130, p[3], { size: 13, weight: 700 });
     });
-    return svg(360, 138, s, '높은 물탱크가 물을 더 세게 미는 것처럼 전압이 클수록 전기를 세게 밀어요');
+    return svgM(360, 138, s, '높은 물탱크가 물을 더 세게 미는 것처럼 전압이 클수록 전기를 세게 밀어요');
   };
 
   /* 용어 「저항 · 임피던스」: 관이 좁을수록 덜 흘러요 */
@@ -209,7 +210,7 @@
       s += '<rect x="' + p[0] + '" y="' + (y - h / 2) + '" width="150" height="' + h + '" rx="' + h / 2 + '" fill="#e0f2fe" stroke="#64748b" stroke-width="2"/>' + drops(p[0] + 8, p[0] + 142, y, p[4], C.blue);
       s += t(184, y - 3, p[2], { size: 13, weight: 800, fill: p[5], anchor: 'start' }) + t(184, y + 15, p[3], { size: 13, fill: C.sub, anchor: 'start' });
     });
-    return svg(360, 116, s, '넓은 관에는 물이 많이 흐르고 좁은 관에는 조금 흐르는 것처럼 저항이 클수록 전류가 적어요');
+    return svgM(360, 116, s, '넓은 관에는 물이 많이 흐르고 좁은 관에는 조금 흐르는 것처럼 저항이 클수록 전류가 적어요');
   };
 
   /* 용어 「교류」: 한 방향(직류) / 앞뒤로 바뀌어요(교류) */
@@ -222,7 +223,7 @@
       s += p[3] ? wave(x + 12, 148, 66, 22, sinF(2), p[2], 2.6) + t(x + 8, 50, '+', { size: 13, weight: 800, fill: p[2], anchor: 'start' }) + t(x + 8, 92, '−', { size: 13, weight: 800, fill: p[2], anchor: 'start' }) : '<path d="M' + (x + 12) + ' 46H' + (x + 160) + '" stroke="' + p[2] + '" stroke-width="2.6"/>' + t(x + 8, 50, '+', { size: 13, weight: 800, fill: p[2], anchor: 'start' });
       s += t(x + 86, 108, p[4], { size: 13, weight: 700 });
     });
-    return svg(360, 120, s, '직류는 한 방향, 교류는 + 와 − 를 오가요');
+    return svgM(360, 120, s, '직류는 한 방향, 교류는 + 와 − 를 오가요');
   };
 
   /* 용어 「평형 연결」: 둘 다 똑같이 올라가도 키 차이는 그대로 */
@@ -232,13 +233,13 @@
     [[0, false, '그냥 서 있을 때'], [180, true, '둘 다 같은 상자에 올라도']].forEach(function (p) {
       var x = p[0], g = p[1] ? 88 : 108;
       s += rect(x + 4, 4, 172, 128, '#fff', C.line) + t(x + 90, 22, p[2], { size: 13, weight: 800 });
-      if (p[1]) s += '<rect x="' + (x + 26) + '" y="88" width="104" height="20" rx="3" fill="#fdba74"/>' + t(x + 78, 102, '잡음 상자', { size: 12, weight: 700, fill: '#7c2d12' });
+      if (p[1]) s += '<rect x="' + (x + 26) + '" y="88" width="104" height="20" rx="3" fill="#fdba74"/>' + t(x + 78, 102, '잡음 상자', { size: 13, weight: 700, fill: '#7c2d12' });
       s += who(x + 50, g, 62, C.blue) + who(x + 106, g, 44, C.orange);
       s += '<path d="M' + (x + 116) + ' ' + (g - 62) + 'H' + (x + 140) + 'M' + (x + 116) + ' ' + (g - 44) + 'H' + (x + 140) + 'M' + (x + 136) + ' ' + (g - 62) + 'V' + (g - 44) + '" stroke="' + C.purple + '" stroke-width="2"/>';
-      s += t(x + 143, g - 49, '차이', { size: 12, weight: 800, fill: C.purple, anchor: 'start' });
+      s += t(x + 143, g - 49, '차이', { size: 13, weight: 800, fill: C.purple, anchor: 'start' });
       s += t(x + 90, 126, p[1] ? '키 차이(신호)는 그대로!' : '키 차이 = 신호', { size: 13, weight: 800, fill: C.purple });
     });
-    return svg(360, 136, s, '두 사람이 같은 상자에 올라가도 키 차이는 그대로인 것처럼 평형 연결은 똑같이 들어온 잡음을 지워요');
+    return svgM(360, 136, s, '두 사람이 같은 상자에 올라가도 키 차이는 그대로인 것처럼 평형 연결은 똑같이 들어온 잡음을 지워요');
   };
 
   /* 이론 2: 직렬 · 병렬 길 비유 */
@@ -246,19 +247,19 @@
     var s = '';
     [[4, '직렬 — 한 줄 길', '문 두 개를 차례로 지나요', '더 막혀요 → 8 + 8 = 16 Ω', C.orange, false], [204, '병렬 — 두 갈래 길', '길이 두 개라 더 잘 지나가요', '덜 막혀요 → 8 Ω 두 대 = 4 Ω', C.teal, true]].forEach(function (p) {
       var x = p[0];
-      s += rect(x, 4, 192, 166, '#fff', C.line) + t(x + 96, 24, p[1], { size: 13.5, weight: 800, fill: p[4] });
+      s += rect(x, 4, 192, 180, '#fff', C.line) + t(x + 96, 24, p[1], { size: 13.5, weight: 800, fill: p[4] });
       if (!p[5]) {
         s += '<rect x="' + (x + 12) + '" y="62" width="168" height="26" rx="4" fill="#e2e8f0"/>';
-        [70, 124].forEach(function (gx) { s += '<rect x="' + (x + gx) + '" y="54" width="14" height="42" rx="3" fill="' + p[4] + '"/>' + t(x + gx + 7, 112, '8 Ω', { size: 12, weight: 800, fill: p[4] }); });
+        [70, 124].forEach(function (gx) { s += '<rect x="' + (x + gx) + '" y="54" width="14" height="42" rx="3" fill="' + p[4] + '"/>' + t(x + gx + 7, 118, '8 Ω', { size: 13, weight: 800, fill: p[4] }); });
         s += drops(x + 14, x + 66, 75, 2, C.blue) + drops(x + 86, x + 122, 75, 1, C.blue) + drops(x + 140, x + 178, 75, 1, C.blue);
       } else {
         s += '<path d="M' + (x + 12) + ' 76H' + (x + 44) + 'M' + (x + 44) + ' 56V96M' + (x + 44) + ' 56H' + (x + 150) + 'M' + (x + 44) + ' 96H' + (x + 150) + 'M' + (x + 150) + ' 56V96M' + (x + 150) + ' 76H' + (x + 180) + '" stroke="#e2e8f0" stroke-width="18" stroke-linecap="round" fill="none"/>';
         [56, 96].forEach(function (gy) { s += '<rect x="' + (x + 90) + '" y="' + (gy - 15) + '" width="14" height="30" rx="3" fill="' + p[4] + '"/>' + drops(x + 50, x + 86, gy, 1, C.blue) + drops(x + 108, x + 146, gy, 1, C.blue); });
-        s += t(x + 126, 120, '8 Ω · 8 Ω', { size: 12, weight: 800, fill: p[4] }) + drops(x + 12, x + 42, 76, 1, C.blue);
+        s += t(x + 97, 130, '8 Ω 두 대', { size: 13, weight: 800, fill: p[4] }) + drops(x + 12, x + 42, 76, 1, C.blue);
       }
-      s += t(x + 96, 140, p[2], { size: 12.5, fill: C.sub }) + t(x + 96, 160, p[3], { size: 13, weight: 800, fill: p[4] });
+      s += t(x + 96, 154, p[2], { size: 13.5, fill: C.sub }) + t(x + 96, 174, p[3], { size: 13, weight: 800, fill: p[4] });
     });
-    return svg(400, 174, s, '직렬은 한 줄 길에 문 두 개, 병렬은 두 갈래 길이라 더 잘 흐르는 그림');
+    return svgM(400, 188, s, '직렬은 한 줄 길에 문 두 개, 병렬은 두 갈래 길이라 더 잘 흐르는 그림');
   };
 
   /* 이론 6: 3상 4선식 분전반 */
@@ -269,36 +270,36 @@
       var y = 40 + i * 24;
       s += '<path d="M60 ' + y + 'H390" stroke="' + l[1] + '" stroke-width="' + (i === 4 ? 4 : 5) + '"' + (i === 4 ? ' stroke-dasharray="10 6"' : '') + '/>' + t(8, y + 5, l[0], { size: 14, weight: 900, fill: l[1], anchor: 'start' });
     });
-    s += t(8, 168, '선 색(2022년 규정): L1 갈색 · L2 검정 · L3 회색 · N 파랑 · 접지 녹색-노랑', { size: 11.5, fill: C.sub, anchor: 'start' });
-    var tap = function (x, ya, yb, lab, col) { return '<circle cx="' + x + '" cy="' + ya + '" r="4" fill="' + col + '"/><circle cx="' + x + '" cy="' + yb + '" r="4" fill="' + col + '"/><path d="M' + x + ' ' + ya + 'V' + yb + '" stroke="' + col + '" stroke-width="2" stroke-dasharray="3 2"/>' + '<rect x="' + (x + 6) + '" y="' + ((ya + yb) / 2 - 11) + '" width="' + (lab.length * 8 + 12) + '" height="20" rx="4" fill="#fff" stroke="' + col + '"/>' + t(x + 12, (ya + yb) / 2 + 4, lab, { size: 12.5, weight: 800, fill: col, anchor: 'start' }); };
+    s += t(8, 168, '선 색(2022년 규정): L1 갈색 · L2 검정 · L3 회색', { size: 13, fill: C.sub, anchor: 'start' }) + t(8, 186, 'N 파랑 · 접지(PE) 녹색-노랑', { size: 13, fill: C.sub, anchor: 'start' });
+    var tap = function (x, ya, yb, lab, col) { return '<circle cx="' + x + '" cy="' + ya + '" r="4" fill="' + col + '"/><circle cx="' + x + '" cy="' + yb + '" r="4" fill="' + col + '"/><path d="M' + x + ' ' + ya + 'V' + yb + '" stroke="' + col + '" stroke-width="2" stroke-dasharray="3 2"/>' + '<rect x="' + (x + 6) + '" y="' + ((ya + yb) / 2 - 11) + '" width="' + (lab.length * 8 + 12) + '" height="20" rx="4" fill="#fff" stroke="' + col + '"/>' + t(x + 12, (ya + yb) / 2 + 4, lab, { size: 13.5, weight: 800, fill: col, anchor: 'start' }); };
     s += tap(110, 40, 112, '220 V', C.blue) + tap(200, 64, 112, '220 V', C.blue) + tap(280, 88, 112, '220 V', C.blue) + tap(318, 40, 64, '380 V', C.red);
-    s += t(200, 190, '음향 장비(220 V)는 한 상 + N 에서 받아요 · 세 상에 고르게 나눠요', { size: 12, weight: 700, fill: C.ink });
-    return svg(400, 198, s, '3상 4선식 분전반: L1 L2 L3 와 N, 한 상과 N 사이 220 V, 두 상 사이 380 V');
+    s += t(8, 210, '음향 장비(220 V)는 한 상과 N 에서 받아요.', { size: 13, weight: 700, fill: C.ink, anchor: 'start' }) + t(8, 228, '장비를 세 상에 고르게 나눠 꽂아요.', { size: 13, weight: 700, fill: C.ink, anchor: 'start' });
+    return svgM(400, 236, s, '3상 4선식 분전반: L1 L2 L3 와 N, 한 상과 N 사이 220 V, 두 상 사이 380 V');
   };
 
   /* 이론 6: 누전 · 단락 · 지락 */
   V.peFaults = function () {
     var s = '';
-    [[2, '누전', '전기가 선 밖으로 새요', '금속 외함으로 흘러요', C.amber], [136, '단락 (쇼트)', '+ 와 − 선이 바로 붙어요', '불꽃 · 퓨즈 끊김', C.red], [270, '지락', '전기선이 접지와 붙어요', '감전 · 차단기 내려감', C.purple]].forEach(function (p, i) {
+    [[2, '누전', '선 밖으로 새요', '금속 외함에 흘러요', C.amber], [136, '단락 (쇼트)', '두 선이 붙어요', '불꽃 · 퓨즈 끊김', C.red], [270, '지락', '접지에 닿아요', '감전 위험', C.purple]].forEach(function (p, i) {
       var x = p[0], cx = x + 64;
       s += rect(x, 4, 128, 168, '#fff', C.line) + t(cx, 26, p[1], { size: 14, weight: 900, fill: p[4] });
-      s += '<path d="M' + (x + 14) + ' 54H' + (x + 114) + 'M' + (x + 14) + ' 96H' + (x + 114) + '" stroke="#475569" stroke-width="3"/>' + t(x + 10, 50, 'L', { size: 12, weight: 800, fill: C.sub, anchor: 'start' }) + t(x + 10, 92, i === 2 ? '' : 'N', { size: 12, weight: 800, fill: C.sub, anchor: 'start' });
-      if (i === 0) s += '<rect x="' + (cx - 26) + '" y="66" width="52" height="22" rx="4" fill="#e2e8f0" stroke="#64748b"/>' + t(cx, 81, '외함', { size: 12, weight: 700 }) + '<path d="M' + (cx - 4) + ' 56l5 5 -5 4 5 5" stroke="' + p[4] + '" stroke-width="2.2" fill="none"/>';
+      s += '<path d="M' + (x + 14) + ' 54H' + (x + 114) + 'M' + (x + 14) + ' 96H' + (x + 114) + '" stroke="#475569" stroke-width="3"/>' + t(x + 10, 50, 'L', { size: 13, weight: 800, fill: C.sub, anchor: 'start' }) + t(x + 10, 92, i === 2 ? '' : 'N', { size: 13, weight: 800, fill: C.sub, anchor: 'start' });
+      if (i === 0) s += '<rect x="' + (cx - 26) + '" y="66" width="52" height="22" rx="4" fill="#e2e8f0" stroke="#64748b"/>' + t(cx, 81, '외함', { size: 13, weight: 700 }) + '<path d="M' + (cx - 4) + ' 56l5 5 -5 4 5 5" stroke="' + p[4] + '" stroke-width="2.2" fill="none"/>';
       if (i === 1) s += '<path d="M' + cx + ' 54V96" stroke="' + p[4] + '" stroke-width="4"/><path d="M' + (cx + 6) + ' 70l12 -6M' + (cx + 6) + ' 78l14 2M' + (cx - 6) + ' 72l-12 -5" stroke="' + C.amber + '" stroke-width="2.4" stroke-linecap="round"/>';
-      if (i === 2) s += '<path d="M' + cx + ' 54V100" stroke="' + p[4] + '" stroke-width="4"/><path d="M' + (cx - 16) + ' 100H' + (cx + 16) + 'M' + (cx - 10) + ' 106H' + (cx + 10) + 'M' + (cx - 4) + ' 112H' + (cx + 4) + '" stroke="#16a34a" stroke-width="2.4"/>' + t(x + 104, 92, '접지', { size: 12, weight: 700, fill: '#16a34a' });
-      s += t(cx, 140, p[2], { size: 12, weight: 700 }) + t(cx, 160, p[3], { size: 12, fill: C.sub });
+      if (i === 2) s += '<path d="M' + cx + ' 54V100" stroke="' + p[4] + '" stroke-width="4"/><path d="M' + (cx - 16) + ' 100H' + (cx + 16) + 'M' + (cx - 10) + ' 106H' + (cx + 10) + 'M' + (cx - 4) + ' 112H' + (cx + 4) + '" stroke="#16a34a" stroke-width="2.4"/>' + t(x + 104, 92, '접지', { size: 13, weight: 700, fill: '#16a34a' });
+      s += t(cx, 140, p[2], { size: 13, weight: 700 }) + t(cx, 160, p[3], { size: 13, fill: C.sub });
     });
-    return svg(400, 176, s, '누전은 선 밖으로 새는 것, 단락은 두 선이 바로 붙는 것, 지락은 전기선이 접지와 붙는 것');
+    return svgM(400, 176, s, '누전은 선 밖으로 새는 것, 단락은 두 선이 바로 붙는 것, 지락은 전기선이 접지와 붙는 것');
   };
 
   /* 확인 문제: 켜는 순서 그림을 보고 끄는 순서 고르기 */
   V.peOnOrder = function () {
     var s = t(200, 18, '예배 전 켤 때 순서', { size: 14, weight: 800 });
-    var box = function (x, n, lab, sub, col) { return rect(x, 30, 112, 70, '#fff', col, 10) + '<circle cx="' + (x + 18) + '" cy="48" r="11" fill="' + col + '"/>' + t(x + 18, 52.5, n, { size: 13, weight: 900, fill: '#fff' }) + t(x + 62, 54, lab, { size: 14, weight: 800, fill: col }) + t(x + 56, 84, sub, { size: 12, fill: C.sub }); };
+    var box = function (x, n, lab, sub, col) { return rect(x, 30, 112, 70, '#fff', col, 10) + '<circle cx="' + (x + 18) + '" cy="48" r="11" fill="' + col + '"/>' + t(x + 18, 52.5, n, { size: 13, weight: 900, fill: '#fff' }) + t(x + 62, 54, lab, { size: 14, weight: 800, fill: col }) + t(x + 56, 84, sub, { size: 13, fill: C.sub }); };
     s += box(8, '1', '콘솔', '먼저 켜요', C.blue) + arrow(124, 65, 144, 65, '#94a3b8') + box(146, '2', '앰프', '마지막에 켜요', C.orange) + arrow(262, 65, 282, 65, '#94a3b8');
     s += rect(284, 30, 108, 70, '#fff7ed', C.orange, 10) + t(338, 58, '스피커에서', { size: 13, weight: 800, fill: C.orange }) + t(338, 78, '「퍽」 없음', { size: 13, weight: 800, fill: C.orange });
     s += t(200, 126, '끌 때는 어느 쪽을 먼저 끌까요?', { size: 13.5, weight: 800, fill: C.purple });
-    return svg(400, 136, s, '켤 때는 콘솔 다음 앰프 순서이고, 끌 때 순서를 묻는 그림');
+    return svgM(400, 136, s, '켤 때는 콘솔 다음 앰프 순서이고, 끌 때 순서를 묻는 그림');
   };
 
   /* =========================================================================== 실습: 전기 실험대 (STASims.circuitLab) */

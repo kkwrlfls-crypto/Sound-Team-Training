@@ -166,7 +166,7 @@
       '<path d="M230 204h22" stroke="' + C.blue + '" stroke-width="2.6" stroke-dasharray="7 4"/>' + t(258, 208, '큰 음량일 때 귀(더 평평)', { size: 11.5, anchor: 'start', weight: 700, fill: C.blue }) +
       t(584, 16, '귀가 느끼는 크기 — A·C 가중치 곡선(등청감 곡선을 바탕으로 만든 표준 곡선)', { size: 10.5, fill: C.sub, anchor: 'end' }), '음량에 따라 귀가 높이별로 다르게 느끼는 모습');
   };
-  V.eqPicMasking = function () {
+  function maskPics() {
     var F = [60, 120, 250, 500, 1000, 2000, 4000, 8000];
     function panel(ox, title, low, maskTop, ok) {
       var x0 = ox + 14, bw = 28, base = 168, h = '<rect x="' + ox + '" y="6" width="288" height="200" rx="12" fill="' + C.bg + '" stroke="' + (ok ? C.green : C.red) + '" stroke-width="1.6"/>' + t(ox + 144, 28, title, { size: 13, weight: 800, fill: ok ? C.green : C.red });
@@ -178,8 +178,10 @@
       h += t(x0 + 31, base - 10, '저음', { size: 12, weight: 800, fill: '#fff' }) + t(x0 + 4 * 34 + 60, 56, ok ? '목소리가 다 보여요' : '목소리 윗부분이 가려져요', { size: 12, weight: 800, fill: ok ? C.green : C.red });
       return h + t(ox + 144, 200, 'Hz (막대 = 소리 크기 · 점선 = 가려지는 선)', { size: 10.5, fill: C.sub });
     }
-    return svg(600, 212, panel(4, 'HPF 끄기: 필요 없는 저음이 큼', [130, 118], 140, false) + panel(308, 'HPF 켜기: 저음을 걸러 냄', [26, 40], 62, true), '큰 저음이 목소리를 가리는 마스킹과 HPF 로 걸러 낸 뒤 비교');
+    return { off: svgM(296, 212, panel(4, 'HPF 끄기: 필요 없는 저음이 큼', [130, 118], 140, false), '큰 저음이 목소리 윗부분을 가리는 마스킹'), on: svgM(296, 212, panel(4, 'HPF 켜기: 저음을 걸러 냄', [26, 40], 62, true), 'HPF 로 저음을 걸러 낸 뒤 목소리가 드러남') };
   };
+  V.eqPicMaskOff = function () { return maskPics().off; };
+  V.eqPicMaskOn = function () { return maskPics().on; };
   V.eqPicSweep = function () {
     function frame(ox, n, title, sub, body) { return '<rect x="' + ox + '" y="6" width="188" height="186" rx="12" fill="' + C.bg + '" stroke="' + C.line + '"/><circle cx="' + (ox + 22) + '" cy="28" r="12" fill="' + C.teal + '"/>' + t(ox + 22, 33, n, { size: 13, weight: 800, fill: '#fff' }) +
       t(ox + 40, 33, title, { size: 13, weight: 800, anchor: 'start' }) + '<path d="M' + (ox + 12) + ' 120H' + (ox + 176) + '" stroke="#94a3b8"/>' + body + t(ox + 94, 172, sub, { size: 11.5, fill: C.sub }); }
@@ -637,7 +639,7 @@
           '<li>마이크에 바짝 대고 노래하면 저음이 커져요(근접 효과). 이때도 HPF 가 도움이 돼요.</li> ' +
           '<li><b>큰 저음은 다른 소리를 가려요(마스킹).</b> 낮은 소리는 높은 소리를 잘 가려요. 하지만 높은 소리는 낮은 소리를 잘 못 가려요. 그래서 필요 없는 저음을 걸러 내면 목소리가 또렷하게 드러나요.</li> ' +
           '<li>악기마다 가장 낮은 음(기본음)이 달라요. 그 음을 미리 알아 두면 HPF 를 어디까지 올릴지 정하기 쉬워요.</li></ul>',
-        pics: [{ v: 'eqPicMasking', cap: '왼쪽: 필요 없는 저음이 크면 목소리의 윗부분이 가려져요(마스킹). 오른쪽: HPF 로 저음을 걸러 내면 같은 목소리가 또렷하게 드러나요. (막대 높이는 교육용 그림이에요)' }],
+        pics: [{ v: 'eqPicMaskOff', cap: '<b>HPF 를 끄면</b>: 필요 없는 저음이 커요. 빨간 점선 아래의 목소리 윗부분이 가려져요(마스킹).' }, { v: 'eqPicMaskOn', cap: '<b>HPF 를 켜면</b>: 저음을 걸러 내서 가리는 선이 내려가요. 같은 목소리가 또렷하게 드러나요. (막대 높이는 교육용 그림이에요)' }],
         check: { q: 'MG12XU 의 HPF 버튼을 켜면 어떻게 될까요?', options: [
           { t: '80 Hz 아래 저음이 점점 줄어요 (12 dB/oct)', ok: true, why: '맞아요. 80 Hz 에서 −3 dB 줄고, 그 아래로 갈수록 더 많이 줄기 때문이에요.' },
           { t: '80 Hz 위 고음이 줄어요', why: '반대예요. HPF 는 높은 소리를 통과(Pass)시키고 낮은 소리를 줄여요.' },

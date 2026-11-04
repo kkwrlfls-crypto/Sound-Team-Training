@@ -185,9 +185,9 @@
       '<path d="M180 8V124" stroke="' + C.line + '"/>' + door(250, 22, 34, 60, 0.35) + '<path d="M286 52q8 -5 16 0t16 0" fill="none" stroke="' + C.teal + '" stroke-width="2.4"/>' + t(270, 104, 'Range −20 dB', { size: 15, weight: 800, fill: C.teal }) + t(270, 123, '살짝 열어 둬요(조금 줄임)', { size: 13.5, fill: C.sub }), 'Range 를 문을 닫는 정도에 비유한 그림');
   };
   V.gateTermBleed = function () {
-    function drum(cx, cy, r, lab) { return '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + r + '" ry="' + (r * 0.42) + '" fill="#e2e8f0" stroke="' + C.ink + '" stroke-width="2.4"/><path d="M' + (cx - r) + ' ' + cy + 'V' + (cy + r * 0.7) + 'A' + r + ' ' + (r * 0.42) + ' 0 0 0 ' + (cx + r) + ' ' + (cy + r * 0.7) + 'V' + cy + '" fill="#cbd5e1" stroke="' + C.ink + '" stroke-width="2.4"/>' + t(cx, cy + r * 0.7 + 26, lab, { size: 14, weight: 800 }); }
+    function drum(cx, cy, r, lab) { return '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + r + '" ry="' + (r * 0.42) + '" fill="#e2e8f0" stroke="' + C.ink + '" stroke-width="2.4"/><path d="M' + (cx - r) + ' ' + cy + 'V' + (cy + r * 0.7) + 'A' + r + ' ' + (r * 0.42) + ' 0 0 0 ' + (cx + r) + ' ' + (cy + r * 0.7) + 'V' + cy + '" fill="#cbd5e1" stroke="' + C.ink + '" stroke-width="2.4"/>' + t(cx, cy + r * 1.12 + 18, lab, { size: 14, weight: 800 }); }
     var mic = '<path d="M84 30L108 50" stroke="' + C.ink + '" stroke-width="4"/><rect x="72" y="18" width="20" height="13" rx="6" transform="rotate(40 82 24)" fill="' + C.ink + '"/>';
-    return svgM(360, 130, drum(110, 66, 40, '탐') + mic + t(56, 16, '탐 마이크', { size: 13.5, weight: 700, fill: C.teal, anchor: 'start' }) + drum(276, 70, 34, '스네어') +
+    return svgM(360, 140, drum(110, 66, 40, '탐') + mic + t(56, 16, '탐 마이크', { size: 13.5, weight: 700, fill: C.teal, anchor: 'start' }) + drum(276, 70, 34, '스네어') +
       '<path d="M238 58C200 40 140 26 98 28" fill="none" stroke="' + C.red + '" stroke-width="2.6" stroke-dasharray="7 5"/><path d="M106 22L96 28L106 34" fill="none" stroke="' + C.red + '" stroke-width="2.6"/>' + t(206, 28, '새어 들어옴', { size: 14, weight: 800, fill: C.red }), '탐 마이크에 스네어 소리가 새어 드는 블리드');
   };
   V.gatePicDoorStory = function () {

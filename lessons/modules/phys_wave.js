@@ -173,6 +173,7 @@
   };
 
   /* =========================================================================== 2026-11-04 「그림으로 보기」 — 용어 · 이론 · 문제에 붙이는 쉬운 그림 */
+  function svgM(w, h, body, label) { return svg(w, h, body, label).replace('<svg class="mod-svg"', '<svg class="mod-svg" style="min-width:0"'); }   // 작은 그림: 휴대폰에서 가로로 밀리지 않게(글자 13 이상)
   function dbl(x, y, col, w) { w = w || 10; return '<path d="M' + (x - w) + ' ' + y + 'H' + (x + w) + '" stroke="' + col + '" stroke-width="2"/><path d="M' + (x - w) + ' ' + y + 'l5 -3.5v7zM' + (x + w) + ' ' + y + 'l-5 -3.5v7z" fill="' + col + '"/>'; }
   function person(x, y, col) { return '<circle cx="' + x + '" cy="' + y + '" r="8" fill="' + (col || '#fde68a') + '" stroke="' + C.amber + '" stroke-width="1.5"/><path d="M' + x + ' ' + (y + 8) + 'V' + (y + 30) + 'M' + (x - 9) + ' ' + (y + 16) + 'H' + (x + 9) + 'M' + x + ' ' + (y + 30) + 'l-7 12M' + x + ' ' + (y + 30) + 'l7 12" stroke="#475569" stroke-width="2.2" fill="none" stroke-linecap="round"/>'; }
   function okx(x, y, ok) { return '<circle cx="' + x + '" cy="' + y + '" r="11" fill="' + (ok ? C.green : C.red) + '"/>' + (ok ? '<circle cx="' + x + '" cy="' + y + '" r="5.5" fill="none" stroke="#fff" stroke-width="2.4"/>' : '<path d="M' + (x - 5) + ' ' + (y - 5) + 'l10 10M' + (x + 5) + ' ' + (y - 5) + 'l-10 10" stroke="#fff" stroke-width="2.4"/>'); }
@@ -184,7 +185,7 @@
     xs.forEach(function (x, i) { s += person(x, 34, i < 2 ? '#bfdbfe' : null) + dbl(x, 90, C.orange, 9); });
     s += '<path d="M10 52H34" stroke="' + C.ink + '" stroke-width="3"/><path d="M40 52l-8 -5v10z" fill="' + C.ink + '"/>' + t(22, 74, '툭', { size: 13, weight: 800 });
     s += t(68, 108, '빽빽(밀)', { size: 13, weight: 800, fill: C.blue }) + t(150, 112, '제자리에서 앞뒤로만 흔들려요', { size: 13, weight: 700, fill: C.orange, anchor: 'start' });
-    return svg(360, 120, s, '줄을 선 사람 어깨를 밀면 밀림이 차례로 전해지는 그림');
+    return svgM(360, 120, s, '줄을 선 사람 어깨를 밀면 밀림이 차례로 전해지는 그림');
   };
 
   /* 용어 「주파수」: 같은 1초 동안 몇 번 떨리나 */
@@ -194,7 +195,7 @@
       s += rect(p[0], 24, 170, 54, '#fff', C.line) + '<path d="M' + (p[0] + 8) + ' 51H' + (p[0] + 162) + '" stroke="' + C.line + '" stroke-dasharray="3 3"/>' + sine(p[0] + 8, 154, 51, 18, p[1], p[2], 2.4);
       s += t(p[0] + 85, 96, p[3], { size: 13, weight: 800, fill: p[2] }) + t(p[0] + 85, 114, p[4], { size: 13, weight: 700 });
     });
-    return svg(360, 120, s, '1초 동안 천천히 떨리는 낮은 음과 빨리 떨리는 높은 음');
+    return svgM(360, 120, s, '1초 동안 천천히 떨리는 낮은 음과 빨리 떨리는 높은 음');
   };
 
   /* 용어 「dB SPL」: 계단 비유 — 한 계단 +6 dB = 음압 2배 */
@@ -207,7 +208,7 @@
       s += t(x + 40, top + 17, lab[i], { size: 13, weight: 800, fill: C.ink });
       s += t(x + 40, top - 6, '음압 ' + mul[i], { size: 13, weight: 700, fill: C.purple });
     }
-    return svg(360, 130, s, '계단 한 칸마다 6 dB 씩, 음압은 2배씩 커지는 그림');
+    return svgM(360, 130, s, '계단 한 칸마다 6 dB 씩, 음압은 2배씩 커지는 그림');
   };
 
   /* 이론 4: 왜 「역제곱」일까 — 손전등 빛처럼 넓게 퍼져요 */
@@ -221,7 +222,7 @@
     s += t(148, 134, '1 m', { size: 13, weight: 800, fill: C.blue }) + t(148, 152, '1칸', { size: 13, weight: 700, fill: C.blue });
     s += t(268, 154, '2 m', { size: 13, weight: 800, fill: C.orange }) + t(318, 100, '4칸', { size: 14, weight: 800, fill: C.orange, anchor: 'start' });
     s += t(200, 180, '같은 에너지가 4칸에 나뉘어요 → 한 칸 세기 1/4', { size: 13, weight: 700 }) + t(200, 198, '세기 1/4 = 음압 1/2 = 약 −6 dB', { size: 13, weight: 800, fill: C.red });
-    return svg(400, 206, s, '거리가 2배가 되면 소리가 퍼지는 넓이가 4배가 되는 그림');
+    return svgM(400, 206, s, '거리가 2배가 되면 소리가 퍼지는 넓이가 4배가 되는 그림');
   };
 
   /* 이론 4 개념 체크: 그림을 보고 고르기 */
@@ -232,8 +233,8 @@
       s += '<path d="M' + p[0] + ' 80V92" stroke="' + C.sub + '" stroke-width="2"/>' + '<circle cx="' + p[0] + '" cy="66" r="10" fill="' + p[3] + '"/>';
       s += t(p[0], 44, p[2], { size: 15, weight: 900, fill: p[3] }) + t(p[0], 108, p[1], { size: 13, weight: 800 });
     });
-    s += t(244, 128, '반사는 없다고 생각해요 · 그림 간격은 대강', { size: 12, fill: C.sub });
-    return svg(400, 136, s, '설교자에서 2 m 자리는 84 dB, 4 m 자리는 물음표');
+    s += t(244, 128, '반사는 없다고 생각해요 · 그림 간격은 대강', { size: 13, fill: C.sub });
+    return svgM(400, 136, s, '설교자에서 2 m 자리는 84 dB, 4 m 자리는 물음표');
   };
 
   /* 이론 5: 그네 비유 — 같은 박자 / 반대 박자 */
@@ -246,12 +247,12 @@
       var sw = p[1] ? 30 : 0;
       s += '<path d="M' + cx + ' 44L' + (cx + sw) + ' 112" stroke="#475569" stroke-width="2"/><rect x="' + (cx + sw - 12) + '" y="110" width="24" height="6" rx="2" fill="#475569"/>';
       if (p[1]) s += '<path d="M' + (cx + 40) + ' 100l8 -6M' + (cx + 42) + ' 112l9 -2" stroke="' + p[3] + '" stroke-width="2" stroke-linecap="round"/>';
-      s += t(x + 12, 72, 'A', { size: 14, weight: 900, fill: C.blue, anchor: 'start' }) + arrow(x + 28, 67, x + 84, 67, C.blue) + t(x + 56, 88, '밀기', { size: 12.5, weight: 700, fill: C.blue });
-      s += t(x + 12, 118, 'B', { size: 14, weight: 900, fill: p[1] ? C.blue : C.orange, anchor: 'start' }) + (p[1] ? arrow(x + 28, 113, x + 84, 113, C.blue) : arrow(x + 84, 113, x + 28, 113, C.orange)) + t(x + 56, 134, p[1] ? '밀기' : '당기기', { size: 12.5, weight: 700, fill: p[1] ? C.blue : C.orange });
+      s += t(x + 12, 72, 'A', { size: 14, weight: 900, fill: C.blue, anchor: 'start' }) + arrow(x + 28, 67, x + 84, 67, C.blue) + t(x + 56, 88, '밀기', { size: 13.5, weight: 700, fill: C.blue });
+      s += t(x + 12, 118, 'B', { size: 14, weight: 900, fill: p[1] ? C.blue : C.orange, anchor: 'start' }) + (p[1] ? arrow(x + 28, 113, x + 84, 113, C.blue) : arrow(x + 84, 113, x + 28, 113, C.orange)) + t(x + 56, 134, p[1] ? '밀기' : '당기기', { size: 13.5, weight: 700, fill: p[1] ? C.blue : C.orange });
       s += okx(x + 174, 160, p[1]) + t(x + 84, 165, p[1] ? '그네가 더 높이 가요' : '그네가 거의 멈춰요', { size: 13, weight: 800, fill: p[3] });
     });
     s += t(100, 198, '같은 위상 → +6 dB', { size: 13, weight: 800, fill: C.green }) + t(300, 198, '반대 위상(180°) → 상쇄', { size: 13, weight: 800, fill: C.red });
-    return svg(400, 206, s, '두 사람이 같은 박자로 그네를 밀면 높이 가고, 한 명이 밀고 한 명이 당기면 거의 멈추는 그림');
+    return svgM(400, 206, s, '두 사람이 같은 박자로 그네를 밀면 높이 가고, 한 명이 밀고 한 명이 당기면 거의 멈추는 그림');
   };
 
   /* 이론 6: 소리의 3요소 — 높이 · 크기 · 음색 */
@@ -265,36 +266,36 @@
       if (i === 1) s += sine(x + 10, 108, 104, 6, 2, c[2], 2.2) + sine(x + 10, 108, 158, 20, 2, c[2], 2.2);
       if (i === 2) s += sine(x + 10, 108, 104, 14, 2, c[2], 2.2) + saw(x + 10, 108, 158, 14, c[2]);
       var lab = [['낮은 음', '높은 음'], ['작은 소리', '큰 소리'], ['플루트 같은 소리', '바이올린 같은 소리']][i];
-      s += t(x + 64, 128, lab[0], { size: 12, fill: C.sub }) + t(x + 64, 194, lab[1], { size: 12, fill: C.sub });
+      s += t(x + 64, 128, lab[0], { size: 13, fill: C.sub }) + t(x + 64, 194, lab[1], { size: 13, fill: C.sub });
     });
-    return svg(400, 210, s, '소리의 높이는 주파수, 크기는 진폭, 음색은 파형과 배음으로 정해지는 그림');
+    return svgM(400, 210, s, '소리의 높이는 주파수, 크기는 진폭, 음색은 파형과 배음으로 정해지는 그림');
   };
 
   /* 이론 6: 마스킹 — 큰 소리가 가까운 작은 소리를 가려요 */
   V.pwMask = function () {
     var s = t(200, 18, '큰 소리가 가까운 작은 소리를 가려요(마스킹)', { size: 13.5, weight: 800 });
     var X0 = 24, X1 = 388, Y0 = 156;
-    s += '<path d="M' + X0 + ' ' + Y0 + 'H' + X1 + '" stroke="#94a3b8" stroke-width="1.5"/>' + t(X1, Y0 + 20, '높은 소리 →', { size: 12, fill: C.sub, anchor: 'end' }) + t(X0, Y0 + 20, '← 낮은 소리', { size: 12, fill: C.sub, anchor: 'start' });
+    s += '<path d="M' + X0 + ' ' + Y0 + 'H' + X1 + '" stroke="#94a3b8" stroke-width="1.5"/>' + t(X1, Y0 + 20, '높은 소리 →', { size: 13, fill: C.sub, anchor: 'end' }) + t(X0, Y0 + 20, '← 낮은 소리', { size: 13, fill: C.sub, anchor: 'start' });
     var d = 'M' + X0 + ' ' + Y0; for (var x = X0; x <= X1; x += 4) { var u = x - 110, h = u < 0 ? 104 * Math.exp(-u * u / 900) : 104 * Math.exp(-u / 90); d += 'L' + x + ' ' + (Y0 - h).toFixed(1); }
     s += '<path d="' + d + 'L' + X1 + ' ' + Y0 + 'Z" fill="#ede9fe" stroke="' + C.purple + '" stroke-width="1.6" stroke-dasharray="5 4"/>';
     s += '<rect x="98" y="46" width="24" height="110" rx="3" fill="' + C.purple + '"/>' + t(110, 40, '큰 베이스', { size: 13, weight: 800, fill: C.purple });
-    s += '<rect x="168" y="118" width="16" height="38" rx="3" fill="#94a3b8"/>' + t(190, 76, '가려져서', { size: 12.5, weight: 800, fill: C.red, anchor: 'start' }) + t(190, 92, '안 들려요', { size: 12.5, weight: 800, fill: C.red, anchor: 'start' }) + '<path d="M196 98L180 114" stroke="' + C.red + '" stroke-width="1.5"/>';
+    s += '<rect x="168" y="118" width="16" height="38" rx="3" fill="#94a3b8"/>' + t(190, 76, '가려져서', { size: 13.5, weight: 800, fill: C.red, anchor: 'start' }) + t(190, 92, '안 들려요', { size: 13.5, weight: 800, fill: C.red, anchor: 'start' }) + '<path d="M196 98L180 114" stroke="' + C.red + '" stroke-width="1.5"/>';
     s += '<rect x="318" y="118" width="16" height="38" rx="3" fill="' + C.teal + '"/>' + t(326, 110, '들려요', { size: 13, weight: 800, fill: C.teal });
-    s += t(206, 194, '저음은 위쪽(높은 소리)을 더 넓게 가려요', { size: 12.5, fill: C.sub });
-    return svg(400, 202, s, '큰 베이스 소리가 바로 위 작은 소리를 가리고, 멀리 떨어진 높은 소리는 들리는 그림');
+    s += t(206, 194, '저음은 위쪽(높은 소리)을 더 넓게 가려요', { size: 13.5, fill: C.sub });
+    return svgM(400, 202, s, '큰 베이스 소리가 바로 위 작은 소리를 가리고, 멀리 떨어진 높은 소리는 들리는 그림');
   };
 
   /* 확인 문제 4: 마이크 두 개 상황 */
   V.pwMicPair = function () {
     var s = '<circle cx="30" cy="74" r="20" fill="#fde68a" stroke="' + C.amber + '" stroke-width="1.5"/>' + t(30, 112, '입', { size: 13, weight: 700 });
-    s += '<rect x="76" y="56" width="34" height="11" rx="5" fill="#334155"/>' + t(93, 30, '마이크 A', { size: 13, weight: 800 }) + t(93, 46, '가까워요', { size: 12, fill: C.sub });
-    s += '<rect x="152" y="98" width="34" height="11" rx="5" fill="#334155"/>' + t(169, 126, '마이크 B', { size: 13, weight: 800 }) + t(169, 142, '조금 멀어요', { size: 12, fill: C.sub });
+    s += '<rect x="76" y="56" width="34" height="11" rx="5" fill="#334155"/>' + t(93, 30, '마이크 A', { size: 13, weight: 800 }) + t(93, 46, '가까워요', { size: 13, fill: C.sub });
+    s += '<rect x="152" y="98" width="34" height="11" rx="5" fill="#334155"/>' + t(169, 126, '마이크 B', { size: 13, weight: 800 }) + t(169, 142, '조금 멀어요', { size: 13, fill: C.sub });
     s += '<path d="M50 70L76 62M50 80L152 103" stroke="' + C.purple + '" stroke-width="1.6" stroke-dasharray="4 3"/>';
-    s += rect(232, 8, 164, 140, '#f8fafc', C.line) + t(314, 28, 'A · B 둘 다 올리면', { size: 13, weight: 800, fill: C.purple });
-    var d = '', X0 = 244, W = 140; for (var i = 0; i <= W; i++) { var f = 50 * Math.pow(200, i / W), th = 2 * Math.PI * f * 0.001, re = 1 + 0.8 * Math.cos(th), im = 0.8 * Math.sin(th), db = 20 * Math.log10(Math.hypot(re, im)); d += (i ? 'L' : 'M') + (X0 + i).toFixed(1) + ' ' + (68 - db * 2.6).toFixed(1); }
-    s += '<path d="M' + X0 + ' 68H' + (X0 + W) + '" stroke="#94a3b8" stroke-dasharray="3 3"/><path d="' + d + '" fill="none" stroke="' + C.purple + '" stroke-width="2"/>';
-    s += t(314, 128, '빗살처럼 들쭉날쭉', { size: 12.5, weight: 700, fill: C.purple }) + t(244, 142, '낮은 소리', { size: 11, fill: C.sub, anchor: 'start' }) + t(384, 142, '높은 소리', { size: 11, fill: C.sub, anchor: 'end' });
-    return svg(400, 152, s, '입에서 거리가 다른 마이크 두 개를 함께 올렸을 때 생기는 빗살 모양 주파수 그래프');
+    s += rect(232, 8, 164, 166, '#f8fafc', C.line) + t(314, 28, 'A · B 둘 다 올리면', { size: 13, weight: 800, fill: C.purple });
+    var d = '', X0 = 244, W = 140; for (var i = 0; i <= W; i++) { var f = 50 * Math.pow(200, i / W), th = 2 * Math.PI * f * 0.001, re = 1 + 0.8 * Math.cos(th), im = 0.8 * Math.sin(th), db = 20 * Math.log10(Math.hypot(re, im)); d += (i ? 'L' : 'M') + (X0 + i).toFixed(1) + ' ' + (66 - db * 2.2).toFixed(1); }
+    s += '<path d="M' + X0 + ' 66H' + (X0 + W) + '" stroke="#94a3b8" stroke-dasharray="3 3"/><path d="' + d + '" fill="none" stroke="' + C.purple + '" stroke-width="2"/>';
+    s += t(314, 140, '빗살처럼 들쭉날쭉', { size: 13.5, weight: 700, fill: C.purple }) + t(240, 162, '낮은 소리', { size: 13, fill: C.sub, anchor: 'start' }) + t(388, 162, '높은 소리', { size: 13, fill: C.sub, anchor: 'end' });
+    return svgM(400, 178, s, '입에서 거리가 다른 마이크 두 개를 함께 올렸을 때 생기는 빗살 모양 주파수 그래프');
   };
 
   /* =========================================================================== 실습: 파동 실험대 (STASims.waveLab) */
