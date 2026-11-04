@@ -669,3 +669,12 @@ html.nav-open #toTopBtn { opacity: 0; pointer-events: none; }
 @keyframes modShake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
 @media (max-width: 640px) { .mod-match__grid { grid-template-columns: minmax(0, 1fr); } .mod-match { padding: 12px; } }
 @media (prefers-reduced-motion: reduce) { .mod-mrow.bad, .mod-mcard.bad { animation: none; } }
+/* 2026-11-04: 「물리음향」이 더해져 홈 분야 카드가 5개 — 줄 끝에 카드 하나만 남지 않게 */
+.hm-cats { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.hm-cats > .hm-cat { grid-column: span 2; }
+.hm-cats > .hm-cat:nth-child(n+4) { grid-column: span 3; }
+@media (min-width: 1440px) { .hm-cats { grid-template-columns: repeat(5, minmax(0, 1fr)); } .hm-cats > .hm-cat, .hm-cats > .hm-cat:nth-child(n+4) { grid-column: auto; } }
+@media (max-width: 1279px) { .hm-cats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hm-cats > .hm-cat, .hm-cats > .hm-cat:nth-child(n+4) { grid-column: auto; } .hm-cats > .hm-cat:last-child:nth-child(odd) { grid-column: 1 / -1; } }
+@media (max-width: 640px) { .hm-cats { grid-template-columns: minmax(0, 1fr); } .hm-cats > .hm-cat:last-child:nth-child(odd) { grid-column: auto; } }
+@media (min-width: 1280px) and (max-width: 1439px) { .hm-cats > .hm-cat:nth-child(n+4) .hm-cat__img { aspect-ratio: 16 / 5; } }
+@media (min-width: 641px) and (max-width: 1279px) { .hm-cats > .hm-cat:last-child:nth-child(odd) .hm-cat__img { aspect-ratio: 16 / 4; } }

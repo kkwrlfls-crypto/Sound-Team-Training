@@ -95,6 +95,7 @@
   var CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
   var ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
   var CAT_ICO = {   // 메뉴 아이콘과 같은 선 굵기·크기
+    physics: '<path d="M2 12c2-5 4-5 6 0s4 5 6 0 4-5 6 0"/><path d="M20 12h2"/>',
     hardware: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/>',
     mixing: '<path d="M6 4v16M12 4v16M18 4v16"/><rect x="4" y="13" width="4" height="3"/><rect x="10" y="7" width="4" height="3"/><rect x="16" y="11" width="4" height="3"/>',
     church: '<path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/>',
@@ -103,6 +104,7 @@
   function svgIco(k) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (CAT_ICO[k] || '') + '</svg>'; }
   /* 교회 시스템 실습 · 트러블슈팅은 메뉴의 실습 화면을 묶어 보여 줍니다(메뉴 구성은 그대로). */
   var HOME_CATS = [
+    { id: 'physics', path: 'physics', img: 'img/modules/phys_wave.svg' },   // 2026-11-04 물리음향
     { id: 'hardware', path: 'hardware', img: 'img/modules/hw_mic.jpg' },
     { id: 'mixing', path: 'mixing', img: 'img/modules/mix2_path.jpg', imgPos: '50% 50%' },
     { id: 'church', title: '교회 시스템 실습', sum: '본당에 설치된 실제 장비 구성으로 배치·배선하고, 콘솔을 직접 조작해 봅니다.', tabs: ['tab2', 'tab5', 'tab6', 'tab1'], img: 'cl5_top.jpg', imgPos: '50% 70%' },
@@ -155,7 +157,7 @@
     }
     var firstL = lessonById('signal-flow'), mic = (window.STA_MODULES || {}).mic, rec = [];
     if (firstL && firstL.status === 'ready') rec.push({ attr: 'data-lesson="signal-flow"', thumb: firstL.thumb, kicker: '기초 이론 · ' + minTxt(firstL.minutes), title: firstL.title });
-    if (mic && mic.status === 'ready') rec.push({ attr: 'data-module="mic"', img: mic.img, kicker: (((window.STA_PATHS || [])[0] || {}).title || '') + ' · 01', title: mic.title });
+    if (mic && mic.status === 'ready') rec.push({ attr: 'data-module="mic"', img: mic.img, kicker: pathTitle(mic) + ' · ' + (window.STA_NO_TXT ? STA_NO_TXT(mic) : '01'), title: mic.title });
     rec.push({ attr: 'data-mgo-tab="tab1"', img: 'vi10p.jpg', kicker: '실습', title: tabName('tab1') });
     rec.push({ attr: 'data-mgo-tab="tab6"', img: 'console_strip.jpg', kicker: '실습', title: tabName('tab6') });
     return '<section class="hm-sec" id="homeNext"><div class="hm-sec__head"><h2>처음이라면 이 순서로 시작하세요</h2><p>신호 흐름 → 장비 → 실습 순서로 배우면 이해가 빨라요.</p></div><div class="hm-next">' +

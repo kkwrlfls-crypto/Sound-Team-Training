@@ -452,6 +452,11 @@
     dconn: { label: '3D 모델(디지털 오디오 커넥터)', need: 'DigitalConnectors', dir: [0.6, 0.42, 1],
       variants: [['set', '한눈에 비교', '실제 크기 비율로 나란히', [0.1, 0.8, 1], 1.2], ['etherCON', 'etherCON', 'Dante · AES50 랜선의 잠금 커넥터'], ['RJ45', 'RJ45', '일반 랜선 플러그'], ['AES-XLR', 'AES/EBU', '110 Ω 디지털 XLR'], ['BNC', 'BNC', '75 Ω 동축 · 워드클럭 · MADI'], ['TOSLINK', '광(TOSLINK)', 'ADAT · S/PDIF 광'], ['USB-C', 'USB-C', '양면 · 둥근 타원'], ['USB-AB', 'USB A-B', 'A(컴퓨터) ↔ B(오디오 장비)', [0.25, 0.85, 1], 1.3]],
       make: function (v) { return DigitalConnectors.create({ variant: v }); } },
+    /* 2026-11-04: 3층 d&b 패시브 스피커(절차적 모델) — 「속 보기」로 그릴 뒤 드라이버 */
+    dbspk: { label: '3D 모델(d&b 패시브 스피커)', need: 'DbSpeakers', dir: [0.6, 0.3, 1],
+      variants: [['Vi10P', 'Vi10P · 메인', '무대 메인 L · R — 3웨이 패시브', [0.55, 0.28, 1], 2.3], ['Yi10P', 'Yi10P · 천장 가운데', '2웨이 · 110° × 40°', null, 2.3], ['Yi7P', 'Yi7P · 천장 좌우', '2웨이 · 75° × 40°', null, 2.3], ['E8', 'E8 · 기둥', '8″/1″ 동축 · 90° × 50°', [0.6, 0.32, 1], 2.2], ['V-SUB', 'V-SUB · 서브우퍼', '18″ + 12″ 저음', [0.7, 0.45, 1], 1.8]],
+      toggleTxt: '속 보기(드라이버) 켜기', toggleLabel: function (on) { return on ? '속 보기(드라이버) 켜기' : '속 보기 끄기'; },
+      make: function (v) { return DbSpeakers.create({ variant: v }); }, toggle: function (m, on) { DbSpeakers.api(m).setXray(!on); } },
     zxa1: { label: '3D 모델(EV ZXA1)', need: 'EvZXA1', dir: [0.5, 0.2, 1], make: function () { return EvZXA1.create(); } }
   };
   function mountViewer(def) {
@@ -471,7 +476,7 @@
     var on = true, alive = true;
     r.domElement.addEventListener('pointerdown', function () { ctl.autoRotate = false; });
     (function loop() { if (!alive) return; requestAnimationFrame(loop); var tabEl = $('tabModule'); if (!tabEl || !tabEl.classList.contains('active')) return; ctl.update(); r.render(sc, cam); })();
-    viewer = { toggle: function () { on = !on; if (def.toggle) def.toggle(obj, on); return on; }, destroy: function () { alive = false; sc.traverse(function (o) { if (o.geometry) o.geometry.dispose(); }); r.dispose(); }, isOn: function () { return on; }, object: obj };
+    viewer = { def: def, toggle: function () { on = !on; if (def.toggle) def.toggle(obj, on); return on; }, destroy: function () { alive = false; sc.traverse(function (o) { if (o.geometry) o.geometry.dispose(); }); r.dispose(); }, isOn: function () { return on; }, object: obj };
   }
   function destroyViewer() { if (viewer) { try { viewer.destroy(); } catch (e) { /* noop */ } viewer = null; } }
 
@@ -493,7 +498,7 @@
     document.querySelectorAll('.tab-group').forEach(function (g) { g.classList.remove('active'); g.classList.toggle('in', !!PATHS.find(function (p) { return p.id === g.getAttribute('data-navpath') && (p.practice || []).indexOf(tabId) >= 0; })); }); }
   function buildNav() {
     var nav = document.querySelector('.site-header .tab-nav'); if (!nav || nav.querySelector('.tab-group')) return;
-    var ico = { hardware: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/>', mixing: '<path d="M6 4v16M12 4v16M18 4v16"/><rect x="4" y="13" width="4" height="3"/><rect x="10" y="7" width="4" height="3"/><rect x="16" y="11" width="4" height="3"/>', field: '<path d="M12 3l8 4v6c0 4-3.5 7-8 8-4.5-1-8-4-8-8V7z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>' };
+    var ico = { physics: '<path d="M2 12c2-5 4-5 6 0s4 5 6 0 4-5 6 0"/><path d="M20 12h2"/>', hardware: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/>', mixing: '<path d="M6 4v16M12 4v16M18 4v16"/><rect x="4" y="13" width="4" height="3"/><rect x="10" y="7" width="4" height="3"/><rect x="16" y="11" width="4" height="3"/>', field: '<path d="M12 3l8 4v6c0 4-3.5 7-8 8-4.5-1-8-4-8-8V7z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>' };
     PATHS.forEach(function (p) {
       var g = document.createElement('button'); g.type = 'button'; g.className = 'tab-group'; g.setAttribute('data-navpath', p.id);
       g.innerHTML = '<svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ico[p.id] || '') + '</svg><span>' + esc(p.title) + '</span>';
@@ -559,7 +564,7 @@
     var fg = t.closest('[data-mfig]'); if (fg) { var y0 = window.scrollY; view.fig = fg.getAttribute('data-mfig') === '3d' ? '3d' : 'photo'; renderModule(); window.scrollTo(0, y0); return; }
     var mg = t.closest('[data-mgo]'); if (mg) { var pr = mg.getAttribute('data-mgo').split(':'), m = MODS[view.mod]; var item = pr[0] === 'practice' ? m.practice.links[+pr[1]] : m.missions[+pr[1]]; showBack(); go(item.go); return; }
     var mv = t.closest('[data-mvar]'); if (mv) { var y1 = window.scrollY; view.var3d = +mv.getAttribute('data-mvar') || 0; renderModule(); window.scrollTo(0, y1); return; }   // 2026-11-04: 3D 제품 바꾸기(앰프 40D/10D · 스피커 · 커넥터)
-    var vw = t.closest('[data-mviewer]'); if (vw && viewer) { var on = viewer.toggle(); vw.textContent = on ? '스위치 ON/OFF (지금 켜짐)' : '스위치 ON/OFF (지금 꺼짐)'; return; }
+    var vw = t.closest('[data-mviewer]'); if (vw && viewer) { var on = viewer.toggle(), dd = viewer.def || {}; vw.textContent = dd.toggleLabel ? dd.toggleLabel(on) : on ? '스위치 ON/OFF (지금 켜짐)' : '스위치 ON/OFF (지금 꺼짐)'; vw.setAttribute('aria-pressed', String(!on)); return; }
     var ck = t.closest('[data-mcheckchk],[data-mquizchk]');
     if (ck) {
       var kind = ck.hasAttribute('data-mcheckchk') ? 'mcheck' : 'mquiz', qi = +ck.getAttribute('data-' + kind + 'chk'), sel = document.querySelector('#tabModule input[name="' + kind + qi + '"]:checked'); if (!sel) return;
