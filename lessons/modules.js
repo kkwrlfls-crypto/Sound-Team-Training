@@ -138,7 +138,7 @@
   /* ------------------------------------------------------------- 모듈 화면 */
   function qHtml(q, qi, ans, kind) {
     var answered = ans != null;
-    return '<div class="lsn-q mod-q" data-' + kind + '="' + qi + '"><b>' + (kind === 'mquiz' ? (qi + 1) + '. ' : '✔ 개념 체크 · ') + esc(q.q) + '</b><fieldset class="lsn-opts"><legend class="sr-only">' + esc(q.q) + '</legend>' +
+    return '<div class="lsn-q mod-q" data-' + kind + '="' + qi + '"><b>' + (kind === 'mquiz' ? (qi + 1) + '. ' : '✔ 개념 체크 · ') + esc(q.q) + '</b>' + visBox(q.visual, 'mod-qvis') + '<fieldset class="lsn-opts"><legend class="sr-only">' + esc(q.q) + '</legend>' +
       q.options.map(function (o, oi) {
         var cls = answered ? (o.ok ? ' ok' : (oi === ans ? ' no' : '')) : '';
         return '<label class="lsn-opt' + cls + '"><input type="radio" name="' + kind + qi + '" value="' + oi + '"' + (answered && oi === ans ? ' checked' : '') + '><span>' + esc(o.t) + (answered && (o.ok || oi === ans) ? '<span class="why">' + (o.ok ? '✓ ' : '✗ ') + esc(o.why) + '</span>' : '') + '</span></label>';
@@ -218,7 +218,7 @@
     var showVis = VIS[o.model] && !(h.vis === o.model);
     return '<div class="mod-ov"><div class="mod-ov__main"><section class="mod-box mod-concept"><h2 class="mod-box__h">' + mi('bulb') + '핵심 개념</h2><div class="mod-lead mod-paras">' + paras(o.lead) + '</div>' +
       (g.glance ? matchHtml(g.glance) : '')   /* 2026-11-04: 「한눈에 보기」 → 단어 · 설명 짝 맞추기 */ +
-      '<h3 class="mod-h3">주요 용어 <small>눌러서 뜻 보기</small></h3><div class="mod-terms">' + o.terms.map(function (t2) { return '<details class="mod-term"><summary>' + esc(t2[0]) + '</summary><p>' + esc(t2[1]) + '</p></details>'; }).join('') + '</div>' +
+      '<h3 class="mod-h3">주요 용어 <small>눌러서 뜻 보기</small></h3><div class="mod-terms">' + o.terms.map(function (t2) { return '<details class="mod-term"><summary>' + esc(t2[0]) + '</summary><p>' + esc(t2[1]) + '</p>' + visBox(t2[2], 'mod-term__vis') + '</details>'; }).join('') + '</div>' +
       (showVis ? '<div class="mod-visual">' + VIS[o.model]() + '</div>' : '') + '</section></div>' +
       '<aside class="mod-ov__side">' +   /* 2026-11-04: 「관련 실습 바로가기」 상자 뺌 */
       '<div class="lsn-points mod-points"><h4>기억할 점</h4><ul>' + o.points.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div></aside></div>' +
@@ -230,7 +230,7 @@
       m.theory.map(function (x, i) {
         var ok = s.checks[i] === okIdx(x.check);
         return '<section class="mod-sec" id="modSec' + i + '"><h2 class="mod-sec__h"><span class="lsn-num">' + (i + 1) + '</span>' + esc(x.title) + (ok ? '<span class="mod-tick">✓</span>' : '') + '</h2>' +
-          (x.visual && VIS[x.visual] ? '<div class="mod-visual">' + VIS[x.visual]() + '</div>' : '') + '<div class="mod-p mod-paras">' + paras(x.body) + '</div>' +
+          (x.visual && VIS[x.visual] ? '<div class="mod-visual">' + VIS[x.visual]() + '</div>' : '') + '<div class="mod-p mod-paras">' + paras(x.body) + '</div>' + picsHtml(x.pics) +
           (x.more ? '<details class="mod-more"><summary>더 알아보기</summary><div' + (/<(ul|ol|table)\b/.test(x.more) ? '>' + x.more : ' class="mod-paras">' + paras(x.more)) + '</div></details>' : '') +
           qHtml(x.check, i, s.checks[i], 'mcheck') + '</section>';
       }).join('') + '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="practice">실습하기 →</button></div>';
@@ -256,6 +256,13 @@
     return '<p class="mod-lead">배운 원리를 실제 문제 상황에 적용해 보세요.</p><div class="mod-links">' + m.missions.map(function (x, i) { return '<button type="button" class="mod-link mission" data-mgo="missions:' + i + '"><b>🎯 ' + esc(x.title) + '</b><span>' + esc(x.text) + '</span><em>미션 열기 →</em></button>'; }).join('') + '</div>' +
       '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="deeper">심화 학습 →</button></div>';
   }
+  /* 2026-11-04 「그림으로 보기」: 용어 · 이론 · 문제 · 심화에 그림을 더 붙일 수 있게 (데이터에 그림 이름만 적으면 됨)
+     - 용어: terms 의 세 번째 칸 = 그림 이름  · 이론: pics: [{ v: 그림 이름, cap: '설명' }]  · 문제/개념 체크: visual  · 심화: visual */
+  function visBox(key, cls) { return key && VIS[key] ? '<div class="mod-visual ' + cls + '">' + VIS[key]() + '</div>' : ''; }
+  function picsHtml(list) {
+    list = (list || []).filter(function (p) { return p && VIS[p.v]; }); if (!list.length) return '';
+    return '<div class="mod-pics' + (list.length > 1 ? ' mod-pics--2' : '') + '">' + list.map(function (p) { return '<figure class="mod-pic"><div class="mod-visual">' + VIS[p.v]() + '</div>' + (p.cap ? '<figcaption>' + p.cap + '</figcaption>' : '') + '</figure>'; }).join('') + '</div>';
+  }
   /* 2026-10-23 가독성: 긴 글을 문장마다 줄을 바꿔 보여 줌(태그 안에서는 자르지 않음) */
   function paras(h) {
     h = String(h || ''); var out = [], cur = '', depth = 0;
@@ -271,7 +278,7 @@
   function rich(x) { return /<\/?(b|ul|li|br|i|small)\b/.test(x || '') ? x : esc(x); }   // 2026-10-23: 데이터에 <b>·<ul> 이 있으면 그대로
   function tabDeeper(m) {
     var p = pathById(m.path), ids = p.modules, i = ids.indexOf(m.id), next = ids.slice(i + 1).map(function (id) { return MODS[id]; }).find(function (x) { return x && x.status === 'ready'; });
-    return '<div class="lsn-deep">' + m.deeper.map(function (d) { return '<div class="lsn-deep-item"><b>' + esc(d.title) + '</b><div class="mod-paras">' + paras(rich(d.text)) + '</div>' + (d.more ? '<details><summary>자세히 보기</summary><div' + (/<(ul|ol|table)\b/.test(d.more) ? '>' + rich(d.more) : ' class="mod-paras">' + paras(rich(d.more))) + '</div></details>' : '') + '</div>'; }).join('') + '</div>' +
+    return '<div class="lsn-deep">' + m.deeper.map(function (d) { return '<div class="lsn-deep-item"><b>' + esc(d.title) + '</b><div class="mod-paras">' + paras(rich(d.text)) + '</div>' + visBox(d.visual, 'mod-dvis') + (d.more ? '<details><summary>자세히 보기</summary><div' + (/<(ul|ol|table)\b/.test(d.more) ? '>' + rich(d.more) : ' class="mod-paras">' + paras(rich(d.more))) + '</div></details>' : '') + '</div>'; }).join('') + '</div>' +
       
       '<div class="mod-next">' + (next ? '<button type="button" class="btn mod-cta" data-module="' + next.id + '">다음 과정: ' + esc(next.title) + ' →</button>' : '<button type="button" class="btn mod-cta" data-path="' + p.id + '">' + esc(p.title) + ' 과정 목록 →</button>') + '</div>';
   }

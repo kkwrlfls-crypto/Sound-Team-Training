@@ -252,3 +252,13 @@
 .mod-fig__vars button { font: inherit; font-size: 0.78rem; font-weight: 700; padding: 5px 11px; border-radius: 999px; border: 1px solid #c8d5e6; background: #fff; color: var(--sta-ink); cursor: pointer; }
 .mod-fig__vars button[aria-pressed="true"] { background: var(--sta-navy, #0f2a4a); border-color: var(--sta-navy, #0f2a4a); color: #fff; }
 .mod-fig__vars button:focus-visible { outline: 2px solid #22d3ee; outline-offset: 2px; }
+/* 2026-11-04 「그림으로 보기」 — 비유 · 단계 · 비교 그림 */
+.mod-pics { display: grid; gap: 12px; margin: 10px 0 6px; }
+.mod-pics--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 760px) { .mod-pics--2 { grid-template-columns: minmax(0, 1fr); } }
+.mod-pic { margin: 0; min-width: 0; }
+.mod-pic .mod-visual { margin: 0; }
+.mod-pic figcaption { margin-top: 6px; font-size: 0.82rem; line-height: 1.6; color: var(--sta-ink-2); text-wrap: pretty; }
+.mod-term__vis { margin: 0 14px 12px; max-width: 420px; }
+.mod-qvis { margin: 8px 0 10px; max-width: 560px; }
+.mod-dvis { margin: 8px 0; max-width: 620px; }
