@@ -144,8 +144,8 @@
 
   /* ------------------------------------------------------------------ 「그림으로 보기」 (2026-11-04)
      - 비유 · 단계 · 전/후 비교 그림. viewBox 400 안팎, 글자 13 이상
-     - class 는 mod-pic-svg (최소 폭 = viewBox 의 85% — 휴대폰에서도 글자 13 이 11px 이상으로 보이게, 넘치면 상자 안에서 옆으로 밀어 봐요) */
-  function psvg(w, h, body, label) { return '<div style="contain:inline-size;overflow-x:auto"><svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, system-ui, sans-serif" style="display:block;width:100%;max-width:' + w + 'px;min-width:' + Math.round(w * 0.85) + 'px;height:auto;margin:0 auto">' + body + '</svg></div>'; }
+     - class 는 mod-pic-svg (최소 폭 = viewBox 의 83% — 휴대폰에서도 글자 13 이 11px 이상으로 보이게, 넘치면 상자 안에서 옆으로 밀어 봐요) */
+  function psvg(w, h, body, label) { return '<div style="contain:inline-size;overflow-x:auto"><svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, system-ui, sans-serif" style="display:block;width:100%;max-width:' + w + 'px;min-width:' + Math.round(w * 0.83) + 'px;height:auto;margin:0 auto">' + body + '</svg></div>'; }
   // ○/× 처럼 두 칸으로 나뉜 그림: 칸마다 따로 그려 좁은 화면에서는 위아래로 쌓아요(글자 크기 그대로)
   function psvgPair(w, h, a, b, label) { function one(body, lab) { return '<svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + lab + '" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, system-ui, sans-serif" style="display:block;flex:1 1 ' + Math.round(w * 0.85) + 'px;max-width:' + w + 'px;min-width:' + Math.round(w * 0.85) + 'px;height:auto">' + body + '</svg>'; }
     return '<div role="group" aria-label="' + label + '" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">' + one(a, label + ' (1)') + one(b, label + ' (2)') + '</div>'; }
@@ -195,64 +195,69 @@
 
   // 이론 2 — 테스터로 재면 적힌 값보다 조금 낮아요
   V.ampMeterCheck = function () {
-    var b = box(8, 16, 120, 150, '#facc15', '#a16207', 14) + box(20, 28, 96, 44, '#e5e7eb', '#475569', 6) + t(68, 58, '6.6 Ω', { size: 18, weight: 800 }) + '<circle cx="68" cy="112" r="22" fill="#1f2937"/>' + t(68, 117, 'Ω', { size: 14, weight: 800, fill: '#fff' }) + t(68, 156, '테스터', { size: 13, weight: 800 });
-    b += '<path d="M48 166 C60 200 170 196 212 132" fill="none" stroke="' + C.red + '" stroke-width="3"/><path d="M88 166 C100 190 186 184 212 150" fill="none" stroke="' + C.ink + '" stroke-width="3"/>';
-    b += box(212, 50, 72, 120, '#fff', C.ink, 8) + '<circle cx="248" cy="96" r="22" fill="none" stroke="' + C.ink + '" stroke-width="2.5"/>' + t(248, 152, '8Ω', { size: 14, weight: 800 }) + t(248, 40, '스피커', { size: 13, weight: 800 });
-    b += t(300, 74, '적힌 값', { size: 13, anchor: 'start', fill: C.sub }) + t(300, 92, '8Ω', { size: 14, anchor: 'start', weight: 800 }) + t(300, 120, '테스터', { size: 13, anchor: 'start', fill: C.sub }) + t(300, 138, '6~7 Ω', { size: 14, anchor: 'start', weight: 800, fill: C.teal }) + t(300, 160, '→ 정상이에요', { size: 13, anchor: 'start', fill: C.teal, weight: 700 });
-    b += t(200, 200, '앰프에서 케이블을 뺀 뒤에 재요', { size: 13, fill: C.sub });
-    return psvg(400, 208, b, '테스터로 잰 스피커 저항은 적힌 공칭 임피던스보다 조금 낮게 나와요');
+    var b = box(6, 16, 100, 150, '#facc15', '#a16207', 14) + box(16, 28, 80, 44, '#e5e7eb', '#475569', 6) + t(56, 58, '6.6 Ω', { size: 18, weight: 800 }) + '<circle cx="56" cy="112" r="22" fill="#1f2937"/>' + t(56, 117, 'Ω', { size: 14, weight: 800, fill: '#fff' }) + t(56, 156, '테스터', { size: 13, weight: 800 });
+    b += '<path d="M36 166 C48 200 140 196 170 132" fill="none" stroke="' + C.red + '" stroke-width="3"/><path d="M76 166 C88 190 150 184 170 150" fill="none" stroke="' + C.ink + '" stroke-width="3"/>';
+    b += box(170, 50, 62, 120, '#fff', C.ink, 8) + '<circle cx="201" cy="96" r="20" fill="none" stroke="' + C.ink + '" stroke-width="2.5"/>' + t(201, 152, '8Ω', { size: 14, weight: 800 }) + t(201, 40, '스피커', { size: 13, weight: 800 });
+    b += t(244, 74, '적힌 값', { size: 13, anchor: 'start', fill: C.sub }) + t(244, 92, '8Ω', { size: 14, anchor: 'start', weight: 800 }) + t(244, 120, '테스터', { size: 13, anchor: 'start', fill: C.sub }) + t(244, 138, '6~7 Ω', { size: 14, anchor: 'start', weight: 800, fill: C.teal }) + t(244, 160, '→ 정상이에요', { size: 13, anchor: 'start', fill: C.teal, weight: 700 });
+    b += t(170, 200, '앰프에서 케이블을 뺀 뒤에 재요', { size: 13, fill: C.sub });
+    return psvg(340, 208, b, '테스터로 잰 스피커 저항은 적힌 공칭 임피던스보다 조금 낮게 나와요');
   };
+
 
   // 이론 3 — 댐핑: 신호가 멈추면 콘도 멈추게 하는 브레이크
   V.ampDamping = function () {
     function row(y, title, sub, ring, col) {
-      var h = t(8, y, title, { size: 13, weight: 800, anchor: 'start', fill: col }) + t(392, y, sub, { size: 13, anchor: 'end', fill: C.sub }) + '<path d="M12 ' + (y + 44) + 'H392" stroke="' + C.line + '"/>';
-      h += '<path d="' + wv(12, y + 44, 380, function (u) { var x = u * 380; if (x < 190) return 26 * Math.sin(x / 190 * Math.PI * 4); var k = (x - 190); return ring ? 20 * Math.exp(-k / 55) * Math.sin(k / 24 * Math.PI * 2) : 0; }, 240) + '" fill="none" stroke="' + col + '" stroke-width="3"/>';
-      return h + '<path d="M202 ' + (y + 10) + 'V' + (y + 78) + '" stroke="' + C.sub + '" stroke-dasharray="4 3"/>';
+      var h = t(8, y, title, { size: 13, weight: 800, anchor: 'start', fill: col }) + t(332, y, sub, { size: 13, anchor: 'end', fill: C.sub }) + '<path d="M12 ' + (y + 44) + 'H332" stroke="' + C.line + '"/>';
+      h += '<path d="' + wv(12, y + 44, 320, function (u) { var x = u * 320; if (x < 160) return 26 * Math.sin(x / 160 * Math.PI * 4); var k = (x - 160); return ring ? 20 * Math.exp(-k / 46) * Math.sin(k / 20 * Math.PI * 2) : 0; }, 240) + '" fill="none" stroke="' + col + '" stroke-width="3"/>';
+      return h + '<path d="M172 ' + (y + 10) + 'V' + (y + 78) + '" stroke="' + C.sub + '" stroke-dasharray="4 3"/>';
     }
-    var b = row(18, '댐핑이 클 때', '브레이크가 세요 → 바로 멈춰요', false, C.teal) + row(116, '댐핑이 작을 때', '더 흔들려요 → 「웅웅」', true, C.red);
-    b += t(208, 208, '↑ 신호가 멈춘 때', { size: 13, fill: C.sub, anchor: 'start' });
-    return psvg(400, 214, b, '댐핑이 크면 신호가 멈출 때 스피커 콘도 바로 멈춰요');
+    var b = row(18, '댐핑이 클 때', '바로 멈춰요', false, C.teal) + row(116, '댐핑이 작을 때', '더 흔들려요 → 「웅웅」', true, C.red);
+    b += t(178, 208, '↑ 신호가 멈춘 때', { size: 13, fill: C.sub, anchor: 'start' });
+    return psvg(340, 214, b, '댐핑이 크면 신호가 멈출 때 스피커 콘도 바로 멈춰요');
   };
+
 
   // 이론 5 — 켜고 끄는 순서
   V.ampPowerOrder = function () {
     function row(y, title, items, col) {
-      var h = t(8, y + 30, title, { size: 14, weight: 800, anchor: 'start', fill: col });
-      items.forEach(function (it, i) { var x = 64 + i * 112, amp = /앰프/.test(it[0]); h += box(x, y, 100, 50, amp ? C.teal : '#fff', amp ? C.teal : C.line, 8) + num(x + 16, y + 16, String(i + 1), amp ? C.ink : col) + t(x + 56, y + 24, it[0], { size: 13, weight: 800, fill: amp ? '#fff' : C.ink }) + t(x + 56, y + 42, it[1], { size: 13, fill: amp ? '#e0f2fe' : C.sub }); if (i < 2) h += arrow(x + 100, y + 25, x + 112, y + 25, C.ink, 2); });
+      var h = t(6, y + 30, title, { size: 14, weight: 800, anchor: 'start', fill: col });
+      items.forEach(function (it, i) { var x = 58 + i * 94, amp = /앰프/.test(it[0]); h += box(x, y, 86, 50, amp ? C.teal : '#fff', amp ? C.teal : C.line, 8) + '<circle cx="' + (x + 12) + '" cy="' + (y + 12) + '" r="9" fill="' + (amp ? C.ink : col) + '"/>' + t(x + 12, y + 17, String(i + 1), { size: 13, weight: 800, fill: '#fff' }) + t(x + 52, y + (it[1] ? 24 : 31), it[0], { size: 13, weight: 800, fill: amp ? '#fff' : C.ink }) + (it[1] ? t(x + 52, y + 42, it[1], { size: 13, fill: amp ? '#e0f2fe' : C.sub }) : ''); if (i < 2) h += arrow(x + 86, y + 25, x + 94, y + 25, C.ink, 2); });
       return h;
     }
     var b = row(10, '켤 때', [['음원·악기', ''], ['콘솔', ''], ['앰프', '마지막']], C.green) + row(78, '끌 때', [['앰프', '먼저'], ['콘솔', ''], ['음원·악기', '']], C.red);
-    b += t(200, 160, '앰프가 켜져 있는 동안 앞 장비를 켜고 끄면', { size: 13, fill: C.sub }) + t(200, 178, '「퍽」 소리가 스피커로 나가요', { size: 13, fill: C.sub });
-    return psvg(400, 186, b, '확성 장비를 켜고 끄는 순서');
+    b += t(170, 160, '앰프가 켜진 동안 앞 장비를 켜고 끄면', { size: 13, fill: C.sub }) + t(170, 178, '「퍽」 소리가 스피커로 나가요', { size: 13, fill: C.sub });
+    return psvg(340, 186, b, '확성 장비를 켜고 끄는 순서');
   };
+
 
   // 심화 — Class A · B · AB 를 일꾼으로
   V.ampClassAB = function () {
     function col(x, title, f, top, bot, l1, l2, mark) {
-      var h = box(x, 4, 132, 198, C.bg, C.line, 10) + t(x + 66, 26, title, { size: 15, weight: 800 });
-      h += '<path d="M' + (x + 8) + ' 96H' + (x + 124) + '" stroke="' + C.line + '"/>';
-      h += '<path d="' + wv(x + 8, 96, 58, function (u) { return f(u * 0.5); }, 80) + '" fill="none" stroke="' + top + '" stroke-width="3"/>';
-      h += '<path d="' + wv(x + 66, 96, 58, function (u) { return f(0.5 + u * 0.5); }, 80) + '" fill="none" stroke="' + bot + '" stroke-width="3"/>';
-      if (mark) h += '<circle cx="' + (x + 66) + '" cy="96" r="12" fill="none" stroke="' + C.red + '" stroke-width="2"/>';
-      return h + t(x + 66, 166, l1, { size: 13, weight: 800 }) + t(x + 66, 186, l2, { size: 13, fill: C.sub });
+      var h = box(x, 4, 108, 198, C.bg, C.line, 10) + t(x + 54, 26, title, { size: 15, weight: 800 });
+      h += '<path d="M' + (x + 8) + ' 96H' + (x + 100) + '" stroke="' + C.line + '"/>';
+      h += '<path d="' + wv(x + 8, 96, 46, function (u) { return f(u * 0.5); }, 80) + '" fill="none" stroke="' + top + '" stroke-width="3"/>';
+      h += '<path d="' + wv(x + 54, 96, 46, function (u) { return f(0.5 + u * 0.5); }, 80) + '" fill="none" stroke="' + bot + '" stroke-width="3"/>';
+      if (mark) h += '<circle cx="' + (x + 54) + '" cy="96" r="12" fill="none" stroke="' + C.red + '" stroke-width="2"/>';
+      return h + t(x + 54, 166, l1, { size: 13, weight: 800 }) + t(x + 54, 186, l2, { size: 13, fill: C.sub });
     }
     function sine(u) { return 40 * Math.sin(u * Math.PI * 2); }
     function cross(u) { var v = Math.sin(u * Math.PI * 2), a = Math.abs(v); return a < 0.22 ? 0 : 40 * Math.sign(v) * (a - 0.22) / 0.78; }
-    var b = col(4, 'Class A', sine, C.violet, C.violet, '한 일꾼이 전부', '늘 뜨거워요', false) + col(144, 'Class B', cross, C.teal, C.amber, '위·아래 반씩', '이음매가 찌그러져요', true) + col(284, 'Class AB', sine, C.teal, C.amber, '반씩 + 살짝 겹침', '매끈 · 공연용에 많이', false);
-    b += t(210, 222, '파형 색 = 그 부분을 맡은 증폭 부품(일꾼)', { size: 13, fill: C.sub });
-    return psvg(420, 230, b, 'Class A, B, AB 증폭 방식을 일꾼 비유로 비교');
+    var b = col(4, 'Class A', sine, C.violet, C.violet, '한 일꾼이 전부', '늘 뜨거워요', false) + col(116, 'Class B', cross, C.teal, C.amber, '위·아래 반씩', '이음매 찌그러짐', true) + col(228, 'Class AB', sine, C.teal, C.amber, '반씩 + 살짝 겹침', '공연용에 많이', false);
+    b += t(170, 222, '색 = 그 부분을 맡은 증폭 부품(일꾼)', { size: 13, fill: C.sub });
+    return psvg(340, 230, b, 'Class A, B, AB 증폭 방식을 일꾼 비유로 비교');
   };
+
 
   // 확인 문제 1 — 8Ω 2대 병렬
   V.ampQuizParallel = function () {
-    var b = box(8, 22, 76, 92, C.ink, null, 8) + t(46, 62, '앰프', { size: 13, weight: 800, fill: '#fff' }) + t(46, 80, 'CH1', { size: 13, fill: '#cbd5e1' });
-    b += '<path d="M84 44 H116 M116 30 V96 M116 30 H136 M116 96 H136" fill="none" stroke="' + C.red + '" stroke-width="2.5"/>' + t(98, 38, '+', { size: 15, weight: 800, fill: C.red });
-    b += mini(136, 16, 96, 28, '8Ω', C.ink) + mini(136, 82, 96, 28, '8Ω', C.ink);
-    b += '<path d="M232 30 H252 V96 H232 M252 96 V122 H100 V96 H84" fill="none" stroke="' + C.ink + '" stroke-width="2.5"/>' + t(92, 90, '−', { size: 15, weight: 800 });
-    b += t(312, 66, '전체', { size: 13, fill: C.sub }) + t(312, 92, '? Ω', { size: 22, weight: 800, fill: C.teal });
-    return psvg(360, 130, b, '8Ω 스피커 2대를 앰프 한 채널에 병렬로 연결한 모습');
+    var b = box(6, 22, 64, 92, C.ink, null, 8) + t(38, 62, '앰프', { size: 13, weight: 800, fill: '#fff' }) + t(38, 80, 'CH1', { size: 13, fill: '#cbd5e1' });
+    b += '<path d="M70 44 H96 M96 30 V96 M96 30 H114 M96 96 H114" fill="none" stroke="' + C.red + '" stroke-width="2.5"/>' + t(82, 38, '+', { size: 15, weight: 800, fill: C.red });
+    b += mini(114, 16, 90, 28, '8Ω', C.ink) + mini(114, 82, 90, 28, '8Ω', C.ink);
+    b += '<path d="M204 30 H222 V96 H204 M222 96 V122 H84 V96 H70" fill="none" stroke="' + C.ink + '" stroke-width="2.5"/>' + t(78, 90, '−', { size: 15, weight: 800 });
+    b += t(284, 66, '전체', { size: 13, fill: C.sub }) + t(284, 92, '? Ω', { size: 22, weight: 800, fill: C.teal });
+    return psvg(340, 130, b, '8Ω 스피커 2대를 앰프 한 채널에 병렬로 연결한 모습');
   };
+
 
   /* ------------------------------------------------------------------ 실습: 앰프 + 스피커 부하 실험대 */
   var XLI = { v8: Math.sqrt(330 * 8), v4: Math.sqrt(450 * 4), vb8: Math.sqrt(900 * 8) };   // 정격(제조사 자료)에서 계산한 최대 출력 전압(사인파 실효값)

@@ -110,8 +110,8 @@
 
   /* ---------------------------------------------------------------- 「그림으로 보기」 (2026-11-04)
      - 용어 · 확인 문제 · 심화에 붙이는 작은 그림. viewBox 400 안팎, 글자 13 이상
-     - class 는 mod-pic-svg (최소 폭 = viewBox 의 85% — 휴대폰에서도 글자 13 이 11px 이상으로 보이게, 넘치면 상자 안에서 옆으로 밀어 봐요) */
-  function psvg(w, h, body, label) { return '<div style="contain:inline-size;overflow-x:auto"><svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" font-family="Pretendard, system-ui, sans-serif" style="display:block;width:100%;max-width:' + w + 'px;min-width:' + Math.round(w * 0.85) + 'px;height:auto;margin:0 auto">' + body + '</svg></div>'; }
+     - class 는 mod-pic-svg (최소 폭 = viewBox 의 83% — 휴대폰에서도 글자 13 이 11px 이상으로 보이게, 넘치면 상자 안에서 옆으로 밀어 봐요) */
+  function psvg(w, h, body, label) { return '<div style="contain:inline-size;overflow-x:auto"><svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" font-family="Pretendard, system-ui, sans-serif" style="display:block;width:100%;max-width:' + w + 'px;min-width:' + Math.round(w * 0.83) + 'px;height:auto;margin:0 auto">' + body + '</svg></div>'; }
   function num(x, y, n, col) { return '<circle cx="' + x + '" cy="' + y + '" r="11" fill="' + col + '"/>' + t(x, y + 5, n, { size: 13, weight: 800, fill: '#fff' }); }
   function fd(x, y, h, pos, col) { return '<path d="M' + x + ' ' + y + 'V' + (y + h) + '" stroke="#475569" stroke-width="3"/>' + rect(x - 8, y + pos - 5, 16, 10, col || '#e5e7eb', null, 2); }
   function knob(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="11" fill="#e5e7eb" stroke="#94a3b8" stroke-width="1.5"/><path d="M' + x + ' ' + y + 'L' + x + ' ' + (y - 9) + '" stroke="' + C.ink + '" stroke-width="2.5"/>'; }
@@ -170,41 +170,45 @@
 
   // 확인 문제 1 — 레이어가 바뀐 줄 모르고 페이더를 내림
   V.x32QuizLayer = function () {
-    var s = t(44, 18, '레이어', { size: 13, weight: 800 }), lay = [['1–16', false], ['17–32', true], ['AUX', false], ['BUS', false]];
-    lay.forEach(function (b, i) { var y = 28 + i * 32; s += rect(8, y, 72, 24, b[1] ? '#fbbf24' : '#e2e8f0', b[1] ? '#b45309' : '#94a3b8', 6) + t(44, y + 17, b[0], { size: 13, weight: 800, fill: b[1] ? '#111827' : C.sub }); });
-    s += rect(96, 8, 300, 150, '#1f2933', null, 10);
-    for (var i = 0; i < 8; i++) { var x = 118 + i * 36, hot = i === 2; s += rect(x - 15, 16, 30, 20, hot ? '#fde68a' : '#334155', null, 3) + t(x, 31, String(17 + i), { size: 13, weight: 800, fill: hot ? '#111827' : '#e2e8f0' }) + fd(x, 46, 84, hot ? 70 : 24 + (i * 11) % 20, hot ? '#f87171' : '#e5e7eb'); }
-    s += arrow(190, 62, 190, 104, '#f87171') + t(246, 150, '왼쪽 세 번째 페이더를 내렸어요', { size: 13, fill: '#e2e8f0', weight: 700 });
-    return psvg(400, 164, s, '레이어 17–32 에서 왼쪽 세 번째 페이더를 내린 모습');
+    var s = t(34, 18, '레이어', { size: 13, weight: 800 }), lay = [['1–16', false], ['17–32', true], ['AUX', false], ['BUS', false]];
+    lay.forEach(function (b, i) { var y = 28 + i * 32; s += rect(4, y, 60, 24, b[1] ? '#fbbf24' : '#e2e8f0', b[1] ? '#b45309' : '#94a3b8', 6) + t(34, y + 17, b[0], { size: 13, weight: 800, fill: b[1] ? '#111827' : C.sub }); });
+    s += rect(74, 8, 262, 150, '#1f2933', null, 10);
+    for (var i = 0; i < 7; i++) { var x = 96 + i * 36, hot = i === 2; s += rect(x - 15, 16, 30, 20, hot ? '#fde68a' : '#334155', null, 3) + t(x, 31, String(17 + i), { size: 13, weight: 800, fill: hot ? '#111827' : '#e2e8f0' }) + fd(x, 46, 84, hot ? 70 : 24 + (i * 11) % 20, hot ? '#f87171' : '#e5e7eb'); }
+    s += arrow(168, 62, 168, 104, '#f87171') + t(205, 150, '왼쪽 세 번째 페이더를 내렸어요', { size: 13, fill: '#e2e8f0', weight: 700 });
+    return psvg(340, 164, s, '레이어 17–32 에서 왼쪽 세 번째 페이더를 내린 모습');
   };
+
 
   // 확인 문제 3 — DCA 를 내리면 무엇이 바뀔까?
   V.x32QuizDca = function () {
-    var s = rect(6, 8, 88, 150, C.purple, null, 10) + t(50, 30, 'DCA 1', { size: 13, weight: 800, fill: '#fff' }) + t(50, 48, '악기', { size: 13, fill: '#ede9fe' }) + '<path d="M50 58V146" stroke="#ddd6fe" stroke-width="3"/>' + rect(38, 112, 24, 12, '#fff', null, 2) + arrow(76, 70, 76, 116, '#fde68a') + t(76, 66, '−6', { size: 13, weight: 800, fill: '#fde68a' });
-    s += rect(110, 8, 180, 150, '#f5f3ff', '#c4b5fd', 10) + t(200, 28, '악기 채널 페이더', { size: 13, weight: 800 });
-    for (var i = 0; i < 8; i++) { var x = 127 + i * 21; s += '<path d="M' + x + ' 44V128" stroke="#94a3b8" stroke-width="3"/>' + t(x, 148, '?', { size: 15, weight: 800, fill: C.purple }); }
-    s += rect(304, 8, 90, 150, '#fff7ed', '#fdba74', 10) + t(349, 32, '무대 모니터', { size: 13, weight: 800, fill: C.orange }) + t(349, 50, '(PRE)', { size: 13, fill: C.orange }) + '<circle cx="349" cy="96" r="22" fill="none" stroke="' + C.orange + '" stroke-width="2.5"/>' + t(349, 103, '?', { size: 20, weight: 800, fill: C.orange });
-    return psvg(400, 164, s, 'DCA 1 을 6 dB 내렸을 때 채널 페이더와 무대 모니터는?');
+    var s = rect(6, 8, 74, 150, C.purple, null, 10) + t(43, 30, 'DCA 1', { size: 13, weight: 800, fill: '#fff' }) + t(43, 48, '악기', { size: 13, fill: '#ede9fe' }) + '<path d="M36 58V146" stroke="#ddd6fe" stroke-width="3"/>' + rect(24, 112, 24, 12, '#fff', null, 2) + arrow(64, 74, 64, 116, '#fde68a') + t(64, 68, '−6', { size: 13, weight: 800, fill: '#fde68a' });
+    s += rect(90, 8, 162, 150, '#f5f3ff', '#c4b5fd', 10) + t(171, 28, '악기 채널 페이더', { size: 13, weight: 800 });
+    for (var i = 0; i < 8; i++) { var x = 108 + i * 18; s += '<path d="M' + x + ' 44V128" stroke="#94a3b8" stroke-width="3"/>' + t(x, 148, '?', { size: 14, weight: 800, fill: C.purple }); }
+    s += rect(260, 8, 76, 150, '#fff7ed', '#fdba74', 10) + t(298, 32, '무대 모니터', { size: 13, weight: 800, fill: C.orange }) + t(298, 50, '(PRE)', { size: 13, fill: C.orange }) + '<circle cx="298" cy="96" r="22" fill="none" stroke="' + C.orange + '" stroke-width="2.5"/>' + t(298, 103, '?', { size: 20, weight: 800, fill: C.orange });
+    return psvg(340, 164, s, 'DCA 1 을 6 dB 내렸을 때 채널 페이더와 무대 모니터는?');
   };
+
 
   // 심화 — 아날로그 멀티 케이블과 AES50 랜선 비교
   V.x32StageboxMini = function () {
     function row(y, title, sub, many, col) {
-      var h = t(8, y, title, { size: 13, weight: 800, anchor: 'start', fill: col }) + rect(8, y + 10, 88, 46, '#fff', C.line, 8) + t(52, y + 38, many ? '무대' : '스테이지박스', { size: 13, weight: 800 }) + rect(304, y + 10, 88, 46, '#fff', C.line, 8) + t(348, y + 38, '콘솔', { size: 13, weight: 800 });
-      if (many) { for (var k = 0; k < 9; k++) h += '<path d="M96 ' + (y + 18 + k * 4) + ' H304" stroke="' + col + '" stroke-width="2.4"/>'; } else h += '<path d="M96 ' + (y + 33) + ' H304" stroke="' + col + '" stroke-width="3"/>';
-      return h + t(200, y + 76, sub, { size: 13, fill: C.sub });
+      var h = t(8, y, title, { size: 13, weight: 800, anchor: 'start', fill: col }) + rect(6, y + 10, 92, 46, '#fff', C.line, 8) + t(52, y + 38, many ? '무대' : '스테이지박스', { size: 13, weight: 800 }) + rect(246, y + 10, 88, 46, '#fff', C.line, 8) + t(290, y + 38, '콘솔', { size: 13, weight: 800 });
+      if (many) { for (var k = 0; k < 9; k++) h += '<path d="M98 ' + (y + 18 + k * 4) + ' H246" stroke="' + col + '" stroke-width="2.4"/>'; } else h += '<path d="M98 ' + (y + 33) + ' H246" stroke="' + col + '" stroke-width="3"/>';
+      return h + t(170, y + 76, sub, { size: 13, fill: C.sub });
     }
-    var s = row(18, '아날로그 멀티 케이블', '채널마다 선이 따로 · 굵고 무거워요', true, C.sub) + row(118, 'AES50: 랜선 한 가닥', '한 가닥으로 48채널씩 오가요 · 최대 100 m', false, C.teal);
-    return psvg(400, 204, s, '아날로그 멀티 케이블과 AES50 랜선 한 가닥 비교');
+    var s = row(18, '아날로그 멀티 케이블', '채널마다 선이 따로 · 굵고 무거워요', true, C.sub) + row(118, 'AES50: 랜선 한 가닥', '한 가닥에 48채널씩 오가요 · 최대 100 m', false, C.teal);
+    return psvg(340, 204, s, '아날로그 멀티 케이블과 AES50 랜선 한 가닥 비교');
   };
+
 
   // 심화 — 가상 사운드체크 순서
   V.x32VirtualSc = function () {
-    var s = '', st = [['1', '주일 예배', '채널마다 따로 녹음', 8, 8], ['2', '평일', '녹음을 채널로 틀기', 212, 8], ['3', '연습', 'EQ·컴프·밸런스', 212, 92], ['4', '예배 전', '입력을 마이크로 되돌리기', 8, 92]];
-    st.forEach(function (r, i) { var x = r[3], y = r[4], col = i === 3 ? C.red : C.teal; s += rect(x, y, 180, 64, '#fff', col, 10) + num(x + 22, y + 22, r[0], col) + t(x + 40, y + 27, r[1], { size: 14, weight: 800, anchor: 'start', fill: col }) + t(x + 14, y + 52, r[2], { size: 13, anchor: 'start', fill: C.sub }); });
-    s += arrow(188, 40, 210, 40, C.ink) + arrow(302, 72, 302, 90, C.ink) + arrow(212, 124, 190, 124, C.ink);
-    return psvg(400, 162, s, '가상 사운드체크 순서');
+    var s = '', st = [['1', '주일 예배', '채널마다 따로 녹음', 6, 8], ['2', '평일', '녹음을 채널로 틀기', 178, 8], ['3', '연습', 'EQ·컴프·밸런스', 178, 92], ['4', '예배 전', '마이크 입력으로 복구', 6, 92]];
+    st.forEach(function (r, i) { var x = r[3], y = r[4], col = i === 3 ? C.red : C.teal; s += rect(x, y, 156, 64, '#fff', col, 10) + num(x + 20, y + 22, r[0], col) + t(x + 38, y + 27, r[1], { size: 14, weight: 800, anchor: 'start', fill: col }) + t(x + 12, y + 52, r[2], { size: 13, anchor: 'start', fill: C.sub }); });
+    s += arrow(162, 40, 176, 40, C.ink) + arrow(256, 72, 256, 90, C.ink) + arrow(178, 124, 164, 124, C.ink);
+    return psvg(340, 162, s, '가상 사운드체크 순서');
   };
+
 
   /* 실습(X32 사진 위에서 마우스로 조작)은 lessons/modules/x32_photo_sim.js — 2026-11-04 */
 })();

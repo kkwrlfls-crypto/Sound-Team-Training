@@ -150,7 +150,7 @@
       '<path d="M22 96H118V80H22Z" fill="#7dd3fc" stroke="' + C.ink + '" stroke-width="1.5"/>' + person(150, 96, C.blue);
     var bounce = '<path d="M150 60L198 30L120 12L20 40L80 112L198 86L150 64" fill="none" stroke="' + C.red + '" stroke-width="2" stroke-dasharray="5 3"/>';
     var tail = ''; for (var i = 0; i < 26; i++) { var x = 224 + i * 5, h = 58 * Math.exp(-i / 9); tail += '<path d="M' + x + ' 90V' + (90 - h).toFixed(1) + '" stroke="' + C.teal + '" stroke-width="2.4"/>'; }
-    return svgM(360, 130, room + bounce + '<path d="M218 90H354" stroke="' + C.ink + '"/>' + tail + t(286, 112, '천천히 작아지는 울림', { size: 13.5, weight: 800, fill: C.teal }) + t(286, 128, '= 잔향', { size: 13.5, weight: 800, fill: C.teal }), '목욕탕에서 소리가 여러 번 튕겨 울림이 남는 모습');
+    return svgM(360, 130, room + bounce + t(105, 30, '목욕탕', { size: 14, weight: 800 }) + '<path d="M218 90H354" stroke="' + C.ink + '"/>' + tail + t(286, 112, '천천히 작아지는 울림', { size: 13.5, weight: 800, fill: C.teal }) + t(286, 128, '= 잔향', { size: 13.5, weight: 800, fill: C.teal }), '목욕탕에서 소리가 여러 번 튕겨 울림이 남는 모습');
   };
   VIS.fxTermPre = function () {
     var tail = ''; for (var i = 0; i < 30; i++) { var x = 196 + i * 5, h = 46 * Math.exp(-i / 11); tail += '<path d="M' + x + ' 84V' + (84 - h).toFixed(1) + '" stroke="' + C.teal + '" stroke-width="2.4"/>'; }
@@ -160,23 +160,23 @@
   };
   VIS.fxTermEcho = function () {   // 산 메아리: 같은 간격으로 반복, 점점 작아짐
     var mt = '<path d="M196 112L262 30L300 70L322 46L356 112Z" fill="#cbd5e1" stroke="' + C.ink + '" stroke-width="2"/>';
-    var call = [0, 1, 2, 3].map(function (k) { var x = 24 + k * 42, s = [17, 14, 12, 10][k]; return t(x, 52, '야호', { size: s, weight: 800, fill: k ? C.orange : C.ink, anchor: 'start' }).replace('<text', '<text fill-opacity="' + (1 - k * 0.2) + '"'); }).join('');
+    var call = [0, 1, 2, 3].map(function (k) { var x = 20 + k * 44, s = [17, 15, 14, 13][k]; return t(x, 52, '야호', { size: s, weight: 800, fill: k ? C.orange : C.ink, anchor: 'start' }).replace('<text', '<text fill-opacity="' + (1 - k * 0.2) + '"'); }).join('');
     return svgM(360, 130, mt + person(20, 112, C.blue) + call + '<path d="M24 72H186" stroke="' + C.orange + '" stroke-dasharray="4 3"/>' + [66, 108, 150].map(function (x) { return '<path d="M' + x + ' 66V78" stroke="' + C.orange + '" stroke-width="2"/>'; }).join('') +
       t(108, 96, '같은 간격 = Delay Time', { size: 13.5, weight: 800, fill: C.orange }) + t(108, 118, '점점 작아짐 = Feedback', { size: 13.5, weight: 800, fill: C.sub }), '메아리처럼 같은 간격으로 반복되는 딜레이');
   };
   VIS.fxTermWetDry = function () {   // 맑은 물(Dry) + 물감 물(Wet)을 섞는 비율
     function cup(x, fill, lab, sub, lv) { return '<path d="M' + x + ' 20L' + (x + 8) + ' 92H' + (x + 52) + 'L' + (x + 60) + ' 20" fill="none" stroke="' + C.ink + '" stroke-width="2.4"/><path d="M' + (x + 2 + (1 - lv) * 6) + ' ' + (92 - 70 * lv) + 'L' + (x + 8) + ' 92H' + (x + 52) + 'L' + (x + 58 - (1 - lv) * 6) + ' ' + (92 - 70 * lv) + 'Z" fill="' + fill + '"/>' + t(x + 30, 110, lab, { size: 14, weight: 800 }) + t(x + 30, 126, sub, { size: 12.5, fill: C.sub }); }
-    return svgM(360, 130, cup(10, '#e0f2fe', 'Dry', '원래 소리', 0.85) + t(92, 62, '+', { size: 22, weight: 800 }) + cup(110, '#a78bfa', 'Wet', '효과음', 0.4) + t(192, 62, '=', { size: 22, weight: 800 }) + cup(216, '#c7d2fe', '섞은 소리', '조금만 섞어요', 0.85) + t(352, 56, '물감이', { size: 12, fill: C.violet, anchor: 'end' }).replace('x="352"', 'x="356"'), 'Dry 와 Wet 을 섞는 비율을 물과 물감에 비유');
+    return svgM(360, 130, cup(10, '#e0f2fe', 'Dry', '원래 소리', 0.85) + t(92, 62, '+', { size: 22, weight: 800 }) + cup(110, '#a78bfa', 'Wet', '효과음', 0.4) + t(192, 62, '=', { size: 22, weight: 800 }) + cup(216, '#c7d2fe', '섞은 소리', '조금만 섞어요', 0.85), 'Dry 와 Wet 을 섞는 비율을 물과 물감에 비유');
   };
   function roomPic(full) {
     var w = 296, body = '<rect x="2" y="2" width="292" height="206" rx="12" fill="' + C.bg + '" stroke="' + (full ? C.teal : C.red) + '" stroke-width="1.8"/>' + t(148, 26, full ? '사람이 가득 찬 예배' : '빈 본당 (리허설)', { size: 14, weight: 800, fill: full ? C.teal : C.red });
-    body += '<path d="M20 120V44H276V120Z" fill="#fff" stroke="' + C.ink + '" stroke-width="2"/>' + '<rect x="28" y="96" width="34" height="18" fill="#94a3b8"/>' + t(45, 92, '스피커', { size: 11, fill: C.sub });
+    body += '<path d="M20 120V44H276V120Z" fill="#fff" stroke="' + C.ink + '" stroke-width="2"/>' + '<rect x="28" y="96" width="34" height="18" fill="#94a3b8"/>' + t(45, 90, '스피커', { size: 12.5, fill: C.sub });
     for (var r = 0; r < 2; r++) for (var c = 0; c < 6; c++) { var x = 96 + c * 30, y = 112 - r * 0; if (full) body += person(x + (r ? 15 : 0), 116 - r * 14, r ? '#64748b' : '#475569'); else body += '<rect x="' + (x - 9 + (r ? 15 : 0)) + '" y="' + (106 - r * 14) + '" width="18" height="8" rx="2" fill="#cbd5e1"/>'; }
     var bnc = full ? 'M62 100L140 50L200 74' : 'M62 100L140 46L276 64L180 116L60 52L250 46L276 104';
     body += '<path d="' + bnc + '" fill="none" stroke="' + C.red + '" stroke-width="2" stroke-dasharray="5 3"/>';
     var L = full ? 0.9 : 2.0, x0 = 30, x1 = 270, base = 182, tail = '';
     for (var i = 0; i <= 48; i++) { var s = i / 48 * 2.2, h = s <= L ? 40 * (1 - s / L) : 0; if (h > 0.5) tail += '<path d="M' + (x0 + s / 2.2 * (x1 - x0)).toFixed(1) + ' ' + base + 'V' + (base - h).toFixed(1) + '" stroke="' + C.teal + '" stroke-width="2.6"/>'; }
-    body += '<path d="M' + x0 + ' ' + base + 'H' + x1 + '" stroke="' + C.ink + '"/>' + tail + t(x1, 200, full ? '울림이 짧아요' : '울림이 길어요', { size: 12.5, weight: 800, fill: full ? C.teal : C.red, anchor: 'end' }) + t(x0, 200, '시간 →', { size: 11, fill: C.sub, anchor: 'start' });
+    body += '<path d="M' + x0 + ' ' + base + 'H' + x1 + '" stroke="' + C.ink + '"/>' + tail + t(x1, 200, full ? '울림이 짧아요' : '울림이 길어요', { size: 12.5, weight: 800, fill: full ? C.teal : C.red, anchor: 'end' }) + t(x0, 200, '시간 →', { size: 12.5, fill: C.sub, anchor: 'start' });
     return svgM(w, 210, body, full ? '사람이 가득 찬 예배당은 울림이 짧아요' : '빈 본당은 울림이 길어요');
   }
   VIS.fxPicRoomEmpty = function () { return roomPic(false); };
@@ -187,7 +187,7 @@
     var b = '<rect x="2" y="2" width="292" height="206" rx="12" fill="' + C.bg + '" stroke="' + C.line + '" stroke-width="1.4"/>' + t(148, 26, ins ? '인서트 — 모두 지나가요' : 'AUX — 일부만 보내 더해요', { size: 14, weight: 800, fill: ins ? C.blue : C.teal });
     if (ins) {
       b += box(12, 70, 62, '채널') + ar(74, 89, 112, 89, C.blue) + box(114, 70, 82, '컴프·게이트', C.blue, '#fff') + ar(196, 89, 222, 89, C.blue) + box(224, 70, 62, '메인') +
-        t(148, 140, '원래 소리가 모두 바뀌어요', { size: 12.5, weight: 700 }) + t(148, 164, '예) 컴프레서 · 게이트 · EQ', { size: 12, fill: C.sub }) + t(148, 186, '(이펙터 Mix 로 양을 정하기도 해요)', { size: 11, fill: C.sub });
+        t(148, 140, '원래 소리가 모두 바뀌어요', { size: 12.5, weight: 700 }) + t(148, 164, '예) 컴프레서 · 게이트 · EQ', { size: 12, fill: C.sub }) + t(148, 186, '(이펙터 Mix 로 양을 정하기도 해요)', { size: 12, fill: C.sub });
     } else {
       b += box(12, 52, 62, '채널') + ar(74, 71, 222, 71, C.ink) + box(224, 52, 62, '메인') + t(148, 64, '원래 소리(Dry)', { size: 11.5, fill: C.sub }) +
         ar(100, 71, 100, 116, C.teal) + box(80, 118, 120, '리버브(100% Wet)', C.teal, '#fff') + '<path d="M200 137H250V96" fill="none" stroke="' + C.teal + '" stroke-width="2.6"/>' + ar(250, 100, 250, 92, C.teal) +

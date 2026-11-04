@@ -176,7 +176,7 @@
         mask += (i ? 'L' : 'M') + (x + bw / 2) + ' ' + (base - m); });
       h += '<path d="M' + x0 + ' ' + base + 'H' + (x0 + 7 * 34 + bw) + '" stroke="' + C.ink + '"/>' + '<path d="' + mask + '" fill="none" stroke="' + C.red + '" stroke-width="2" stroke-dasharray="6 4"/>';
       h += t(x0 + 31, base - 10, '저음', { size: 12, weight: 800, fill: '#fff' }) + t(x0 + 4 * 34 + 60, 56, ok ? '목소리가 다 보여요' : '목소리 윗부분이 가려져요', { size: 12, weight: 800, fill: ok ? C.green : C.red });
-      return h + t(ox + 144, 200, 'Hz (막대 = 소리 크기 · 점선 = 가려지는 선)', { size: 10.5, fill: C.sub });
+      return h + t(ox + 144, 200, 'Hz · 빨간 점선 = 가려지는 선', { size: 12, fill: C.sub });
     }
     return { off: svgM(296, 212, panel(4, 'HPF 끄기: 필요 없는 저음이 큼', [130, 118], 140, false), '큰 저음이 목소리 윗부분을 가리는 마스킹'), on: svgM(296, 212, panel(4, 'HPF 켜기: 저음을 걸러 냄', [26, 40], 62, true), 'HPF 로 저음을 걸러 낸 뒤 목소리가 드러남') };
   };

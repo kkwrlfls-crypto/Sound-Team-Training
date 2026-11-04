@@ -142,8 +142,8 @@
 
   /* =========================================================================== 「그림으로 보기」 (2026-11-04)
      - 비유 · 단계 · 전/후 비교 그림. 폭이 좁은 칸(용어 · 나란히 두 그림)에도 들어가게 viewBox 400 안팎, 글자 13 이상
-     - class 는 mod-pic-svg (최소 폭 = viewBox 의 85% — 휴대폰에서도 글자 13 이 11px 이상으로 보이게, 넘치면 상자 안에서 옆으로 밀어 봐요) */
-  function psvg(w, h, body, label) { return '<div style="contain:inline-size;overflow-x:auto"><svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, system-ui, sans-serif" style="display:block;width:100%;max-width:' + w + 'px;min-width:' + Math.round(w * 0.85) + 'px;height:auto;margin:0 auto">' + body + '</svg></div>'; }
+     - class 는 mod-pic-svg (최소 폭 = viewBox 의 83% — 휴대폰에서도 글자 13 이 11px 이상으로 보이게, 넘치면 상자 안에서 옆으로 밀어 봐요) */
+  function psvg(w, h, body, label) { return '<div style="contain:inline-size;overflow-x:auto"><svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, system-ui, sans-serif" style="display:block;width:100%;max-width:' + w + 'px;min-width:' + Math.round(w * 0.83) + 'px;height:auto;margin:0 auto">' + body + '</svg></div>'; }
   // ○/× 처럼 두 칸으로 나뉜 그림: 칸마다 따로 그려 좁은 화면에서는 위아래로 쌓아요(글자 크기 그대로)
   function psvgPair(w, h, a, b, label) { function one(body, lab) { return '<svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + lab + '" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, system-ui, sans-serif" style="display:block;flex:1 1 ' + Math.round(w * 0.85) + 'px;max-width:' + w + 'px;min-width:' + Math.round(w * 0.85) + 'px;height:auto">' + body + '</svg>'; }
     return '<div role="group" aria-label="' + label + '" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">' + one(a, label + ' (1)') + one(b, label + ' (2)') + '</div>'; }
@@ -176,12 +176,13 @@
   // 이론 2 — PAD 쓰는 순서 ① ② ③
   V.consolePadSteps = function () {
     var s = '', st = [['1', 'GAIN 다 내려도', '빨간 불', 8, C.red], ['2', 'PAD 켜기', '(−26 dB)', 3, C.ink], ['3', 'GAIN 다시', '맞추기', 6, C.green]];
-    st.forEach(function (r, i) { var x = 6 + i * 132;
-      s += rr(x, 6, 120, 188, i === 2 ? '#f0fdf4' : C.bg, i === 0 ? '#fecaca' : C.line, 10) + num(x + 20, 26, r[0], r[4]) + meter(x + 47, 42, r[3]) +
-        t(x + 60, 160, r[1], { size: 13, weight: 800 }) + t(x + 60, 178, r[2], { size: 13, fill: r[4], weight: 700 });
-      if (i < 2) s += arrow(x + 120, 88, x + 132, 88, C.ink, { w: 2 }); });
-    return psvg(400, 200, s, 'PAD 를 켜고 GAIN 을 다시 맞추는 순서');
+    st.forEach(function (r, i) { var x = 4 + i * 118;
+      s += rr(x, 6, 100, 188, i === 2 ? '#f0fdf4' : C.bg, i === 0 ? '#fecaca' : C.line, 10) + num(x + 20, 26, r[0], r[4]) + meter(x + 37, 42, r[3]) +
+        t(x + 50, 160, r[1], { size: 13, weight: 800 }) + t(x + 50, 178, r[2], { size: 13, fill: r[4], weight: 700 });
+      if (i < 2) s += arrow(x + 100, 88, x + 118, 88, C.ink, { w: 2 }); });
+    return psvg(340, 200, s, 'PAD 를 켜고 GAIN 을 다시 맞추는 순서');
   };
+
 
   // 이론 2 — 팬텀 전원 · 마이크 꽂을 때 ○ / ×
   V.consolePhantomSafe = function () {
@@ -203,36 +204,38 @@
     s += rr(40, 10, 24, 184, '#e2e8f0', null, 6) + '<path d="M52 18 V186" stroke="' + C.ink + '" stroke-width="3"/>';
     [10, 5, 0, -5, -10, -20, -30, -40, -60].forEach(function (d) { var y = fy(d).toFixed(1), lab = d !== -40 && d !== -60; s += '<path d="M66 ' + y + 'H78" stroke="' + C.ink + '" stroke-width="1.5"/>' + (lab ? t(82, +y + 5, (d > 0 ? '+' : d < 0 ? '−' : '') + Math.abs(d) + (d === 0 ? ' (U)' : ''), { size: 13, anchor: 'start', weight: d === 0 ? 800 : 400, fill: d === 0 ? C.teal : C.ink }) : ''); });
     s += t(82, 191, '−∞', { size: 13, anchor: 'start' }) + rr(36, fy(0) - 7, 32, 14, C.teal, null, 3);
-    s += rr(150, fy(5) - 4, 244, fy(-10) - fy(5) + 8, '#ecfeff', C.teal, 8) + t(160, fy(5) + 20, '여기서 조절하기 좋아요', { size: 13, weight: 800, fill: C.teal, anchor: 'start' }) + t(160, fy(5) + 38, '눈금 사이가 넓어 섬세해요', { size: 13, fill: C.sub, anchor: 'start' });
-    s += rr(150, fy(-30) - 4, 244, fy(-60) - fy(-30) + 26, '#fff7ed', C.amber, 8) + t(160, fy(-30) + 16, '아래쪽은 눈금이 좁아요', { size: 13, weight: 800, fill: '#b45309', anchor: 'start' }) + t(160, fy(-30) + 34, '조금만 밀어도 크게 변해요', { size: 13, fill: C.sub, anchor: 'start' });
-    s += '<path d="M134 ' + fy(5) + 'H142V' + fy(-10) + 'H134" fill="none" stroke="' + C.teal + '" stroke-width="2.5"/><path d="M142 ' + ((fy(5) + fy(-10)) / 2) + 'H150" stroke="' + C.teal + '" stroke-width="2.5"/>' +
-      '<path d="M134 ' + fy(-30) + 'H142V' + y0 + 'H134" fill="none" stroke="' + C.amber + '" stroke-width="2.5"/><path d="M142 ' + fy(-40) + 'H150" stroke="' + C.amber + '" stroke-width="2.5"/>';
-    s += t(160, fy(0) + 72, '0 (U) = 키우지도 줄이지도 않는 자리', { size: 13, fill: C.ink, anchor: 'start', weight: 700 });
-    return psvg(400, 200, s, '페이더 눈금은 0 dB 근처가 넓어요');
+    s += '<path d="M128 ' + fy(5) + 'H134V' + fy(-10) + 'H128" fill="none" stroke="' + C.teal + '" stroke-width="2.5"/><path d="M134 ' + ((fy(5) + fy(-10)) / 2) + 'H142" stroke="' + C.teal + '" stroke-width="2.5"/>' +
+      '<path d="M128 ' + fy(-30) + 'H134V' + y0 + 'H128" fill="none" stroke="' + C.amber + '" stroke-width="2.5"/><path d="M134 ' + fy(-40) + 'H142" stroke="' + C.amber + '" stroke-width="2.5"/>';
+    s += rr(142, fy(5) - 4, 194, fy(-10) - fy(5) + 8, '#ecfeff', C.teal, 8) + t(152, fy(5) + 20, '여기서 조절하기 좋아요', { size: 13, weight: 800, fill: C.teal, anchor: 'start' }) + t(152, fy(5) + 38, '눈금 사이가 넓어 섬세해요', { size: 13, fill: C.sub, anchor: 'start' });
+    s += rr(142, fy(-30) - 4, 194, fy(-60) - fy(-30) + 26, '#fff7ed', C.amber, 8) + t(152, fy(-30) + 16, '아래쪽은 눈금이 좁아요', { size: 13, weight: 800, fill: '#b45309', anchor: 'start' }) + t(152, fy(-30) + 34, '조금만 밀어도 크게 변해요', { size: 13, fill: C.sub, anchor: 'start' });
+    s += t(152, fy(0) + 72, '0 (U) = 그대로 보내는 자리', { size: 13, fill: C.ink, anchor: 'start', weight: 700 });
+    return psvg(340, 200, s, '페이더 눈금은 0 dB 근처가 넓어요');
   };
+
 
   // 이론 5 — PRE / POST 를 수도꼭지로
   V.consoleFaucet = function () {
-    var s = rr(4, 66, 70, 44, '#ecfeff', C.teal, 8) + t(39, 86, '채널', { size: 13, weight: 800, fill: C.teal }) + t(39, 102, '소리', { size: 13, fill: C.teal });
-    s += '<path d="M74 88 H170" stroke="' + C.cyan + '" stroke-width="12"/>' + '<path d="M214 88 H300" stroke="' + C.cyan + '" stroke-width="5"/>';
-    s += rr(170, 70, 44, 36, C.ink, null, 6) + '<path d="M182 70 V54 H202 V70" fill="none" stroke="' + C.ink + '" stroke-width="4"/>' + '<path d="M180 54 H204" stroke="' + C.ink + '" stroke-width="6" stroke-linecap="round"/>' + t(192, 44, '수도꼭지 = 페이더', { size: 13, weight: 800 });
-    s += arrow(300, 88, 336, 88, C.teal) + t(368, 84, '메인', { size: 13, weight: 800, fill: C.teal }) + t(368, 100, '스피커', { size: 13, fill: C.teal });
-    // PRE 가지 (꼭지 앞) · POST 가지 (꼭지 뒤)
-    s += '<circle cx="120" cy="88" r="6" fill="' + C.orange + '"/><path d="M120 94 V146" stroke="' + C.orange + '" stroke-width="8"/>' + arrow(120, 146, 120, 166, C.orange, { w: 3 }) + t(120, 186, 'PRE → 무대 모니터', { size: 13, weight: 800, fill: C.orange }) + t(120, 204, '꼭지를 잠가도 그대로', { size: 13, fill: C.sub });
-    s += '<circle cx="262" cy="88" r="5" fill="' + C.purple + '"/><path d="M262 93 V146" stroke="' + C.purple + '" stroke-width="4"/>' + arrow(262, 146, 262, 166, C.purple, { w: 3 }) + t(290, 186, 'POST → 리버브', { size: 13, weight: 800, fill: C.purple }) + t(290, 204, '꼭지를 따라 함께 줄어요', { size: 13, fill: C.sub });
-    s += t(8, 22, '페이더를 반쯤 잠근 모습 (굵기 = 물의 양)', { size: 13, fill: C.sub, anchor: 'start' });
-    return psvg(400, 212, s, '수도꼭지 비유: PRE 는 꼭지 앞, POST 는 꼭지 뒤에서 나눠 받아요');
+    var s = rr(4, 66, 60, 44, '#ecfeff', C.teal, 8) + t(34, 86, '채널', { size: 13, weight: 800, fill: C.teal }) + t(34, 102, '소리', { size: 13, fill: C.teal });
+    s += '<path d="M64 88 H148" stroke="' + C.cyan + '" stroke-width="12"/>' + '<path d="M188 88 H262" stroke="' + C.cyan + '" stroke-width="5"/>';
+    s += rr(148, 70, 40, 36, C.ink, null, 6) + '<path d="M158 70 V54 H178 V70" fill="none" stroke="' + C.ink + '" stroke-width="4"/>' + '<path d="M156 54 H180" stroke="' + C.ink + '" stroke-width="6" stroke-linecap="round"/>' + t(168, 44, '수도꼭지 = 페이더', { size: 13, weight: 800 });
+    s += arrow(262, 88, 290, 88, C.teal) + t(314, 84, '메인', { size: 13, weight: 800, fill: C.teal }) + t(314, 100, '스피커', { size: 13, fill: C.teal });
+    s += '<circle cx="106" cy="88" r="6" fill="' + C.orange + '"/><path d="M106 94 V146" stroke="' + C.orange + '" stroke-width="8"/>' + arrow(106, 146, 106, 166, C.orange, { w: 3 }) + t(106, 186, 'PRE → 무대 모니터', { size: 13, weight: 800, fill: C.orange }) + t(102, 204, '꼭지를 잠가도 그대로', { size: 13, fill: C.sub });
+    s += '<circle cx="226" cy="88" r="5" fill="' + C.purple + '"/><path d="M226 93 V146" stroke="' + C.purple + '" stroke-width="4"/>' + arrow(226, 146, 226, 166, C.purple, { w: 3 }) + t(250, 186, 'POST → 리버브', { size: 13, weight: 800, fill: C.purple }) + t(254, 204, '꼭지 따라 줄어요', { size: 13, fill: C.sub });
+    s += t(6, 22, '페이더를 반쯤 잠근 모습 (굵기 = 물의 양)', { size: 13, fill: C.sub, anchor: 'start' });
+    return psvg(340, 212, s, '수도꼭지 비유: PRE 는 꼭지 앞, POST 는 꼭지 뒤에서 나눠 받아요');
   };
+
 
   // 이론 5 — 인서트(끼워 넣기)와 AUX(보내기)
   V.consoleInsertAux = function () {
-    var s = rr(4, 4, 392, 96, C.bg, C.line, 10) + t(14, 26, '인서트 — 소리 전부가 장비를 지나가요', { size: 13, weight: 800, anchor: 'start' });
-    s += box(14, 40, 70, 40, '채널', '', { size: 13 }) + arrow(84, 60, 116, 60, C.ink) + box(116, 40, 92, 40, 'COMP', '', { size: 13, fill: '#f5f3ff', stroke: C.purple, color: C.purple }) + arrow(208, 60, 240, 60, C.ink) + box(240, 40, 70, 40, '채널', '', { size: 13 }) + t(318, 58, 'COMP · EQ', { size: 13, anchor: 'start', fill: C.sub }) + t(318, 76, 'GATE 등', { size: 13, anchor: 'start', fill: C.sub });
-    s += rr(4, 108, 392, 120, C.bg, C.line, 10) + t(14, 130, 'AUX 보내기 — 복사본만 보내고 섞어요', { size: 13, weight: 800, anchor: 'start' });
-    s += box(14, 146, 70, 40, '채널', '', { size: 13 }) + arrow(84, 160, 280, 160, C.teal) + t(150, 154, '원래 소리', { size: 13, fill: C.teal }) + box(280, 144, 104, 34, '메인 (섞기)', '', { size: 13, fill: '#ecfeff', stroke: C.teal, color: C.teal });
-    s += '<path d="M60 186 V210 H136" fill="none" stroke="' + C.purple + '" stroke-width="2.2" stroke-dasharray="5 4"/>' + box(136, 194, 92, 30, '리버브', '', { size: 13, fill: '#f5f3ff', stroke: C.purple, color: C.purple }) + '<path d="M228 210 H330 V184" fill="none" stroke="' + C.purple + '" stroke-width="2.2"/>' + arrow(330, 190, 330, 180, C.purple) + t(244, 204, '울림', { size: 13, fill: C.purple, anchor: 'start' });
-    return psvg(400, 232, s, '인서트와 AUX 보내기의 차이');
+    var s = rr(4, 4, 332, 96, C.bg, C.line, 10) + t(14, 26, '인서트 — 소리 전부가 장비를 지나가요', { size: 13, weight: 800, anchor: 'start' });
+    s += box(14, 40, 60, 40, '채널', '', { size: 13 }) + arrow(74, 60, 100, 60, C.ink) + box(100, 40, 96, 40, 'COMP · EQ', '', { size: 13, fill: '#f5f3ff', stroke: C.purple, color: C.purple }) + arrow(196, 60, 222, 60, C.ink) + box(222, 40, 60, 40, '채널', '', { size: 13 });
+    s += rr(4, 108, 332, 120, C.bg, C.line, 10) + t(14, 130, 'AUX 보내기 — 복사본만 보내고 섞어요', { size: 13, weight: 800, anchor: 'start' });
+    s += box(14, 146, 60, 40, '채널', '', { size: 13 }) + arrow(74, 160, 226, 160, C.teal) + t(150, 154, '원래 소리', { size: 13, fill: C.teal }) + box(226, 144, 100, 34, '메인 (섞기)', '', { size: 13, fill: '#ecfeff', stroke: C.teal, color: C.teal });
+    s += '<path d="M44 186 V210 H120" fill="none" stroke="' + C.purple + '" stroke-width="2.2" stroke-dasharray="5 4"/>' + box(120, 194, 86, 30, '리버브', '', { size: 13, fill: '#f5f3ff', stroke: C.purple, color: C.purple }) + '<path d="M206 210 H276 V184" fill="none" stroke="' + C.purple + '" stroke-width="2.2"/>' + arrow(276, 190, 276, 180, C.purple) + t(216, 204, '울림', { size: 13, fill: C.purple, anchor: 'start' });
+    return psvg(340, 232, s, '인서트와 AUX 보내기의 차이');
   };
+
 
   // 이론 6 — PAN: 끝까지 돌리면 반대쪽 자리에서 잘 안 들려요
   V.consolePan = function () {
@@ -249,22 +252,24 @@
 
   // 이론 6 — GROUP 을 내려도 무대 모니터(PRE)는 그대로
   V.consoleGroupWarn = function () {
-    var s = box(4, 70, 84, 44, '악기 채널', '', { size: 13 }) + arrow(88, 84, 130, 54, C.purple) + box(130, 30, 96, 44, 'GROUP', '−∞ 로 내림', { size: 13, subSize: 13, fill: '#f5f3ff', stroke: C.purple, color: C.purple, subColor: C.red }) +
-      '<path d="M226 52 H290" stroke="#cbd5e1" stroke-width="2.5" stroke-dasharray="5 4"/>' + spk(316, 52, '#94a3b8', false) + t(348, 40, '메인', { size: 13, anchor: 'start', weight: 800 }) + t(348, 58, '조용', { size: 13, anchor: 'start', fill: C.sub });
-    s += arrow(88, 100, 130, 132, C.orange) + box(130, 112, 96, 44, 'AUX (PRE)', '', { size: 13, fill: '#fff7ed', stroke: C.orange, color: C.orange }) + arrow(226, 134, 290, 134, C.orange) + spk(316, 134, C.orange, true) + t(348, 124, '무대', { size: 13, anchor: 'start', weight: 800 }) + t(348, 142, '모니터', { size: 13, anchor: 'start', weight: 800 });
-    s += t(200, 186, 'GROUP 을 내려도 무대 모니터는 계속 나와요', { size: 13, weight: 800 }) + t(200, 204, '무대 소리를 끄려면 채널 ON 까지 확인해요', { size: 13, fill: C.sub });
-    return psvg(400, 212, s, 'GROUP 페이더를 내려도 AUX PRE 로 가는 무대 모니터는 그대로예요');
+    var s = box(4, 70, 80, 44, '악기 채널', '', { size: 13 }) + arrow(84, 84, 116, 54, C.purple) + box(116, 30, 90, 44, 'GROUP', '−∞ 로 내림', { size: 13, subSize: 13, fill: '#f5f3ff', stroke: C.purple, color: C.purple, subColor: C.red }) +
+      '<path d="M206 52 H250" stroke="#cbd5e1" stroke-width="2.5" stroke-dasharray="5 4"/>' + spk(268, 52, '#94a3b8', false) + t(296, 44, '메인', { size: 13, anchor: 'start', weight: 800 }) + t(296, 62, '조용', { size: 13, anchor: 'start', fill: C.sub });
+    s += arrow(84, 100, 116, 132, C.orange) + box(116, 112, 90, 44, 'AUX (PRE)', '', { size: 13, fill: '#fff7ed', stroke: C.orange, color: C.orange }) + arrow(206, 134, 244, 134, C.orange) + spk(262, 134, C.orange, true) + t(296, 126, '무대', { size: 13, anchor: 'start', weight: 800 }) + t(296, 144, '모니터', { size: 13, anchor: 'start', weight: 800 });
+    s += t(170, 186, 'GROUP 을 내려도 무대 모니터는 나와요', { size: 13, weight: 800 }) + t(170, 204, '무대 소리를 끄려면 채널 ON 도 확인해요', { size: 13, fill: C.sub });
+    return psvg(340, 212, s, 'GROUP 페이더를 내려도 AUX PRE 로 가는 무대 모니터는 그대로예요');
   };
+
 
   // 확인 문제 1 — 메인에서 소리가 안 날 때 따라갈 순서
   V.consoleTrouble = function () {
-    var s = '', row1 = [['입력·GAIN', 'PFL 소리 있음'], ['1. ON', ''], ['2. ST 버튼', '']], row2 = [['3. 채널 페이더', ''], ['4. STEREO 페이더', ''], ['5. 출력 연결', '']];
-    row1.forEach(function (r, i) { var x = 4 + i * 136; s += box(x, 10, 120, 48, r[0], r[1], i === 0 ? { size: 13, subSize: 13, fill: '#eff6ff', stroke: C.blue, color: C.blue, subColor: C.blue } : { size: 13 }); if (i < 2) s += arrow(x + 120, 34, x + 136, 34, C.ink, { w: 2 }); });
-    s += '<path d="M336 58 V76 H64 V88" fill="none" stroke="' + C.ink + '" stroke-width="2"/>' + arrow(64, 84, 64, 94, C.ink, { w: 2 });
-    row2.forEach(function (r, i) { var x = 4 + i * 136; s += box(x, 94, 120, 44, r[0], '', { size: 13 }); if (i < 2) s += arrow(x + 120, 116, x + 136, 116, C.ink, { w: 2 }); });
-    s += t(200, 160, '소리가 지나가는 순서대로 하나씩 따라가요', { size: 13, fill: C.sub });
-    return psvg(412, 168, s, '메인에서 소리가 안 날 때 확인 순서');
+    var s = '', row1 = [['입력·GAIN', 'PFL 소리 있음'], ['1. ON', ''], ['2. ST 버튼', '']], row2 = [['3. 채널', '페이더'], ['4. STEREO', '페이더'], ['5. 출력', '연결']];
+    row1.forEach(function (r, i) { var x = 4 + i * 116; s += box(x, 10, 100, 48, r[0], r[1], i === 0 ? { size: 13, subSize: 13, fill: '#eff6ff', stroke: C.blue, color: C.blue, subColor: C.blue } : { size: 13 }); if (i < 2) s += arrow(x + 100, 34, x + 116, 34, C.ink, { w: 2 }); });
+    s += '<path d="M286 58 V76 H54 V88" fill="none" stroke="' + C.ink + '" stroke-width="2"/>' + arrow(54, 84, 54, 94, C.ink, { w: 2 });
+    row2.forEach(function (r, i) { var x = 4 + i * 116; s += box(x, 94, 100, 48, r[0], r[1], { size: 13, subSize: 13 }); if (i < 2) s += arrow(x + 100, 118, x + 116, 118, C.ink, { w: 2 }); });
+    s += t(170, 164, '소리가 지나가는 순서대로 따라가요', { size: 13, fill: C.sub });
+    return psvg(340, 172, s, '메인에서 소리가 안 날 때 확인 순서');
   };
+
 
   /* =========================================================================== 공통: 보컬 녹음 (cable.js 와 같은 캐시를 씀) */
   function b64ToBuf(uri) { var b = atob(uri.slice(uri.indexOf(',') + 1)), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u.buffer; }
