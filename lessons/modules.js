@@ -468,7 +468,7 @@
     dbspk: { label: '3D 모델(d&b 패시브 스피커)', need: 'DbSpeakers', dir: [0.6, 0.3, 1],
       variants: [['Vi10P', 'Vi10P · 메인', '무대 메인 L · R — 3웨이 패시브', [0.55, 0.28, 1], 2.3], ['Yi10P', 'Yi10P · 천장 가운데', '2웨이 · 110° × 40°', null, 2.3], ['Yi7P', 'Yi7P · 천장 좌우', '2웨이 · 75° × 40°', null, 2.3], ['E8', 'E8 · 기둥', '8″/1″ 동축 · 90° × 50°', [0.6, 0.32, 1], 2.2], ['V-SUB', 'V-SUB · 서브우퍼', '18″ + 12″ 저음', [0.7, 0.45, 1], 1.8]],
       toggleTxt: '속 보기(드라이버) 켜기', toggleLabel: function (on) { return on ? '속 보기(드라이버) 켜기' : '속 보기 끄기'; },
-      make: function (v) { return DbSpeakers.create({ variant: v }); }, toggle: function (m, on) { DbSpeakers.api(m).setXray(!on); } },
+      make: function (v) { return DbSpeakers.create({ variant: v, color: 0xcfd3d8 }); }   /* 2026-11-04: 3층 실제 색은 흰색 — 밝은 화면에서도 구분되게 채도 · 밝기를 조금 낮춘 흰색 */, toggle: function (m, on) { DbSpeakers.api(m).setXray(!on); } },
     zxa1: { label: '3D 모델(EV ZXA1)', need: 'EvZXA1', dir: [0.5, 0.2, 1], make: function () { return EvZXA1.create(); } }
   };
   function mountViewer(def) {
