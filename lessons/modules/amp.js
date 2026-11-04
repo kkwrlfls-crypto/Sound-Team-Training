@@ -145,35 +145,40 @@
   /* ------------------------------------------------------------------ 「그림으로 보기」 (2026-11-04)
      - 비유 · 단계 · 전/후 비교 그림. viewBox 400 안팎, 글자 13 이상
      - class 는 mod-pic-svg (최소 폭 = viewBox 의 85% — 휴대폰에서도 글자 13 이 11px 이상으로 보이게, 넘치면 상자 안에서 옆으로 밀어 봐요) */
-  function psvg(w, h, body, label) { return '<svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, system-ui, sans-serif" style="display:block;width:100%;max-width:' + w + 'px;min-width:' + Math.round(w * 0.85) + 'px;height:auto;margin:0 auto">' + body + '</svg>'; }
+  function psvg(w, h, body, label) { return '<div style="contain:inline-size;overflow-x:auto"><svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, system-ui, sans-serif" style="display:block;width:100%;max-width:' + w + 'px;min-width:' + Math.round(w * 0.85) + 'px;height:auto;margin:0 auto">' + body + '</svg></div>'; }
+  // ○/× 처럼 두 칸으로 나뉜 그림: 칸마다 따로 그려 좁은 화면에서는 위아래로 쌓아요(글자 크기 그대로)
+  function psvgPair(w, h, a, b, label) { function one(body, lab) { return '<svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + lab + '" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, system-ui, sans-serif" style="display:block;flex:1 1 ' + Math.round(w * 0.85) + 'px;max-width:' + w + 'px;min-width:' + Math.round(w * 0.85) + 'px;height:auto">' + body + '</svg>'; }
+    return '<div role="group" aria-label="' + label + '" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">' + one(a, label + ' (1)') + one(b, label + ' (2)') + '</div>'; }
   function wv(x, y, w, f, n) { var d = ''; n = n || 120; for (var i = 0; i <= n; i++) { var u = i / n; d += (i ? 'L' : 'M') + (x + u * w).toFixed(1) + ' ' + (y - f(u)).toFixed(1); } return d; }
   function num(x, y, n, col) { return '<circle cx="' + x + '" cy="' + y + '" r="11" fill="' + col + '"/>' + t(x, y + 5, n, { size: 13, weight: 800, fill: '#fff' }); }
   function mini(x, y, w, h, label, col, fill) { return box(x, y, w, h, fill || '#fff', col || C.ink, 6) + '<circle cx="' + (x + 14) + '" cy="' + (y + h / 2) + '" r="' + Math.min(9, h / 2 - 4) + '" fill="none" stroke="' + (col || C.ink) + '" stroke-width="2"/>' + t(x + w / 2 + 9, y + h / 2 + 5, label, { size: 13, weight: 800, fill: col || C.ink }); }
 
   // 용어 임피던스 — 좁은 호스 · 넓은 호스
   V.ampHoseMini = function () {
-    var b = box(6, 14, 70, 104, C.teal, null, 10) + t(41, 62, '앰프', { size: 14, weight: 800, fill: '#fff' }) + t(41, 82, '(펌프)', { size: 13, fill: '#e0f2fe' });
-    b += '<path d="M76 40 H236" stroke="' + C.cyan + '" stroke-width="6"/>' + arrow(236, 40, 252, 40, C.blue, 2) + t(262, 36, '높은 Ω', { size: 13, weight: 800, anchor: 'start' }) + t(262, 54, '전류 적게', { size: 13, fill: C.sub, anchor: 'start' });
-    b += '<path d="M76 94 H236" stroke="' + C.cyan + '" stroke-width="24"/>' + arrow(236, 94, 252, 94, C.red, 3) + t(262, 90, '낮은 Ω', { size: 13, weight: 800, anchor: 'start', fill: C.red }) + t(262, 108, '전류 많이', { size: 13, fill: C.sub, anchor: 'start' });
-    b += t(156, 70, '좁은 호스 ↑ · 넓은 호스 ↓', { size: 13, fill: C.sub });
-    return psvg(360, 128, b, '임피던스를 호스 굵기로 비유한 그림');
+    var b = box(6, 14, 60, 104, C.teal, null, 10) + t(36, 62, '앰프', { size: 14, weight: 800, fill: '#fff' }) + t(36, 82, '(펌프)', { size: 13, fill: '#e0f2fe' });
+    b += '<path d="M66 40 H186" stroke="' + C.cyan + '" stroke-width="6"/>' + arrow(186, 40, 202, 40, C.blue, 2) + t(126, 28, '좁은 호스', { size: 13, fill: C.sub }) + t(208, 36, '높은 Ω', { size: 13, weight: 800, anchor: 'start' }) + t(208, 54, '전류 적게', { size: 13, fill: C.sub, anchor: 'start' });
+    b += '<path d="M66 94 H186" stroke="' + C.cyan + '" stroke-width="24"/>' + arrow(186, 94, 202, 94, C.red, 3) + t(126, 74, '넓은 호스', { size: 13, fill: C.sub }) + t(208, 90, '낮은 Ω', { size: 13, weight: 800, anchor: 'start', fill: C.red }) + t(208, 108, '전류 많이', { size: 13, fill: C.sub, anchor: 'start' });
+    return psvg(300, 128, b, '임피던스를 호스 굵기로 비유한 그림');
   };
+
 
   // 용어 클리핑 — 천장에 머리가 닿아 잘려요
   V.ampClipMini = function () {
-    var b = '<path d="M8 26H352M8 106H352" stroke="' + C.red + '" stroke-width="2" stroke-dasharray="6 4"/>' + t(352, 18, '앰프가 낼 수 있는 끝', { size: 13, fill: C.red, anchor: 'end' });
-    b += '<path d="' + wv(12, 66, 150, function (u) { return 30 * Math.sin(u * Math.PI * 4); }) + '" fill="none" stroke="' + C.green + '" stroke-width="3"/>' + t(87, 124, '알맞음', { size: 13, weight: 800, fill: C.green });
-    b += '<path d="' + wv(196, 66, 150, function (u) { return Math.max(-40, Math.min(40, 64 * Math.sin(u * Math.PI * 4))); }) + '" fill="none" stroke="' + C.red + '" stroke-width="3"/>' + t(271, 124, '너무 큼 → 윗부분이 잘림', { size: 13, weight: 800, fill: C.red });
-    return psvg(360, 130, b, '앰프가 낼 수 있는 끝을 넘으면 파형 윗부분이 잘려요');
+    var b = '<path d="M6 26H294M6 106H294" stroke="' + C.red + '" stroke-width="2" stroke-dasharray="6 4"/>' + t(294, 18, '앰프가 낼 수 있는 끝', { size: 13, fill: C.red, anchor: 'end' });
+    b += '<path d="' + wv(8, 66, 120, function (u) { return 30 * Math.sin(u * Math.PI * 4); }) + '" fill="none" stroke="' + C.green + '" stroke-width="3"/>' + t(68, 124, '알맞음', { size: 13, weight: 800, fill: C.green });
+    b += '<path d="' + wv(168, 66, 120, function (u) { return Math.max(-40, Math.min(40, 64 * Math.sin(u * Math.PI * 4))); }) + '" fill="none" stroke="' + C.red + '" stroke-width="3"/>' + t(228, 124, '너무 큼 → 잘림', { size: 13, weight: 800, fill: C.red });
+    return psvg(300, 130, b, '앰프가 낼 수 있는 끝을 넘으면 파형 윗부분이 잘려요');
   };
+
 
   // 용어 데시벨 — W 가 2배일 때마다 한 계단(+3 dB)
   V.ampDbStairs = function () {
-    var b = t(8, 18, 'W 가 2배 될 때마다 한 계단 (+3 dB)', { size: 13, weight: 800, anchor: 'start', fill: C.teal });
-    [[1, 0], [2, 3], [4, 6], [8, 9], [16, 12]].forEach(function (r, i) { var x = 8 + i * 70, top = 128 - i * 20;
-      b += '<rect x="' + x + '" y="' + top + '" width="64" height="' + (166 - top) + '" rx="4" fill="' + C.teal + '" fill-opacity="' + (0.35 + i * 0.15) + '"/>' + t(x + 32, top + 24, r[0] + ' W', { size: 13, weight: 800, fill: i ? '#fff' : C.ink }) + t(x + 32, top - 8, (r[1] ? '+' : '') + r[1] + ' dB', { size: 13, weight: 800, fill: C.ink }); });
-    return psvg(360, 168, b, '전력이 2배가 될 때마다 3 dB 씩 올라가는 계단');
+    var b = t(6, 18, 'W 가 2배 될 때마다 한 계단 (+3 dB)', { size: 13, weight: 800, anchor: 'start', fill: C.teal });
+    [[1, 0], [2, 3], [4, 6], [8, 9], [16, 12]].forEach(function (r, i) { var x = 6 + i * 58, top = 128 - i * 20;
+      b += '<rect x="' + x + '" y="' + top + '" width="54" height="' + (166 - top) + '" rx="4" fill="' + C.teal + '" fill-opacity="' + (0.35 + i * 0.15) + '"/>' + t(x + 27, top + 24, r[0] + ' W', { size: 13, weight: 800, fill: i ? '#fff' : C.ink }) + t(x + 27, top - 8, (r[1] ? '+' : '') + r[1] + ' dB', { size: 13, weight: 800, fill: C.ink }); });
+    return psvg(300, 168, b, '전력이 2배가 될 때마다 3 dB 씩 올라가는 계단');
   };
+
 
   // 이론 2 — 병렬과 직렬
   V.ampSeriesParallel = function () {
@@ -185,7 +190,7 @@
       h += plus + minus + mini(x + 70, 38, 84, 26, '8Ω', col) + mini(x + 70, 100, 84, 26, '8Ω', col) + t(x + 112, 88, par ? '길이 2개' : '한 줄로', { size: 13, fill: col, weight: 700 });
       return h + t(x + 97, 172, z, { size: 15, weight: 800, fill: col }) + t(x + 97, 194, sub, { size: 13, fill: C.sub });
     }
-    return psvg(400, 208, panel(4, '병렬 (나란히)', '8Ω 2대 → 4Ω', '물길이 넓어져 잘 흘러요', C.teal, true) + panel(202, '직렬 (한 줄로)', '8Ω + 8Ω → 16Ω', '길이 길어져 더 막혀요', C.blue, false), '스피커를 병렬로 이으면 임피던스가 낮아지고, 직렬로 이으면 높아져요');
+    return psvgPair(200, 208, panel(4, '병렬 (나란히)', '8Ω 2대 → 4Ω', '물길이 넓어져 잘 흘러요', C.teal, true), panel(4, '직렬 (한 줄로)', '8Ω + 8Ω → 16Ω', '길이 길어져 더 막혀요', C.blue, false), '스피커를 병렬로 이으면 임피던스가 낮아지고, 직렬로 이으면 높아져요');
   };
 
   // 이론 2 — 테스터로 재면 적힌 값보다 조금 낮아요

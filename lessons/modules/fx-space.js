@@ -141,6 +141,73 @@
     return svg(600, 214, h, '직접음, 초기 반사음, 잔향을 나타낸 에코그램 예시');
   };
 
+  /* ------------------------------------------------------------------ 2026-11-04 「그림으로 보기」: 비유 · 비교 그림 */
+  function svgM(w, h, body, label) { return svg(w, h, body, label).replace('<svg class="mod-svg"', '<svg class="mod-svg" style="min-width:0"'); }
+  function arcs(cx, cy, n, r0, step, col, op) { var h = ''; for (var i = 0; i < n; i++) { var r = r0 + i * step; h += '<path d="M' + (cx + r * 0.6) + ' ' + (cy - r * 0.8) + 'A' + r + ' ' + r + ' 0 0 1 ' + (cx + r * 0.6) + ' ' + (cy + r * 0.8) + '" fill="none" stroke="' + col + '" stroke-width="2.4" stroke-opacity="' + Math.max(0.15, (op || 1) - i * 0.18) + '"/>'; } return h; }
+  function person(x, y, col) { return '<circle cx="' + x + '" cy="' + (y - 30) + '" r="8" fill="' + col + '"/><path d="M' + (x - 10) + ' ' + y + 'Q' + x + ' ' + (y - 34) + ' ' + (x + 10) + ' ' + y + 'Z" fill="' + col + '"/>'; }
+  VIS.fxTermBath = function () {   // 목욕탕: 단단한 벽에 소리가 여러 번 튕겨 울림이 길게 남음
+    var room = '<rect x="10" y="10" width="190" height="104" rx="6" fill="#e0f2fe" stroke="' + C.ink + '" stroke-width="2.4"/>' + [0, 1, 2, 3, 4, 5].map(function (i) { return '<path d="M' + (10 + i * 38) + ' 10V114" stroke="#bae6fd"/>'; }).join('') +
+      '<path d="M22 96H118V80H22Z" fill="#7dd3fc" stroke="' + C.ink + '" stroke-width="1.5"/>' + person(150, 96, C.blue);
+    var bounce = '<path d="M150 60L198 30L120 12L20 40L80 112L198 86L150 64" fill="none" stroke="' + C.red + '" stroke-width="2" stroke-dasharray="5 3"/>';
+    var tail = ''; for (var i = 0; i < 26; i++) { var x = 224 + i * 5, h = 58 * Math.exp(-i / 9); tail += '<path d="M' + x + ' 90V' + (90 - h).toFixed(1) + '" stroke="' + C.teal + '" stroke-width="2.4"/>'; }
+    return svgM(360, 130, room + bounce + '<path d="M218 90H354" stroke="' + C.ink + '"/>' + tail + t(286, 112, '천천히 작아지는 울림', { size: 13.5, weight: 800, fill: C.teal }) + t(286, 128, '= 잔향', { size: 13.5, weight: 800, fill: C.teal }), '목욕탕에서 소리가 여러 번 튕겨 울림이 남는 모습');
+  };
+  VIS.fxTermPre = function () {
+    var tail = ''; for (var i = 0; i < 30; i++) { var x = 196 + i * 5, h = 46 * Math.exp(-i / 11); tail += '<path d="M' + x + ' 84V' + (84 - h).toFixed(1) + '" stroke="' + C.teal + '" stroke-width="2.4"/>'; }
+    return svgM(360, 130, '<path d="M14 84H352" stroke="' + C.ink + '"/><path d="M40 84V22" stroke="' + C.ink + '" stroke-width="5"/>' + t(40, 106, '노래 소리', { size: 13.5, weight: 800 }) + t(40, 124, '(직접음)', { size: 12.5, fill: C.sub }) +
+      '<path d="M48 40H188" stroke="' + C.violet + '" stroke-width="2.6"/><path d="M48 33V47M188 33V47" stroke="' + C.violet + '" stroke-width="2.6"/>' + t(118, 30, '틈 = Pre-delay', { size: 14, weight: 800, fill: C.violet }) + t(118, 66, '가사가 먼저 또렷하게', { size: 13, fill: C.sub }) +
+      tail + t(270, 106, '그다음 울림(잔향)', { size: 13.5, weight: 800, fill: C.teal }), 'Pre-delay 는 직접음과 잔향 사이의 틈');
+  };
+  VIS.fxTermEcho = function () {   // 산 메아리: 같은 간격으로 반복, 점점 작아짐
+    var mt = '<path d="M196 112L262 30L300 70L322 46L356 112Z" fill="#cbd5e1" stroke="' + C.ink + '" stroke-width="2"/>';
+    var call = [0, 1, 2, 3].map(function (k) { var x = 24 + k * 42, s = [17, 14, 12, 10][k]; return t(x, 52, '야호', { size: s, weight: 800, fill: k ? C.orange : C.ink, anchor: 'start' }).replace('<text', '<text fill-opacity="' + (1 - k * 0.2) + '"'); }).join('');
+    return svgM(360, 130, mt + person(20, 112, C.blue) + call + '<path d="M24 72H186" stroke="' + C.orange + '" stroke-dasharray="4 3"/>' + [66, 108, 150].map(function (x) { return '<path d="M' + x + ' 66V78" stroke="' + C.orange + '" stroke-width="2"/>'; }).join('') +
+      t(108, 96, '같은 간격 = Delay Time', { size: 13.5, weight: 800, fill: C.orange }) + t(108, 118, '점점 작아짐 = Feedback', { size: 13.5, weight: 800, fill: C.sub }), '메아리처럼 같은 간격으로 반복되는 딜레이');
+  };
+  VIS.fxTermWetDry = function () {   // 맑은 물(Dry) + 물감 물(Wet)을 섞는 비율
+    function cup(x, fill, lab, sub, lv) { return '<path d="M' + x + ' 20L' + (x + 8) + ' 92H' + (x + 52) + 'L' + (x + 60) + ' 20" fill="none" stroke="' + C.ink + '" stroke-width="2.4"/><path d="M' + (x + 2 + (1 - lv) * 6) + ' ' + (92 - 70 * lv) + 'L' + (x + 8) + ' 92H' + (x + 52) + 'L' + (x + 58 - (1 - lv) * 6) + ' ' + (92 - 70 * lv) + 'Z" fill="' + fill + '"/>' + t(x + 30, 110, lab, { size: 14, weight: 800 }) + t(x + 30, 126, sub, { size: 12.5, fill: C.sub }); }
+    return svgM(360, 130, cup(10, '#e0f2fe', 'Dry', '원래 소리', 0.85) + t(92, 62, '+', { size: 22, weight: 800 }) + cup(110, '#a78bfa', 'Wet', '효과음', 0.4) + t(192, 62, '=', { size: 22, weight: 800 }) + cup(216, '#c7d2fe', '섞은 소리', '조금만 섞어요', 0.85) + t(352, 56, '물감이', { size: 12, fill: C.violet, anchor: 'end' }).replace('x="352"', 'x="356"'), 'Dry 와 Wet 을 섞는 비율을 물과 물감에 비유');
+  };
+  function roomPic(full) {
+    var w = 296, body = '<rect x="2" y="2" width="292" height="206" rx="12" fill="' + C.bg + '" stroke="' + (full ? C.teal : C.red) + '" stroke-width="1.8"/>' + t(148, 26, full ? '사람이 가득 찬 예배' : '빈 본당 (리허설)', { size: 14, weight: 800, fill: full ? C.teal : C.red });
+    body += '<path d="M20 120V44H276V120Z" fill="#fff" stroke="' + C.ink + '" stroke-width="2"/>' + '<rect x="28" y="96" width="34" height="18" fill="#94a3b8"/>' + t(45, 92, '스피커', { size: 11, fill: C.sub });
+    for (var r = 0; r < 2; r++) for (var c = 0; c < 6; c++) { var x = 96 + c * 30, y = 112 - r * 0; if (full) body += person(x + (r ? 15 : 0), 116 - r * 14, r ? '#64748b' : '#475569'); else body += '<rect x="' + (x - 9 + (r ? 15 : 0)) + '" y="' + (106 - r * 14) + '" width="18" height="8" rx="2" fill="#cbd5e1"/>'; }
+    var bnc = full ? 'M62 100L140 50L200 74' : 'M62 100L140 46L276 64L180 116L60 52L250 46L276 104';
+    body += '<path d="' + bnc + '" fill="none" stroke="' + C.red + '" stroke-width="2" stroke-dasharray="5 3"/>';
+    var L = full ? 0.9 : 2.0, x0 = 30, x1 = 270, base = 182, tail = '';
+    for (var i = 0; i <= 48; i++) { var s = i / 48 * 2.2, h = s <= L ? 40 * (1 - s / L) : 0; if (h > 0.5) tail += '<path d="M' + (x0 + s / 2.2 * (x1 - x0)).toFixed(1) + ' ' + base + 'V' + (base - h).toFixed(1) + '" stroke="' + C.teal + '" stroke-width="2.6"/>'; }
+    body += '<path d="M' + x0 + ' ' + base + 'H' + x1 + '" stroke="' + C.ink + '"/>' + tail + t(x1, 200, full ? '울림이 짧아요' : '울림이 길어요', { size: 12.5, weight: 800, fill: full ? C.teal : C.red, anchor: 'end' }) + t(x0, 200, '시간 →', { size: 11, fill: C.sub, anchor: 'start' });
+    return svgM(w, 210, body, full ? '사람이 가득 찬 예배당은 울림이 짧아요' : '빈 본당은 울림이 길어요');
+  }
+  VIS.fxPicRoomEmpty = function () { return roomPic(false); };
+  VIS.fxPicRoomFull = function () { return roomPic(true); };
+  function routePic(ins) {
+    function box(x, y, w, l1, col, txt) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="38" rx="8" fill="' + (col || '#fff') + '" stroke="' + C.ink + '" stroke-width="1.6"/>' + t(x + w / 2, y + 24, l1, { size: 12.5, weight: 800, fill: txt || C.ink }); }
+    function ar(x1, y1, x2, y2, col) { var a = Math.atan2(y2 - y1, x2 - x1); return '<path d="M' + x1 + ' ' + y1 + 'L' + x2 + ' ' + y2 + '" stroke="' + col + '" stroke-width="2.6"/><path d="M' + (x2 - 8 * Math.cos(a - 0.5)).toFixed(1) + ' ' + (y2 - 8 * Math.sin(a - 0.5)).toFixed(1) + 'L' + x2 + ' ' + y2 + 'L' + (x2 - 8 * Math.cos(a + 0.5)).toFixed(1) + ' ' + (y2 - 8 * Math.sin(a + 0.5)).toFixed(1) + '" fill="none" stroke="' + col + '" stroke-width="2.6"/>'; }
+    var b = '<rect x="2" y="2" width="292" height="206" rx="12" fill="' + C.bg + '" stroke="' + C.line + '" stroke-width="1.4"/>' + t(148, 26, ins ? '인서트 — 모두 지나가요' : 'AUX — 일부만 보내 더해요', { size: 14, weight: 800, fill: ins ? C.blue : C.teal });
+    if (ins) {
+      b += box(12, 70, 62, '채널') + ar(74, 89, 112, 89, C.blue) + box(114, 70, 82, '컴프·게이트', C.blue, '#fff') + ar(196, 89, 222, 89, C.blue) + box(224, 70, 62, '메인') +
+        t(148, 140, '원래 소리가 모두 바뀌어요', { size: 12.5, weight: 700 }) + t(148, 164, '예) 컴프레서 · 게이트 · EQ', { size: 12, fill: C.sub }) + t(148, 186, '(이펙터 Mix 로 양을 정하기도 해요)', { size: 11, fill: C.sub });
+    } else {
+      b += box(12, 52, 62, '채널') + ar(74, 71, 222, 71, C.ink) + box(224, 52, 62, '메인') + t(148, 64, '원래 소리(Dry)', { size: 11.5, fill: C.sub }) +
+        ar(100, 71, 100, 116, C.teal) + box(80, 118, 120, '리버브(100% Wet)', C.teal, '#fff') + '<path d="M200 137H250V96" fill="none" stroke="' + C.teal + '" stroke-width="2.6"/>' + ar(250, 100, 250, 92, C.teal) +
+        t(64, 102, 'Send', { size: 12, weight: 800, fill: C.teal, anchor: 'end' }).replace('x="64"', 'x="94"') + t(258, 124, 'Return', { size: 12, weight: 800, fill: C.teal, anchor: 'start' }).replace('x="258"', 'x="254"') +
+        t(148, 180, '예) 리버브 · 딜레이', { size: 12, fill: C.sub });
+    }
+    return svgM(296, 210, b, ins ? '인서트 연결: 채널 소리가 이펙터를 모두 지나감' : 'AUX 연결: 일부만 이펙터로 보내 효과음을 더함');
+  }
+  VIS.fxPicInsert = function () { return routePic(true); };
+  VIS.fxPicAux = function () { return routePic(false); };
+  VIS.fxQuizWall = function () {
+    var x0 = 40, x1 = 560, sx = (x1 - x0) / 34;
+    return svg(600, 170, '<rect x="' + x0 + '" y="96" width="70" height="30" fill="#94a3b8"/>' + t(x0 + 35, 116, '무대', { size: 13, weight: 800, fill: '#fff' }) +
+      '<rect x="' + x1 + '" y="20" width="14" height="106" fill="' + C.ink + '"/>' + t(x1 + 7, 144, '뒤 벽', { size: 13, weight: 800 }) + '<path d="M' + x0 + ' 126H' + (x1 + 14) + '" stroke="' + C.ink + '"/>' +
+      '<path d="M' + (x0 + 70) + ' 60H' + (x1 - 4) + '" stroke="' + C.orange + '" stroke-width="2.6"/><path d="M' + (x1 - 12) + ' 54L' + (x1 - 4) + ' 60L' + (x1 - 12) + ' 66" fill="none" stroke="' + C.orange + '" stroke-width="2.6"/>' +
+      '<path d="M' + (x1 - 4) + ' 80H' + (x0 + 74) + '" stroke="' + C.red + '" stroke-width="2.6" stroke-dasharray="7 4"/><path d="M' + (x0 + 82) + ' 74L' + (x0 + 74) + ' 80L' + (x0 + 82) + ' 86" fill="none" stroke="' + C.red + '" stroke-width="2.6"/>' +
+      t((x0 + x1) / 2, 50, '가는 길 34 m', { size: 13, weight: 800, fill: C.orange }) + t((x0 + x1) / 2, 100, '돌아오는 길 34 m', { size: 13, weight: 800, fill: C.red }) +
+      t(x0, 160, '소리는 1 m 에 약 2.9 ms (1초에 343 m)', { size: 12, fill: C.sub, anchor: 'start' }) + [0, 10, 20, 30].map(function (m) { return '<path d="M' + (x0 + m * sx) + ' 126v6" stroke="' + C.sub + '"/>' + t(x0 + m * sx, 144, m + ' m', { size: 11, fill: C.sub }); }).join(''), '무대에서 34 m 떨어진 뒤 벽까지 왕복하는 소리');
+  };
+
   /* ------------------------------------------------------------------ 녹음 불러오기 (compressor 와 함께 씀) */
   function b64ToBuf(uri) { var b = atob(uri.slice(uri.indexOf(',') + 1)), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u.buffer; }
   function synthEnv(s) { var base = s % 10 < 5 ? -28 : -8, ph = (s % 0.45) / 0.45; return base - 14 * (1 - Math.pow(Math.sin(Math.PI * Math.min(1, ph / 0.8)), 2)); }
@@ -419,11 +486,11 @@
       terms: [
         ['직접음', '음원(입·스피커)에서 귀로 곧바로 오는 첫 소리예요. 소리가 어디서 나는지와 또렷함을 정해요.'],
         ['초기 반사음', '가까운 벽·바닥·천장에 한두 번 튕겨, 직접음 뒤 수십 ms 안에 오는 소리예요. 공간의 크기를 느끼게 해요.'],
-        ['잔향 (Reverb tail)', '셀 수 없이 많은 반사가 겹치며 점점 작아지는 울림이에요.'],
+        ['잔향 (Reverb tail)', '셀 수 없이 많은 반사가 겹치며 점점 작아지는 울림이에요.', 'fxTermBath'],
         ['RT60 · Decay', '소리를 멈춘 뒤 잔향이 60 dB 작아질 때까지(거의 안 들릴 때까지) 걸리는 시간이에요. 리버브의 Decay(Reverb Time)가 이 길이를 정해요.'],
-        ['Pre-delay', '직접음이 지나간 뒤 잔향이 시작되기까지의 틈(ms)이에요. 알맞게 주면 가사가 잔향에 덜 묻혀요.'],
-        ['Delay Time · Feedback', 'Delay Time 은 한 번 반복되기까지의 시간(ms)이에요. Feedback 은 반복이 몇 번 이어질지 정하는 양이에요.'],
-        ['Wet / Dry', 'Dry 는 효과가 없는 원래 소리, Wet 은 이펙터를 지난 효과음이에요. 둘을 섞는 비율이 공간감의 양이에요.'],
+        ['Pre-delay', '직접음이 지나간 뒤 잔향이 시작되기까지의 틈(ms)이에요. 알맞게 주면 가사가 잔향에 덜 묻혀요.', 'fxTermPre'],
+        ['Delay Time · Feedback', 'Delay Time 은 한 번 반복되기까지의 시간(ms)이에요. Feedback 은 반복이 몇 번 이어질지 정하는 양이에요.', 'fxTermEcho'],
+        ['Wet / Dry', 'Dry 는 효과가 없는 원래 소리, Wet 은 이펙터를 지난 효과음이에요. 둘을 섞는 비율이 공간감의 양이에요.', 'fxTermWetDry'],
         ['FX Send / Return', 'Send 는 채널 소리를 이펙터로 보내는 길이에요. Return 은 효과음이 콘솔로 돌아와 메인에 섞이는 길이에요.']
       ],
       points: [
@@ -443,21 +510,22 @@
           { t: '약 500 ms', why: '아니에요. 500 ms 는 약 170 m 떨어졌을 때예요.' }] } },
       { title: '공간이 더하는 잔향 — 예배당도 리버브예요', visual: 'fxRoomDecay',
         body: '예배당은 그 자체로 커다란 리버브 장치예요. 스피커에서 나온 소리도 벽·천장에 반사되어 울림(잔향)이 생겨요. 잔향의 길이는 보통 <b>RT60</b> 으로 말해요. 소리를 멈춘 뒤 60 dB 작아질 때까지의 시간이에요. 공간이 크고 단단한 면(콘크리트·유리·돌)이 많을수록 길어요. 소리를 빨아들이는 것(흡음: 카펫·의자 쿠션·사람)이 많을수록 짧아요. 이미 울림이 많은 본당에서는 콘솔 리버브를 조금만 넣어도 충분해요. 거의 넣지 않아도 될 때도 있어요.',
-        more: '<ul><li>콘솔에서 넣은 리버브는 공간의 잔향에 <b>더해져요</b>. 공간의 울림을 콘솔에서 빼 줄 수는 없어요.</li> <li>사람이 가득 찬 예배 때는 사람과 옷이 소리를 빨아들여요. 그래서 빈 본당에서 리허설할 때보다 잔향이 짧아져요. 리허설 때 맞춘 리버브 양이 예배 때는 다르게 들릴 수 있어요.</li> <li>잔향이 길면 앞 음절의 울림이 다음 음절을 덮어 말이 뭉개져요. 그래서 말을 전하는 공간은 잔향이 짧을수록 유리해요.</li> <li>그림의 RT60 값들은 비교를 위한 <b>예시</b>예요. 우리 본당의 측정값이 아니에요.</li></ul>',
+        more: '<ul><li>콘솔에서 넣은 리버브는 공간의 잔향에 <b>더해져요</b>. 공간의 울림을 콘솔에서 빼 줄 수는 없어요.</li> <li>사람이 가득 찬 예배 때는 사람과 옷이 소리를 빨아들여요. 그래서 빈 본당에서 리허설할 때보다 잔향이 짧아져요. 리허설 때 맞춘 리버브 양이 예배 때는 다르게 들릴 수 있어요.</li> <li>잔향이 길면 앞 음절의 울림이 다음 음절을 덮어 말이 뭉개져요. 그래서 말을 전하는 공간은 잔향이 짧을수록 유리해요.</li> <li><b>알맞은 잔향 길이는 쓰임에 따라 달라요.</b> 말(설교·강연)은 짧을수록 또렷해요. 합창·교회음악은 조금 긴 울림이 어울려요. 그래서 예배당은 말과 노래 사이에서 알맞은 길이를 찾아야 해요.</li> <li>잔향 길이는 높이(주파수)마다 조금씩 달라요. 따로 말이 없으면 보통 500 Hz 의 값을 말해요.</li> <li>그림의 RT60 값들은 비교를 위한 <b>예시</b>예요. 우리 본당의 측정값이 아니에요.</li></ul>',
+        pics: [{ v: 'fxPicRoomEmpty', cap: '<b>빈 본당(리허설)</b>: 소리를 빨아들이는 것이 적어요. 울림이 길게 남아요.' }, { v: 'fxPicRoomFull', cap: '<b>사람이 가득 찬 예배</b>: 사람과 옷이 소리를 빨아들여 울림이 짧아져요. 리허설 때와 효과가 다르게 들릴 수 있어요. (길이는 교육용 그림)' }],
         check: { q: '사람이 가득 찬 예배 때는 빈 본당에서 리허설할 때보다 울림이 어떨까요?', options: [
           { t: '사람과 옷이 소리를 흡수해 잔향이 짧아져요', ok: true, why: '맞아요. 소리를 빨아들이는 것이 늘어 잔향이 짧아지기 때문이에요. 리허설 때 맞춘 효과가 달리 들릴 수 있어요.' },
           { t: '사람이 많으면 잔향이 길어져요', why: '아니에요. 사람은 소리를 빨아들여서 잔향을 줄여요.' },
           { t: '아무 차이가 없어요', why: '아니에요. 소리를 빨아들이는 것이 늘면 잔향이 달라져요.' }] } },
       { title: 'Reverb 와 Delay 의 차이', visual: 'fxRevVsDelay',
         body: '<b>리버브</b>는 아주 많은 반사가 촘촘히 이어지며 줄어드는 「울림」이에요. 소리를 큰 공간에 둔 것처럼 풍성하게 해요. <b>딜레이</b>는 같은 소리가 정해 둔 시간 뒤에 또렷하게 「반복」되는 효과예요. 산에서 「야호」 하면 돌아오는 메아리와 비슷해요. 리버브는 주로 <b>Decay(잔향 길이)·Pre-delay</b>로 조절해요. 딜레이는 <b>Delay Time(반복 간격)·Feedback(반복 횟수)</b>으로 조절해요.',
-        more: '<ul><li><b>MG12XU 내장 SPX(이펙터)</b>: 24개 프로그램 중 PROGRAM 노브로 골라요. (제조사 자료)<ul><li>리버브: REV HALL 1·2, REV ROOM 1·2, REV STAGE 1·2, REV PLATE 등</li> <li>딜레이: SINGLE DLY, DELAY, VOCAL ECHO 등</li> <li>PARAMETER 노브: 리버브에서는 Reverb Time, 딜레이에서는 Delay Time 을 바꿔요.</li></ul></li> <li><b>CL5 내장 이펙트</b> (제조사 자료)<ul><li>리버브: REV-X HALL·ROOM·PLATE, REVERB HALL·ROOM·STAGE·PLATE 등</li> <li>딜레이: MONO DELAY, STEREO DELAY, ECHO 등</li></ul></li> <li>Hall 은 크고 긴 울림이에요. Room 은 작은 방처럼 짧은 울림이에요. Plate 는 금속판 울림을 흉내 낸 밝은 잔향이에요.</li> <li>그림은 두 효과의 반사 모양을 비교한 <b>예시</b>예요.</li></ul>',
+        more: '<ul><li><b>MG12XU 내장 SPX(이펙터)</b>: 24개 프로그램 중 PROGRAM 노브로 골라요. (제조사 자료)<ul><li>리버브: REV HALL 1·2, REV ROOM 1·2, REV STAGE 1·2, REV PLATE 등</li> <li>딜레이: SINGLE DLY, DELAY, VOCAL ECHO 등</li> <li>PARAMETER 노브: 리버브에서는 Reverb Time, 딜레이에서는 Delay Time 을 바꿔요.</li></ul></li> <li><b>CL5 내장 이펙트</b> (제조사 자료)<ul><li>리버브: REV-X HALL·ROOM·PLATE, REVERB HALL·ROOM·STAGE·PLATE 등</li> <li>딜레이: MONO DELAY, STEREO DELAY, ECHO 등</li></ul></li> <li>Hall 은 크고 긴 울림이에요. Room 은 작은 방처럼 짧은 울림이에요. Plate 는 금속판 울림을 흉내 낸 밝은 잔향이에요.</li> <li><b>디지털 리버브를 만드는 두 방법</b>: 반사가 생기는 원리를 계산으로 흉내 내는 <b>알고리즘 리버브</b>가 가장 흔해요. 세밀하게 바꾸기 쉬워요. 실제 공간의 울림을 녹음한 견본(임펄스)을 쓰는 <b>컨볼루션 리버브</b>도 있어요. 실제 공간과 가장 비슷하지만 바꿀 수 있는 값은 적어요.</li> <li><b>딜레이로 만드는 다른 효과</b>: 아주 살짝 늦춘 소리를 섞으면 두 사람이 함께 부르는 듯한 <b>더블링</b>이 돼요. <b>코러스</b>는 늦춘 소리의 높이·크기를 천천히 흔들어 여러 명이 부르는 듯 풍성하게 해요. <b>플랜저·페이저</b>는 「슈웅」 하고 소리 색깔이 흘러가는 효과예요.</li> <li>그림은 두 효과의 반사 모양을 비교한 <b>예시</b>예요.</li></ul>',
         check: { q: '같은 소리가 「똑… 똑… 똑…」 또렷하게 반복되어 들려요. 어떤 이펙트일까요?', options: [
           { t: '딜레이', ok: true, why: '맞아요. 정해 둔 시간마다 또렷하게 반복되는 것이 딜레이이기 때문이에요.' },
           { t: '리버브', why: '아니에요. 리버브는 반사가 촘촘히 이어져 하나의 울림으로 들려요.' },
           { t: '컴프레서', why: '아니에요. 컴프레서는 음량 차이를 줄이는 장치예요.' }] } },
       { title: 'Decay 와 Pre-delay', visual: 'fxPredelay',
         body: '<b>Decay</b>(Reverb Time)는 잔향이 얼마나 오래 남는지예요. <b>Pre-delay</b> 는 직접음이 지나간 뒤 잔향이 시작되기까지의 틈이에요. Pre-delay 를 20–60 ms 쯤 줘 봐요. 그러면 가사의 첫 자음이 잔향에 덮이기 전에 먼저 들려 또렷해져요. 울림은 그 뒤에 풍성하게 따라와요. 너무 길면(약 100 ms 이상) 잔향이 따로 떨어진 메아리처럼 들릴 수 있어요.',
-        more: '<ul><li>Decay 가 길수록 풍성해요. 하지만 앞 음절의 울림이 다음 음절을 덮어요. 빠른 곡은 짧게, 느린 곡은 조금 길게 두는 것이 보통이에요.</li> <li>Pre-delay 는 「첫 반사가 오기까지 걸리는 시간」을 흉내 낸다고 생각해도 좋아요. 40 ms 는 소리가 약 14 m 를 더 돌아오는 시간이에요(40 ÷ 2.9).</li> <li>그림의 「자음 구간」은 직접음 뒤 첫 30 ms 를 나타낸 <b>교육용 어림값(근사)</b>이에요.</li></ul>',
+        more: '<ul><li>Decay 가 길수록 풍성해요. 하지만 앞 음절의 울림이 다음 음절을 덮어요. 빠른 곡은 짧게, 느린 곡은 조금 길게 두는 것이 보통이에요.</li> <li>Pre-delay 는 「첫 반사가 오기까지 걸리는 시간」을 흉내 낸다고 생각해도 좋아요. 40 ms 는 소리가 약 14 m 를 더 돌아오는 시간이에요(40 ÷ 2.9).</li> <li>리버브에는 다른 손잡이도 있어요. <b>Diffusion</b>(확산)은 반사가 얼마나 촘촘한지예요. <b>고음·저음 감쇠</b>(HF·LF Ratio 등)는 울림 속 고음과 저음이 얼마나 빨리 사라질지예요. 실제 공간에서는 고음이 먼저 사라져요.</li> <li>그림의 「자음 구간」은 직접음 뒤 첫 30 ms 를 나타낸 <b>교육용 어림값(근사)</b>이에요.</li></ul>',
         check: { q: '찬양 보컬에 리버브를 넣었더니 가사가 흐려요. 울림은 살리면서 가사를 또렷하게 하려면?', options: [
           { t: 'Pre-delay 를 조금(20–60 ms) 늘려요', ok: true, why: '맞아요. 자음이 잔향보다 먼저 들려 또렷해지고, 울림은 뒤에서 따라오기 때문이에요.' },
           { t: 'Decay 를 두 배로 늘려요', why: '아니에요. 잔향이 더 길어져 가사가 더 흐려져요.' },
@@ -471,7 +539,8 @@
           { t: '1000 ms', why: '아니에요. 1000 ms 는 60 BPM 의 한 박이에요.' }] } },
       { title: 'FX Send/Return 과 또렷함(명료도)', visual: 'fxSendReturn',
         body: '콘솔에서는 채널마다 이펙터를 따로 꽂지 않아요. 여러 채널이 <b>Send 노브</b>로 하나의 FX 버스에 소리를 보내요. 이펙터는 효과음(Wet)만 내보내요. 그 소리가 <b>FX Return</b> 으로 돌아와 메인에 섞여요. 원래 소리(Dry)는 채널 페이더로 정해요. 효과음 전체 양은 Return 으로 정해요. 리버브는 보통 <b>POST(페이더 뒤)</b>로 보내요. 그래야 페이더를 내리면 효과음도 함께 줄어요. PRE(페이더 앞)로 보내면 실수가 생길 수 있어요. 페이더를 내려도 효과음만 남아요.',
-        more: '<ul><li><b>MG12XU</b>: 채널의 AUX2/FX 노브가 AUX2 버스와 내장 이펙트(SPX)에 같은 양을 보내요. 효과음은 FX RTN 페이더로 ST(메인)나 GROUP 1-2 에 섞어요. FX RTN 페이더는 AUX 로 보내는 양에는 영향을 주지 않아요. 이펙트 ON 버튼과 풋 스위치(발로 밟는 스위치, 별매 FC5)로 효과를 켜고 끌 수 있어요. (제조사 자료)</li> <li>MG12XU 설명서의 빠른 시작: FX RTN 페이더를 「0」에 둬요. 그리고 FX RTN 페이더로 효과의 전체 깊이를 조절해요. (제조사 자료)</li> <li>MG12XU 채널의 ON 을 끄면 그 채널 소리는 AUX·GROUP 버스로도 가지 않아요. (제조사 자료)</li> <li><b>CL5</b>: 이펙트 랙(이펙터를 넣는 칸)이 8개 있어요. MIX 버스로 보내는 지점은 Pre EQ · Pre Fader · Post On(페이더·ON 뒤) 중에서 골라요. (제조사 자료)</li> <li><b>공간감과 또렷함(명료도)</b>: 설교·기도·광고는 리버브를 짧고 적게(또는 끄고) 해요. 찬양은 조금 더 써요. 리버브는 회중석에서 「있는 듯 없는 듯」할 때가 알맞은 경우가 많아요.</li> <li>이펙터를 채널에 직접 꽂는 방식(Insert)도 있어요. 이때는 이펙터의 Wet/Dry(Mix) 비율로 양을 정해요. Send/Return 방식에서는 이펙터를 100% Wet 으로 둬요. 그리고 Send·Return 양으로 조절해요.</li></ul>',
+        more: '<ul><li><b>MG12XU</b>: 채널의 AUX2/FX 노브가 AUX2 버스와 내장 이펙트(SPX)에 같은 양을 보내요. 효과음은 FX RTN 페이더로 ST(메인)나 GROUP 1-2 에 섞어요. FX RTN 페이더는 AUX 로 보내는 양에는 영향을 주지 않아요. 이펙트 ON 버튼과 풋 스위치(발로 밟는 스위치, 별매 FC5)로 효과를 켜고 끌 수 있어요. (제조사 자료)</li> <li>MG12XU 설명서의 빠른 시작: FX RTN 페이더를 「0」에 둬요. 그리고 FX RTN 페이더로 효과의 전체 깊이를 조절해요. (제조사 자료)</li> <li>MG12XU 채널의 ON 을 끄면 그 채널 소리는 AUX·GROUP 버스로도 가지 않아요. (제조사 자료)</li> <li><b>CL5</b>: 이펙트 랙(이펙터를 넣는 칸)이 8개 있어요. MIX 버스로 보내는 지점은 Pre EQ · Pre Fader · Post On(페이더·ON 뒤) 중에서 골라요. (제조사 자료)</li> <li><b>공간감과 또렷함(명료도)</b>: 설교·기도·광고는 리버브를 짧고 적게(또는 끄고) 해요. 찬양은 조금 더 써요. 리버브는 회중석에서 「있는 듯 없는 듯」할 때가 알맞은 경우가 많아요.</li> <li>이펙터를 채널에 직접 꽂는 방식(Insert)도 있어요. 이때는 이펙터의 Wet/Dry(Mix) 비율로 양을 정해요. Send/Return 방식에서는 이펙터를 100% Wet 으로 둬요. 그리고 Send·Return 양으로 조절해요.</li> <li><b>무엇을 어디에 연결할까요?</b> 인서트에 넣으면 원래 소리가 모두 이펙터를 지나가요. 그래서 소리 전체를 바꾸는 컴프레서·게이트·EQ 를 넣어요. 원래 소리에 효과음을 「더하는」 리버브·딜레이는 AUX(Send/Return)로 연결해요.</li></ul>',
+        pics: [{ v: 'fxPicInsert', cap: '<b>인서트</b>: 채널 소리가 이펙터를 「모두」 지나가요. 컴프레서·게이트·EQ 처럼 소리 자체를 바꿀 때 써요.' }, { v: 'fxPicAux', cap: '<b>AUX (Send/Return)</b>: 원래 소리는 그대로 가고, 일부만 이펙터로 보내 효과음을 더해요. 리버브·딜레이에 써요.' }],
         check: { q: '리버브를 PRE 로 보내고 있어요. 설교자 마이크 페이더를 끝까지 내리면 어떻게 될까요?', options: [
           { t: '리버브 소리만 계속 남아 들려요', ok: true, why: '맞아요. PRE 는 페이더 앞에서 보내서, 페이더와 상관없이 효과음이 나가기 때문이에요.' },
           { t: '리버브도 함께 꺼져요', why: '아니에요. 그것은 POST 로 보낼 때예요.' },
@@ -497,7 +566,7 @@
         { t: '짧은 Decay, 적은 양 (또는 끔)', ok: true, why: '맞아요. 말은 또렷함이 먼저라 울림을 짧고 적게 해야 하기 때문이에요.' },
         { t: '긴 Decay, 많은 양', why: '아니에요. 말이 다음 음절의 울림에 덮여 알아듣기 어려워져요.' },
         { t: '템포에 맞춘 딜레이를 크게', why: '아니에요. 말에 딜레이를 걸면 말이 겹쳐 들려요.' }] },
-      { q: '무대에서 34 m 떨어진 뒤쪽 벽에 소리가 튕겨 무대로 돌아와요(왕복 68 m). 약 얼마 뒤에 도착할까요?', options: [
+      { q: '그림처럼 무대에서 34 m 떨어진 뒤쪽 벽에 소리가 튕겨 무대로 돌아와요(왕복 68 m). 약 얼마 뒤에 도착할까요?', visual: 'fxQuizWall', options: [
         { t: '약 20 ms', why: '아니에요. 1 m 에 약 2.9 ms 라서 68 m 면 약 200 ms 예요.' },
         { t: '약 200 ms', ok: true, why: '맞아요. 68 ÷ 343 ≈ 0.198 s 이기 때문이에요. 따로 들리는 메아리가 될 만큼 늦어요.' },
         { t: '약 2 s', why: '아니에요. 2 s 면 약 690 m 를 가야 해요.' }] },
@@ -529,7 +598,10 @@
       { t: 'Yamaha CL5 레퍼런스 매뉴얼 — Effect Type List(REV-X·REVERB·DELAY 종류, 탭 템포)', url: 'https://manualslib.mx/manual/582/Yamaha-Cl5.html?page=294' },
       { t: 'Yamaha CL5 레퍼런스 매뉴얼 — Mixer Basic Parameters(Mix Send Point: Pre EQ/Pre Fader/Post On, 이펙트 8개)', url: 'https://manualslib.mx/manual/582/Yamaha-Cl5.html?page=334' },
       { t: 'Yamaha CL 시리즈 브로슈어(제조사) — Effect Rack 8', url: 'https://dk.yamaha.com/files/download/brochure/6/329186/CL_brochure_Jan2013_L_en.pdf' },
-      { t: 'W3C Web Audio API — ConvolverNode·DelayNode(실습 소리 처리)', url: 'https://www.w3.org/TR/webaudio/#ConvolverNode' }
+      { t: 'W3C Web Audio API — ConvolverNode·DelayNode(실습 소리 처리)', url: 'https://www.w3.org/TR/webaudio/#ConvolverNode' },
+      { t: '무대예술전문인 자격검정 표준교재 「무대음향」(국립극장 · 교보문고, 2023) — 8장 시간 제어계(리버브 종류 · 파라미터 · 딜레이 · 코러스 · 플랜저 · 페이저) p.260–266', url: '' },
+      { t: '무대예술전문인 자격검정 표준교재 「무대음향」(국립극장 · 교보문고, 2023) — 4장 인서트 연결과 억스 연결 p.144–146', url: '' },
+      { t: '무대예술전문인 자격검정 표준교재 「무대음향」(국립극장 · 교보문고, 2023) — 11장 초기 반사음 · 잔향 · 최적 잔향시간 · 잔향시간(RT60) p.328–331, 338', url: '' }
     ]
   };
 })();

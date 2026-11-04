@@ -111,57 +111,62 @@
   /* ---------------------------------------------------------------- 「그림으로 보기」 (2026-11-04)
      - 용어 · 확인 문제 · 심화에 붙이는 작은 그림. viewBox 400 안팎, 글자 13 이상
      - class 는 mod-pic-svg (최소 폭 = viewBox 의 85% — 휴대폰에서도 글자 13 이 11px 이상으로 보이게, 넘치면 상자 안에서 옆으로 밀어 봐요) */
-  function psvg(w, h, body, label) { return '<svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" font-family="Pretendard, system-ui, sans-serif" style="display:block;width:100%;max-width:' + w + 'px;min-width:' + Math.round(w * 0.85) + 'px;height:auto;margin:0 auto">' + body + '</svg>'; }
+  function psvg(w, h, body, label) { return '<div style="contain:inline-size;overflow-x:auto"><svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" font-family="Pretendard, system-ui, sans-serif" style="display:block;width:100%;max-width:' + w + 'px;min-width:' + Math.round(w * 0.85) + 'px;height:auto;margin:0 auto">' + body + '</svg></div>'; }
   function num(x, y, n, col) { return '<circle cx="' + x + '" cy="' + y + '" r="11" fill="' + col + '"/>' + t(x, y + 5, n, { size: 13, weight: 800, fill: '#fff' }); }
   function fd(x, y, h, pos, col) { return '<path d="M' + x + ' ' + y + 'V' + (y + h) + '" stroke="#475569" stroke-width="3"/>' + rect(x - 8, y + pos - 5, 16, 10, col || '#e5e7eb', null, 2); }
   function knob(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="11" fill="#e5e7eb" stroke="#94a3b8" stroke-width="1.5"/><path d="M' + x + ' ' + y + 'L' + x + ' ' + (y - 9) + '" stroke="' + C.ink + '" stroke-width="2.5"/>'; }
 
   // 용어 SELECT — 고른 채널 하나를 노브 한 벌로
   V.x32SelectMini = function () {
-    var s = rect(4, 4, 178, 128, '#1f2933', null, 10);
-    for (var i = 0; i < 5; i++) { var x = 26 + i * 34, on = i === 2; s += fd(x, 14, 56, 30) + rect(x - 13, 80, 26, 16, on ? '#fbbf24' : '#64748b', null, 4) + t(x, 120, String(i + 1), { size: 13, weight: 800, fill: on ? '#fde68a' : '#cbd5e1' }); }
-    s += t(93, 109, 'SELECT', { size: 13, fill: '#94a3b8', weight: 700 });
-    s += arrow(186, 88, 214, 88, C.orange) + rect(216, 14, 140, 118, '#fff7ed', C.orange, 10) + t(286, 36, '노브 한 벌', { size: 14, weight: 800, fill: C.orange });
-    [0, 1, 2, 3].forEach(function (i) { s += knob(240 + i * 31, 66); });
-    s += t(286, 104, '지금은 CH3 만', { size: 13, weight: 800 }) + t(286, 122, '조절해요', { size: 13, fill: C.sub });
-    return psvg(360, 136, s, 'SELECT 를 누른 채널 하나를 노브 한 벌로 조절해요');
+    var s = rect(4, 4, 148, 128, '#1f2933', null, 10);
+    for (var i = 0; i < 4; i++) { var x = 26 + i * 34, on = i === 2; s += fd(x, 14, 56, 30) + rect(x - 13, 80, 26, 16, on ? '#fbbf24' : '#64748b', null, 4) + t(x, 120, String(i + 1), { size: 13, weight: 800, fill: on ? '#fde68a' : '#cbd5e1' }); }
+    s += t(78, 109, 'SELECT', { size: 13, fill: '#94a3b8', weight: 700 });
+    s += arrow(154, 88, 172, 88, C.orange) + rect(174, 14, 122, 118, '#fff7ed', C.orange, 10) + t(235, 36, '노브 한 벌', { size: 14, weight: 800, fill: C.orange });
+    [0, 1, 2, 3].forEach(function (i) { s += knob(196 + i * 26, 66); });
+    s += t(235, 104, '지금은 CH3 만', { size: 13, weight: 800 }) + t(235, 122, '조절해요', { size: 13, fill: C.sub });
+    return psvg(300, 136, s, 'SELECT 를 누른 채널 하나를 노브 한 벌로 조절해요');
   };
+
 
   // 용어 레이어 — 같은 페이더에 다른 채널 묶음을 불러오기
   V.x32LayerMini = function () {
     var s = '', tabs = [['1–16', false], ['17–32', true], ['AUX·FX', false], ['BUS', false]];
-    tabs.forEach(function (b, i) { var x = 10 + i * 60; s += rect(x, 6, 56, 24, b[1] ? '#fbbf24' : '#e2e8f0', b[1] ? '#b45309' : '#94a3b8', 6) + t(x + 28, 23, b[0], { size: 13, weight: 800, fill: b[1] ? '#111827' : C.sub }); });
-    s += rect(10, 34, 236, 98, '#1f2933', null, 8);
-    for (var i = 0; i < 7; i++) { var x = 30 + i * 32; s += t(x, 54, String(17 + i), { size: 13, weight: 800, fill: '#fde68a' }) + fd(x, 62, 58, 14 + (i * 13) % 34); }
-    s += t(306, 52, '책장을', { size: 14, weight: 800, fill: C.ink }) + t(306, 72, '넘기듯', { size: 14, weight: 800, fill: C.ink }) + t(306, 98, '같은 페이더에', { size: 13, fill: C.sub }) + t(306, 116, '다른 채널이 와요', { size: 13, fill: C.sub });
-    return psvg(360, 136, s, '레이어 버튼으로 같은 페이더에 다른 채널 묶음을 불러와요');
+    tabs.forEach(function (b, i) { var x = 6 + i * 72; s += rect(x, 6, 66, 24, b[1] ? '#fbbf24' : '#e2e8f0', b[1] ? '#b45309' : '#94a3b8', 6) + t(x + 33, 23, b[0], { size: 13, weight: 800, fill: b[1] ? '#111827' : C.sub }); });
+    s += rect(6, 36, 288, 96, '#1f2933', null, 8);
+    for (var i = 0; i < 8; i++) { var x = 26 + i * 35; s += t(x, 56, String(17 + i), { size: 13, weight: 800, fill: '#fde68a' }) + fd(x, 64, 56, 14 + (i * 13) % 34); }
+    s += t(150, 154, '책장을 넘기듯', { size: 14, weight: 800, fill: C.ink }) + t(150, 174, '같은 페이더에 다른 채널이 와요', { size: 13, fill: C.sub });
+    return psvg(300, 180, s, '레이어 버튼으로 같은 페이더에 다른 채널 묶음을 불러와요');
   };
+
 
   // 용어 Sends on Fader — 페이더가 맡는 일이 바뀌어요
   V.x32SofMini = function () {
-    function desk(x, title, col, pos, out, outCol) { var h = t(x + 70, 18, title, { size: 13, weight: 800, fill: outCol }) + rect(x, 26, 140, 70, '#1f2933', null, 8); pos.forEach(function (p, i) { h += fd(x + 22 + i * 32, 36, 50, p, col); }); return h + t(x + 70, 116, out, { size: 13, weight: 800, fill: outCol }); }
-    var s = desk(6, '평소', '#e5e7eb', [14, 22, 10, 30], '= 메인으로 섞는 양', C.teal) + desk(214, '버튼 켜고 BUS 1 고름', '#fbbf24', [8, 38, 40, 34], '= BUS 1 로 보내는 양', C.orange);
-    s += arrow(150, 61, 210, 61, C.orange) + rect(156, 70, 50, 22, C.orange, null, 5) + t(181, 86, 'SoF', { size: 13, weight: 800, fill: '#fff' });
-    return psvg(360, 126, s, 'Sends on Fader 를 켜면 페이더가 BUS 로 보내는 양이 돼요');
+    function desk(x, title, col, pos, o1, o2, outCol) { var h = t(x + 59, 18, title, { size: 13, weight: 800, fill: outCol }) + rect(x, 26, 118, 70, '#1f2933', null, 8); pos.forEach(function (p, i) { h += fd(x + 20 + i * 26, 36, 50, p, col); }); return h + t(x + 59, 116, o1, { size: 13, weight: 800, fill: outCol }) + t(x + 59, 134, o2, { size: 13, weight: 800, fill: outCol }); }
+    var s = desk(4, '평소', '#e5e7eb', [14, 22, 10, 30], '메인으로', '섞는 양', C.teal) + desk(178, 'BUS 1 을 고르면', '#fbbf24', [8, 38, 40, 34], 'BUS 1 로', '보내는 양', C.orange);
+    s += arrow(124, 54, 174, 54, C.orange) + rect(126, 64, 46, 22, C.orange, null, 5) + t(149, 80, 'SoF', { size: 13, weight: 800, fill: '#fff' });
+    return psvg(300, 140, s, 'Sends on Fader 를 켜면 페이더가 BUS 로 보내는 양이 돼요');
   };
+
 
   // 용어 DCA — 여러 채널 페이더의 리모컨
   V.x32DcaMini = function () {
-    var s = rect(8, 20, 64, 104, C.purple, null, 10) + t(40, 40, 'DCA 1', { size: 13, weight: 800, fill: '#fff' }) + '<path d="M40 50V114" stroke="#ddd6fe" stroke-width="3"/>' + rect(30, 90, 20, 10, '#fff', null, 2) + arrow(58, 62, 58, 94, '#fde68a');
-    s += '<path d="M72 36 H88 V9 H308" fill="none" stroke="' + C.purple + '" stroke-width="2" stroke-dasharray="4 3"/>' ;
-    ['기타', '건반', '베이스', '드럼'].forEach(function (n, i) { var x = 128 + i * 60;
-      s += '<path d="M' + x + ' 9V22" stroke="' + C.purple + '" stroke-width="2" stroke-dasharray="4 3"/>' + rect(x - 24, 22, 48, 80, '#f5f3ff', '#c4b5fd', 6) + t(x, 40, n, { size: 13, weight: 800 }) + fd(x, 48, 46, 18) + t(x, 120, '−6 dB', { size: 13, weight: 800, fill: C.purple });
+    var s = rect(6, 20, 56, 104, C.purple, null, 10) + t(34, 40, 'DCA 1', { size: 13, weight: 800, fill: '#fff' }) + '<path d="M34 50V114" stroke="#ddd6fe" stroke-width="3"/>' + rect(24, 90, 20, 10, '#fff', null, 2) + arrow(52, 62, 52, 94, '#fde68a');
+    s += '<path d="M62 36 H74 V9 H274" fill="none" stroke="' + C.purple + '" stroke-width="2" stroke-dasharray="4 3"/>';
+    ['기타', '건반', '베이스', '드럼'].forEach(function (n, i) { var x = 106 + i * 56;
+      s += '<path d="M' + x + ' 9V22" stroke="' + C.purple + '" stroke-width="2" stroke-dasharray="4 3"/>' + rect(x - 23, 22, 46, 80, '#f5f3ff', '#c4b5fd', 6) + t(x, 40, n, { size: 13, weight: 800 }) + fd(x, 48, 46, 18) + t(x, 120, '−6 dB', { size: 13, weight: 800, fill: C.purple });
     });
-    s += t(220, 140, '페이더는 제자리 · 나가는 크기만 함께', { size: 13, fill: C.sub });
-    return psvg(360, 148, s, 'DCA 는 여러 채널의 크기를 한 번에 바꾸는 리모컨이에요');
+    s += t(178, 142, '페이더는 제자리 · 크기만 함께', { size: 13, fill: C.sub });
+    return psvg(300, 148, s, 'DCA 는 여러 채널의 크기를 한 번에 바꾸는 리모컨이에요');
   };
+
 
   // 용어 씬 — 게임 저장처럼 SAVE · GO
   V.x32SceneMini = function () {
-    var s = '', st = [['1', '리허설 끝', '설정 완성', C.teal], ['2', 'SAVE', '「01 주일 1부」', C.blue], ['3', '다음 주 GO', '그대로 돌아와요', C.green]];
-    st.forEach(function (r, i) { var x = 4 + i * 120; s += rect(x, 8, 108, 108, '#fff', r[3], 10) + num(x + 54, 32, r[0], r[3]) + t(x + 54, 70, r[1], { size: 14, weight: 800, fill: r[3] }) + t(x + 54, 94, r[2], { size: 13, fill: C.sub }); if (i < 2) s += arrow(x + 108, 62, x + 120, 62, C.ink); });
-    return psvg(360, 122, s, '씬은 설정 전체를 저장했다가 한 번에 불러와요');
+    var s = '', st = [['1', '리허설 끝', '설정 완성', C.teal], ['2', 'SAVE', '「01 주일 1부」', C.blue], ['3', '다음 주 GO', '같은 상태로', C.green]];
+    st.forEach(function (r, i) { var x = 4 + i * 102; s += rect(x, 8, 90, 108, '#fff', r[3], 10) + num(x + 45, 32, r[0], r[3]) + t(x + 45, 70, r[1], { size: 14, weight: 800, fill: r[3] }) + t(x + 45, 94, r[2], { size: 13, fill: C.sub }); if (i < 2) s += arrow(x + 90, 62, x + 102, 62, C.ink); });
+    return psvg(300, 122, s, '씬은 설정 전체를 저장했다가 한 번에 불러와요');
   };
+
 
   // 확인 문제 1 — 레이어가 바뀐 줄 모르고 페이더를 내림
   V.x32QuizLayer = function () {

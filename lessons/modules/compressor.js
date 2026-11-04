@@ -149,6 +149,69 @@
         t(485, 202, '→ 피드백 여유가 그만큼 줄어요', { size: 11, fill: C.red, weight: 700 });
       return svg(600, 214, left + right, '과도한 압축의 펌핑과 피드백 여유 감소');
     };
+
+    /* ------------------------------------------------------------- 2026-11-04 「그림으로 보기」: 용어 미니 그림 · 단계 · ○/× 비교 */
+    function svgM(w, h, body, label) { return svg(w, h, body, label).replace('<svg class="mod-svg"', '<svg class="mod-svg" style="min-width:0"'); }
+    function arrowR(x1, y, x2, col, w) { return '<path d="M' + x1 + ' ' + y + 'H' + x2 + '" stroke="' + col + '" stroke-width="' + (w || 2.4) + '"/><path d="M' + (x2 - 7) + ' ' + (y - 5) + 'L' + x2 + ' ' + y + 'L' + (x2 - 7) + ' ' + (y + 5) + '" fill="none" stroke="' + col + '" stroke-width="' + (w || 2.4) + '"/>'; }
+    VIS.compTermLine = function () {   // 선을 넘는 막대만 눌러 줄임(넘은 부분: 흐린 색 → 줄어든 뒤)
+      var H = [40, 86, 58, 100, 34, 74], base = 100, thr = 60, R = 3;
+      var bars = H.map(function (h, i) { var x = 18 + i * 44, out = h > thr ? thr + (h - thr) / R : h;
+        return (h > thr ? '<rect x="' + x + '" y="' + (base - h) + '" width="26" height="' + (h - out) + '" rx="4" fill="' + C.orange + '" fill-opacity=".22" stroke="' + C.orange + '" stroke-dasharray="3 2"/>' : '') +
+          '<rect x="' + x + '" y="' + (base - out) + '" width="26" height="' + out + '" rx="4" fill="' + (h > thr ? C.teal : '#94a3b8') + '"/>'; }).join('');
+      return svgM(360, 130, '<path d="M10 ' + base + 'H280" stroke="' + C.ink + '"/>' + bars + '<path d="M10 ' + (base - thr) + 'H288" stroke="' + C.red + '" stroke-width="2.5" stroke-dasharray="8 5"/>' +
+        t(292, base - thr - 2, 'Thres', { size: 13, weight: 800, fill: C.red, anchor: 'start' }) + t(292, base - thr + 14, 'hold', { size: 13, weight: 800, fill: C.red, anchor: 'start' }) +
+        t(10, 124, '선을 넘은 부분(점선)만 눌러 줄여요', { size: 14, weight: 700, anchor: 'start' }), 'Threshold 선을 넘은 부분만 줄이는 모습');
+    };
+    VIS.compTermRatio = function () {   // 4:1 — 넘은 4칸이 1칸으로
+      function stack(x, n, col, lab, sub) { var h = ''; for (var i = 0; i < n; i++) h += '<rect x="' + x + '" y="' + (86 - (i + 1) * 17) + '" width="56" height="14" rx="3" fill="' + col + '"/>'; return h + t(x + 28, 106, lab, { size: 15, weight: 800, fill: col }) + t(x + 28, 124, sub, { size: 13, fill: C.sub }); }
+      return svgM(360, 130, '<path d="M14 86H346" stroke="' + C.red + '" stroke-width="2.5" stroke-dasharray="8 5"/>' + t(346, 98, 'Threshold', { size: 12, fill: C.red, weight: 700, anchor: 'end' }) +
+        stack(30, 4, C.orange, '넘은 4 dB', '들어온 소리') + arrowR(110, 52, 168, C.ink, 3) + t(139, 40, '4:1', { size: 18, weight: 900 }) + stack(190, 1, C.teal, '1 dB 만', '나간 소리'), 'Ratio 4:1 이면 넘은 4 dB 가 1 dB 로 줄어요');
+    };
+    VIS.compTermMakeup = function () {
+      function bar(x, top, peak, lab, col) { return '<rect x="' + x + '" y="' + (100 - top) + '" width="46" height="' + top + '" rx="5" fill="' + col + '"/>' + '<path d="M' + (x - 4) + ' ' + (100 - peak) + 'h54" stroke="' + C.ink + '" stroke-width="2"/>' + t(x + 23, 120, lab, { size: 13.5, weight: 800, fill: col }); }
+      return svgM(360, 130, '<path d="M8 100H352" stroke="' + C.ink + '"/>' + bar(22, 86, 86, '컴프 전', '#64748b') + arrowR(76, 60, 112, C.ink) + bar(124, 58, 58, '눌린 뒤', C.orange) + arrowR(178, 60, 214, C.ink) + bar(226, 84, 84, 'Makeup', C.teal) +
+        t(300, 30, '줄어든', { size: 13, fill: C.teal, weight: 700, anchor: 'start' }) + t(300, 48, '만큼', { size: 13, fill: C.teal, weight: 700, anchor: 'start' }) + t(300, 66, '다시', { size: 13, fill: C.teal, weight: 700, anchor: 'start' }) + t(300, 84, '올려요', { size: 13, fill: C.teal, weight: 700, anchor: 'start' }), 'Makeup Gain 으로 줄어든 크기를 다시 올리는 모습');
+    };
+    VIS.compPicSteps = function () {
+      var S = [['1', 'Ratio 정하기', '말 2:1–3:1', '노래 3:1–4:1'], ['2', 'Threshold 내리기', '큰 부분에서', 'GR 3–6 dB 켜질 때까지'], ['3', 'Makeup 올리기', '줄어든 만큼', '원래 크기로'], ['4', '껐다 켜며 비교', '크기를 맞춘 채', '귀로 들어 봐요']];
+      return svg(600, 168, S.map(function (s, i) { var x = 6 + i * 150;
+        return '<rect x="' + x + '" y="8" width="134" height="150" rx="12" fill="' + (i === 1 ? '#ecfeff' : C.bg) + '" stroke="' + (i === 1 ? C.teal : C.line) + '" stroke-width="1.6"/><circle cx="' + (x + 67) + '" cy="34" r="15" fill="' + C.teal + '"/>' + t(x + 67, 40, s[0], { size: 15, weight: 800, fill: '#fff' }) +
+          t(x + 67, 76, s[1], { size: 13, weight: 800 }) + t(x + 67, 106, s[2], { size: 12, fill: C.sub }) + t(x + 67, 126, s[3], { size: 12, fill: C.sub }) + (i < 3 ? arrowR(x + 136, 84, x + 148, C.ink, 2) : ''); }).join(''), '컴프레서를 맞추는 순서 네 단계');
+    };
+    function grPanel(ok) {   // GR 미터 시간 변화(위에서 아래로 켜짐) — 계산으로 만든 예시
+      var T = ok ? -14 : -36, R = ok ? 3 : 20, rel = ok ? 200 : 60, f = waCurve(T, 0, R), g = 0, d = '', ka = 1 - Math.exp(-0.01 / tau(5)), kr = 1 - Math.exp(-0.01 / tau(rel)), x0 = 40, x1 = 280, y0 = 50, y1 = 170;
+      for (var s = 0; s <= 6.0001; s += 0.01) { var x = phrase(2 + s), tg = Math.max(0, x - f(x)); g += (tg - g) * (tg > g ? ka : kr); d += (d ? 'L' : 'M') + (x0 + s / 6 * (x1 - x0)).toFixed(1) + ' ' + (y0 + Math.min(g, 24) / 24 * (y1 - y0)).toFixed(1); }
+      var col = ok ? C.green : C.red, grid = [0, 6, 12, 18, 24].map(function (v) { var y = y0 + v / 24 * (y1 - y0); return '<path d="M' + x0 + ' ' + y + 'H' + x1 + '" stroke="' + C.line + '" stroke-dasharray="3 3"/>' + t(x0 - 5, y + 4, v ? '−' + v : '0', { size: 11, fill: C.sub, anchor: 'end' }); }).join('');
+      return svgM(296, 210, '<rect x="2" y="2" width="292" height="206" rx="12" fill="' + C.bg + '" stroke="' + col + '" stroke-width="1.8"/>' + t(148, 26, ok ? '○ 가볍게 (큰 부분만 조금)' : '× 너무 세게 (늘 많이)', { size: 14, weight: 800, fill: col }) +
+        grid + '<path d="' + d + 'L' + x1 + ' ' + y0 + 'L' + x0 + ' ' + y0 + 'Z" fill="' + col + '" fill-opacity=".18"/><path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="2.4"/>' +
+        t(x0, 44, 'GR (dB) ↓', { size: 11, fill: C.sub, anchor: 'start' }) + t((x0 + x1) / 2, 192, '시간 → (조용한 절 → 힘찬 후렴, 예시)', { size: 11, fill: C.sub }), ok ? '가볍게 건 컴프레서의 GR 변화' : '너무 세게 건 컴프레서의 GR 변화');
+    }
+    VIS.compPicGood = function () { return grPanel(true); };
+    VIS.compPicBad = function () { return grPanel(false); };
+    VIS.compPicDuck = function () {
+      var x0 = 110, x1 = 584, fx = function (s) { return x0 + s / 10 * (x1 - x0); }, talk = [[2, 5.2], [6.4, 8.2]];
+      function on(s) { return talk.some(function (k) { return s >= k[0] && s < k[1]; }); }
+      var sp = '', mu = '', g = 0;
+      for (var s = 0; s <= 10.0001; s += 0.05) { var tk = on(s), v = tk ? 26 + 10 * Math.abs(Math.sin(s * 7)) : 0; sp += (sp ? 'L' : 'M') + fx(s).toFixed(1) + ' ' + (78 - v).toFixed(1);
+        g += ((tk ? 1 : 0) - g) * (tk ? 0.5 : 0.08); var m = 34 - 22 * g + 3 * Math.sin(s * 4); mu += (mu ? 'L' : 'M') + fx(s).toFixed(1) + ' ' + (170 - m).toFixed(1); }
+      return svg(600, 204, '<rect x="' + x0 + '" y="20" width="' + (x1 - x0) + '" height="60" fill="' + C.bg + '" stroke="' + C.line + '"/><rect x="' + x0 + '" y="110" width="' + (x1 - x0) + '" height="62" fill="' + C.bg + '" stroke="' + C.line + '"/>' +
+        talk.map(function (k) { return '<rect x="' + fx(k[0]) + '" y="20" width="' + (fx(k[1]) - fx(k[0])) + '" height="152" fill="' + C.amber + '" fill-opacity=".12"/>'; }).join('') +
+        '<path d="' + sp + 'L' + x1 + ' 78L' + x0 + ' 78Z" fill="' + C.blue + '" fill-opacity=".25"/><path d="' + sp + '" fill="none" stroke="' + C.blue + '" stroke-width="2"/>' + '<path d="' + mu + 'L' + x1 + ' 170L' + x0 + ' 170Z" fill="' + C.teal + '" fill-opacity=".25"/><path d="' + mu + '" fill="none" stroke="' + C.teal + '" stroke-width="2.4"/>' +
+        t(100, 46, '사회자 마이크', { size: 13, weight: 800, fill: C.blue, anchor: 'end' }) + t(100, 64, '(듣는 소리)', { size: 11.5, fill: C.sub, anchor: 'end' }) + t(100, 136, '배경음악', { size: 13, weight: 800, fill: C.teal, anchor: 'end' }) + t(100, 154, '(줄어드는 소리)', { size: 11.5, fill: C.sub, anchor: 'end' }) +
+        t((fx(2) + fx(5.2)) / 2, 100, '말할 때 ↓ 작아짐', { size: 12, weight: 800, fill: '#b45309' }) + t((fx(5.2) + fx(6.4)) / 2, 100, '다시 ↑', { size: 12, weight: 800, fill: C.teal }) +
+        t(584, 194, '소리 크기 · 시간 → (교육용 그림)', { size: 11, fill: C.sub, anchor: 'end' }), '사회자가 말할 때 배경음악이 자동으로 작아지는 더킹');
+    };
+    VIS.compQuizCurve = function () {
+      var x0 = 60, x1 = 330, y0 = 20, y1 = 230, T = -18, fx = function (d) { return x0 + (d + 36) / 36 * (x1 - x0); }, fy = function (d) { return y1 - (d + 36) / 36 * (y1 - y0); };
+      var grid = [-36, -30, -24, -18, -12, -6, 0].map(function (d) { return '<path d="M' + fx(d) + ' ' + y0 + 'V' + y1 + 'M' + x0 + ' ' + fy(d) + 'H' + x1 + '" stroke="' + C.line + '" stroke-width=".8"/>' + t(fx(d), y1 + 16, nd(d), { size: 11, fill: C.sub }) + t(x0 - 6, fy(d) + 4, nd(d), { size: 11, fill: C.sub, anchor: 'end' }); }).join('');
+      var line = 'M' + fx(-36) + ' ' + fy(-36) + 'L' + fx(T) + ' ' + fy(T) + 'L' + fx(0) + ' ' + fy(T + 18 / 4);
+      return svg(600, 262, grid + '<path d="M' + fx(-36) + ' ' + fy(-36) + 'L' + fx(0) + ' ' + fy(0) + '" stroke="#94a3b8" stroke-dasharray="5 4"/>' + '<path d="' + line + '" fill="none" stroke="' + C.teal + '" stroke-width="3"/>' +
+        '<path d="M' + fx(T) + ' ' + y0 + 'V' + y1 + '" stroke="' + C.red + '" stroke-dasharray="6 4" stroke-width="1.6"/>' + t(fx(T) - 4, y0 + 14, 'Threshold −18', { size: 11.5, fill: C.red, weight: 800, anchor: 'end' }) +
+        '<path d="M' + fx(-6) + ' ' + y1 + 'V' + y0 + '" stroke="' + C.orange + '" stroke-width="2" stroke-dasharray="3 3"/>' + t(fx(-6) + 4, y1 - 8, '입력 −6', { size: 11.5, fill: C.orange, weight: 800, anchor: 'start' }) +
+        t((x0 + x1) / 2, 258, '들어온 소리 (dB)', { size: 11, fill: C.sub }) +
+        t(360, 60, '청록 선 = Ratio 4:1', { size: 13, weight: 800, fill: C.teal, anchor: 'start' }) + t(360, 84, '회색 점선 = 컴프 없음(1:1)', { size: 12, fill: C.sub, anchor: 'start' }) +
+        t(360, 124, '입력 −6 dB 는 Threshold 를', { size: 12.5, anchor: 'start' }) + t(360, 144, '몇 dB 넘었나요?', { size: 12.5, anchor: 'start' }) + t(360, 172, '그중 얼마가 줄어들까요?', { size: 12.5, anchor: 'start', weight: 700 }), 'Threshold −18 dB, Ratio 4:1 전달 곡선과 입력 −6 dB 위치');
+    };
   }
 
   /* ------------------------------------------------------------------ 녹음 불러오기 (fx-space 와 함께 씀) */

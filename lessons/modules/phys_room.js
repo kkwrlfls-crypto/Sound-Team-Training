@@ -357,7 +357,7 @@
     var s = t(200, 16, '말이 울려서 잘 안 들릴 때 — 해 볼 순서', { size: 13.5, weight: 800 });
     steps.forEach(function (st, i) {
       var x = 4 + (i % 2) * 200, y = 28 + Math.floor(i / 2) * 76;
-      s += rect(x, y, 192, 66, '#fff', st[2], 10) + num(x + 20, y + 22, String(i + 1), st[2]) + t(x + 34, y + 27, st[0], { size: 13, weight: 800, fill: st[2], anchor: 'start' }) + t(x + 34, y + 49, st[1], { size: 13, fill: C.sub, anchor: 'start' });
+      s += rect(x, y, 192, 66, '#fff', st[2], 10) + '<circle cx="' + (x + 20) + '" cy="' + (y + 22) + '" r="10" fill="' + st[2] + '"/>' + t(x + 20, y + 26.5, String(i + 1), { size: 13, weight: 900, fill: '#fff' }) + t(x + 34, y + 27, st[0], { size: 13, weight: 800, fill: st[2], anchor: 'start' }) + t(x + 34, y + 49, st[1], { size: 13, fill: C.sub, anchor: 'start' });
     });
     return svgM(400, 182, s, '스피커 겨누기, 마이크 가까이, 흡음과 확산, 마지막으로 EQ 와 리버브 순서');
   };

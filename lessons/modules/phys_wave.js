@@ -227,14 +227,14 @@
 
   /* 이론 4 개념 체크: 그림을 보고 고르기 */
   V.pwCheckDist = function () {
-    var s = '<path d="M20 86H390" stroke="' + C.line + '" stroke-width="2"/>';
-    s += person(34, 40) + t(34, 108, '설교자', { size: 13, weight: 700 });
-    [[174, '2 m', '84 dB', C.blue], [314, '4 m', '? dB', C.red]].forEach(function (p) {
+    var s = '<path d="M10 86H312" stroke="' + C.line + '" stroke-width="2"/>';
+    s += person(28, 40) + t(28, 108, '설교자', { size: 13, weight: 700 });
+    [[150, '2 m', '84 dB', C.blue], [268, '4 m', '? dB', C.red]].forEach(function (p) {
       s += '<path d="M' + p[0] + ' 80V92" stroke="' + C.sub + '" stroke-width="2"/>' + '<circle cx="' + p[0] + '" cy="66" r="10" fill="' + p[3] + '"/>';
-      s += t(p[0], 44, p[2], { size: 15, weight: 900, fill: p[3] }) + t(p[0], 108, p[1], { size: 13, weight: 800 });
+      s += t(p[0], 44, p[2], { size: 16, weight: 900, fill: p[3] }) + t(p[0], 108, p[1], { size: 14, weight: 800 });
     });
-    s += t(244, 128, '반사는 없다고 생각해요 · 그림 간격은 대강', { size: 13, fill: C.sub });
-    return svgM(400, 136, s, '설교자에서 2 m 자리는 84 dB, 4 m 자리는 물음표');
+    s += t(160, 132, '반사는 없다고 생각해요 · 간격은 대강', { size: 13, fill: C.sub });
+    return svgM(320, 140, s, '설교자에서 2 m 자리는 84 dB, 4 m 자리는 물음표');
   };
 
   /* 이론 5: 그네 비유 — 같은 박자 / 반대 박자 */

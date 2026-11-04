@@ -143,7 +143,10 @@
   /* =========================================================================== 「그림으로 보기」 (2026-11-04)
      - 비유 · 단계 · 전/후 비교 그림. 폭이 좁은 칸(용어 · 나란히 두 그림)에도 들어가게 viewBox 400 안팎, 글자 13 이상
      - class 는 mod-pic-svg (최소 폭 = viewBox 의 85% — 휴대폰에서도 글자 13 이 11px 이상으로 보이게, 넘치면 상자 안에서 옆으로 밀어 봐요) */
-  function psvg(w, h, body, label) { return '<svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, system-ui, sans-serif" style="display:block;width:100%;max-width:' + w + 'px;min-width:' + Math.round(w * 0.85) + 'px;height:auto;margin:0 auto">' + body + '</svg>'; }
+  function psvg(w, h, body, label) { return '<div style="contain:inline-size;overflow-x:auto"><svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, system-ui, sans-serif" style="display:block;width:100%;max-width:' + w + 'px;min-width:' + Math.round(w * 0.85) + 'px;height:auto;margin:0 auto">' + body + '</svg></div>'; }
+  // ○/× 처럼 두 칸으로 나뉜 그림: 칸마다 따로 그려 좁은 화면에서는 위아래로 쌓아요(글자 크기 그대로)
+  function psvgPair(w, h, a, b, label) { function one(body, lab) { return '<svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + lab + '" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, system-ui, sans-serif" style="display:block;flex:1 1 ' + Math.round(w * 0.85) + 'px;max-width:' + w + 'px;min-width:' + Math.round(w * 0.85) + 'px;height:auto">' + body + '</svg>'; }
+    return '<div role="group" aria-label="' + label + '" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">' + one(a, label + ' (1)') + one(b, label + ' (2)') + '</div>'; }
   function wave(x, y, w, a, cyc, lim) { var d = ''; for (var i = 0; i <= 80; i++) { var v = a * Math.sin(i / 80 * Math.PI * 2 * cyc); if (lim) v = Math.max(-lim, Math.min(lim, v)); d += (i ? 'L' : 'M') + (x + i / 80 * w).toFixed(1) + ' ' + (y - v).toFixed(1); } return d; }
   function mark(x, y, good) { return good ? '<circle cx="' + x + '" cy="' + y + '" r="11" fill="#fff" stroke="' + C.green + '" stroke-width="3.5"/>' : '<path d="M' + (x - 8) + ' ' + (y - 8) + 'L' + (x + 8) + ' ' + (y + 8) + 'M' + (x + 8) + ' ' + (y - 8) + 'L' + (x - 8) + ' ' + (y + 8) + '" stroke="' + C.red + '" stroke-width="4" stroke-linecap="round"/>'; }
   function rr(x, y, w, h, fill, stroke, r) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + (r == null ? 8 : r) + '" fill="' + fill + '"' + (stroke ? ' stroke="' + stroke + '" stroke-width="2"' : '') + '/>'; }
@@ -153,20 +156,22 @@
 
   // 용어 PAD — 너무 큰 소리를 미리 줄여 알맞게
   V.consolePadMini = function () {
-    var s = '<path d="M8 22H118M8 94H118" stroke="' + C.red + '" stroke-dasharray="5 4" stroke-width="1.5"/>' + '<path d="' + wave(10, 58, 106, 50, 2, 40) + '" fill="none" stroke="' + C.red + '" stroke-width="3"/>' +
-      t(63, 114, '너무 큰 소리', { size: 13, fill: C.red, weight: 800 }) + arrow(124, 58, 150, 58, C.ink) +
-      rr(152, 38, 66, 40, C.ink, null, 8) + t(185, 56, 'PAD', { size: 14, fill: '#fff', weight: 800 }) + t(185, 72, '−26 dB', { size: 13, fill: '#e2e8f0' }) + arrow(220, 58, 246, 58, C.ink) +
-      '<path d="M248 22H354M248 94H354" stroke="' + C.red + '" stroke-dasharray="5 4" stroke-width="1.5"/>' + '<path d="' + wave(250, 58, 102, 22, 2) + '" fill="none" stroke="' + C.green + '" stroke-width="3"/>' + t(301, 114, '알맞은 크기', { size: 13, fill: C.green, weight: 800 });
-    return psvg(360, 122, s, 'PAD 는 너무 큰 입력을 미리 줄여요');
+    var s = '<path d="M6 22H90M6 94H90" stroke="' + C.red + '" stroke-dasharray="5 4" stroke-width="1.5"/>' + '<path d="' + wave(8, 58, 80, 50, 2, 40) + '" fill="none" stroke="' + C.red + '" stroke-width="3"/>' +
+      t(48, 114, '너무 큰 소리', { size: 13, fill: C.red, weight: 800 }) + arrow(96, 58, 116, 58, C.ink) +
+      rr(118, 38, 64, 40, C.ink, null, 8) + t(150, 56, 'PAD', { size: 14, fill: '#fff', weight: 800 }) + t(150, 72, '−26 dB', { size: 13, fill: '#e2e8f0' }) + arrow(184, 58, 204, 58, C.ink) +
+      '<path d="M206 22H294M206 94H294" stroke="' + C.red + '" stroke-dasharray="5 4" stroke-width="1.5"/>' + '<path d="' + wave(208, 58, 84, 22, 2) + '" fill="none" stroke="' + C.green + '" stroke-width="3"/>' + t(250, 114, '알맞은 크기', { size: 13, fill: C.green, weight: 800 });
+    return psvg(300, 122, s, 'PAD 는 너무 큰 입력을 미리 줄여요');
   };
+
 
   // 용어 버스 — 개울이 모여 강이 돼요
   V.consoleBusMini = function () {
     var s = '', src = [['CH1 보컬', 24], ['CH2 기타', 60], ['CH3 건반', 96]];
-    src.forEach(function (r) { s += t(8, r[1] + 5, r[0], { size: 13, anchor: 'start', weight: 700 }) + '<path d="M78 ' + r[1] + ' C130 ' + r[1] + ' 150 60 196 60" fill="none" stroke="' + C.cyan + '" stroke-width="5" stroke-linecap="round"/>'; });
-    s += '<path d="M196 60 H300" stroke="' + C.teal + '" stroke-width="16" stroke-linecap="round"/>' + arrow(300, 60, 350, 60, C.teal, { w: 3 }) + t(248, 38, '버스 (모이는 길)', { size: 13, fill: C.teal, weight: 800 }) + t(258, 96, '개울이 모여 강이 돼요', { size: 13, fill: C.sub });
-    return psvg(360, 112, s, '여러 채널 소리가 버스 하나로 모여요');
+    src.forEach(function (r) { s += t(6, r[1] + 5, r[0], { size: 13, anchor: 'start', weight: 700 }) + '<path d="M68 ' + r[1] + ' C110 ' + r[1] + ' 124 60 160 60" fill="none" stroke="' + C.cyan + '" stroke-width="5" stroke-linecap="round"/>'; });
+    s += '<path d="M160 60 H244" stroke="' + C.teal + '" stroke-width="16" stroke-linecap="round"/>' + arrow(244, 60, 290, 60, C.teal, { w: 3 }) + t(212, 36, '버스 (모이는 길)', { size: 13, fill: C.teal, weight: 800 }) + t(222, 96, '개울이 모여 강이 돼요', { size: 13, fill: C.sub });
+    return psvg(300, 112, s, '여러 채널 소리가 버스 하나로 모여요');
   };
+
 
   // 이론 2 — PAD 쓰는 순서 ① ② ③
   V.consolePadSteps = function () {
@@ -189,7 +194,7 @@
       h += t(x + 95, 140, good ? '스피커가 조용해요' : '큰 소리가 스피커로', { size: 13, weight: 700, fill: col }) + t(x + 95, 160, good ? '꽂은 뒤 ON 을 켜요' : '나가 고장 날 수 있어요', { size: 13, fill: C.sub });
       return h;
     }
-    return psvg(400, 200, side(4, true) + side(206, false), '팬텀 전원을 쓸 때 마이크를 꽂는 바른 방법과 틀린 방법');
+    return psvgPair(198, 200, side(4, true), side(4, false), '팬텀 전원을 쓸 때 마이크를 꽂는 바른 방법과 틀린 방법');
   };
 
   // 이론 3 — 페이더 눈금: 0 dB(U) 근처가 넓어요
@@ -239,7 +244,7 @@
       h += t(x + 96, 194, good ? '모든 자리에서 잘 들려요' : '오른쪽 자리는 잘 안 들려요', { size: 13, weight: 700, fill: col });
       return h;
     }
-    return psvg(400, 208, side(4, true) + side(204, false), '예배당에서 PAN 을 끝까지 돌리면 반대쪽 자리에서 잘 안 들려요');
+    return psvgPair(200, 208, side(4, true), side(4, false), '예배당에서 PAN 을 끝까지 돌리면 반대쪽 자리에서 잘 안 들려요');
   };
 
   // 이론 6 — GROUP 을 내려도 무대 모니터(PRE)는 그대로
