@@ -176,7 +176,7 @@
   var FIG_A = 1.6;
   function figHtml(m) {
     var h = (GL[m.id] || {}).hero, d3 = MODEL3D[m.overview.model], is3d = view.fig === '3d' && d3;
-    var tools = d3 ? '<div class="mod-fig__tools" role="group" aria-label="보기 방식"><button type="button" data-mfig="photo" aria-pressed="' + !is3d + '">' + (h && h.zones ? '사진 · 기능부 설명' : '사진 설명') + '</button><button type="button" data-mfig="3d" aria-pressed="' + !!is3d + '">3D 로 돌려 보기</button></div>' : '';
+    var tools = d3 ? '<div class="mod-fig__tools" role="group" aria-label="보기 방식"><button type="button" data-mfig="photo" aria-pressed="' + !is3d + '">' + (h && h.zones ? '사진 · 기능부 설명' : h && h.vis ? '그림 설명' : '사진 설명') + '</button><button type="button" data-mfig="3d" aria-pressed="' + !!is3d + '">3D 로 돌려 보기</button></div>' : '';
     if (is3d) return '<figure class="mod-fig mod-fig--3d"><div class="mod-viewer" data-role="viewer"><div class="mod-viewer__msg">3D 모델을 불러오는 중…</div></div>' +
       '<figcaption class="mod-fig__foot mod-viewer__bar">' + tools + (d3.variants ? '<div class="mod-fig__vars" role="group" aria-label="제품 고르기">' + d3.variants.map(function (vv, vi) { return '<button type="button" data-mvar="' + vi + '" aria-pressed="' + (vi === (view.var3d || 0)) + '">' + esc(vv[1]) + '</button>'; }).join('') + '</div>' : '') + '<span>끌어서 돌려 보기 · ' + esc(d3.variants ? d3.variants[view.var3d || 0][2] || d3.label : d3.label) + '</span>' + (d3.toggle ? '<button type="button" class="sim-btn" data-mviewer="switch">' + esc(d3.toggleTxt) + '</button>' : '') + '</figcaption></figure>';
     if (h && h.vis && VIS[h.vis]) return '<figure class="mod-fig mod-fig--vis"><div class="mod-visual">' + VIS[h.vis]() + '</div>' + (tools ? '<div class="mod-fig__foot">' + tools + '</div>' : '') + '</figure>';
@@ -448,6 +448,10 @@
     mg12xu: { label: '3D 모델(Yamaha MG12XU)', need: 'YamahaMG12XU', dir: [0.15, 1.1, 1], make: function () { return YamahaMG12XU.create(); } },
     crown: { label: '3D 모델(Crown XLi1500)', need: 'CrownXLi1500', dir: [0.45, 0.35, 1], make: function () { return CrownXLi1500.create(); } },
     x32: { label: '3D 모델(Behringer X32)', need: 'BehringerX32', dir: [0.18, 0.95, 1], make: function () { return BehringerX32.create(); } },   // 2026-11-03: 공식 윗면·뒷면 사진 배치 기준
+    /* 2026-11-04: 디지털 케이블 커넥터(절차적 모델) — [id, 버튼 이름, 설명, 카메라 방향, 거리 배수] */
+    dconn: { label: '3D 모델(디지털 오디오 커넥터)', need: 'DigitalConnectors', dir: [0.6, 0.42, 1],
+      variants: [['set', '한눈에 비교', '실제 크기 비율로 나란히', [0.1, 0.8, 1], 1.2], ['etherCON', 'etherCON', 'Dante · AES50 랜선의 잠금 커넥터'], ['RJ45', 'RJ45', '일반 랜선 플러그'], ['AES-XLR', 'AES/EBU', '110 Ω 디지털 XLR'], ['BNC', 'BNC', '75 Ω 동축 · 워드클럭 · MADI'], ['TOSLINK', '광(TOSLINK)', 'ADAT · S/PDIF 광'], ['USB-C', 'USB-C', '양면 · 둥근 타원'], ['USB-AB', 'USB A-B', 'A(컴퓨터) ↔ B(오디오 장비)', [0.25, 0.85, 1], 1.3]],
+      make: function (v) { return DigitalConnectors.create({ variant: v }); } },
     zxa1: { label: '3D 모델(EV ZXA1)', need: 'EvZXA1', dir: [0.5, 0.2, 1], make: function () { return EvZXA1.create(); } }
   };
   function mountViewer(def) {
@@ -456,12 +460,13 @@
     var w = el.clientWidth || 360, h = el.clientHeight || 300, r;
     try { r = new THREE.WebGLRenderer({ antialias: true, alpha: true }); } catch (e) { el.querySelector('.mod-viewer__msg').textContent = '이 기기에서는 3D 를 표시할 수 없어요.'; return; }
     r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1)); r.setSize(w, h); r.outputEncoding = THREE.sRGBEncoding; r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.2;
-    var obj; try { obj = def.make(def.variants ? def.variants[Math.min(view.var3d || 0, def.variants.length - 1)][0] : undefined); } catch (e) { el.querySelector('.mod-viewer__msg').textContent = '3D 모델을 만들지 못했어요.'; r.dispose(); return; }
+    var vv = def.variants ? def.variants[Math.min(view.var3d || 0, def.variants.length - 1)] : null, dir = (vv && vv[3]) || def.dir, dk = (vv && vv[4]) || def.dist || 1.6;
+    var obj; try { obj = def.make(vv ? vv[0] : undefined); } catch (e) { el.querySelector('.mod-viewer__msg').textContent = '3D 모델을 만들지 못했어요.'; r.dispose(); return; }
     el.innerHTML = ''; el.appendChild(r.domElement);
     var sc = new THREE.Scene(); sc.add(new THREE.HemisphereLight(0xdfeaff, 0x1a2333, 0.9)); var k = new THREE.DirectionalLight(0xffffff, 2); k.position.set(2, 3, 3); sc.add(k); var rim = new THREE.DirectionalLight(0x7cc4ff, 1.4); rim.position.set(-3, 2, -2); sc.add(rim);
     sc.add(obj);
     var bb = new THREE.Box3().setFromObject(obj), ctr = bb.getCenter(new THREE.Vector3()), sz = bb.getSize(new THREE.Vector3()).length();
-    var cam = new THREE.PerspectiveCamera(32, w / h, sz * 0.01, sz * 20); cam.position.copy(ctr).add(new THREE.Vector3(def.dir[0], def.dir[1], def.dir[2]).normalize().multiplyScalar(sz * 1.6));
+    var cam = new THREE.PerspectiveCamera(32, w / h, sz * 0.01, sz * 20); cam.position.copy(ctr).add(new THREE.Vector3(dir[0], dir[1], dir[2]).normalize().multiplyScalar(sz * dk));
     var ctl = new THREE.OrbitControls(cam, r.domElement); ctl.target.copy(ctr); ctl.enableDamping = true; ctl.autoRotate = true; ctl.autoRotateSpeed = 1.6; ctl.enablePan = false; ctl.minDistance = sz * 0.6; ctl.maxDistance = sz * 3; ctl.update();
     var on = true, alive = true;
     r.domElement.addEventListener('pointerdown', function () { ctl.autoRotate = false; });
