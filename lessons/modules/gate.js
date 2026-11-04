@@ -90,7 +90,7 @@
     function brk(s0, s1, y, txt, col) { return '<path d="M' + X(s0) + ' ' + (y - 5) + 'V' + (y + 5) + 'M' + X(s0) + ' ' + y + 'H' + X(s1) + 'M' + X(s1) + ' ' + (y - 5) + 'V' + (y + 5) + '" stroke="' + col + '" stroke-width="1.8"/>' + t((X(s0) + X(s1)) / 2, y - 7, txt, { size: 11.5, fill: col, weight: 800 }); }
     return svg(600, 236, '<rect x="' + x0 + '" y="24" width="' + (x1 - x0) + '" height="80" fill="' + C.bg + '" stroke="' + C.line + '"/><rect x="' + x0 + '" y="126" width="' + (x1 - x0) + '" height="80" fill="' + C.bg + '" stroke="' + C.line + '"/>' +
       '<path d="' + inp + '" fill="none" stroke="#64748b" stroke-width="2.2"/><path d="M' + x0 + ' ' + thrY + 'H' + x1 + '" stroke="' + C.red + '" stroke-dasharray="7 4" stroke-width="1.6"/>' + t(x1 - 4, thrY - 5, 'Threshold', { size: 11, fill: C.red, weight: 800, anchor: 'end' }) + t(x0 + 4, 40, '입력', { size: 11, fill: C.sub, weight: 800, anchor: 'start' }) +
-      '<path d="' + gp + '" fill="none" stroke="' + C.teal + '" stroke-width="3"/>' + t(x0 + 4, 142, '게이트가 통과시키는 양', { size: 11, fill: C.sub, weight: 800, anchor: 'start' }) + t(x0 - 4, gY(0) + 4, '0 dB', { size: 10, fill: C.sub, anchor: 'end' }) + t(x0 - 4, gY(-40) + 4, '−40', { size: 10, fill: C.sub, anchor: 'end' }) +
+      '<path d="' + gp + '" fill="none" stroke="' + C.teal + '" stroke-width="3"/>' + t(x0 + 4, 142, '통과하는 양', { size: 11, fill: C.sub, weight: 800, anchor: 'start' }) + t(x0 - 4, gY(0) + 4, '0 dB', { size: 10, fill: C.sub, anchor: 'end' }) + t(x0 - 4, gY(-40) + 4, '−40', { size: 10, fill: C.sub, anchor: 'end' }) +
       '<path d="M' + X(a) + ' 24V206M' + X(b + 0.035) + ' 24V206" stroke="#94a3b8" stroke-dasharray="2 3"/>' +
       brk(a, a + att, 120, 'Attack', C.blue) + brk(b + 0.035, b + hold, 120, 'Hold', C.amber) + brk(b + hold, b + hold + rel, 120, 'Release', C.violet) +
       '<path d="M' + X(1.12) + ' ' + gY(0) + 'V' + gY(-40) + '" stroke="' + C.red + '" stroke-width="2"/><path d="M' + (X(1.12) - 4) + ' ' + (gY(-40) - 7) + 'L' + X(1.12) + ' ' + gY(-40) + 'L' + (X(1.12) + 4) + ' ' + (gY(-40) - 7) + '" fill="none" stroke="' + C.red + '" stroke-width="2"/>' + t(X(1.1), gY(-20), 'Range', { size: 11.5, fill: C.red, weight: 800, anchor: 'end' }) +
@@ -143,8 +143,8 @@
     function lane(y0, arr, title, col) { var o = plot({ x0: 46, x1: 584, y0: y0, y1: y0 + 76, t1: T, dbMin: -60, dbMax: 0 });
       return o.frame + '<path d="' + o.area(arr, dt) + '" fill="' + col + '" fill-opacity=".3"/><path d="' + o.line(arr, dt) + '" fill="none" stroke="' + col + '" stroke-width="1.4"/>' + '<path d="M46 ' + o.ly(P.thr) + 'H584" stroke="' + C.red + '" stroke-dasharray="6 4"/>' + t(52, y0 + 14, title, { size: 11.5, weight: 800, fill: C.ink, anchor: 'start' }) + t(40, o.ly(P.thr) + 4, '기준', { size: 10, fill: C.red, anchor: 'end' }); }
     function X(s) { return 46 + s / T * 538; }
-    return svg(600, 220, lane(20, lv, '탐 마이크에 들어온 소리: 새어 든 스네어(작은 봉우리) + 탐(큰 봉우리)', '#64748b') + lane(116, out, '게이트 뒤: 탐을 칠 때만 열림', C.teal) +
-      [1.25, 2.75, 3.05].map(function (h) { return t(X(h) + 2, 108, '▲탐', { size: 10.5, fill: C.teal, weight: 800, anchor: 'start' }); }).join('') + t(584, 210, '4초 동안의 크기 (dB) · 교육용 어림 그림', { size: 10.5, fill: C.sub, anchor: 'end' }), '탐 마이크 게이트로 스네어 블리드 줄이기');
+    return svg(600, 220, lane(20, lv, '탐 마이크 (게이트 앞)', '#64748b') + lane(116, out, '게이트 뒤: 탐을 칠 때만 열림', C.teal) +
+      [1.25, 2.75, 3.05].map(function (h) { return t(X(h) + 2, 108, '▲탐', { size: 10.5, fill: C.teal, weight: 800, anchor: 'start' }); }).join('') + t(584, 210, '작은 봉우리 = 새어 든 스네어 · 큰 봉우리 = 탐 · 4초 동안의 크기 (dB) · 교육용 어림 그림', { size: 10.5, fill: C.sub, anchor: 'end' }), '탐 마이크 게이트로 스네어 블리드 줄이기');
   };
   V.gateCl5 = function () {
     var K = [['THRESHOLD', '−72 ~ 0 dB', 0.55], ['RANGE', '−∞ ~ 0 dB', 0.25], ['ATTACK', '0 ~ 120 ms', 0.1], ['HOLD', '0.02 ms ~ 1.96 s', 0.35], ['DECAY', '5 ms ~ 42.3 s', 0.45]];
