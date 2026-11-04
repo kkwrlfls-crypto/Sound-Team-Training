@@ -49,14 +49,15 @@
       var pts = [[50, -9], [80, -5], [120, -2], [200, -0.5], [500, 0], [1000, 0], [2000, 1.5], [3500, 4], [5000, 4.5], [7000, 2], [10000, -1], [15000, -6]];
       var d = pts.map(function (p, i) { return (i ? 'L' : 'M') + fx(p[0]).toFixed(1) + ' ' + fy(p[1]).toFixed(1); }).join('');
       return svg(600, 210, grid + '<path d="' + d + '" fill="none" stroke="' + C.teal + '" stroke-width="3"/>' +
-        t(fx(4200), fy(4.5) - 10, '말소리가 또렷하게 (중고음 ↑)', { size: 11, fill: C.teal }) + t(fx(70), fy(-9) + 22, '저음 줄임', { size: 11, fill: C.teal }) +
-        t(x1, 18, '보컬 마이크 주파수 응답 「예시」 (특정 제품의 측정값 아님)', { size: 11, fill: C.sub, anchor: 'end' }) + t(x0 + 4, 18, 'dB', { size: 10, fill: C.sub, anchor: 'start' }), '보컬 마이크 주파수 응답 예시 그래프');
+        t(fx(4200), fy(4.5) - 10, '말소리가 또렷하게 (중고음 ↑)', { size: 11, fill: C.teal }) + t(fx(70), fy(-9) + 22, '낮은 소리 줄임', { size: 11, fill: C.teal }) +
+        t(x1, 18, '보컬 마이크 주파수 응답 「예시」 (특정 제품의 측정값 아님)', { size: 11, fill: C.sub, anchor: 'end' }) + t(x0 + 4, 18, 'dB', { size: 10, fill: C.sub, anchor: 'start' }) +
+        t(x0, 204, '← 낮은 소리', { size: 10, fill: C.sub, anchor: 'start' }) + t((x0 + x1) / 2, 204, '주파수 (Hz, 1초에 떨리는 횟수)', { size: 10, fill: C.sub }) + t(x1, 204, '높은 소리 →', { size: 10, fill: C.sub, anchor: 'end' }), '보컬 마이크 주파수 응답 예시 그래프');
     },
     distance: function () {
       var ds = [5, 10, 20, 40], base = 30, x0 = 70;
       var bars = ds.map(function (d, i) { var db = -20 * Math.log10(d / 5), h = 120 + db * 4.5, x = x0 + i * 130;
         return '<rect x="' + x + '" y="' + (170 - h) + '" width="70" height="' + h + '" rx="6" fill="' + C.teal + '" fill-opacity="' + (1 - i * 0.18) + '"/>' + t(x + 35, 165 - h, (db ? db.toFixed(0) : '0') + ' dB', { size: 13, weight: 800 }) + t(x + 35, 192, d + ' cm', { size: 12, fill: C.sub }); }).join('');
-      return svg(600, 210, bars + t(560, 24, '입-마이크 거리가 2배 → 약 −6 dB (역제곱 법칙, 반사 없는 공간 기준)', { size: 11, fill: C.sub, anchor: 'end' }), '거리에 따른 목소리 크기 변화');
+      return svg(600, 210, bars + t(560, 24, '입과 마이크 거리가 2배 → 목소리 약 −6 dB (역제곱 법칙, 반사 없는 공간)', { size: 11, fill: C.sub, anchor: 'end' }), '거리에 따른 목소리 크기 변화');
     },
     proximity: function () {
       var x0 = 60, x1 = 560, y0 = 30, y1 = 170, fx = function (cm) { return x0 + (Math.log10(cm) - Math.log10(1)) / (Math.log10(100) - Math.log10(1)) * (x1 - x0); }, fy = function (db) { return y1 - db / 30 * (y1 - y0); };
@@ -66,13 +67,14 @@
         [0, 10, 20, 30].map(function (d) { return '<path d="M' + x0 + ' ' + fy(d) + 'H' + x1 + '" stroke="' + C.line + '" stroke-dasharray="3 3"/>' + t(x0 - 6, fy(d) + 4, '+' + d, { size: 10, fill: C.sub, anchor: 'end' }); }).join('');
       return svg(600, 210, grid + '<path d="' + curve(0.5) + '" fill="none" stroke="' + C.teal + '" stroke-width="3"/><path d="' + curve(1) + '" fill="none" stroke="' + C.blue + '" stroke-width="3" stroke-dasharray="6 4"/>' +
         t(fx(9), fy(20), '카디오이드: 가까울수록 저음 ↑', { size: 12, fill: C.teal, anchor: 'start', weight: 700 }) + t(fx(4), fy(0) - 8, '무지향: 거의 변화 없음', { size: 12, fill: C.blue, anchor: 'start', weight: 700 }) +
-        t(x1, 18, '100 Hz 저음 증가량 (1차 지향성 이론, 교육용 근사)', { size: 11, fill: C.sub, anchor: 'end' }) + t(x0, 18, 'dB', { size: 10, fill: C.sub, anchor: 'start' }), '근접 효과: 거리에 따른 저음 증가');
+        t(x1, 18, '100 Hz 낮은 소리가 커지는 양 (1차 지향성 이론, 교육용 근사)', { size: 11, fill: C.sub, anchor: 'end' }) + t(x0, 18, 'dB', { size: 10, fill: C.sub, anchor: 'start' }) +
+        t((x0 + x1) / 2, 204, '입과 마이크 사이 거리', { size: 10, fill: C.sub }), '근접 효과: 거리에 따른 저음 증가');
     },
     phantom: function () {
       var pin = function (x, y, n, col) { return '<circle cx="' + x + '" cy="' + y + '" r="13" fill="' + (col ? '#fff7ed' : '#fff') + '" stroke="' + (col || C.ink) + '" stroke-width="2"/>' + t(x, y + 5, n, { size: 13, weight: 800, fill: col || C.ink }); };
       var leg = function (y, n, txt, col) { return t(30, y, n, { size: 12, weight: 800, fill: col || C.ink, anchor: 'start' }) + t(46, y, txt, { size: 12, fill: col || C.sub, anchor: 'start' }); };
       return svg(600, 200, '<circle cx="90" cy="70" r="52" fill="' + C.bg + '" stroke="' + C.ink + '" stroke-width="3"/>' + pin(70, 52, '1') + pin(110, 52, '2', C.amber) + pin(90, 92, '3', C.amber) +
-        leg(146, '1', '그라운드') + leg(164, '2', '+48V · 신호(+)', C.amber) + leg(182, '3', '+48V · 신호(−)', C.amber) + t(90, 12, 'XLR 핀 (IEC 61938, P48)', { size: 11, fill: C.sub }) +
+        leg(146, '1', '그라운드 (돌아오는 길)') + leg(164, '2', '+48V · 신호(+)', C.amber) + leg(182, '3', '+48V · 신호(−)', C.amber) + t(90, 12, 'XLR 핀 (IEC 61938, P48)', { size: 11, fill: C.sub }) +
         '<rect x="230" y="40" width="120" height="70" rx="10" fill="#0f2747"/>' + t(290, 72, '콘솔', { size: 14, fill: '#fff', weight: 800 }) + t(290, 92, '+48V ON', { size: 11, fill: '#fde68a' }) +
         '<path d="M350 75 H470" stroke="' + C.ink + '" stroke-width="4"/><path d="M350 66 H470" stroke="' + C.amber + '" stroke-width="2" stroke-dasharray="6 4"/>' + t(410, 56, '전원 →', { size: 11, fill: C.amber }) + t(410, 98, '← 소리 신호', { size: 11, fill: C.blue }) +
         '<rect x="470" y="50" width="90" height="50" rx="25" fill="#334155"/>' + t(515, 80, '콘덴서', { size: 12, fill: '#fff', weight: 700 }) +
@@ -82,12 +84,12 @@
       var y = function (dbu) { return 180 - (dbu + 70) * 1.9; };
       var band = function (a, b, col, name, note) { return '<rect x="150" y="' + y(b) + '" width="160" height="' + (y(a) - y(b)) + '" rx="6" fill="' + col + '" fill-opacity=".85"/>' + t(160, y(b) + 18, name, { size: 13, fill: '#fff', weight: 800, anchor: 'start' }) + t(330, (y(a) + y(b)) / 2 + 4, note, { size: 11, fill: C.sub, anchor: 'start' }); };
       var ticks = [-60, -40, -20, 0, 20].map(function (d) { return '<path d="M120 ' + y(d) + 'H140" stroke="' + C.sub + '"/>' + t(114, y(d) + 4, (d > 0 ? '+' : '') + d, { size: 10, fill: C.sub, anchor: 'end' }); }).join('');
-      return svg(600, 200, ticks + t(80, 20, 'dBu', { size: 10, fill: C.sub }) + band(-60, -30, C.teal, '마이크 레벨', '대략 −60 ~ −30 dBu (목소리·마이크에 따라 다름)') + band(-10, 14, C.blue, '라인 레벨', '기준 +4 dBu (프로 장비)') +
-        '<path d="M150 ' + y(20) + 'H310" stroke="' + C.red + '" stroke-width="2" stroke-dasharray="5 4"/>' + t(330, y(20) + 4, '장비의 최대치(클리핑) — 장비마다 다름', { size: 11, fill: C.red, anchor: 'start' }) +
+      return svg(600, 200, ticks + t(80, 20, 'dBu', { size: 10, fill: C.sub }) + band(-60, -30, C.teal, '마이크 레벨', '대략 −60 ~ −30 dBu (목소리·마이크에 따라 다름)') + band(-10, 14, C.blue, '라인 레벨', '기준 +4 dBu (프로 장비)') + t(230, 90, '↑ GAIN 으로 키워요', { size: 11, fill: C.teal, weight: 700 }) +
+        '<path d="M150 ' + y(20) + 'H310" stroke="' + C.red + '" stroke-width="2" stroke-dasharray="5 4"/>' + t(330, y(20) + 4, '찌그러지는 한계(클리핑) — 장비마다 달라요', { size: 11, fill: C.red, anchor: 'start' }) +
         t(560, 190, '스피커 레벨은 앰프·스피커마다 달라 한 숫자로 말하지 않아요', { size: 10, fill: C.sub, anchor: 'end' }), '마이크 레벨과 라인 레벨 비교');
     },
     chain: function () {
-      var st = [['입력', '마이크'], ['GAIN', '프리앰프'], ['HPF·EQ', '음색'], ['ON', '켜기/끄기'], ['페이더', '섞는 양'], ['ST 버스', '모으기'], ['마스터', '최종 출력']];
+      var st = [['입력', '마이크'], ['GAIN', '처음 키우기'], ['HPF·EQ', '음색 다듬기'], ['ON', '켜기/끄기'], ['페이더', '섞는 양'], ['ST 버스', '한데 모으기'], ['마스터', '최종 출력']];
       var w = 74, gap = 10;
       return svg(600, 130, st.map(function (s, i) { var x = 6 + i * (w + gap), hot = i === 1 || i === 4;
         return '<rect x="' + x + '" y="30" width="' + w + '" height="56" rx="10" fill="' + (hot ? C.teal : C.bg) + '" stroke="' + (hot ? C.teal : C.line) + '" stroke-width="2"/>' + t(x + w / 2, 56, s[0], { size: 13, weight: 800, fill: hot ? '#fff' : C.ink }) + t(x + w / 2, 74, s[1], { size: 10, fill: hot ? '#e0f2fe' : C.sub }) +
@@ -113,12 +115,12 @@
     },
     headroom: function () {
       return svg(600, 200, '<rect x="60" y="20" width="200" height="160" rx="8" fill="' + C.bg + '" stroke="' + C.line + '"/>' +
-        '<rect x="60" y="150" width="200" height="30" fill="#94a3b8" fill-opacity=".5"/>' + t(160, 170, '노이즈 플로어 (늘 깔린 잡음)', { size: 11 }) +
-        '<path d="M60 40 H260" stroke="' + C.red + '" stroke-width="3"/>' + t(160, 34, '클리핑 (최대치)', { size: 11, fill: C.red, weight: 700 }) +
-        '<path d="M60 90 H260" stroke="' + C.green + '" stroke-width="3" stroke-dasharray="6 4"/>' + t(160, 84, '평소 레벨', { size: 11, fill: C.green, weight: 700 }) +
-        '<path d="M280 42 V88" stroke="' + C.teal + '" stroke-width="3"/><path d="M274 48 l6 -8 6 8 M274 82 l6 8 6 -8" fill="none" stroke="' + C.teal + '" stroke-width="2"/>' + t(292, 70, '헤드룸 (여유)', { size: 12, fill: C.teal, weight: 800, anchor: 'start' }) +
+        '<rect x="60" y="150" width="200" height="30" fill="#94a3b8" fill-opacity=".5"/>' + t(160, 170, '노이즈 플로어 (바닥 · 늘 깔린 잡음)', { size: 11 }) +
+        '<path d="M60 40 H260" stroke="' + C.red + '" stroke-width="3"/>' + t(160, 34, '클리핑 (천장 · 찌그러짐)', { size: 11, fill: C.red, weight: 700 }) +
+        '<path d="M60 90 H260" stroke="' + C.green + '" stroke-width="3" stroke-dasharray="6 4"/>' + t(160, 84, '평소 크기 (레벨)', { size: 11, fill: C.green, weight: 700 }) +
+        '<path d="M280 42 V88" stroke="' + C.teal + '" stroke-width="3"/><path d="M274 48 l6 -8 6 8 M274 82 l6 8 6 -8" fill="none" stroke="' + C.teal + '" stroke-width="2"/>' + t(292, 70, '헤드룸 (머리 위 여유)', { size: 12, fill: C.teal, weight: 800, anchor: 'start' }) +
         '<path d="M280 92 V148" stroke="' + C.blue + '" stroke-width="3"/>' + t(292, 124, '신호 대 잡음', { size: 12, fill: C.blue, weight: 800, anchor: 'start' }) +
-        t(292, 160, '평소 레벨이 천장에 붙으면 쉽게 찌그러지고,', { size: 11, fill: C.sub, anchor: 'start' }) + t(292, 176, '바닥에 붙으면 잡음이 들려요.', { size: 11, fill: C.sub, anchor: 'start' }), '헤드룸과 노이즈 플로어');
+        t(292, 160, '평소 크기가 천장에 붙으면 쉽게 찌그러지고,', { size: 11, fill: C.sub, anchor: 'start' }) + t(292, 176, '바닥에 붙으면 잡음이 들려요.', { size: 11, fill: C.sub, anchor: 'start' }), '헤드룸과 노이즈 플로어');
     }
   };
   window.STAVisuals = V;

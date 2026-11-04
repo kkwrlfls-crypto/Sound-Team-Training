@@ -76,7 +76,7 @@
         '<path d="M' + (x0 + 14) + ' ' + (y0 + 15) + 'h18" stroke="#94a3b8" stroke-width="2.5"/>' + t(x0 + 38, y0 + 19, '컴프 전: 절·후렴 큰 부분 차이 약 ' + Math.round(dIn) + ' dB', { size: 11, anchor: 'start' }) +
         '<path d="M' + (x0 + 14) + ' ' + (y0 + 32) + 'h18" stroke="' + C.teal + '" stroke-width="2.5"/>' + t(x0 + 38, y0 + 36, '컴프 후(4:1 + Makeup 8 dB): 약 ' + Math.round(dOut) + ' dB', { size: 11, anchor: 'start', fill: C.teal, weight: 700 }) +
         '<path d="M' + (x0 + 14) + ' ' + (y0 + 48) + 'h18" stroke="' + C.red + '" stroke-width="1.5" stroke-dasharray="6 4"/>' + t(x0 + 38, y0 + 52, 'Threshold −18 dB (이 선을 넘는 부분만 줄임)', { size: 11, anchor: 'start', fill: C.red }) +
-        t(x1, 212, '노래 레벨 「예시」 — 계산으로 만든 가상 곡선', { size: 10, fill: C.sub, anchor: 'end' }), '컴프레서 전후 음량 변화 예시');
+        t(x1, 212, '노래 크기 「예시」 — 계산으로 만든 곡선', { size: 10, fill: C.sub, anchor: 'end' }), '컴프레서 전후 음량 변화 예시');
     };
     VIS.compCurve = function () {
       var x0 = 50, x1 = 290, y0 = 16, y1 = 256, T = -20, fx = function (d) { return x0 + (d + 60) / 60 * (x1 - x0); }, fy = function (d) { return y1 - (d + 60) / 60 * (y1 - y0); };
@@ -91,8 +91,8 @@
         '<path d="' + line(4, 0) + '" fill="none" stroke="' + C.teal + '" stroke-width="3"/>' +
         '<path d="M' + fx(ex) + ' ' + fy(ex) + 'V' + (fy(ey) - 3) + '" stroke="' + C.orange + '" stroke-width="2"/><path d="M' + (fx(ex) - 4) + ' ' + (fy(ey) - 7) + 'l4 6 4 -6" fill="none" stroke="' + C.orange + '" stroke-width="2"/>' +
         '<circle cx="' + fx(ex) + '" cy="' + fy(ey) + '" r="4" fill="' + C.teal + '"/>' + t(fx(ex) - 6, (fy(ex) + fy(ey)) / 2 + 4, 'GR ' + nd(ex - ey) + ' dB', { size: 11, fill: C.orange, weight: 800, anchor: 'end' }) +
-        t((x0 + x1) / 2, y1 + 28, '입력 (dB)', { size: 10, fill: C.sub }) + t(x0 - 30, y0 - 4, '출력 (dB)', { size: 10, fill: C.sub, anchor: 'start' });
-      var lg = [[C.teal, '4:1 (하드 니)', ''], [C.blue, '2:1', ''], [C.red, '∞:1 (리미터)', ''], [C.violet, '4:1 소프트 니 (폭 12 dB)', '4 3'], ['#94a3b8', '1:1 (컴프 없음)', '5 4']];
+        t((x0 + x1) / 2, y1 + 28, '들어온 소리 (입력 dB)', { size: 10, fill: C.sub }) + t(x0 - 30, y0 - 4, '나간 소리 (출력 dB)', { size: 10, fill: C.sub, anchor: 'start' });
+      var lg = [[C.teal, '4:1 (딱 꺾임 · 하드 니)', ''], [C.blue, '2:1', ''], [C.red, '∞:1 (리미터 · 천장)', ''], [C.violet, '4:1 부드럽게 꺾임 (소프트 니 12 dB)', '4 3'], ['#94a3b8', '1:1 (컴프 없음)', '5 4']];
       body += lg.map(function (l, i) { var y = 34 + i * 20; return '<path d="M318 ' + y + 'h24" stroke="' + l[0] + '" stroke-width="2.5"' + (l[2] ? ' stroke-dasharray="' + l[2] + '"' : '') + '/>' + t(348, y + 4, l[1], { size: 11, anchor: 'start' }); }).join('');
       body += '<rect x="312" y="140" width="276" height="96" rx="10" fill="' + C.bg + '" stroke="' + C.line + '"/>' + t(324, 160, '출력 = T + (입력 − T) ÷ Ratio', { size: 12, weight: 800, anchor: 'start' }) +
         t(324, 180, '예) T −20 dB, 4:1, 입력 −8 dB', { size: 11, anchor: 'start', fill: C.sub }) + t(324, 198, '→ 넘은 12 dB 가 3 dB 로 → 출력 ' + nd(ey) + ' dB', { size: 11, anchor: 'start' }) +
@@ -113,7 +113,7 @@
         '<path d="M' + (x0 + 70) + ' 206h16" stroke="' + C.red + '" stroke-width="2.5"/>' + t(x0 + 92, 210, 'Attack 1 ms: 자음까지 눌림', { size: 11, anchor: 'start', fill: C.red }) +
         '<path d="M' + (x0 + 280) + ' 206h16" stroke="' + C.teal + '" stroke-width="2.5"/>' + t(x0 + 302, 210, 'Attack 25 ms: 앞부분 통과', { size: 11, anchor: 'start', fill: C.teal }) +
         t(fx(0.27), fy(-30) - 8, 'Release', { size: 10, fill: C.sub }) +
-        t(x1, 236, 'Threshold −20, 4:1, Release 100 ms · 1차 지연 계산(교육용 근사)', { size: 10, fill: C.sub, anchor: 'end' }) + t(x0, 14, 'dB', { size: 10, fill: C.sub, anchor: 'start' }), 'Attack 빠름과 느림의 비교');
+        t(x1, 236, 'Threshold −20, 4:1, Release 100 ms · 계산으로 만든 교육용 그림', { size: 10, fill: C.sub, anchor: 'end' }) + t(x0, 14, 'dB', { size: 10, fill: C.sub, anchor: 'start' }), 'Attack 빠름과 느림의 비교');
     };
     VIS.compGR = function () {
       function meter(x, label, val, kind, note) {
@@ -142,9 +142,9 @@
       function grPath(T, R, rel) { var f = waCurve(T, 0, R), g = 0, d = '', ka = 1 - Math.exp(-0.005 / tau(5)), kr = 1 - Math.exp(-0.005 / tau(rel)); for (var s = 0; s <= 3.0001; s += 0.005) { var x = phrase(5 + s), tg = Math.max(0, x - f(x)); g += (tg - g) * (tg > g ? ka : kr); d += (d ? 'L' : 'M') + fx(s).toFixed(1) + ' ' + fy(Math.min(24, g)).toFixed(1); } return d; }
       var grid = [0, 6, 12, 18, 24].map(function (g) { return '<path d="M' + x0 + ' ' + fy(g) + 'H' + x1 + '" stroke="' + C.line + '" stroke-dasharray="3 3"/>' + t(x0 - 5, fy(g) + 4, g ? '−' + g : 0, { size: 9, fill: C.sub, anchor: 'end' }); }).join('');
       var left = grid + '<path d="' + grPath(-14, 3, 200) + '" fill="none" stroke="' + C.teal + '" stroke-width="2.4"/><path d="' + grPath(-36, 20, 60) + '" fill="none" stroke="' + C.red + '" stroke-width="2.2"/>' +
-        t(x0, 18, 'GR (dB) — 후렴 3초', { size: 11, fill: C.sub, anchor: 'start' }) + t(x1, y1 + 18, '가벼운 압축(청록): 큰 부분만 조금', { size: 11, fill: C.teal, anchor: 'end' }) + t(x1, y1 + 34, '과도한 압축(빨강): 크게 출렁임 = 펌핑', { size: 11, fill: C.red, anchor: 'end', weight: 700 });
+        t(x0, 18, '줄이는 양 GR (dB) — 후렴 3초', { size: 11, fill: C.sub, anchor: 'start' }) + t(x1, y1 + 18, '가벼운 압축(청록): 큰 부분만 조금', { size: 11, fill: C.teal, anchor: 'end' }) + t(x1, y1 + 34, '너무 센 압축(빨강): 크게 출렁임 = 펌핑', { size: 11, fill: C.red, anchor: 'end', weight: 700 });
       var bx = 380, by = 160, bars = [['컴프 없음', 0, '#94a3b8'], ['가볍게\n+3 dB', 3, C.teal], ['세게\n+12 dB', 12, C.red]];
-      var right = t(485, 18, '조용한 순간의 이득 (Makeup 만큼 ↑)', { size: 11, fill: C.sub }) + '<path d="M' + bx + ' ' + by + 'H590" stroke="' + C.ink + '"/>' +
+      var right = t(485, 18, '조용할 때 커지는 양 (Makeup 만큼 ↑)', { size: 11, fill: C.sub }) + '<path d="M' + bx + ' ' + by + 'H590" stroke="' + C.ink + '"/>' +
         bars.map(function (b, i) { var x = bx + 14 + i * 70, h = 6 + b[1] * 9; return '<rect x="' + x + '" y="' + (by - h) + '" width="44" height="' + h + '" rx="4" fill="' + b[2] + '"/>' + t(x + 22, by - h - 6, '+' + b[1] + ' dB', { size: 11, weight: 800, fill: b[2] }) + b[0].split('\n').map(function (s, k) { return t(x + 22, by + 14 + k * 13, s, { size: 10, fill: C.sub }); }).join(''); }).join('') +
         t(485, 202, '→ 피드백 여유가 그만큼 줄어요', { size: 11, fill: C.red, weight: 700 });
       return svg(600, 214, left + right, '과도한 압축의 펌핑과 피드백 여유 감소');
@@ -198,16 +198,16 @@
               '<div class="sim-cmp-mcol"><div class="sim-cmp-lbl">GR</div>' + mtr('gr', SEG_GR, true) + '<b data-o="gr">0</b></div>' +
               '<div class="sim-cmp-mcol"><div class="sim-cmp-lbl">출력</div>' + mtr('out', SEG_IN) + '<b data-o="out">−∞</b></div>' +
             '</div>' +
-            '<div class="sim-cmp-cbox"><canvas data-cv="curve" aria-label="전달 곡선과 지금의 입력·출력 점"></canvas><small>전달 곡선 · 점 = 지금 입력 → 출력 (Makeup 포함)</small></div>' +
+            '<div class="sim-cmp-cbox"><canvas data-cv="curve" aria-label="전달 곡선과 지금의 입력·출력 점"></canvas><small>전달 곡선(입력·출력 그래프) · 점 = 지금 들어온 소리 → 나간 소리 (Makeup 포함)</small></div>' +
           '</div>' +
           '<div class="sim-cmp-plots">' +
-            '<div class="sim-cmp-pbox"><canvas data-cv="hist" aria-label="최근 6초 레벨과 GR 기록"></canvas><small>최근 6초 · 회색 입력 · 청록 출력 · 주황 GR(위에서 아래로)</small></div>' +
-            '<div class="sim-cmp-pbox"><canvas data-cv="zoom" aria-label="한 음절 확대"></canvas><small>한 음절 확대(교육용 계산) · 노란 띠 = 자음 구간(첫 10 ms)</small></div>' +
+            '<div class="sim-cmp-pbox"><canvas data-cv="hist" aria-label="최근 6초 레벨과 GR 기록"></canvas><small>최근 6초 · 회색 = 입력 · 청록 = 출력 · 주황 = 줄이는 양 GR(위에서 아래로)</small></div>' +
+            '<div class="sim-cmp-pbox"><canvas data-cv="zoom" aria-label="한 음절 확대"></canvas><small>한 음절을 크게 본 그림(교육용 계산) · 노란 띠 = 자음 구간(첫 10 ms)</small></div>' +
           '</div>' +
         '</div>' +
         '<div class="sim-side">' +
           '<div class="sim-box"><h4>소리</h4><button type="button" class="sim-btn sim-play" data-sim="play">🔊 소리 켜기</button>' +
-            '<label class="sim-switch"><input type="checkbox" data-sim="on" checked><span>COMP <b>ON</b> (끄면 원래 소리와 비교)</span></label><p class="sim-note" data-role="src"></p></div>' +
+            '<label class="sim-switch"><input type="checkbox" data-sim="on" checked><span>COMP <b>ON</b> (끄면 원래 소리와 비교해요)</span></label><p class="sim-note" data-role="src"></p></div>' +
           '<div class="sim-box"><h4>컴프레서 조절</h4>' + CTRL.map(function (c) { return '<label class="sim-range sim-cmp-rng"><span>' + c[1] + ' <b data-out="' + c[0] + '"></b></span><input type="range" min="' + c[2] + '" max="' + c[3] + '" step="' + c[4] + '" data-k="' + c[0] + '" aria-label="' + c[1] + '"></label>'; }).join('') +
             '<div class="sim-btns"><button type="button" class="sim-btn" data-sim="reset">처음 상태로</button></div></div>' +
           '<div class="sim-box sim-read" data-role="read"></div>' +
@@ -243,7 +243,7 @@
       } catch (e) { cb(formula); }
     }
     function startAudio() {
-      if (!Vx || !Vx.buf) { $('[data-role=src]').textContent = '녹음을 불러오지 못해 소리는 들을 수 없어요(미터는 가상 신호로 동작).'; return; }
+      if (!Vx || !Vx.buf) { $('[data-role=src]').textContent = '녹음을 불러오지 못해 소리는 들을 수 없어요. 미터는 가상 신호로 움직여요.'; return; }
       var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
       actx = actx || new AC(); if (actx.resume) actx.resume();
       var src = actx.createBufferSource(); src.buffer = Vx.buf; src.loop = true;
@@ -306,16 +306,16 @@
     }
     function renderRead() {
       var diff = S.maxOut - S.maxIn, gr = S.maxGR || 0, pm = { none: ['ok', '없음'], some: ['warn', '조금 — 출렁임이 들려요'], heavy: ['bad', '심함 — 「훅훅」 출렁여요'] }[S.pump || 'none'];
-      var grq = !S.on ? ['', 'COMP OFF'] : gr < 0.5 ? ['warn', '거의 동작 안 함'] : gr <= 6 ? ['ok', '알맞은 편'] : gr <= 10 ? ['warn', '조금 셈'] : ['bad', '너무 셈'];
+      var grq = !S.on ? ['', 'COMP OFF'] : gr < 0.5 ? ['warn', '거의 안 줄임'] : gr <= 6 ? ['ok', '알맞은 편'] : gr <= 10 ? ['warn', '조금 셈'] : ['bad', '너무 셈'];
       var pass = Z.pass, ps = !S.on || Z.grss < 1 ? ['', '—'] : pass >= 0.4 * Z.grss ? ['ok', '살아 있어요 (약 ' + f1(pass) + ' dB 덜 눌림)'] : pass >= 0.2 * Z.grss ? ['warn', '조금 눌려요 (' + f1(pass) + ' dB)'] : ['bad', '눌려요 (' + f1(pass) + ' dB)'];
-      read.innerHTML = '<h4>지금 상태 <small>최근 3초 · 교육용 근사</small></h4>' +
+      read.innerHTML = '<h4>지금 상태 <small>최근 3초 · 교육용 어림값</small></h4>' +
         '<div class="sim-row"><span>GR 최대 / 출렁임</span><b class="' + grq[0] + '">' + (S.on ? f1(gr) + ' dB / ' + f1(S.swing || 0) + ' dB · ' : '') + grq[1] + '</b></div>' +
-        '<div class="sim-row"><span>입력 피크 → 출력 피크</span><b>' + fmt(S.maxIn) + ' → ' + fmt(S.maxOut) + ' dBFS</b></div>' +
+        '<div class="sim-row"><span>입력 피크 → 출력 피크 (가장 큰 순간)</span><b>' + fmt(S.maxIn) + ' → ' + fmt(S.maxOut) + ' dBFS</b></div>' +
         '<div class="sim-row"><span>출력 − 입력(피크)</span><b class="' + (Math.abs(diff) <= 1.5 ? 'ok' : 'warn') + '">' + (diff >= 0 ? '+' : '') + f1(diff) + ' dB</b></div>' +
         '<div class="sim-row"><span>자음(첫 10 ms)</span><b class="' + ps[0] + '">' + ps[1] + '</b></div>' +
         '<div class="sim-row"><span>펌핑</span><b class="' + pm[0] + '">' + (S.on ? pm[1] : '—') + '</b></div>' +
-        '<div class="sim-row"><span>조용한 순간 이득</span><b class="' + (!S.on || S.makeup < 6 ? 'ok' : S.makeup < 10 ? 'warn' : 'bad') + '">' + (S.on ? '+' + f1(S.makeup) + ' dB → 피드백 여유 ' + (S.makeup ? '−' + f1(S.makeup) : '0') + ' dB' : '0 dB') + '</b></div>' +
-        '<p class="sim-note">조용한 순간에는 GR 이 0 이라 Makeup 만큼 그대로 커져요. 스피커 소리가 마이크로 돌아가는 양도 같이 커져요.</p>';
+        '<div class="sim-row"><span>조용할 때 커진 양</span><b class="' + (!S.on || S.makeup < 6 ? 'ok' : S.makeup < 10 ? 'warn' : 'bad') + '">' + (S.on ? '+' + f1(S.makeup) + ' dB → 피드백 여유 ' + (S.makeup ? '−' + f1(S.makeup) : '0') + ' dB' : '0 dB') + '</b></div>' +
+        '<p class="sim-note">조용한 순간에는 GR 이 0 이에요. 그래서 Makeup 만큼 그대로 커져요. 스피커 소리가 마이크로 돌아가는 양도 같이 커져요.</p>';
     }
     /* --- 그리기 */
     function prep(cv, h) { var w = cv.parentNode.clientWidth || 300; if (h === 'sq') h = Math.min(w, 300); cv.style.width = w + 'px'; cv.style.height = h + 'px'; cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); var x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); return { x: x, w: w, h: h }; }
@@ -425,77 +425,77 @@
     title: 'Compressor', sub: '음량 편차를 고르게',
     prereq: ['signal-flow'],
     overview: {
-      lead: '컴프레서는 소리가 정해 둔 크기(<b>Threshold</b>)를 넘으면, 넘은 만큼을 정해 둔 비율(<b>Ratio</b>)로 줄여서 큰 소리와 작은 소리의 차이(<b>다이내믹 레인지</b>)를 좁혀 주는 장치예요. 줄어든 만큼은 <b>Makeup Gain</b> 으로 다시 올려, 작은 소리는 잘 들리고 큰 소리는 튀지 않게 만들어요.',
+      lead: '컴프레서는 큰 소리를 자동으로 살짝 눌러 주는 장치예요. 소리가 정해 둔 크기(<b>Threshold</b>)를 넘으면, 넘은 만큼을 정해 둔 비율(<b>Ratio</b>)로 줄여요. 그러면 큰 소리와 작은 소리의 차이(<b>다이내믹 레인지</b>)가 좁아져요. 줄어든 만큼은 <b>Makeup Gain</b> 으로 다시 올려요. 그래서 작은 소리는 잘 들리고, 큰 소리는 튀지 않아요.',
       terms: [
         ['다이내믹 레인지', '가장 작은 소리와 가장 큰 소리의 크기 차이(dB)예요. 조용히 부르다 후렴에서 크게 부르면 이 차이가 커져요.'],
         ['Threshold (스레숄드)', '컴프레서가 일하기 시작하는 기준 크기예요. 이 선을 넘는 큰 부분만 줄여요.'],
         ['Ratio (레이쇼·비율)', 'Threshold 를 넘은 양을 얼마나 줄일지 정해요. 4:1 이면 넘은 4 dB 가 1 dB 로 줄어요.'],
         ['Attack (어택)', '소리가 Threshold 를 넘은 뒤 얼마나 빨리 줄이는지예요. 너무 빠르면 자음의 앞부분까지 눌려요.'],
         ['Release (릴리스)', '소리가 Threshold 아래로 내려간 뒤 원래 크기로 돌아오는 데 걸리는 시간이에요.'],
-        ['Knee (니)', 'Threshold 근처에서 줄이기 시작하는 모양이에요. Hard 는 딱 꺾이고, Soft 는 서서히 부드럽게 시작해요.'],
+        ['Knee (니)', 'Threshold 근처에서 줄이기 시작하는 모양이에요(Knee 는 「무릎」이라는 뜻). Hard 는 딱 꺾이고, Soft 는 서서히 부드럽게 꺾여요.'],
         ['Gain Reduction (GR)', '컴프레서가 지금 몇 dB 를 줄이고 있는지예요. GR 미터로 확인해요.'],
         ['Makeup Gain (출력 게인)', '줄어든 만큼 출력 전체를 다시 올리는 양이에요. CL5 에서는 OUT GAIN 이라고 해요.']
       ],
       points: [
-        '컴프레서는 <b>큰 부분만 줄여</b> 음량 차이를 좁히고, 줄어든 만큼 <b>Makeup</b> 으로 전체를 다시 올려요.',
-        '보컬·설교의 출발점: <b>Ratio 2:1–4:1</b>, 큰 부분에서 <b>GR 3–6 dB</b> 정도. 그다음 귀로 듣고 조절해요.',
-        '너무 세게 걸면 소리가 출렁이고(펌핑), 조용한 순간이 커져 <b>피드백이 쉬워져요.</b> MG12XU 설명서도 이 점을 주의하라고 해요. (제조사 자료)'
+        '컴프레서는 <b>큰 부분만 줄여</b> 음량 차이를 좁혀요. 줄어든 만큼은 <b>Makeup</b> 으로 전체를 다시 올려요.',
+        '보컬·설교의 출발점은 <b>Ratio 2:1–4:1</b>, 큰 부분에서 <b>GR 3–6 dB</b> 정도예요. 그다음 귀로 듣고 조절해요.',
+        '너무 세게 걸면 소리가 출렁여요(펌핑). 조용한 순간도 커져 <b>피드백이 쉬워져요.</b> MG12XU 설명서도 이 점을 주의하라고 해요. (제조사 자료)'
       ],
       model: 'compCurve'
     },
     theory: [
       { title: '다이내믹 레인지와 컴프레서의 역할', visual: 'compDynamics',
-        body: '찬양 인도자는 조용한 절에서는 작게, 후렴에서는 크게 불러요. 페이더 하나로 맞추면, 절에 맞추면 후렴이 너무 크고 후렴에 맞추면 절이 묻혀요. 컴프레서는 <b>Threshold 를 넘는 큰 부분만 자동으로 눌러</b> 그 차이를 줄여요. 차이가 줄면 전체를 조금 올려도 큰 부분이 튀지 않아서, 작은 부분까지 잘 들리게 돼요.',
-        more: '<ul><li>컴프레서는 「아주 빠르게 움직이는 자동 페이더」라고 생각하면 쉬워요. 사람 손보다 훨씬 빨리(수 ms ~ 수백 ms) 반응해요.</li><li><b>리미터</b>는 Ratio 가 아주 큰(10:1 이상, ∞:1) 컴프레서예요. 소리가 넘지 말아야 할 천장을 지키는 데 써요.</li><li>컴프레서는 GAIN 이 잘못 맞춰진 것이나 마이크가 입에서 멀어진 것을 대신 고쳐 주지 못해요. Gain Structure 와 마이크 거리가 먼저예요.</li><li>그림의 레벨 변화는 이해를 돕기 위해 계산으로 만든 <b>예시</b>예요.</li></ul>',
+        body: '찬양 인도자는 조용한 절에서는 작게, 후렴에서는 크게 불러요. 페이더 하나로는 맞추기 어려워요. 절에 맞추면 후렴이 너무 크고, 후렴에 맞추면 절이 묻혀요. 컴프레서는 <b>Threshold 를 넘는 큰 부분만 자동으로 눌러</b> 그 차이를 줄여요. 차이가 줄면 전체를 조금 올려도 큰 부분이 튀지 않아요. 그래서 작은 부분까지 잘 들리게 돼요.',
+        more: '<ul><li>컴프레서는 「아주 빠르게 움직이는 자동 페이더」라고 생각하면 쉬워요. 사람 손보다 훨씬 빨리(수 ms ~ 수백 ms) 반응해요.</li> <li><b>리미터</b>는 Ratio 가 아주 큰(10:1 이상, ∞:1) 컴프레서예요. 소리가 넘으면 안 되는 천장을 지키는 데 써요.</li> <li>컴프레서가 대신 고쳐 주지 못하는 것도 있어요. GAIN 이 잘못 맞춰진 것, 마이크가 입에서 멀어진 것이에요. Gain Structure(단계마다 소리 크기 맞추기)와 마이크 거리가 먼저예요.</li> <li>그림의 크기 변화는 이해를 돕기 위해 계산으로 만든 <b>예시</b>예요.</li></ul>',
         check: { q: '컴프레서가 하는 일로 알맞은 것은?', options: [
-          { t: '큰 부분을 줄여 큰 소리와 작은 소리의 차이를 줄인다', ok: true, why: '맞아요. Threshold 를 넘는 부분만 줄여 다이내믹 레인지를 좁혀요.' },
-          { t: '모든 소리를 똑같이 키운다', why: '모든 소리를 똑같이 키우는 것은 GAIN·페이더의 일이에요.' },
-          { t: '특정 주파수(음색)만 줄인다', why: '주파수별 조절은 EQ 의 일이에요. 컴프레서는 크기를 다뤄요.' }] } },
+          { t: '큰 부분을 줄여 큰 소리와 작은 소리의 차이를 줄여요', ok: true, why: '맞아요. Threshold 를 넘는 부분만 줄여 차이(다이내믹 레인지)를 좁히기 때문이에요.' },
+          { t: '모든 소리를 똑같이 키워요', why: '아니에요. 모든 소리를 똑같이 키우는 것은 GAIN·페이더의 일이에요.' },
+          { t: '특정 높이(주파수)의 소리만 줄여요', why: '아니에요. 높이별 조절은 EQ 의 일이에요. 컴프레서는 크기를 다뤄요.' }] } },
       { title: 'Threshold 와 Ratio — 전달 곡선 읽기', visual: 'compCurve',
-        body: '전달 곡선은 <b>가로축이 입력, 세로축이 출력</b>인 그래프예요. Threshold 아래에서는 입력 = 출력(대각선)이라 아무 일도 하지 않아요. Threshold 를 넘으면 선이 눕고, Ratio 가 클수록 더 많이 누워요. 계산은 <b>출력 = Threshold + (입력 − Threshold) ÷ Ratio</b> 예요. 예를 들어 Threshold −20 dB, Ratio 4:1 에서 입력이 −8 dB 이면 넘은 12 dB 가 3 dB 가 되어 출력은 −17 dB, 줄어든 양(GR)은 9 dB 예요.',
-        more: '<ul><li>줄어드는 양: <b>GR = (입력 − Threshold) × (1 − 1/Ratio)</b>. 2:1 이면 넘은 양의 절반, 4:1 이면 3/4 을 줄여요.</li><li>Ratio 1:1 은 아무것도 줄이지 않아요. ∞:1 은 Threshold 를 넘지 않게 막는 리미터예요.</li><li><b>Knee</b>: Hard knee 는 Threshold 에서 딱 꺾이고, Soft knee 는 Threshold 근처 몇 dB 에서 서서히 꺾여 더 자연스럽게 들려요. CL5 의 KNEE 는 Hard 와 1–5 단계가 있고, 숫자가 클수록 부드러워요. (제조사 자료)</li><li>그림의 선은 위 공식으로 계산했어요(Threshold −20 dB 예시).</li></ul>',
-        check: { q: 'Threshold −20 dB, Ratio 4:1 일 때 입력이 −12 dB 이면 출력은?', options: [
-          { t: '−18 dB', ok: true, why: '맞아요. 넘은 8 dB 가 4:1 로 2 dB 가 되어 −20 + 2 = −18 dB 예요.' },
-          { t: '−12 dB (그대로)', why: 'Threshold(−20 dB)를 넘었으니 넘은 부분이 줄어들어요.' },
-          { t: '−20 dB', why: 'Threshold 에 딱 붙는 것은 ∞:1(리미터)일 때예요.' }] } },
+        body: '전달 곡선은 <b>가로축이 들어온 소리(입력), 세로축이 나간 소리(출력)</b>인 그래프예요. Threshold 아래에서는 입력 = 출력(대각선)이에요. 아무 일도 하지 않아요. Threshold 를 넘으면 선이 눕기 시작해요. Ratio 가 클수록 더 많이 누워요. 계산은 <b>출력 = Threshold + (입력 − Threshold) ÷ Ratio</b> 예요. 예를 들어 Threshold −20 dB, Ratio 4:1 이고 입력이 −8 dB 라고 해 봐요. 넘은 12 dB 가 3 dB 로 줄어 출력은 −17 dB 예요. 줄어든 양(GR)은 9 dB 예요.',
+        more: '<ul><li>줄어드는 양: <b>GR = (입력 − Threshold) × (1 − 1/Ratio)</b>. 2:1 이면 넘은 양의 절반을 줄여요. 4:1 이면 3/4 을 줄여요.</li> <li>Ratio 1:1 은 아무것도 줄이지 않아요. ∞:1 은 Threshold 를 넘지 않게 막는 리미터예요.</li> <li><b>Knee</b>: Hard knee 는 Threshold 에서 딱 꺾여요. Soft knee 는 Threshold 근처 몇 dB 에서 서서히 꺾여요. 그래서 더 자연스럽게 들려요. CL5 의 KNEE 는 Hard 와 1–5 단계가 있어요. 숫자가 클수록 부드러워요. (제조사 자료)</li> <li>그림의 선은 위 공식으로 계산했어요(Threshold −20 dB 예시).</li></ul>',
+        check: { q: 'Threshold −20 dB, Ratio 4:1 에서 입력이 −12 dB 이면 출력은?', options: [
+          { t: '−18 dB', ok: true, why: '맞아요. 넘은 8 dB 가 4:1 로 2 dB 가 되어 −20 + 2 = −18 dB 이기 때문이에요.' },
+          { t: '−12 dB (그대로)', why: '아니에요. Threshold(−20 dB)를 넘었으니 넘은 부분이 줄어들어요.' },
+          { t: '−20 dB', why: '아니에요. Threshold 에 딱 붙는 것은 ∞:1(리미터)일 때예요.' }] } },
       { title: 'Attack 과 Release — 얼마나 빨리 누르고 놓을까', visual: 'compTime',
-        body: '<b>Attack</b> 은 큰 소리가 들어왔을 때 줄이기 시작하는 빠르기, <b>Release</b> 는 소리가 작아진 뒤 원래대로 놓아주는 빠르기예요. Attack 이 너무 빠르면 「ㅅ·ㅊ·ㅌ·ㅋ」 같은 자음의 앞부분까지 눌려 말이 뭉개지고 답답해져요. 조금 느리게(약 10–30 ms) 두면 앞부분은 지나가고 뒤쪽 큰 부분만 눌러 또렷해요. Release 가 너무 짧으면 소리가 떨리듯 출렁이고, 너무 길면 다음 작은 소리까지 눌린 채로 남아요.',
-        more: '<ul><li><b>MG12XU COMP</b>: Attack 약 25 ms, Release 약 300 ms 로 정해져 있어 따로 바꿀 수 없어요. (제조사 자료)</li><li><b>CL5 채널 컴프레서</b>: ATTACK 0–120 ms, RELEASE 5 ms–42.3 s(48 kHz 기준)에서 고를 수 있어요. (제조사 자료)</li><li>음절이 촘촘한 빠른 곡은 Release 를 조금 짧게, 느린 곡은 조금 길게 두면 자연스러워요.</li><li>그림은 1차 지연(지수 곡선)으로 계산한 <b>교육용 근사</b>예요. 실제 컴프레서마다 움직이는 모양이 조금씩 달라요.</li></ul>',
+        body: '<b>Attack</b> 은 큰 소리가 들어왔을 때 줄이기 시작하는 빠르기예요. <b>Release</b> 는 소리가 작아진 뒤 원래대로 놓아주는 빠르기예요. Attack 이 너무 빠르면 「ㅅ·ㅊ·ㅌ·ㅋ」 같은 자음의 앞부분까지 눌려요. 그러면 말이 뭉개지고 답답해져요. 조금 느리게(약 10–30 ms) 두면 앞부분은 그냥 지나가요. 뒤쪽 큰 부분만 눌러서 또렷해요. Release 가 너무 짧으면 소리가 떨리듯 출렁여요. 너무 길면 다음 작은 소리까지 눌린 채로 남아요.',
+        more: '<ul><li><b>MG12XU COMP</b>: Attack 약 25 ms, Release 약 300 ms 로 정해져 있어요. 따로 바꿀 수 없어요. (제조사 자료)</li> <li><b>CL5 채널 컴프레서</b>: ATTACK 0–120 ms, RELEASE 5 ms–42.3 s(48 kHz 기준)에서 고를 수 있어요. (제조사 자료)</li> <li>음절이 촘촘한 빠른 곡은 Release 를 조금 짧게 둬요. 느린 곡은 조금 길게 두면 자연스러워요.</li> <li>그림은 간단한 공식(1차 지연, 지수 곡선)으로 계산한 <b>교육용 어림값(근사)</b>이에요. 실제 컴프레서마다 움직이는 모양이 조금씩 달라요.</li></ul>',
         check: { q: '컴프를 건 뒤 보컬의 자음이 뭉개지고 답답하게 들려요. Attack 을 어떻게 바꿔 볼까요?', options: [
-          { t: '조금 느리게(길게) 한다', ok: true, why: '맞아요. 자음의 앞부분이 눌리기 전에 지나가서 또렷해져요.' },
-          { t: '0 ms 로 가장 빠르게 한다', why: '가장 빠르면 앞부분까지 눌려 더 답답해져요.' },
-          { t: 'Attack 은 음색과 상관없다', why: 'Attack 은 소리의 앞부분을 얼마나 누를지 정해서 음색에 큰 영향을 줘요.' }] } },
+          { t: '조금 느리게(길게) 해요', ok: true, why: '맞아요. 자음의 앞부분이 눌리기 전에 지나가서 또렷해지기 때문이에요.' },
+          { t: '0 ms 로 가장 빠르게 해요', why: '아니에요. 가장 빠르면 앞부분까지 눌려 더 답답해져요.' },
+          { t: 'Attack 은 소리 색깔(음색)과 상관없어요', why: '아니에요. Attack 은 소리의 앞부분을 얼마나 누를지 정해요. 그래서 음색에 큰 영향을 줘요.' }] } },
       { title: 'Gain Reduction 미터와 Makeup Gain', visual: 'compGR',
-        body: '<b>GR 미터</b>는 위에서 아래로 켜지며 지금 몇 dB 를 줄이고 있는지 보여 줘요. 큰 부분을 줄인 만큼 소리 전체가 작아지니, <b>Makeup Gain</b> 으로 다시 올려 원래 크기 근처로 맞춰요. 컴프를 켰다 껐다 비교할 때는 두 소리의 크기를 맞춰야 해요. 크기가 다르면 큰 쪽이 더 좋게 들리는 착각이 생기기 때문이에요.',
-        more: '<ul><li><b>CL5</b>: OUT GAIN 으로 Makeup 을 0.0 ~ +18.0 dB 범위에서 직접 맞춰요. (제조사 자료)</li><li><b>MG12XU</b>: COMP 노브를 오른쪽으로 돌리면 출력 게인도 0 ~ +7 dB 범위에서 함께 올라가요. 따로 Makeup 노브는 없어요. (제조사 자료)</li><li>소리가 날 때 GR 미터가 쉬지 않고 계속 켜져 있다면 Threshold 가 너무 낮은 거예요. 큰 부분에서만 움직이는 것이 보통이에요.</li><li>그림의 미터 값은 <b>예시</b>예요.</li></ul>',
+        body: '<b>GR 미터</b>는 위에서 아래로 켜져요. 지금 몇 dB 를 줄이고 있는지 보여 줘요. 큰 부분을 줄인 만큼 소리 전체가 작아져요. 그래서 <b>Makeup Gain</b> 으로 다시 올려 원래 크기 근처로 맞춰요. 컴프를 켰다 껐다 비교할 때는 두 소리의 크기를 맞춰야 해요. 크기가 다르면 큰 쪽이 더 좋게 들리는 착각이 생기기 때문이에요.',
+        more: '<ul><li><b>CL5</b>: OUT GAIN 으로 Makeup 을 0.0 ~ +18.0 dB 범위에서 직접 맞춰요. (제조사 자료)</li> <li><b>MG12XU</b>: COMP 노브를 오른쪽으로 돌리면 출력 게인도 0 ~ +7 dB 범위에서 함께 올라가요. 따로 Makeup 노브는 없어요. (제조사 자료)</li> <li>소리가 날 때 GR 미터가 쉬지 않고 계속 켜져 있다면 Threshold 가 너무 낮은 거예요. 큰 부분에서만 움직이는 것이 보통이에요.</li> <li>그림의 미터 값은 <b>예시</b>예요.</li></ul>',
         check: { q: '컴프레서를 걸었더니 보컬이 전체적으로 작아졌어요. 무엇으로 맞출까요?', options: [
-          { t: 'Makeup Gain(출력 게인)을 올린다', ok: true, why: '맞아요. 줄어든 만큼 출력을 다시 올려요.' },
-          { t: 'Threshold 를 더 낮춘다', why: '더 많이 줄어들어 오히려 더 작아져요.' },
-          { t: 'Ratio 를 더 높인다', why: '더 세게 눌러 오히려 더 작아져요.' }] } },
+          { t: 'Makeup Gain(출력 게인)을 올려요', ok: true, why: '맞아요. 줄어든 만큼 출력을 다시 올리면 되기 때문이에요.' },
+          { t: 'Threshold 를 더 낮춰요', why: '아니에요. 더 많이 줄어들어 오히려 더 작아져요.' },
+          { t: 'Ratio 를 더 높여요', why: '아니에요. 더 세게 눌러 오히려 더 작아져요.' }] } },
       { title: '예배 보컬 음량 관리 — 말과 노래', visual: 'compWorship',
-        body: '<b>설교·기도·광고</b> 같은 말은 노래보다 크기 변화가 작지만, 입과 마이크 거리가 바뀌거나 갑자기 목소리를 높일 때 튀어요. 말에는 <b>낮은 Ratio(2:1–3:1)로 가볍게</b> 걸어 자연스러움을 지켜요. <b>찬양 보컬</b>은 조용한 절과 힘찬 후렴의 차이가 커서 조금 더 걸 수 있어요(3:1–4:1, 큰 부분에서 GR 3–6 dB). 어느 쪽이든 숫자보다 귀가 먼저예요. 컴프를 켰다 껐다 하며 비교해요.',
-        more: '<ul><li><b>마이크 사용이 먼저</b>예요. 입과 마이크 거리가 일정하면 컴프를 조금만 걸어도 돼요. 「마이크」 모듈의 거리 이야기를 떠올려 보세요.</li><li><b>MG12XU</b>: COMP 노브는 CH1–4 에만 있어요. 설교·보컬 마이크를 이 채널에 꽂아야 COMP 를 쓸 수 있어요. (제조사 자료)</li><li><b>CL5</b>: 입력 채널마다 다이내믹스가 두 개 있어요. DYNAMICS 1 은 Gate·Ducking·Comp·Expander, DYNAMICS 2 는 Comp·De-Esser·Compander H·Compander S 중에서 골라요. 다이내믹스 라이브러리에는 「Solo Vocal」, 「Announcer」 같은 프리셋이 있어 출발점으로 쓸 수 있어요. (제조사 자료)</li><li>그림의 설정값은 흔히 쓰는 <b>출발점 예시</b>예요. 목소리·곡·공간에 따라 달라요.</li></ul>',
+        body: '<b>설교·기도·광고</b> 같은 말은 노래보다 크기 변화가 작아요. 하지만 입과 마이크 거리가 바뀌거나 갑자기 목소리를 높일 때 튀어요. 말에는 <b>낮은 Ratio(2:1–3:1)로 가볍게</b> 걸어요. 그래야 자연스러움이 지켜져요. <b>찬양 보컬</b>은 조용한 절과 힘찬 후렴의 차이가 커요. 그래서 조금 더 걸 수 있어요. 3:1–4:1 로, 큰 부분에서 GR 3–6 dB 정도예요. 어느 쪽이든 숫자보다 귀가 먼저예요. 컴프를 켰다 껐다 하며 비교해요.',
+        more: '<ul><li><b>마이크 사용이 먼저</b>예요. 입과 마이크 거리가 일정하면 컴프를 조금만 걸어도 돼요. 「마이크」 모듈의 거리 이야기를 떠올려 보세요.</li> <li><b>MG12XU</b>: COMP 노브는 CH1–4 에만 있어요. 설교·보컬 마이크를 이 채널에 꽂아야 COMP 를 쓸 수 있어요. (제조사 자료)</li> <li><b>CL5</b>: 입력 채널마다 다이내믹스(소리 크기 처리기)가 두 개 있어요. (제조사 자료)<ul><li>DYNAMICS 1: Gate·Ducking·Comp·Expander 중에서 골라요.</li> <li>DYNAMICS 2: Comp·De-Esser·Compander H·Compander S 중에서 골라요.</li> <li>다이내믹스 라이브러리에는 「Solo Vocal」, 「Announcer」 같은 프리셋(미리 저장된 설정)이 있어요. 출발점으로 쓸 수 있어요.</li></ul></li> <li>그림의 설정값은 흔히 쓰는 <b>출발점 예시</b>예요. 목소리·곡·공간에 따라 달라요.</li></ul>',
         check: { q: '설교 마이크 컴프레서의 출발점으로 가장 알맞은 것은?', options: [
-          { t: 'Ratio 2:1–3:1 정도로 가볍게, 큰 소리에서 몇 dB 만 줄인다', ok: true, why: '맞아요. 말은 자연스러움이 중요해서 가볍게 걸어요.' },
-          { t: 'Ratio ∞:1, Threshold 를 아주 낮게 해 늘 세게 누른다', why: '말이 답답해지고, 조용한 순간이 커져 피드백에도 약해져요.' },
-          { t: '말에는 컴프레서를 절대 쓰지 않는다', why: '가볍게 쓰면 갑자기 커지는 소리를 다듬는 데 도움이 돼요.' }] } },
+          { t: 'Ratio 2:1–3:1 정도로 가볍게, 큰 소리에서 몇 dB 만 줄여요', ok: true, why: '맞아요. 말은 자연스러움이 중요해서 가볍게 걸기 때문이에요.' },
+          { t: 'Ratio ∞:1, Threshold 를 아주 낮게 해 늘 세게 눌러요', why: '아니에요. 말이 답답해지고, 조용한 순간이 커져 피드백에도 약해져요.' },
+          { t: '말에는 컴프레서를 절대 쓰지 않아요', why: '아니에요. 가볍게 쓰면 갑자기 커지는 소리를 다듬는 데 도움이 돼요.' }] } },
       { title: '과도한 압축 — 펌핑과 피드백 위험', visual: 'compOver',
-        body: 'Threshold 를 너무 낮추고 Ratio 를 너무 높이면 문제가 생겨요. ① 소리가 납작하고 답답해져요. ② 큰 소리가 지나갈 때마다 전체 소리가 「훅훅」 줄었다 올라오는 <b>펌핑</b>이 들려요. ③ 줄어든 만큼 Makeup 으로 올렸기 때문에, 노래가 멈춘 순간에는 잡음·주변 소리·<b>스피커에서 돌아오는 소리까지 커져요.</b> 그래서 <b>피드백 여유가 줄어</b> 하울링이 쉽게 나요. MG12XU 설명서도 「압축을 너무 높게 설정하지 마세요. 평균 출력 레벨이 높아져 피드백이 생길 수 있어요.」라고 안내해요. (제조사 자료)',
-        more: '<ul><li>예: 큰 부분에서 GR 10 dB 를 걸고 Makeup 을 +10 dB 올리면, 큰 부분 크기는 그대로지만 <b>조용한 순간의 이득은 +10 dB</b> 커져요. 스피커 → 마이크 → 스피커로 도는 소리도 10 dB 커지는 셈이에요.</li><li>MG12XU 설명서의 문제 해결 표에도 「컴프레서가 너무 높게 설정되어 있지 않나요? COMP 노브로 낮추세요」라는 항목이 있어요. (제조사 자료)</li><li>고치는 순서: Threshold 를 올리고 → Ratio 를 낮추고 → 필요하면 Release 를 조금 길게. GR 미터가 늘 10 dB 넘게 켜져 있으면 너무 센 거예요.</li><li>그림의 값은 계산으로 만든 <b>교육용 근사</b>예요.</li></ul>',
+        body: 'Threshold 를 너무 낮추고 Ratio 를 너무 높이면 문제가 생겨요. ① 소리가 납작하고 답답해져요. ② 큰 소리가 지나갈 때마다 전체 소리가 「훅훅」 줄었다 올라와요. 이것을 <b>펌핑</b>이라고 해요. ③ 줄어든 만큼 Makeup 으로 올렸기 때문에, 노래가 멈추면 다른 소리가 커져요. 잡음·주변 소리·<b>스피커에서 돌아오는 소리까지 커져요.</b> 그래서 <b>피드백 여유가 줄어</b> 하울링(삐- 소리)이 쉽게 나요. MG12XU 설명서도 압축을 너무 높게 설정하지 말라고 안내해요. 평균 출력 레벨(평소 소리 크기)이 높아져 피드백이 생길 수 있기 때문이에요. (제조사 자료)',
+        more: '<ul><li>예: 큰 부분에서 GR 10 dB 를 걸고 Makeup 을 +10 dB 올렸다고 해 봐요. 큰 부분 크기는 그대로예요. 하지만 <b>조용한 순간의 이득은 +10 dB</b> 커져요(조용할 때 소리가 10 dB 커져요). 스피커 → 마이크 → 스피커로 도는 소리도 10 dB 커지는 셈이에요.</li> <li>MG12XU 설명서의 문제 해결 표에도 「컴프레서가 너무 높게 설정되어 있지 않나요? COMP 노브로 낮추세요」라는 항목이 있어요. (제조사 자료)</li> <li>고치는 순서: Threshold 를 올리고 → Ratio 를 낮추고 → 필요하면 Release 를 조금 길게 해요. GR 미터가 늘 10 dB 넘게 켜져 있으면 너무 센 거예요.</li> <li>그림의 값은 계산으로 만든 <b>교육용 어림값(근사)</b>이에요.</li></ul>',
         check: { q: '컴프를 세게 걸고 Makeup 으로 크기를 맞췄더니 하울링이 잘 생겨요. 가장 큰 이유는?', options: [
-          { t: '조용한 순간의 이득이 커져, 스피커 소리가 마이크로 돌아가는 양도 커졌기 때문', ok: true, why: '맞아요. Makeup 으로 올린 만큼 조용할 때 전체 이득이 커져 피드백 여유가 줄어요.' },
-          { t: '컴프레서가 고음만 키웠기 때문', why: '컴프레서는 주파수가 아니라 크기를 다뤄요.' },
-          { t: 'Attack 이 느려서', why: 'Attack 은 앞부분을 누르는 빠르기라 이 문제의 주된 원인이 아니에요.' }] } }
+          { t: '조용한 순간의 이득이 커져, 스피커 소리가 마이크로 돌아가는 양도 커졌기 때문', ok: true, why: '맞아요. Makeup 으로 올린 만큼 조용할 때 전체 소리가 커져요. 그래서 피드백 여유가 줄어요.' },
+          { t: '컴프레서가 고음만 키웠기 때문', why: '아니에요. 컴프레서는 높낮이(주파수)가 아니라 크기를 다뤄요.' },
+          { t: 'Attack 이 느려서', why: '아니에요. Attack 은 앞부분을 누르는 빠르기예요. 이 문제의 주된 원인이 아니에요.' }] } }
     ],
     practice: {
       kind: 'compressorSim',
-      lead: '실제 찬양 보컬 녹음이 컴프레서를 지나가요. Threshold·Ratio·Attack·Release·Knee·Makeup 을 움직이며 입력·GR·출력 미터와 전달 곡선 위의 점이 어떻게 움직이는지 보세요. 「소리 켜기」를 누르면 바뀐 소리를 바로 들을 수 있어요.',
-      note: '소리는 브라우저의 컴프레서(Web Audio)로 실제 녹음을 처리해요. 미터의 dBFS 눈금, 펌핑·자음 판정, 「조용한 순간 이득」은 교육용 근사이고 MG12XU·CL5 의 실제 소리·수치와는 달라요. 소리를 켜지 않아도 같은 녹음의 레벨을 분석해 미터가 움직여요.',
+      lead: '실제 찬양 보컬 녹음이 컴프레서를 지나가요. Threshold·Ratio·Attack·Release·Knee·Makeup 을 움직여 보세요. 입력·GR·출력 미터가 어떻게 바뀌는지 봐요. 전달 곡선(입력·출력 그래프) 위의 점도 함께 봐요. 피크는 가장 큰 순간의 크기예요. 「소리 켜기」를 누르면 바뀐 소리를 바로 들을 수 있어요.',
+      note: '소리는 브라우저에 들어 있는 컴프레서(Web Audio)로 실제 녹음을 처리해요. 미터의 dBFS 눈금, 펌핑·자음 판정, 「조용할 때 커진 양」은 교육용 어림값(근사)이에요. MG12XU·CL5 의 실제 소리·숫자와는 달라요. 소리를 켜지 않아도 같은 녹음의 크기를 분석해 미터가 움직여요.',
       tasks: [
-        { id: 'peak', title: '피크를 3–6 dB 줄이기', text: 'COMP ON, Ratio 2:1 이상에서 Threshold 를 내려, 노래의 큰 부분에서 GR(최근 3초 최대)이 3–6 dB 가 되게 맞추세요.' },
-        { id: 'makeup', title: 'Makeup 으로 원래 크기 맞추기', text: 'GR 이 3 dB 이상 걸린 상태에서 Makeup 을 올려, 출력 피크를 입력 피크와 ±1.5 dB 안으로 맞추세요.' },
-        { id: 'pump', title: '너무 센 압축 — 펌핑 확인', text: 'Ratio 를 10:1 이상으로 올리고 Threshold 를 낮춰, GR 이 12 dB 넘게 출렁이는 「펌핑: 심함」 상태를 만들어 보세요.' },
-        { id: 'attack', title: 'Attack 을 바꿔 자음 살리기', text: 'GR 이 3 dB 이상 걸린 상태에서 Attack 을 2 ms 이하로 해 자음이 눌리는 것을 본 뒤, 15–40 ms 로 바꿔 「자음: 살아 있어요」를 확인하세요.' }
+        { id: 'peak', title: '피크를 3–6 dB 줄이기', text: 'COMP ON, Ratio 2:1 이상에서 Threshold 를 내려 보세요. 노래의 큰 부분에서 GR(최근 3초 최대)이 3–6 dB 가 되면 성공이에요.' },
+        { id: 'makeup', title: 'Makeup 으로 원래 크기 맞추기', text: 'GR 이 3 dB 이상 걸린 상태에서 Makeup 을 올리세요. 출력 피크(가장 큰 순간)를 입력 피크와 ±1.5 dB 안으로 맞춰요.' },
+        { id: 'pump', title: '너무 센 압축 — 펌핑 확인', text: 'Ratio 를 10:1 이상으로 올리고 Threshold 를 낮춰 보세요. GR 이 12 dB 넘게 출렁이는 「펌핑: 심함」 상태를 만들어 봐요.' },
+        { id: 'attack', title: 'Attack 을 바꿔 자음 살리기', text: 'GR 이 3 dB 이상 걸린 상태에서 Attack 을 2 ms 이하로 해 보세요. 자음이 눌리는 것을 본 뒤, 15–40 ms 로 바꿔요. 「자음: 살아 있어요」가 나오면 성공이에요.' }
       ],
       links: [
         { title: 'MG12XU 기능부 설명 · COMP', text: '1~4번 채널의 원 노브 컴프레서가 콘솔 어디에 있는지 봐요.', go: { tab: 'tab6', sec: 'comp' } },
@@ -504,34 +504,34 @@
     },
     quiz: [
       { q: 'Threshold −18 dB, Ratio 4:1 에서 입력이 −6 dB 일 때 줄어드는 양(GR)은?', options: [
-        { t: '3 dB', why: '3 dB 는 줄어든 뒤 Threshold 위에 남는 양이에요. 넘은 12 dB 중 9 dB 가 줄어요.' },
-        { t: '9 dB', ok: true, why: '맞아요. 넘은 12 dB × (1 − 1/4) = 9 dB 를 줄여 출력은 −15 dB 예요.' },
-        { t: '12 dB', why: '12 dB 를 모두 줄이는 것은 ∞:1(리미터)일 때예요.' }] },
-      { q: '노래하는 동안 GR 미터가 쉬지 않고 10 dB 넘게 켜져 있고 소리가 답답해요. 먼저 할 일은?', options: [
-        { t: 'Makeup 을 더 올린다', why: '크기만 커지고 답답함은 그대로예요. 피드백 여유도 줄어요.' },
-        { t: 'Threshold 를 올리거나 Ratio 를 낮춰 덜 누른다', ok: true, why: '맞아요. 큰 부분에서만 몇 dB 줄이도록 압축을 줄여요.' },
-        { t: 'Attack 을 0 ms 로 한다', why: '앞부분까지 눌러 더 답답해져요.' }] },
+        { t: '3 dB', why: '아니에요. 3 dB 는 줄어든 뒤 Threshold 위에 남는 양이에요. 넘은 12 dB 중 9 dB 가 줄어요.' },
+        { t: '9 dB', ok: true, why: '맞아요. 넘은 12 dB × (1 − 1/4) = 9 dB 를 줄여 출력은 −15 dB 가 되기 때문이에요.' },
+        { t: '12 dB', why: '아니에요. 12 dB 를 모두 줄이는 것은 ∞:1(리미터)일 때예요.' }] },
+      { q: '노래하는 동안 GR 미터가 쉬지 않고 10 dB 넘게 켜져 있고, 소리도 답답해요. 먼저 할 일은?', options: [
+        { t: 'Makeup 을 더 올려요', why: '아니에요. 크기만 커지고 답답함은 그대로예요. 피드백 여유도 줄어요.' },
+        { t: 'Threshold 를 올리거나 Ratio 를 낮춰 덜 눌러요', ok: true, why: '맞아요. 큰 부분에서만 몇 dB 줄이도록 압축을 줄여야 하기 때문이에요.' },
+        { t: 'Attack 을 0 ms 로 해요', why: '아니에요. 앞부분까지 눌러 더 답답해져요.' }] },
       { q: 'MG12XU 의 COMP 노브를 오른쪽으로 돌리면 어떻게 될까요?', options: [
-        { t: 'Threshold·Ratio·출력 게인이 함께 바뀌어 압축이 세지고 출력도 보정된다', ok: true, why: '맞아요. 제조사 설명서: 노브 하나로 Threshold(+22 ~ −8 dBu)·Ratio(1:1 ~ 4:1)·출력 게인(0 ~ +7 dB)이 함께 바뀌어요.' },
-        { t: 'Attack 시간만 짧아진다', why: 'MG12XU COMP 의 Attack(약 25 ms)·Release(약 300 ms)는 고정이에요.' },
-        { t: '고음(EQ HIGH)이 올라간다', why: 'COMP 는 음색이 아니라 크기를 다뤄요.' }] },
+        { t: 'Threshold·Ratio·출력 게인이 함께 바뀌어, 압축이 세지고 출력도 보정돼요', ok: true, why: '맞아요. 제조사 설명서에 따르면 노브 하나로 세 값이 함께 바뀌어요. Threshold(+22 ~ −8 dBu)·Ratio(1:1 ~ 4:1)·출력 게인(0 ~ +7 dB)이에요.' },
+        { t: 'Attack 시간만 짧아져요', why: '아니에요. MG12XU COMP 의 Attack(약 25 ms)·Release(약 300 ms)는 고정이에요.' },
+        { t: '고음(EQ HIGH)이 올라가요', why: '아니에요. COMP 는 소리 색깔(음색)이 아니라 크기를 다뤄요.' }] },
       { q: 'Makeup Gain 을 쓰는 이유로 알맞은 것은?', options: [
-        { t: '피크를 더 많이 줄이려고', why: '피크를 줄이는 것은 Threshold·Ratio 의 일이에요.' },
-        { t: '피드백을 줄이려고', why: '오히려 조용한 순간의 이득이 커져 피드백 여유가 줄어요.' },
-        { t: '압축으로 줄어든 만큼 전체 크기를 되돌리려고', ok: true, why: '맞아요. 줄어든 만큼 출력을 다시 올려 원래 크기 근처로 맞춰요.' }] },
+        { t: '피크를 더 많이 줄이려고', why: '아니에요. 피크를 줄이는 것은 Threshold·Ratio 의 일이에요.' },
+        { t: '피드백을 줄이려고', why: '아니에요. 오히려 조용한 순간이 커져 피드백 여유가 줄어요.' },
+        { t: '압축으로 줄어든 만큼 전체 크기를 되돌리려고', ok: true, why: '맞아요. 줄어든 만큼 출력을 다시 올려 원래 크기 근처로 맞추기 때문이에요.' }] },
       { q: '「펌핑」이란 어떤 현상일까요?', options: [
         { t: '큰 소리가 올 때마다 전체 소리가 눈에 띄게 줄었다 다시 올라오는 출렁임', ok: true, why: '맞아요. Threshold 가 너무 낮고 Ratio 가 너무 높을 때 잘 생겨요.' },
-        { t: '마이크를 입에 가까이 대면 저음이 커지는 현상', why: '그것은 근접 효과예요.' },
-        { t: '디지털 미터가 0 dBFS 를 넘어 잘리는 현상', why: '그것은 클리핑이에요.' }] }
+        { t: '마이크를 입에 가까이 대면 저음이 커지는 현상', why: '아니에요. 그것은 근접 효과예요.' },
+        { t: '디지털 미터가 0 dBFS 를 넘어 잘리는 현상', why: '아니에요. 그것은 클리핑(소리가 잘려 찌그러짐)이에요.' }] }
     ],
     missions: [
       { title: 'Ear Training · 볼륨 변화 트레이닝', text: '몇 dB 바뀌었는지 귀로 맞히는 연습이에요. GR 3 dB 와 6 dB 의 차이를 귀로 구분하는 힘이 길러져요.', go: { tab: 'tab3' } },
       { title: 'CL5 콘솔 트레이닝 · 예배 식순', text: '식순에 맞춰 설교 마이크와 찬양 보컬 채널을 바꿔 켜는 연습이에요. 말과 노래에 컴프를 다르게 거는 이유를 떠올리며 해 보세요.', go: { tab: 'tab5' } }
     ],
     deeper: [
-      { title: '리미터와 시스템 보호', text: 'Ratio 가 아주 큰(10:1 이상, ∞:1) 컴프레서를 리미터라고 해요. 갑작스러운 큰 소리가 앰프·스피커의 한계를 넘지 않게 지키는 데 써요.', more: '리미터는 소리를 만드는 도구라기보다 사고를 막는 안전장치예요. 리미터가 늘 동작하고 있다면 앞 단계의 레벨이 너무 큰 거예요. Gain Structure 부터 다시 확인하세요.' },
-      { title: '디에서 (De-Esser)', text: '「ㅅ·ㅆ」 같은 치찰음이 귀를 찌를 때, 그 고음 대역만 감지해 순간적으로 줄이는 컴프레서예요. CL5 의 DYNAMICS 2 에서 고를 수 있어요. (제조사 자료)', more: 'EQ 로 고음을 늘 깎으면 평소 음색까지 어두워지지만, 디에서는 치찰음이 나올 때만 줄여 평소 음색을 지켜요.' },
-      { title: '컴프레서 앞의 저음 정리', text: '불필요한 저음(무대 울림, 마이크 잡는 소리)이 많으면 그 저음 때문에 컴프가 자주 동작해요. HPF 로 불필요한 저음을 먼저 정리하면 컴프가 목소리에만 반응해요.', more: '「EQ」 모듈의 HPF 이야기와 함께 보세요. 저음을 크게 올리는 EQ 도 컴프를 더 자주 동작하게 만들어요.' }
+      { title: '리미터와 시스템 보호', text: 'Ratio 가 아주 큰(10:1 이상, ∞:1) 컴프레서를 리미터라고 해요. 갑자기 큰 소리가 나도 앰프·스피커의 한계를 넘지 않게 지켜 줘요.', more: '리미터는 소리를 만드는 도구라기보다 사고를 막는 안전장치예요. 리미터가 늘 동작하고 있다면 앞 단계의 소리가 너무 큰 거예요. Gain Structure 부터 다시 확인하세요.' },
+      { title: '디에서 (De-Esser)', text: '「ㅅ·ㅆ」 같은 쉿 소리(치찰음)가 귀를 찌를 때 써요. 그 고음 부분만 감지해 순간적으로 줄이는 컴프레서예요. CL5 의 DYNAMICS 2 에서 고를 수 있어요. (제조사 자료)', more: 'EQ 로 고음을 늘 깎으면 평소 소리까지 어두워져요. 디에서는 치찰음이 나올 때만 줄여서 평소 소리를 지켜요.' },
+      { title: '컴프레서 앞의 저음 정리', text: '필요 없는 저음(무대 울림, 마이크 잡는 소리)이 많으면 그 저음 때문에 컴프가 자주 동작해요. HPF 로 먼저 정리하면 컴프가 목소리에만 반응해요.', more: '「EQ」 모듈의 HPF 이야기와 함께 보세요. 저음을 크게 올리는 EQ 도 컴프를 더 자주 동작하게 만들어요.' }
     ],
     sources: [
       { t: 'Yamaha MG20XU/MG16XU/MG12XU 사용설명서(제조사) — COMP·AUX/FX·피드백 주의·문제 해결', url: MG_OM },

@@ -407,7 +407,7 @@
           '<div class="brd-status" aria-live="polite"></div>' +
           '<div class="brd-grid"></div>' +
         '</div>' +
-        '<section class="brd-sec" aria-labelledby="brd-p-h"><h2 id="brd-p-h">💡 브랜드보다 중요한 것</h2><p>좋은 브랜드를 아는 것도 도움이 되지만, 실제로 장비를 고르고 쓸 때는 아래 네 가지가 더 중요해요.</p>' +
+        '<section class="brd-sec" aria-labelledby="brd-p-h"><h2 id="brd-p-h">💡 브랜드보다 중요한 것</h2><p>좋은 브랜드를 아는 것도 도움이 돼요. 하지만 실제로 장비를 고르고 쓸 때는 아래 네 가지가 더 중요해요.</p>' +
           '<ul class="brd-princ">' + D.principles.map(function (p) { return '<li><b>' + esc(p.t) + '</b><span>' + esc(p.d) + '</span></li>'; }).join('') + '</ul></section>' +
         '<section class="brd-sec" aria-labelledby="brd-q-h"><h2 id="brd-q-h">🧩 브랜드 퀴즈</h2><p>위에서 본 내용으로 풀어 봐요. 답을 고르고 「정답 확인」을 누르면 설명이 나와요.</p><div class="brd-quiz"></div></section>' +
       '</div>';

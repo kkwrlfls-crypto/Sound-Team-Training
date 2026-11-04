@@ -47,7 +47,7 @@
         '<path d="M70 38 L18 175 L160 175 Z" fill="' + C.cyan + '" opacity=".14"/><path d="M250 38 L160 175 L302 175 Z" fill="' + C.cyan + '" opacity=".14"/>' +
         '<path d="M70 38 L18 175 M70 38 L160 175 M250 38 L160 175 M250 38 L302 175" stroke="' + C.cyan + '" stroke-dasharray="4 3"/>' +
         spk(70, 40, 18, 10, 90, C.navy) + spk(250, 40, 18, 10, 90, C.navy) + seats(40, 60, 10, 6, 24, 19, miss) +
-        '<g transform="translate(20 186)">' + t(0, 0, '■ 빨간 자리 = 지향각 밖(소리가 약함)', { size: 10, fill: C.bad, anchor: 'start', weight: 700 }) + '</g>', '스피커 지향각과 좌석 커버리지(위에서 본 그림)');
+        '<g transform="translate(20 186)">' + t(0, 0, '■ 빨간 자리 = 소리 범위 밖(소리가 약함)', { size: 10, fill: C.bad, anchor: 'start', weight: 700 }) + '</g>', '스피커 소리 범위(지향각)와 좌석(위에서 본 그림)');
     },
     uniformity: function () {
       var v = [[84, 85, 85, 84], [83, 84, 84, 83], [82, 83, 83, 81], [80, 81, 81, 76]], cell = '';
@@ -72,14 +72,14 @@
       return svg(320, 222, '<path d="M10 150 H310" stroke="' + C.ink + '" stroke-width="2"/>' + spk(30, 50, 22, 16, 10, C.navy) + t(30, 30, '메인', { size: 10.5, weight: 700 }) +
         spk(220, 40, 18, 12, 30, C.cyan) + t(220, 24, '딜레이 스피커', { size: 10.5, weight: 700, fill: C.cyan }) + person(250, 148, C.navy, 1.1) +
         '<path d="M42 56 L246 128" stroke="' + C.navy + '" stroke-dasharray="5 4"/><path d="M228 46 L248 126" stroke="' + C.cyan + '" stroke-dasharray="5 4"/>' +
-        '<g transform="translate(16 170)">' + t(0, 0, '메인까지 24 m ≈ 70 ms', { size: 10.5, anchor: 'start' }) + t(160, 0, '딜레이까지 3 m ≈ 9 ms', { size: 10.5, anchor: 'start', fill: C.cyan }) + t(0, 20, '→ 딜레이 스피커에 약 61 ms + 몇 ms 지연', { size: 10.5, anchor: 'start', weight: 700, fill: C.ok }) + '</g>' +
+        '<g transform="translate(16 170)">' + t(0, 0, '메인까지 24 m ≈ 70 ms', { size: 10.5, anchor: 'start' }) + t(160, 0, '딜레이까지 3 m ≈ 9 ms', { size: 10.5, anchor: 'start', fill: C.cyan }) + t(0, 20, '→ 딜레이 스피커를 약 61 ms + 몇 ms 늦추기', { size: 10.5, anchor: 'start', weight: 700, fill: C.ok }) + '</g>' +
         t(160, 214, '거리 1 m ≈ 2.9 ms (소리 속도 343 m/s) · 숫자는 예시', { size: 9.5, fill: C.sub }), '딜레이 스피커 시간 맞추기 예시');
     },
     stiScale: function () {
       var bands = [[0, 0.3, '나쁨', C.bad], [0.3, 0.45, '부족', '#f97316'], [0.45, 0.6, '보통', C.warn], [0.6, 0.75, '좋음', '#10b981'], [0.75, 1, '아주 좋음', C.ok]], x = function (v) { return 20 + v * 280; };
       return svg(320, 120, bands.map(function (b) { return '<rect x="' + x(b[0]) + '" y="40" width="' + (x(b[1]) - x(b[0]) - 2) + '" height="26" rx="3" fill="' + b[3] + '" opacity=".85"/>' + t((x(b[0]) + x(b[1])) / 2, 58, b[2], { size: 10.5, fill: '#fff', weight: 700 }); }).join('') +
         [0, 0.3, 0.45, 0.6, 0.75, 1].map(function (v) { return t(x(v), 82, v, { size: 9.5, fill: C.sub }); }).join('') +
-        '<path d="M' + x(0.5) + ' 28 V70" stroke="' + C.navy + '" stroke-width="2.5"/>' + t(x(0.5), 22, '0.5 이상 바람직', { size: 10.5, weight: 700, fill: C.navy }) + t(160, 108, '말소리 명료도 STI (IEC 60268-16 등급)', { size: 10.5, fill: C.ink }), 'STI 명료도 등급');
+        '<path d="M' + x(0.5) + ' 28 V70" stroke="' + C.navy + '" stroke-width="2.5"/>' + t(x(0.5), 22, '0.5 이상이 좋아요', { size: 10.5, weight: 700, fill: C.navy }) + t(160, 108, '말 알아듣기 점수 STI (IEC 60268-16 등급)', { size: 10.5, fill: C.ink }), 'STI 명료도 등급');
     },
     /* ---------------- C. 룸 어쿠스틱 */
     rtDecay: function () {
@@ -88,7 +88,7 @@
       return svg(320, 160, '<rect x="' + x(0.8) + '" y="12" width="' + (x(1.5) - x(0.8)) + '" height="112" fill="' + C.okS + '"/>' + t((x(0.8) + x(1.5)) / 2, 150, '많은 예배당 0.8–1.5 초', { size: 10, fill: C.ok, weight: 700 }) +
         '<path d="M40 20 V' + y(-60) + ' H300" stroke="' + C.line + '" fill="none"/>' + '<path d="M40 ' + y(-60) + ' H300" stroke="' + C.bad + '" stroke-dasharray="4 3"/>' + t(298, y(-60) - 4, '−60 dB', { size: 9.5, fill: C.bad, anchor: 'end' }) +
         '<path d="' + d + '" stroke="' + C.navy + '" stroke-width="2" fill="none"/>' + t(36, 24, '0', { size: 9.5, fill: C.sub, anchor: 'end' }) + t(x(1.2), y(-60) + 14, '1.2 초', { size: 9.5, fill: C.navy }) +
-        t(46, 12, '소리 크기', { size: 9.5, fill: C.sub, anchor: 'start' }) + t(300, 136, '시간 →', { size: 9.5, fill: C.sub, anchor: 'end' }), '잔향 시간: 소리가 60 dB 줄어드는 시간');
+        t(46, 12, '소리 크기', { size: 9.5, fill: C.sub, anchor: 'start' }) + t(300, 136, '시간 →', { size: 9.5, fill: C.sub, anchor: 'end' }), '울림 길이(잔향 시간): 소리가 60 dB 줄어드는 시간');
     },
     flutter: function () {
       var z = 'M70 30'; for (var i = 0; i < 9; i++) z += ' L' + (i % 2 ? 70 : 250) + ' ' + (30 + (i + 1) * 12);
@@ -114,7 +114,7 @@
       var d = ''; for (var a = 0; a <= 360; a += 6) { var th = a * Math.PI / 180, r = 50 * (0.5 + 0.5 * Math.cos(th)); d += (a ? 'L' : 'M') + (160 + r * Math.cos(th - Math.PI / 2)).toFixed(1) + ' ' + (60 + r * Math.sin(th - Math.PI / 2)).toFixed(1); }
       return svg(320, 160, '<path d="' + d + 'Z" fill="' + C.cyan + '" opacity=".18" stroke="' + C.cyan + '"/>' + person(160, 24, C.navy, 1) +
         '<g transform="translate(160 62)"><circle r="6" fill="' + C.ink + '"/></g>' + t(196, 30, '노래하는 쪽(잘 받음)', { size: 10, fill: C.cyan, anchor: 'start', weight: 700 }) +
-        '<g transform="translate(160 132)"><path d="M-22 -10 L22 -10 L16 10 L-16 10Z" fill="' + C.navy + '"/></g>' + check(196, 130, true) + t(160, 154, '모니터는 마이크 바로 뒤(카디오이드의 빈 곳)', { size: 10.5, weight: 700, fill: C.ok }), '카디오이드 마이크와 모니터 위치');
+        '<g transform="translate(160 132)"><path d="M-22 -10 L22 -10 L16 10 L-16 10Z" fill="' + C.navy + '"/></g>' + check(196, 130, true) + t(160, 154, '모니터는 마이크 바로 뒤(소리를 안 받는 쪽)', { size: 10.5, weight: 700, fill: C.ok }), '카디오이드 마이크와 모니터 위치');
     },
     /* ---------------- 꿀팁 그림 */
     tipPinMic: function () {

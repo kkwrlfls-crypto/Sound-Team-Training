@@ -24,7 +24,7 @@
     el.innerHTML =
       '<div class="sim-mic">' +
         '<div class="sim-stage"><canvas class="sim-canvas" aria-label="무대를 위에서 본 그림: 보컬, 마이크, 모니터 스피커"></canvas>' +
-          '<div class="sim-hint">마이크(동그란 머리)를 끌어 옮기고, 앞쪽 노란 손잡이를 끌어 방향을 돌리세요.</div></div>' +
+          '<div class="sim-hint">마이크(동그란 머리)를 끌어서 옮기세요. 앞쪽 노란 손잡이를 끌면 방향이 돌아가요.</div></div>' +
         '<div class="sim-side">' +
           '<div class="sim-box"><h4>마이크 종류</h4><div class="sim-types">' + Object.keys(MIC_TYPES).map(function (k) { var m = MIC_TYPES[k];
             return '<label class="sim-type"><input type="radio" name="simMicType" value="' + k + '"' + (k === S.type ? ' checked' : '') + '><span><b>' + esc(m.name) + '</b><small>' + esc(m.ex) + (m.phantom ? ' · 팬텀 전원 필요' : '') + '</small></span></label>'; }).join('') + '</div>' +
@@ -32,7 +32,7 @@
           '<div class="sim-box"><h4>조절</h4><label class="sim-range"><span>마이크 방향 <b data-out="ang"></b></span><input type="range" min="-180" max="180" step="1" data-sim="ang" aria-label="마이크 방향"></label>' +
             '<div class="sim-btns"><button type="button" class="sim-btn" data-sim="aim">입 쪽으로 향하기</button><button type="button" class="sim-btn" data-sim="near">입 앞 8 cm 로</button><button type="button" class="sim-btn" data-sim="reset">처음 위치</button></div></div>' +
           '<div class="sim-box sim-listen"><h4>소리로 듣기</h4><button type="button" class="sim-btn sim-play" data-sim="play">🔊 소리 켜기</button>' +
-            '<p class="sim-note" data-role="listen">실제 보컬 녹음이 지금 마이크 위치에서 들리는 소리로 바뀌어요. 거리·방향·근접 효과·실내 울림이 반영돼요.</p></div>' +
+            '<p class="sim-note" data-role="listen">실제 보컬 녹음을 들려줘요. 지금 마이크 자리에서 들리는 소리로 바뀌어요. 거리·방향·근접 효과·방 울림을 함께 계산해요.</p></div>' +
           '<div class="sim-box sim-read" data-role="read"></div>' +
         '</div>' +
       '</div>';
@@ -65,12 +65,12 @@
       else { vtxt = '알맞아요'; vcls = 'ok'; }
       var riskTxt = { low: '낮음', mid: '보통', high: '높음 (하울링 위험)' }[c.risk], proxTxt = c.prox >= 10 ? '강함' : c.prox >= 4 ? '약간' : '거의 없음';
       read.innerHTML = '<h4>결과 <small>교육용 근사 계산</small></h4>' +
-        '<div class="sim-row"><span>입-마이크 거리</span><b>' + Math.round(c.ds * 100) + ' cm · 입 방향에서 ' + Math.round(c.tsDeg) + '° 벗어남</b></div>' +
+        '<div class="sim-row"><span>입과 마이크 거리</span><b>' + Math.round(c.ds * 100) + ' cm · 입 쪽에서 ' + Math.round(c.tsDeg) + '° 비껴 있음</b></div>' +
         '<div class="sim-row"><span>목소리 크기</span><b class="' + vcls + '">' + (c.live ? (c.voice >= 0 ? '+' : '') + c.voice.toFixed(1) + ' dB · ' : '') + vtxt + '</b></div>' + (c.live ? bar(c.voice, -30, 15, vcls) : '') +
         '<div class="sim-row"><span>모니터 스피커 방향</span><b>마이크 정면에서 ' + Math.round(c.twDeg) + '°</b></div>' +
         '<div class="sim-row"><span>피드백 위험</span><b class="' + (c.risk === 'low' ? 'ok' : c.risk === 'mid' ? 'warn' : 'bad') + '">' + (c.live ? riskTxt + ' (여유 ' + c.margin.toFixed(0) + ' dB)' : '—') + '</b></div>' + (c.live ? bar(c.margin, -10, 30, c.risk === 'low' ? 'ok' : c.risk === 'mid' ? 'warn' : 'bad') : '') +
         '<div class="sim-row"><span>근접 효과 (100 Hz 저음)</span><b>' + (c.live ? (c.m.a < 1 ? '+' + c.prox.toFixed(1) + ' dB · ' + proxTxt : '무지향이라 거의 없음') : '—') + '</b></div>' +
-        '<p class="sim-note">피드백 여유 = 목소리 크기 − 모니터 소리 유입(계산값). 감도가 높은 마이크는 목소리와 스피커 소리를 똑같이 크게 받아 여유는 그대로예요.</p>';
+        '<p class="sim-note">피드백 여유 = 목소리 크기 − 마이크로 들어오는 모니터 소리(계산값). 감도가 높은 마이크는 목소리와 스피커 소리를 똑같이 크게 받아요. 그래서 여유는 그대로예요.</p>';
       // 과제 판정
       var good = c.live && c.ds >= 0.05 && c.ds <= 0.15 && c.tsDeg <= 20;
       if (S.type === 'dyn' && good) hit('distance');
@@ -148,7 +148,7 @@
         src.start();
         A = { src: src, lp: lp, ls: ls, dir: dir, roomG: roomG, live: live, out: out };
         btn.textContent = '🔇 소리 끄기'; btn.classList.add('on');
-        info.textContent = '지금 마이크 위치에서 들리는 소리예요. 끌어서 멀리·가까이, 옆으로 돌려 보세요. 하울링은 아래 「피드백 위험」으로 보여 줘요. (교육용 근사)';
+        info.textContent = '지금 마이크 자리에서 들리는 소리예요. 마이크를 멀리·가까이 끌거나 옆으로 돌려 보세요. 하울링은 소리 대신 아래 「피드백 위험」 칸에 보여 줘요. (교육용 근사)';
         S.audio = true; applyAudio(S.last || calc(), true);
       });
     }
@@ -290,10 +290,10 @@
       var nq = snr >= 55 ? ['ok', '깨끗해요'] : snr >= 45 ? ['warn', '조용할 때 잡음이 조금 들려요'] : ['bad', '잡음이 잘 들려요'];
       read.innerHTML = '<h4>지금 상태 <small>교육용 단순 모델 · 최근 3초</small></h4>' +
         '<div class="sim-row"><span>GAIN / 페이더</span><b>+' + S.gain + ' dB / ' + fmtF(S.fader) + '</b></div>' +
-        '<div class="sim-row"><span>입력 미터 최대</span><b class="' + q[0] + '">' + fmt(S.maxIn) + ' · ' + q[1] + '</b></div>' +
+        '<div class="sim-row"><span>입력 미터 최고</span><b class="' + q[0] + '">' + fmt(S.maxIn) + ' · ' + q[1] + '</b></div>' +
         '<div class="sim-row"><span>찌그러짐(클리핑)</span><b class="' + (L.clip || S.anyPeak ? 'bad' : 'ok') + '">' + (S.hist.some(function (h) { return h.clip; }) ? '있음 — 페이더를 내려도 남아요' : '없음') + '</b></div>' +
         '<div class="sim-row"><span>신호 대 잡음</span><b class="' + nq[0] + '">' + snr.toFixed(0) + ' dB · ' + nq[1] + '</b></div>' +
-        '<div class="sim-row"><span>출력 미터 최대</span><b>' + fmt(S.maxOut) + '</b></div>';
+        '<div class="sim-row"><span>출력 미터 최고</span><b>' + fmt(S.maxOut) + '</b></div>';
     }
     function fmt(v) { return v <= -60 ? '−∞' : (v > 0 ? '+' : '') + v.toFixed(0); }
     function fmtF(d) { return d === -Infinity ? '−∞ dB' : (d > 0 ? '+' : '') + d.toFixed(1) + ' dB'; }
@@ -302,7 +302,7 @@
     function setFader(d) { S.fader = d; fIn.value = Math.round(faderPos(d) * 1000); el.querySelector('[data-out=fader]').textContent = fmtF(d); applyAudio(); }
     function applyAudio() { if (!nodes) return; var t = actx.currentTime; nodes.pre.gain.setTargetAtTime(Math.pow(10, (S.gain + IN_TOP - CLIP) / 20) / (env.max || 1), t, 0.02); nodes.fad.gain.setTargetAtTime(S.fader === -Infinity ? 0 : Math.pow(10, S.fader / 20), t, 0.02); }
     function startAudio() {
-      if (!env || !env.buffer) { el.querySelector('[data-role=src]').textContent = '녹음을 불러오지 못해 소리는 들을 수 없어요(미터는 가상 신호로 동작).'; return; }
+      if (!env || !env.buffer) { el.querySelector('[data-role=src]').textContent = '녹음을 불러오지 못해 소리는 들을 수 없어요. 미터는 가상 신호로 움직여요.'; return; }
       var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
       actx = actx || new AC(); if (actx.resume) actx.resume();
       var src = actx.createBufferSource(); src.buffer = env.buffer; src.loop = true;
@@ -327,7 +327,7 @@
     });
     setGain(S.gain); setFader(S.fader);
     el.querySelector('[data-role=src]').textContent = '녹음을 불러오는 중…';
-    loadVox(function (e) { env = e; el.querySelector('[data-role=src]').textContent = e.synthetic ? '녹음을 불러오지 못해 가상 신호로 미터만 보여 줘요.' : '보컬 녹음(MG12XU 실습과 같은 음원)이 반복 재생돼요. 처음엔 소리가 꺼져 있어요.'; S.t0 = performance.now(); tick(); });
+    loadVox(function (e) { env = e; el.querySelector('[data-role=src]').textContent = e.synthetic ? '녹음을 불러오지 못해 가상 신호로 미터만 보여 줘요.' : '보컬 녹음(MG12XU 실습과 같은 노래)이 계속 반복돼요. 처음에는 소리가 꺼져 있어요.'; S.t0 = performance.now(); tick(); });
     return {
       destroy: function () { alive = false; cancelAnimationFrame(raf); stopAudio(); if (actx && actx.close) { try { actx.close(); } catch (e) { /* noop */ } } el.innerHTML = ''; },
       state: function () { return { gain: S.gain, fader: S.fader, maxIn: S.maxIn, anyPeak: S.anyPeak, maxOut: S.maxOut, snr: S.snr, clipSeen: S.clipSeen, audio: S.audio, ready: !!env, synthetic: env && env.synthetic, done: Object.keys(S.done) }; },

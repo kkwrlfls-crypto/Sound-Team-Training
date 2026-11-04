@@ -14,7 +14,7 @@
   function load(k) { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch (e) { return {}; } }
   function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 저장이 안 돼도 화면은 동작 */ } }
   function fig(name, cap) { var f = window.STAFieldFig && window.STAFieldFig[name]; return f ? '<figure class="fld-fig">' + f() + (cap ? '<figcaption>' + esc(cap) + '</figcaption>' : '') + '</figure>' : ''; }
-  function modLink(id) { var m = MODS()[id]; return m && m.status === 'ready' ? '<button type="button" class="fld-modlink" data-module="' + esc(id) + '">📘 관련 학습: ' + esc(m.title) + ' 모듈</button>' : ''; }
+  function modLink(id) { var m = MODS()[id]; return m && m.status === 'ready' ? '<button type="button" class="fld-modlink" data-module="' + esc(id) + '">📘 관련 학습: ' + esc(m.title) + ' 과정</button>' : ''; }
 
   /* =================================================================== 자가 진단 기준표 */
   var ck = load(CK); ck.items = ck.items || {}; var ckFilter = 'all';
@@ -56,7 +56,7 @@
     var sc = score(items), g = grade(sc.pct);
     return '<div class="chk-sum__score"><div class="chk-ring ' + g[1] + '" style="--p:' + (sc.pct || 0) + '"><b>' + (sc.pct == null ? '—' : sc.pct) + '</b><span>' + (sc.pct == null ? '진단 전' : '점') + '</span></div>' +
       '<div><h3>' + (sc.pct == null ? '아직 진단한 항목이 없어요' : g[0]) + '</h3><p>' + sc.answered + ' / ' + sc.n + ' 항목 진단 · <span class="ok">양호 ' + sc.cnt.good + '</span> · <span class="warn">주의 ' + sc.cnt.warn + '</span> · <span class="bad">개선 필요 ' + sc.cnt.bad + '</span>' + (sc.cnt.na ? ' · 해당 없음 ' + sc.cnt.na : '') + '</p>' +
-      '<p class="chk-sum__note">점수 = 양호 2 · 주의 1 · 개선 필요 0 에 중요도(●)를 곱해 합친 비율이에요. 합격/불합격이 아니라 약한 곳을 찾는 용도예요.</p></div></div>';
+      '<p class="chk-sum__note">양호는 2점, 주의는 1점, 개선 필요는 0점이에요. 여기에 중요도(● 개수)를 곱해 합친 비율이 점수예요. 합격/불합격을 가리는 점수가 아니라, 약한 곳을 찾는 점수예요.</p></div></div>';
   }
   function renderCheck() {
     var root = $('chkRoot'); if (!root || !CHECK) return;
@@ -66,7 +66,7 @@
         '<div class="chk-sum__btns"><button type="button" class="sim-btn" data-ckact="copy">📋 결과 복사</button><button type="button" class="sim-btn" data-ckact="print">🖨 인쇄</button><button type="button" class="sim-btn" data-ckact="reset">처음부터</button></div></div>' +
         '<div data-role="ckSum">' + summaryHtml() + '</div><p class="chk-msg" data-role="ckMsg" role="status"></p></section>' +
       '<div class="chk-filter" role="tablist" aria-label="보기">' + [['all', '전체'], ['core', '핵심 3가지'], ['extra', '추가 제안']].map(function (f) { return '<button type="button" role="tab" aria-selected="' + (ckFilter === f[0]) + '" data-ckfilter="' + f[0] + '">' + f[1] + '</button>'; }).join('') + '</div>' +
-      '<p class="chk-guide">항목마다 우리 시스템 상태를 「양호 · 주의 · 개선 필요 · 해당 없음」 중에서 골라요. 「점검 방법」을 펼치면 확인하는 방법과 고치는 방법이 나와요. 기록은 이 브라우저에만 저장돼요.</p>' +
+      '<p class="chk-guide">항목마다 우리 시스템 상태를 골라요(양호 · 주의 · 개선 필요 · 해당 없음). 「점검 방법」을 펼치면 확인하는 방법과 고치는 방법이 나와요. 기록은 이 브라우저에만 저장돼요.</p>' +
       secs.map(sectionHtml).join('') +
       '<section class="chk-prio-wrap"><h3>🔧 개선 우선순위</h3><div data-role="ckPrio">' + priorityHtml() + '</div></section>' +
       '';   /* 2026-10-23: 근거 자료 줄은 화면에서 뺌 */
@@ -109,12 +109,12 @@
     var c = document.querySelector('#tipRoot [data-role=tipCount]'); if (c) c.textContent = list.length + '개'; }
   function renderTips() {
     var root = $('tipRoot'); if (!root || !TIPS) return;
-    root.innerHTML = '<p class="tip-lead">현장에서 자주 겪는 상황과 대처법이에요. 우리 팀 상황에 맞게 고쳐 쓰세요. ☆ 를 눌러 즐겨찾기 해 두면 다시 보기 쉬워요.</p>' +
+    root.innerHTML = '<p class="tip-lead">현장에서 자주 생기는 일과 해결 방법이에요. 우리 팀에 맞게 고쳐 써도 좋아요. ☆ 를 눌러 즐겨찾기 해 두면 다시 찾기 쉬워요.</p>' +
       '<div class="tip-tools"><div class="chk-filter tip-cats" role="tablist" aria-label="분류">' + [['all', '전체']].concat(TIPS.cats.map(function (c) { return [c.k, c.t]; })).map(function (c) {
         return '<button type="button" role="tab" aria-selected="' + (tipCat === c[0]) + '" data-tipcat="' + c[0] + '">' + (c[0] !== 'all' && window.STAFieldIcon ? STAFieldIcon(c[0]) : '') + esc(c[1]) + '</button>'; }).join('') + '</div>' +
       '<div class="tip-search"><input type="search" data-role="tipQ" placeholder="검색 (예: 배터리, 하울링)" value="' + esc(tipQ) + '" aria-label="꿀팁 검색"><label><input type="checkbox" data-role="tipStar"' + (tipStar ? ' checked' : '') + '> ★ 만 보기</label><span data-role="tipCount"></span></div></div>' +
       '<div class="tip-grid" data-role="tipCards"></div>' +
-      '<p class="tip-foot">※ 여러 교회 현장에서 흔히 쓰는 일반적인 노하우예요. 숫자는 대략적인 경향이에요. 우리 팀만의 꿀팁이 생기면 알려 주세요 — 여기에 계속 더해 갈게요.</p>';
+      '<p class="tip-foot">※ 여러 교회에서 흔히 쓰는 방법이에요. 숫자는 「대략 그렇다」는 뜻이에요. 우리 팀만의 꿀팁이 생기면 알려 주세요. 여기에 계속 더해 갈게요.</p>';
     renderTipCards();
   }
 

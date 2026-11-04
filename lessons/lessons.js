@@ -83,7 +83,7 @@
     '네트워크 오디오와 시스템 운용': { module: 'cable', find: '네트워크' },
     '현장 트러블슈팅의 진단 원리': { tab: 'tab7' }
   };
-  function advWhere(a) { var g = ADV_GO[a.title]; if (!g) return null; if (g.tab) return { g: g, label: '음향 트러블슈팅 실습' }; var m = (window.STA_MODULES || {})[g.module]; return m && m.status === 'ready' ? { g: g, label: '「' + m.title + '」 모듈' } : null; }
+  function advWhere(a) { var g = ADV_GO[a.title]; if (!g) return null; if (g.tab) return { g: g, label: '음향 트러블슈팅 실습' }; var m = (window.STA_MODULES || {})[g.module]; return m && m.status === 'ready' ? { g: g, label: '「' + m.title + '」 과정' } : null; }
   function cardAdvOpen(a, i) {
     var w = advWhere(a), need = a.need.map(function (id) { var l = lessonById(id); if (l) return l.title; var mm = (window.STA_MODULES || {})[id]; return mm ? '「' + mm.title + '」 과정' : id; }).join(', ');
     return '<button type="button" class="home-card home-adv" data-adv="' + i + '"' + (w ? '' : ' aria-disabled="true"') + '><div class="home-card__body"><div class="home-card__title">' + esc(a.title) + '</div>' +
@@ -107,8 +107,8 @@
     { id: 'physics', path: 'physics', img: 'img/modules/phys_wave.svg' },   // 2026-11-04 물리음향
     { id: 'hardware', path: 'hardware', img: 'img/modules/hw_mic.jpg' },
     { id: 'mixing', path: 'mixing', img: 'img/modules/mix2_path.jpg', imgPos: '50% 50%' },
-    { id: 'church', title: '교회 시스템 실습', sum: '본당에 설치된 실제 장비 구성으로 배치·배선하고, 콘솔을 직접 조작해 봅니다.', tabs: ['tab2', 'tab5', 'tab6', 'tab1'], img: 'cl5_top.jpg', imgPos: '50% 70%' },
-    { id: 'trouble', title: '트러블슈팅', sum: '소리가 안 나거나 하울링이 나는 상황에서 원인을 찾고 복구하는 연습을 합니다.', tabs: ['tab7', 'tabFeedback', 'tabCheck', 'tabTips'], img: 'jack_strip.jpg', imgPos: '30% 50%' }
+    { id: 'church', title: '교회 시스템 실습', sum: '본당에 있는 실제 장비를 놓고(배치) 선을 이어 봐요(배선). 콘솔도 직접 만져 봐요.', tabs: ['tab2', 'tab5', 'tab6', 'tab1'], img: 'cl5_top.jpg', imgPos: '50% 70%' },
+    { id: 'trouble', title: '트러블슈팅', sum: '소리가 안 나거나 하울링(삐— 하는 소리)이 날 때, 원인을 찾아 고치는 연습을 해요.', tabs: ['tab7', 'tabFeedback', 'tabCheck', 'tabTips'], img: 'jack_strip.jpg', imgPos: '30% 50%' }
   ];
   function tabName(tab) { var b = document.querySelector('.tab-btn[data-tab="' + tab + '"] span'); return b ? b.textContent.trim() : tab; }
   function modList() { var M = window.STA_MODULES || {}; return Object.keys(M).map(function (k) { return M[k]; }).filter(function (m) { return m.status === 'ready'; }); }
@@ -153,14 +153,14 @@
     if (doing.length || doingL.length) {
       var items = doing.map(function (m) { return itemCard({ attr: 'data-module="' + esc(m.id) + '"', img: (window.STA_THUMBS || {})[m.id] || m.img, thumb: 'eq', kicker: pathTitle(m) + ' · ' + (window.STA_NO_TXT ? STA_NO_TXT(m) : String(m.no).padStart(2, '0')), title: m.title, pct: modPct(m.id) }); })
         .concat(doingL.map(function (l) { var s = st(l.id); return itemCard({ attr: 'data-lesson="' + esc(l.id) + '"', thumb: l.thumb, kicker: '기초 이론', title: l.title, pct: Math.round(s.seen.length / 5 * 100) }); }));
-      return '<section class="hm-sec" id="homeNext"><div class="hm-sec__head"><h2>진행 중인 학습</h2><p>시작한 과정을 이어서 학습하세요.</p></div><div class="hm-next">' + items.slice(0, 4).join('') + '</div></section>';
+      return '<section class="hm-sec" id="homeNext"><div class="hm-sec__head"><h2>진행 중인 학습</h2><p>시작한 과정을 이어서 공부해요.</p></div><div class="hm-next">' + items.slice(0, 4).join('') + '</div></section>';
     }
     var firstL = lessonById('signal-flow'), mic = (window.STA_MODULES || {}).mic, rec = [];
     if (firstL && firstL.status === 'ready') rec.push({ attr: 'data-lesson="signal-flow"', thumb: firstL.thumb, kicker: '기초 이론 · ' + minTxt(firstL.minutes), title: firstL.title });
     if (mic && mic.status === 'ready') rec.push({ attr: 'data-module="mic"', img: mic.img, kicker: pathTitle(mic) + ' · ' + (window.STA_NO_TXT ? STA_NO_TXT(mic) : '01'), title: mic.title });
     rec.push({ attr: 'data-mgo-tab="tab1"', img: 'vi10p.jpg', kicker: '실습', title: tabName('tab1') });
     rec.push({ attr: 'data-mgo-tab="tab6"', img: 'console_strip.jpg', kicker: '실습', title: tabName('tab6') });
-    return '<section class="hm-sec" id="homeNext"><div class="hm-sec__head"><h2>처음이라면 이 순서로 시작하세요</h2><p>신호 흐름 → 장비 → 실습 순서로 배우면 이해가 빨라요.</p></div><div class="hm-next">' +
+    return '<section class="hm-sec" id="homeNext"><div class="hm-sec__head"><h2>처음이라면 이 순서로 시작해요</h2><p>신호 흐름 → 장비 → 실습 순서로 배우면 더 쉽게 이해돼요.</p></div><div class="hm-next">' +
       rec.map(function (o, i) { o.step = i + 1; return itemCard(o); }).join('') + '</div></section>';
   }
   function renderHome() {
@@ -181,15 +181,15 @@
       '<h1 id="homeTitle">교회 음향팀을 위한<br>실습 중심 교육 플랫폼</h1>' +
       '<p class="hm-hero__lead">장비를 배우고, 직접 조작하고, 소리를 들으며 실제 예배 현장에서 바로 쓸 수 있는 음향 운영을 익힙니다.</p>' +
       '<div class="hm-hero__cta">' + cta + '<button type="button" class="ui-btn ui-btn--on-dark" data-mgo-tab="tabIntro">음향의 중요성 읽기</button></div></div>' +
-      '<aside class="hm-me" aria-label="나의 학습 현황"><div class="hm-me__head"><div class="ui-ring" style="--p:' + pct + '"><span>' + pct + '%</span></div><div><h2>나의 학습 현황</h2><p>' + (started ? '완료한 레슨·과정 기준' : '아직 시작 전이에요') + '</p></div></div>' +
+      '<aside class="hm-me" aria-label="나의 학습 현황"><div class="hm-me__head"><div class="ui-ring" style="--p:' + pct + '"><span>' + pct + '%</span></div><div><h2>나의 학습 현황</h2><p>' + (started ? '끝낸 레슨 · 과정으로 셌어요' : '아직 시작 전이에요') + '</p></div></div>' +
       '<div class="hm-me__rows"><div class="hm-me__row"><span>신호 흐름 레슨</span><b>' + doneN + ' / ' + ready.length + '</b>' + bar(ready.length ? doneN / ready.length * 100 : 0) + '</div>' +
-      '<div class="hm-me__row"><span>학습 모듈</span><b>' + modDone + ' / ' + mods.length + '</b>' + bar(mods.length ? modDone / mods.length * 100 : 0) + '</div>' +
+      '<div class="hm-me__row"><span>학습 과정</span><b>' + modDone + ' / ' + mods.length + '</b>' + bar(mods.length ? modDone / mods.length * 100 : 0) + '</div>' +
       '<div class="hm-me__row"><span>진행 중</span><b>' + (doing.length + doingL.length) + '개</b></div></div>' +
       '<p class="hm-me__note">기록은 이 브라우저에만 저장돼요.</p></aside></section>' +
       nextSection(doing, doingL) +
-      '<section class="hm-sec" id="modHome"><div class="hm-sec__head"><h2>전체 학습 과정</h2><p>분야를 골라 시작하세요. 각 과정은 이론 → 실습 → 확인 문제로 이어져요.</p></div><div class="hm-cats">' + HOME_CATS.map(catCard).join('') + '</div></section>' +
+      '<section class="hm-sec" id="modHome"><div class="hm-sec__head"><h2>전체 학습 과정</h2><p>분야를 골라 시작해요. 과정마다 이론 → 실습 → 확인 문제 순서로 배워요.</p></div><div class="hm-cats">' + HOME_CATS.map(catCard).join('') + '</div></section>' +
       /* 2026-10-25: 「기초 이론」 칸 삭제 — 남은 레슨(신호 흐름)은 위 「처음이라면」 1번과 음향 장비 학습 경로에서 열어요 */
-      '<section class="hm-sec home-sec" id="homeAdv"><div class="hm-sec__head"><h2>심화 주제</h2><p>더 깊이 알고 싶은 주제를, 그 내용을 다루는 과정으로 바로 열어요.</p></div><div class="home-cards">' + ADV.map(cardAdvOpen).join('') + '</div></section>';
+      '<section class="hm-sec home-sec" id="homeAdv"><div class="hm-sec__head"><h2>심화 주제</h2><p>더 깊이 알고 싶은 주제를 골라요. 그 내용을 배우는 과정이 바로 열려요.</p></div><div class="home-cards">' + ADV.map(cardAdvOpen).join('') + '</div></section>';
   }
 
   /* ------------------------------------------------------------- 레슨 화면 */
@@ -201,8 +201,8 @@
   function secHead(k) { var s = SECS.find(function (x) { return x.k === k; }); return '<h2 class="lsn-sec-h"><span class="lsn-num">' + s.n + '</span>' + esc(s.name) + '</h2>'; }
   function quizHtml(l) {
     var s = st(l.id), all = l.quiz.length, ok = l.quiz.filter(function (q, i) { var a = s.quiz[i]; return a != null && q.options[a] && q.options[a].ok; }).length;
-    var h = s.done ? '<div class="lsn-done" role="status">🎉 이해도 확인 문제를 모두 맞혔어요. 이 레슨을 완료했습니다.</div>'
-      : '<div class="lsn-todo">' + all + '문제를 모두 맞히면 레슨이 완료됩니다. (지금 ' + ok + '/' + all + ')</div>';
+    var h = s.done ? '<div class="lsn-done" role="status">🎉 이해도 확인 문제를 모두 맞혔어요. 이 레슨을 마쳤어요.</div>'
+      : '<div class="lsn-todo">' + all + '문제를 모두 맞히면 레슨을 마쳐요. (지금 ' + ok + '/' + all + ')</div>';
     l.quiz.forEach(function (q, qi) {
       var ans = s.quiz[qi], answered = ans != null;
       h += '<div class="lsn-q" data-q="' + qi + '"><b>' + (qi + 1) + '. ' + esc(q.q) + '</b><fieldset class="lsn-opts"><legend class="sr-only" style="position:absolute;left:-9999px">' + esc(q.q) + '</legend>' +
@@ -211,7 +211,7 @@
           return '<label class="lsn-opt' + cls + '"><input type="radio" name="lsnq' + qi + '" value="' + oi + '"' + (answered && oi === ans ? ' checked' : '') + '><span>' + esc(o.t) +
             (answered ? '<span class="why">' + (o.ok ? '✓ ' : '✗ ') + esc(o.why) + '</span>' : '') + '</span></label>';
         }).join('') + '</fieldset><div class="lsn-qbar"><button type="button" class="lsn-check" data-q="' + qi + '"' + (answered ? '' : ' disabled') + '>' + (answered ? '다시 확인' : '확인') + '</button>' +
-        (answered ? '<span class="lsn-fb ' + (q.options[ans].ok ? 'ok">정답입니다!' : 'no">다시 생각해 보세요') + '</span>' : '') + '</div></div>';
+        (answered ? '<span class="lsn-fb ' + (q.options[ans].ok ? 'ok">정답이에요!' : 'no">다시 생각해 보세요') + '</span>' : '') + '</div></div>';
     });
     return h;
   }
@@ -336,7 +336,7 @@
       var head = document.querySelector('#' + tab + ' > .level-header'); if (!head) return;
       var old = head.querySelector('.lsn-theory-links'); if (old) old.remove();   // 편집 저장 파일에 남은 것 정리
       var d = document.createElement('div'); d.className = 'lsn-theory-links'; d.setAttribute('aria-label', '관련 이론');
-      d.innerHTML = theoryLinks(TAB_LESSONS[tab]) + (TAB_MODULES[tab] || []).map(function (id) { var mm = (window.STA_MODULES || {})[id]; return mm && mm.status === 'ready' ? '<button type="button" class="lsn-theory-link mod-weeklink" data-module="' + id + '">🧭 ' + esc(mm.title) + ' 모듈</button>' : ''; }).join(''); head.appendChild(d);
+      d.innerHTML = theoryLinks(TAB_LESSONS[tab]) + (TAB_MODULES[tab] || []).map(function (id) { var mm = (window.STA_MODULES || {})[id]; return mm && mm.status === 'ready' ? '<button type="button" class="lsn-theory-link mod-weeklink" data-module="' + id + '">🧭 ' + esc(mm.title) + ' 과정</button>' : ''; }).join(''); head.appendChild(d);
     });
   }
   /* ------------------------------------------------------------- 이벤트 */

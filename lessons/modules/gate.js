@@ -47,13 +47,13 @@
     var r20 = '<path d="M' + X(-52) + ' ' + Y(-72) + 'L' + X(thr) + ' ' + Y(thr - 20) + 'L' + X(thr) + ' ' + Y(thr) + '" stroke="' + C.amber + '" stroke-width="2.4" fill="none"/>';
     var inf = '<path d="M' + X(thr) + ' ' + y1 + 'L' + X(thr) + ' ' + Y(thr) + 'L' + X(0) + ' ' + Y(0) + '" stroke="' + C.teal + '" stroke-width="3.4" fill="none"/>';
     return svg(600, 252, grid + ref + r20 + inf + '<path d="M' + X(thr) + ' ' + y0 + 'V' + y1 + '" stroke="' + C.red + '" stroke-width="1.6" stroke-dasharray="6 4"/>' + t(X(thr) + 4, y0 + 12, 'Threshold −40 dB', { size: 11, fill: C.red, weight: 800, anchor: 'start' }) +
-      t((x0 + x1) / 2, 248, '입력 (dB)', { size: 11, fill: C.sub }) + t(18, 120, '출력', { size: 11, fill: C.sub }) +
-      '<g>' + t(352, 52, '열림 (Threshold 위)', { size: 13, weight: 800, fill: C.teal, anchor: 'start' }) + t(352, 70, '입력이 그대로 나가요 (1:1)', { size: 11.5, fill: C.sub, anchor: 'start' }) +
+      t((x0 + x1) / 2, 248, '들어온 소리 (입력 dB)', { size: 11, fill: C.sub }) + t(18, 120, '나간 소리', { size: 11, fill: C.sub }) +
+      '<g>' + t(352, 52, '열림 (Threshold 위)', { size: 13, weight: 800, fill: C.teal, anchor: 'start' }) + t(352, 70, '들어온 소리가 그대로 나가요 (1:1)', { size: 11.5, fill: C.sub, anchor: 'start' }) +
       t(352, 104, '닫힘 (Threshold 아래)', { size: 13, weight: 800, fill: C.ink, anchor: 'start' }) + t(352, 122, 'Range 만큼 줄여요', { size: 11.5, fill: C.sub, anchor: 'start' }) +
       '<path d="M352 142h26" stroke="' + C.teal + '" stroke-width="3.4"/>' + t(384, 146, 'Range −∞ : 완전히 끔', { size: 11.5, fill: C.teal, weight: 700, anchor: 'start' }) +
       '<path d="M352 164h26" stroke="' + C.amber + '" stroke-width="2.4"/>' + t(384, 168, 'Range −20 dB : 20 dB 만 줄임', { size: 11.5, fill: '#b45309', weight: 700, anchor: 'start' }) +
       '<path d="M352 186h26" stroke="#94a3b8" stroke-dasharray="5 4"/>' + t(384, 190, '게이트 없음', { size: 11.5, fill: C.sub, anchor: 'start' }) +
-      t(352, 222, '입력·출력 관계 (교육용 그림)', { size: 10.5, fill: C.sub, anchor: 'start' }) + '</g>', '게이트의 입력과 출력 관계');
+      t(352, 222, '들어온 소리와 나간 소리 (교육용 그림)', { size: 10.5, fill: C.sub, anchor: 'start' }) + '</g>', '게이트의 입력과 출력 관계');
   };
   function speech(seed, T, dt, noise, words) {   // 잡음 + 말(단어) 레벨(dB)
     var r = rnd(seed), out = [], clean = [];
@@ -76,7 +76,7 @@
       t(o.tx(0.7), o.ly(-6), '말', { size: 12, weight: 800 }) + t(o.tx(2.1), o.ly(-10), '말', { size: 12, weight: 800 }) + t(o.tx(1.4), o.ly(-61), '잡음만 (말 사이)', { size: 11, fill: C.sub, weight: 700 }) +
       '<rect x="' + o.x0 + '" y="164" width="' + (o.x1 - o.x0) + '" height="20" rx="4" fill="#e2e8f0"/>' + open.map(function (s) { return '<rect x="' + o.tx(s[0]).toFixed(1) + '" y="164" width="' + (o.tx(s[1]) - o.tx(s[0])).toFixed(1) + '" height="20" rx="4" fill="' + C.green + '"/>'; }).join('') +
       t(o.x0 - 5, 178, '게이트', { size: 10, fill: C.sub, anchor: 'end' }) + (open.length ? t(((o.tx(open[0][0]) + o.tx(open[0][1])) / 2).toFixed(1), 178, '열림', { size: 11, fill: '#fff', weight: 800 }) : '') + (open.length > 1 ? t(((o.tx(open[0][1]) + o.tx(open[1][0])) / 2).toFixed(1), 178, '닫힘', { size: 11, fill: C.sub, weight: 800 }) : '') +
-      t(o.x0, 206, '0', { size: 10, fill: C.sub }) + t(o.x1, 206, '3초', { size: 10, fill: C.sub }) + t(584, 16, '입력 크기(dB)와 게이트 상태 — 교육용 근사 그림', { size: 11, fill: C.sub, anchor: 'end' }) + t(46, 16, 'dB', { size: 10, fill: C.sub, anchor: 'end' });
+      t(o.x0, 206, '0', { size: 10, fill: C.sub }) + t(o.x1, 206, '3초', { size: 10, fill: C.sub }) + t(584, 16, '들어온 소리 크기(dB)와 게이트 상태 — 교육용 어림 그림', { size: 11, fill: C.sub, anchor: 'end' }) + t(46, 16, 'dB', { size: 10, fill: C.sub, anchor: 'end' });
     return svg(600, 214, body, '입력 크기와 Threshold, 게이트가 열리고 닫히는 구간');
   };
   V.gateTimes = function () {
@@ -90,7 +90,7 @@
     function brk(s0, s1, y, txt, col) { return '<path d="M' + X(s0) + ' ' + (y - 5) + 'V' + (y + 5) + 'M' + X(s0) + ' ' + y + 'H' + X(s1) + 'M' + X(s1) + ' ' + (y - 5) + 'V' + (y + 5) + '" stroke="' + col + '" stroke-width="1.8"/>' + t((X(s0) + X(s1)) / 2, y - 7, txt, { size: 11.5, fill: col, weight: 800 }); }
     return svg(600, 236, '<rect x="' + x0 + '" y="24" width="' + (x1 - x0) + '" height="80" fill="' + C.bg + '" stroke="' + C.line + '"/><rect x="' + x0 + '" y="126" width="' + (x1 - x0) + '" height="80" fill="' + C.bg + '" stroke="' + C.line + '"/>' +
       '<path d="' + inp + '" fill="none" stroke="#64748b" stroke-width="2.2"/><path d="M' + x0 + ' ' + thrY + 'H' + x1 + '" stroke="' + C.red + '" stroke-dasharray="7 4" stroke-width="1.6"/>' + t(x1 - 4, thrY - 5, 'Threshold', { size: 11, fill: C.red, weight: 800, anchor: 'end' }) + t(x0 + 4, 40, '입력', { size: 11, fill: C.sub, weight: 800, anchor: 'start' }) +
-      '<path d="' + gp + '" fill="none" stroke="' + C.teal + '" stroke-width="3"/>' + t(x0 + 4, 142, '게이트 게인', { size: 11, fill: C.sub, weight: 800, anchor: 'start' }) + t(x0 - 4, gY(0) + 4, '0 dB', { size: 10, fill: C.sub, anchor: 'end' }) + t(x0 - 4, gY(-40) + 4, '−40', { size: 10, fill: C.sub, anchor: 'end' }) +
+      '<path d="' + gp + '" fill="none" stroke="' + C.teal + '" stroke-width="3"/>' + t(x0 + 4, 142, '게이트가 통과시키는 양', { size: 11, fill: C.sub, weight: 800, anchor: 'start' }) + t(x0 - 4, gY(0) + 4, '0 dB', { size: 10, fill: C.sub, anchor: 'end' }) + t(x0 - 4, gY(-40) + 4, '−40', { size: 10, fill: C.sub, anchor: 'end' }) +
       '<path d="M' + X(a) + ' 24V206M' + X(b + 0.035) + ' 24V206" stroke="#94a3b8" stroke-dasharray="2 3"/>' +
       brk(a, a + att, 120, 'Attack', C.blue) + brk(b + 0.035, b + hold, 120, 'Hold', C.amber) + brk(b + hold, b + hold + rel, 120, 'Release', C.violet) +
       '<path d="M' + X(1.12) + ' ' + gY(0) + 'V' + gY(-40) + '" stroke="' + C.red + '" stroke-width="2"/><path d="M' + (X(1.12) - 4) + ' ' + (gY(-40) - 7) + 'L' + X(1.12) + ' ' + gY(-40) + 'L' + (X(1.12) + 4) + ' ' + (gY(-40) - 7) + '" fill="none" stroke="' + C.red + '" stroke-width="2"/>' + t(X(1.1), gY(-20), 'Range', { size: 11.5, fill: C.red, weight: 800, anchor: 'end' }) +
@@ -130,7 +130,7 @@
     }
     return svg(600, 228, t(o2(0.245), 18, 'ㅅ', { size: 12, weight: 800 }) + t(o2(0.65), 18, '사 · 랑 · 합 · 니', { size: 12, weight: 800 }) + t(o2(1.2), 18, '다 (작아지는 끝)', { size: 12, weight: 800 }) +
       row(26, { thr: -26, att: 0.001, hold: 0, rel: 0.01, range: -60 }, 'Threshold 높음 · Hold 0 · Release 짧음', C.red) + row(112, { thr: -44, att: 0.001, hold: 0.06, rel: 0.25, range: -60 }, 'Threshold 알맞게 · Hold·Release 넉넉히', C.teal) +
-      t(584, 204, '회색 선 = 게이트 앞, 색 = 게이트 뒤, 빨간 칸 = 말인데 잘린 곳', { size: 10.5, fill: C.sub, anchor: 'end' }) + t(584, 220, '「사랑합니다」 크기 변화 (교육용 근사)', { size: 10.5, fill: C.sub, anchor: 'end' }), '말의 시작과 끝이 잘리는 경우와 알맞은 경우');
+      t(584, 204, '회색 선 = 게이트 앞, 색 = 게이트 뒤, 빨간 칸 = 말인데 잘린 곳', { size: 10.5, fill: C.sub, anchor: 'end' }) + t(584, 220, '「사랑합니다」 크기 변화 (교육용 어림값)', { size: 10.5, fill: C.sub, anchor: 'end' }), '말의 시작과 끝이 잘리는 경우와 알맞은 경우');
     function o2(s) { return 46 + s / T * 538; }
   };
   V.gateTom = function () {
@@ -143,8 +143,8 @@
     function lane(y0, arr, title, col) { var o = plot({ x0: 46, x1: 584, y0: y0, y1: y0 + 76, t1: T, dbMin: -60, dbMax: 0 });
       return o.frame + '<path d="' + o.area(arr, dt) + '" fill="' + col + '" fill-opacity=".3"/><path d="' + o.line(arr, dt) + '" fill="none" stroke="' + col + '" stroke-width="1.4"/>' + '<path d="M46 ' + o.ly(P.thr) + 'H584" stroke="' + C.red + '" stroke-dasharray="6 4"/>' + t(52, y0 + 14, title, { size: 11.5, weight: 800, fill: C.ink, anchor: 'start' }) + t(40, o.ly(P.thr) + 4, '기준', { size: 10, fill: C.red, anchor: 'end' }); }
     function X(s) { return 46 + s / T * 538; }
-    return svg(600, 220, lane(20, lv, '탐 마이크 입력: 스네어 블리드(작은 봉우리) + 탐(큰 봉우리)', '#64748b') + lane(116, out, '게이트 뒤: 탐을 칠 때만 열림', C.teal) +
-      [1.25, 2.75, 3.05].map(function (h) { return t(X(h) + 2, 108, '▲탐', { size: 10.5, fill: C.teal, weight: 800, anchor: 'start' }); }).join('') + t(584, 210, '4초 동안의 크기 (dB) · 교육용 근사 그림', { size: 10.5, fill: C.sub, anchor: 'end' }), '탐 마이크 게이트로 스네어 블리드 줄이기');
+    return svg(600, 220, lane(20, lv, '탐 마이크에 들어온 소리: 새어 든 스네어(작은 봉우리) + 탐(큰 봉우리)', '#64748b') + lane(116, out, '게이트 뒤: 탐을 칠 때만 열림', C.teal) +
+      [1.25, 2.75, 3.05].map(function (h) { return t(X(h) + 2, 108, '▲탐', { size: 10.5, fill: C.teal, weight: 800, anchor: 'start' }); }).join('') + t(584, 210, '4초 동안의 크기 (dB) · 교육용 어림 그림', { size: 10.5, fill: C.sub, anchor: 'end' }), '탐 마이크 게이트로 스네어 블리드 줄이기');
   };
   V.gateCl5 = function () {
     var K = [['THRESHOLD', '−72 ~ 0 dB', 0.55], ['RANGE', '−∞ ~ 0 dB', 0.25], ['ATTACK', '0 ~ 120 ms', 0.1], ['HOLD', '0.02 ms ~ 1.96 s', 0.35], ['DECAY', '5 ms ~ 42.3 s', 0.45]];
@@ -153,7 +153,7 @@
         '<path d="M' + cx + ' ' + cy + 'L' + (cx + 19 * Math.sin(a)).toFixed(1) + ' ' + (cy - 19 * Math.cos(a)).toFixed(1) + '" stroke="#22d3ee" stroke-width="3.5" stroke-linecap="round"/>' +
         t(cx, 140, k[0], { size: 11.5, fill: '#e5e7eb', weight: 800 }) + t(cx, 158, k[1], { size: 10.5, fill: '#fde68a' }); }).join('');
     return svg(600, 220, '<rect x="8" y="8" width="584" height="170" rx="12" fill="#111827"/>' + t(22, 32, 'DYNAMICS 1 · GATE', { size: 13, fill: '#a5f3fc', weight: 900, anchor: 'start' }) + t(578, 32, '48 kHz 기준', { size: 10.5, fill: '#9ca3af', anchor: 'end' }) + knobs +
-      t(300, 200, 'CL5 입력 채널 게이트의 값 범위 (제조사 자료 · 화면은 단순화한 그림)', { size: 11, fill: C.sub }), 'CL5 입력 채널 게이트 파라미터 범위');
+      t(300, 200, 'CL5 입력 채널 게이트의 값 범위 (제조사 자료 · 화면은 간단히 그린 그림)', { size: 11, fill: C.sub }), 'CL5 입력 채널 게이트 파라미터 범위');
   };
 
   /* ======================================================================= 게이트 계산 (실습용 · 교육용 근사) */
@@ -282,7 +282,7 @@
         '<div class="sim-side">' +
           '<div class="sim-box"><h4>소리</h4><div class="sim-gate-src">' + Object.keys(SRC).map(function (k) { return '<label><input type="radio" name="simGateSrc" value="' + k + '"' + (k === 'vox' ? ' checked' : '') + '>' + SRC[k].name + '</label>'; }).join('') + '</div>' +
             '<button type="button" class="sim-btn sim-play" data-sim="play" style="margin-top:8px">🔊 소리 켜기</button><p class="sim-note" data-role="srcnote">녹음을 불러오는 중…</p>' +
-            '<label class="sim-switch"><input type="checkbox" data-sim="on" checked><span><b>GATE ON</b> (끄면 게이트 없이 원래 소리)</span></label>' +
+            '<label class="sim-switch"><input type="checkbox" data-sim="on" checked><span><b>GATE ON</b> (끄면 게이트 없이 원래 소리를 들어요)</span></label>' +
             '<div class="sim-btns"><button type="button" class="sim-btn" data-sim="init">처음 값으로</button></div></div>' +
           '<div class="sim-box sim-read" data-role="read"></div>' +
         '</div>' +
@@ -376,11 +376,11 @@
       var vox = S.src === 'vox', wait = m.nSp < 150 || m.nGap < 10;
       var rows = '<div class="sim-row"><span>말소리 통과</span><b class="' + (m.spOpen == null ? '' : m.spOpen >= 0.95 ? 'ok' : m.spOpen >= 0.85 ? 'warn' : 'bad') + '">' + pct(m.spOpen) + '</b></div>' +
         '<div class="sim-row"><span>' + (vox ? '말' : '타격') + ' 사이 잡음 닫힘</span><b class="' + (m.gapClosed == null ? '' : m.gapClosed >= 0.7 ? 'ok' : 'warn') + '">' + pct(m.gapClosed) + '</b></div>' +
-        (vox ? '<div class="sim-row"><span>말끝 보존</span><b class="' + (m.tailKept == null ? '' : m.tailKept >= 0.85 ? 'ok' : m.tailKept >= 0.7 ? 'warn' : 'bad') + '">' + pct(m.tailKept) + '</b></div>'
-          : '<div class="sim-row"><span>타격 첫머리 (1 ms 뒤)</span><b class="' + (m.onset == null ? '' : m.onset >= 0.9 ? 'ok' : m.onset >= 0.6 ? 'warn' : 'bad') + '">' + (m.onset == null ? '—' : Math.round(m.onset * 100) + '% 열림') + '</b></div>') +
-        '<div class="sim-row"><span>닫힘 횟수</span><b class="' + (m.closesPerSec > 2.5 ? 'warn' : '') + '">' + m.closesPerSec.toFixed(1) + '회/초' + (m.closesPerSec > 2.5 ? ' · 떨림(채터링)?' : '') + '</b></div>';
-      var tip = !S.P.on ? '게이트가 꺼져 있어요. GATE ON 을 켜세요.' : S.P.thr < S.noise + 12 && vox ? 'Threshold 가 잡음보다 낮거나 비슷해 잡음에도 게이트가 열려요. 천천히 올려 보세요.' : vox && m.spOpen != null && m.spOpen < 0.85 ? 'Threshold 가 너무 높아 말하는 도중에도 닫혀요.' : vox && m.tailKept != null && m.tailKept < 0.85 ? '말끝이 잘리고 있어요. Hold·Release 를 늘려 보세요.' : '좋아요. 소리를 켜고 GATE ON/OFF 를 번갈아 들어 보세요.';
-      read.innerHTML = '<h4>결과 <small>설정을 바꾼 뒤 ' + m.secs.toFixed(1) + '초 · 교육용 근사</small></h4>' + rows + '<p class="sim-note">' + (wait ? '판정 중… 몇 초 기다려 주세요. ' : '') + tip + '</p>';
+        (vox ? '<div class="sim-row"><span>말끝 살아 있음</span><b class="' + (m.tailKept == null ? '' : m.tailKept >= 0.85 ? 'ok' : m.tailKept >= 0.7 ? 'warn' : 'bad') + '">' + pct(m.tailKept) + '</b></div>'
+          : '<div class="sim-row"><span>북 친 첫머리 (1 ms 뒤)</span><b class="' + (m.onset == null ? '' : m.onset >= 0.9 ? 'ok' : m.onset >= 0.6 ? 'warn' : 'bad') + '">' + (m.onset == null ? '—' : Math.round(m.onset * 100) + '% 열림') + '</b></div>') +
+        '<div class="sim-row"><span>닫힘 횟수</span><b class="' + (m.closesPerSec > 2.5 ? 'warn' : '') + '">' + m.closesPerSec.toFixed(1) + '회/초' + (m.closesPerSec > 2.5 ? ' · 덜덜 끊김(채터링)?' : '') + '</b></div>';
+      var tip = !S.P.on ? '게이트가 꺼져 있어요. GATE ON 을 켜세요.' : S.P.thr < S.noise + 12 && vox ? 'Threshold 가 잡음보다 낮거나 비슷해요. 그래서 잡음에도 게이트가 열려요. 천천히 올려 보세요.' : vox && m.spOpen != null && m.spOpen < 0.85 ? 'Threshold 가 너무 높아 말하는 도중에도 닫혀요.' : vox && m.tailKept != null && m.tailKept < 0.85 ? '말끝이 잘리고 있어요. Hold·Release 를 늘려 보세요.' : '좋아요. 소리를 켜고 GATE ON/OFF 를 번갈아 들어 보세요.';
+      read.innerHTML = '<h4>결과 <small>설정을 바꾼 뒤 ' + m.secs.toFixed(1) + '초 · 교육용 어림값</small></h4>' + rows + '<p class="sim-note">' + (wait ? '판정 중… 몇 초 기다려 주세요. ' : '') + tip + '</p>';
     }
     function tick() {
       if (!alive) return; raf = requestAnimationFrame(tick);
@@ -406,7 +406,7 @@
         d2.process(bufC, bufN, Math.pow(10, S.noise / 20), L, R, n, 0.9); A.blocks = (A.blocks || 0) + 1;
       };
       sp.connect(c2.destination); A.sp = sp; A.dsp = d2; S.audio = true;
-      note.textContent = '실제 녹음 + 배경 잡음이 게이트를 지나 들려요(실시간 계산). 헤드폰으로 들으면 잡음이 잘 들려요.';
+      note.textContent = '실제 녹음과 배경 잡음이 게이트를 지나 들려요(바로바로 계산해요). 헤드폰으로 들으면 잡음이 잘 들려요.';
     }
     function stopAudio() { if (A && A.sp) { try { A.sp.onaudioprocess = null; A.sp.disconnect(); } catch (e) { /* noop */ } A.sp = null; } S.audio = false; last = performance.now(); }
 
@@ -469,135 +469,135 @@
     title: 'Gate', sub: '작은 잡음을 닫아 깨끗하게',
     prereq: ['signal-flow'],
     overview: {
-      lead: '게이트(Gate)는 <b>소리가 정한 크기(Threshold)보다 작으면 채널을 닫아</b> 잡음을 줄이는 도구예요. 말이나 연주가 없는 사이의 「쉬—」 잡음, 다른 악기에서 새어 들어온 소리(블리드)를 줄여요. 하지만 잘못 쓰면 <b>말의 시작과 끝이 잘려</b> 부자연스러워지니, 어디에 쓰고 어디에 쓰지 않을지 아는 것이 중요해요.',
+      lead: '게이트(Gate)는 문지기 같은 도구예요. <b>소리가 정한 크기(Threshold)보다 작으면 채널을 닫아</b> 잡음을 줄여요. 말이나 연주가 없는 사이의 「쉬—」 잡음을 줄여요. 다른 악기에서 새어 들어온 소리(블리드)도 줄여요. 하지만 잘못 쓰면 <b>말의 시작과 끝이 잘려</b> 어색해져요. 그래서 어디에 쓰고 어디에 쓰지 않을지 아는 것이 중요해요.',
       terms: [
-        ['게이트 (Gate)', '입력이 Threshold 보다 작으면 소리를 줄이고(닫힘), 크면 그대로 통과시키는(열림) 다이내믹 도구예요.'],
-        ['Threshold', '열리고 닫히는 기준 크기(dB)예요. 잡음보다 높고, 지키고 싶은 소리보다 낮게 맞춰요.'],
+        ['게이트 (Gate)', '들어온 소리가 Threshold 보다 작으면 소리를 줄이고(닫힘), 크면 그대로 보내는(열림) 도구예요. 소리 크기를 다루는 도구(다이내믹 도구)예요.'],
+        ['Threshold', '문이 열리고 닫히는 기준 크기(dB)예요. 잡음보다 높고, 지키고 싶은 소리보다 낮게 맞춰요.'],
         ['Attack', '기준을 넘었을 때 게이트가 얼마나 빨리 열리는지예요. 너무 길면 소리의 첫머리가 뭉개져요.'],
         ['Hold', '소리가 기준 아래로 내려가도 바로 닫지 않고 열어 두는 시간이에요.'],
         ['Release (Decay)', 'Hold 가 끝난 뒤 얼마나 천천히 닫히는지예요. CL5 에서는 DECAY 라고 불러요.'],
-        ['Range', '닫혔을 때 소리를 얼마나 줄일지예요. −∞ 면 완전히 끄고, −10 dB 면 조금만 줄여요.'],
+        ['Range', '닫혔을 때 소리를 얼마나 줄일지예요. −∞ 면 완전히 꺼요. −10 dB 면 조금만 줄여요.'],
         ['블리드 (bleed)', '한 마이크에 다른 악기·스피커 소리가 새어 들어오는 것이에요. 탐 마이크에 들어온 스네어 소리처럼요.'],
-        ['채터링', 'Threshold 근처에서 게이트가 빠르게 열렸다 닫혔다 하며 소리가 덜덜 끊기는 현상이에요.']
+        ['채터링', 'Threshold 근처에서 게이트가 빠르게 열렸다 닫혔다 하는 현상이에요. 소리가 덜덜 끊겨 들려요.']
       ],
       points: [
-        '<b>Threshold 는 잡음 위, 말소리 아래.</b> 둘 사이 크기 차이가 클수록 게이트가 잘 동작해요.',
-        '말끝이 잘리면 <b>Hold·Release 를 늘리고</b>, 그래도 어색하면 <b>Range 를 얕게</b>(−10 ~ −20 dB) 써요.',
-        '설교·보컬처럼 작은 소리도 중요한 마이크에는 게이트를 <b>쓰지 않거나 아주 약하게</b> 써요. 드럼 탐처럼 소리와 사이가 분명한 곳에 잘 맞아요.'
+        '<b>Threshold 는 잡음 위, 말소리 아래.</b> 둘의 크기 차이가 클수록 게이트가 잘 동작해요.',
+        '말끝이 잘리면 <b>Hold·Release 를 늘려요</b>. 그래도 어색하면 <b>Range 를 얕게</b>(−10 ~ −20 dB) 써요.',
+        '설교·보컬처럼 작은 소리도 중요한 마이크에는 게이트를 <b>쓰지 않거나 아주 약하게</b> 써요. 드럼 탐처럼 소리와 쉬는 사이가 분명한 곳에 잘 맞아요.'
       ],
       model: 'gateTransfer'
     },
     theory: [
       { title: '게이트와 Threshold', visual: 'gateConcept',
-        body: '게이트는 문지기예요. 입력 소리가 <b>Threshold(기준)</b>보다 크면 문을 열어 그대로 통과시키고, 작으면 문을 닫아 소리를 줄여요. 말이 없는 사이에는 잡음만 남아 있으니, Threshold 를 <b>잡음보다 조금 높게</b> 두면 그 사이를 조용하게 만들 수 있어요.',
-        more: '<ul><li>게이트는 소리를 <b>더 좋게</b> 만드는 게 아니라, 신호가 없을 때 <b>덜 들리게</b> 하는 도구예요. 말하는 동안에는 잡음도 함께 열려 그대로 들려요.</li>' +
-          '<li>그림의 위쪽은 입력 크기, 아래쪽 띠는 게이트가 열린 구간이에요. 소리 크기는 계속 변해서, Threshold 근처에서는 열렸다 닫혔다 할 수 있어요(교육용 근사 그림).</li>' +
-          '<li>디지털 콘솔의 Threshold 는 보통 dBFS(디지털 최대치 기준) 단위예요. CL5 게이트는 −72 dB ~ 0 dB 에서 정해요(제조사 자료).</li>' +
-          '<li>게이트를 쓰기 전에 <b>GAIN 을 먼저 알맞게</b> 맞춰요. GAIN 을 바꾸면 신호와 잡음이 함께 커지거나 작아져서 Threshold 를 다시 맞춰야 해요.</li></ul>',
+        body: '게이트는 문지기예요. 들어온 소리가 <b>Threshold(기준)</b>보다 크면 문을 열어 그대로 보내요. 작으면 문을 닫아 소리를 줄여요. 말이 없는 사이에는 잡음만 남아 있어요. 그래서 Threshold 를 <b>잡음보다 조금 높게</b> 두면 그 사이를 조용하게 만들 수 있어요.',
+        more: '<ul><li>게이트는 소리를 <b>더 좋게</b> 만드는 도구가 아니에요. 소리가 없을 때 잡음이 <b>덜 들리게</b> 하는 도구예요. 말하는 동안에는 문이 열려 잡음도 그대로 들려요.</li> ' +
+          '<li>그림의 위쪽은 들어온 소리 크기예요. 아래쪽 띠는 게이트가 열린 구간이에요. 소리 크기는 계속 변해요. 그래서 Threshold 근처에서는 열렸다 닫혔다 할 수 있어요(교육용 어림 그림).</li> ' +
+          '<li>디지털 콘솔의 Threshold 는 보통 dBFS 단위예요. 디지털이 낼 수 있는 가장 큰 소리를 0 으로 잡은 눈금이에요. CL5 게이트는 −72 dB ~ 0 dB 에서 정해요(제조사 자료).</li> ' +
+          '<li>게이트를 쓰기 전에 <b>GAIN 을 먼저 알맞게</b> 맞춰요. GAIN 을 바꾸면 소리와 잡음이 함께 커지거나 작아져요. 그러면 Threshold 를 다시 맞춰야 해요.</li></ul>',
         check: { q: '게이트 Threshold 를 맞추는 기본 원칙은?', options: [
-          { t: '잡음보다 조금 높고, 지키고 싶은 소리보다 낮게', ok: true, why: '맞아요. 그래야 잡음만 있을 때 닫히고, 소리가 나면 열려요.' },
-          { t: '잡음보다 낮게', why: '잡음에도 게이트가 열려 있어서 아무 효과가 없어요.' },
-          { t: '말소리보다 높게', why: '말하는 중에도 닫혀서 말이 끊겨요.' }] } },
+          { t: '잡음보다 조금 높고, 지키고 싶은 소리보다 낮게', ok: true, why: '맞아요. 그래야 잡음만 있을 때 닫히고, 소리가 나면 열리기 때문이에요.' },
+          { t: '잡음보다 낮게', why: '아니에요. 잡음에도 게이트가 열려 있어서 아무 효과가 없어요.' },
+          { t: '말소리보다 높게', why: '아니에요. 말하는 중에도 닫혀서 말이 끊겨요.' }] } },
       { title: 'Attack · Hold · Release · Range', visual: 'gateTimes',
-        body: '게이트가 언제, 얼마나 빨리, 얼마나 많이 열고 닫는지는 네 가지로 정해요. <b>Attack</b>: 기준을 넘었을 때 열리는 속도. <b>Hold</b>: 기준 아래로 내려가도 열어 두는 시간. <b>Release</b>: Hold 뒤에 닫히는 속도. <b>Range</b>: 닫혔을 때 줄이는 양. 시간은 보통 ms(1/1000초) 단위예요.',
-        more: '<ul><li><b>Attack</b>: 북·말 첫소리처럼 빠른 소리는 짧게(1 ms 안팎) 둬요. 너무 길면 첫머리가 뭉개지고, 아주 짧으면 낮은 소리에서 「딱」 하는 클릭이 들릴 수도 있어요.</li>' +
-          '<li><b>Hold</b>: 말소리는 낱말 사이에서도 순간순간 작아져요. Hold 를 수십 ms 정도 두면 말하는 도중에 덜덜 닫히는 채터링이 줄어요.</li>' +
-          '<li><b>Release</b>: 말끝·울림이 자연스럽게 사라지도록 보통 Attack 보다 훨씬 길게(수십–수백 ms) 둬요. 너무 짧으면 말끝이 「뚝」 잘리고, 너무 길면 다음 소리 전까지 닫히지 않아요.</li>' +
-          '<li><b>Range</b>: −∞ 는 완전히 끄고, −10 ~ −20 dB 는 잡음을 줄이면서도 「뚝 끊기는」 느낌을 덜어 줘요.</li>' +
+        body: '게이트가 언제, 얼마나 빨리, 얼마나 많이 열고 닫을지는 네 가지로 정해요. <b>Attack</b>은 기준을 넘었을 때 열리는 빠르기예요. <b>Hold</b>는 기준 아래로 내려가도 열어 두는 시간이에요. <b>Release</b>는 Hold 뒤에 닫히는 빠르기예요. <b>Range</b>는 닫혔을 때 줄이는 양이에요. 시간은 보통 ms(1000분의 1초) 단위예요.',
+        more: '<ul><li><b>Attack</b>: 북·말 첫소리처럼 빠른 소리는 짧게(1 ms 안팎) 둬요. 너무 길면 첫머리가 뭉개져요. 아주 짧으면 낮은 소리에서 「딱」 하는 소리(클릭)가 들릴 수도 있어요.</li> ' +
+          '<li><b>Hold</b>: 말소리는 낱말 사이에서도 순간순간 작아져요. 그래서 Hold 를 수십 ms 정도 둬요. 그러면 말하는 도중에 덜덜 닫히는 채터링이 줄어요.</li> ' +
+          '<li><b>Release</b>: 말끝·울림이 자연스럽게 사라지게 해요. 보통 Attack 보다 훨씬 길게(수십–수백 ms) 둬요. 너무 짧으면 말끝이 「뚝」 잘려요. 너무 길면 다음 소리 전까지 닫히지 않아요.</li> ' +
+          '<li><b>Range</b>: −∞ 는 완전히 꺼요. −10 ~ −20 dB 는 잡음을 줄이면서도 「뚝 끊기는」 느낌을 덜어 줘요.</li> ' +
           '<li>그림은 네 값의 역할을 보여 주는 교육용 그림이에요. 게이트마다 Release 를 재는 방식은 조금씩 달라요.</li></ul>',
         check: { q: '말끝이 「뚝」 잘리는 느낌이 나요. 먼저 늘려 볼 값은?', options: [
-          { t: 'Hold 나 Release', ok: true, why: '맞아요. 기준 아래로 내려간 뒤에도 조금 더 열어 두고 천천히 닫아요.' },
-          { t: 'Attack', why: 'Attack 은 열릴 때(시작 부분)의 속도예요. 끝부분과는 관계가 적어요.' },
-          { t: 'Threshold (더 높게)', why: 'Threshold 를 높이면 더 일찍 닫혀서 더 많이 잘려요.' }] } },
+          { t: 'Hold 나 Release', ok: true, why: '맞아요. 기준 아래로 내려간 뒤에도 조금 더 열어 두고, 천천히 닫아야 하기 때문이에요.' },
+          { t: 'Attack', why: '아니에요. Attack 은 열릴 때(시작 부분)의 빠르기예요. 끝부분과는 관계가 적어요.' },
+          { t: 'Threshold (더 높게)', why: '아니에요. Threshold 를 높이면 더 일찍 닫혀서 더 많이 잘려요.' }] } },
       { title: '잡음과 신호를 구분하기', visual: 'gateSeparate',
-        body: '게이트가 잘 동작하려면 <b>지키고 싶은 소리와 잡음의 크기 차이</b>가 커야 해요. 잡음이 −50 dB, 말소리가 −30 ~ −6 dB 근처라면 그 사이(예: −38 dB)에 Threshold 를 둘 수 있어요. 하지만 작게 말하는 부분이 잡음과 비슷하면, 어디에 두어도 말이 잘리거나 잡음이 남아요. 이때는 게이트보다 <b>잡음 자체를 줄이는 것</b>이 먼저예요.',
-        more: '<ul><li><b>크기 차이를 키우는 방법</b>: 마이크를 입(악기)에 가까이 → 신호가 커져요. 잡음원(에어컨·앰프·모니터 스피커)과 마이크를 멀리 → 잡음이 작아져요.</li>' +
-          '<li>잡음에는 크기가 늘 비슷한 「쉬—」(히스)·「웅—」(험)도 있고, 다른 악기의 블리드처럼 크기가 계속 바뀌는 것도 있어요. 블리드가 더 까다로워요.</li>' +
-          '<li><b>키 인 필터(사이드체인 필터)</b>: 게이트가 소리를 「듣는」 신호에만 필터를 걸어, 원하는 대역(예: 탐의 낮은 대역)에 더 잘 반응하게 하는 기능이에요. 실제로 나가는 소리에는 필터가 걸리지 않아요.</li>' +
+        body: '게이트가 잘 동작하려면 <b>지키고 싶은 소리와 잡음의 크기 차이</b>가 커야 해요. 잡음이 −50 dB, 말소리가 −30 ~ −6 dB 근처라고 해 봐요. 그러면 그 사이(예: −38 dB)에 Threshold 를 둘 수 있어요. 하지만 작게 말하는 부분이 잡음과 비슷하면 어디에 두어도 문제가 생겨요. 말이 잘리거나 잡음이 남아요. 이때는 게이트보다 <b>잡음 자체를 줄이는 것</b>이 먼저예요.',
+        more: '<ul><li><b>크기 차이를 키우는 방법</b>: 마이크를 입(악기)에 가까이 대요. 그러면 소리가 커져요. 잡음을 내는 것(에어컨·앰프·모니터 스피커)과 마이크를 멀리 떨어뜨려요. 그러면 잡음이 작아져요.</li> ' +
+          '<li>잡음에는 크기가 늘 비슷한 「쉬—」(히스)·「웅—」(험)이 있어요. 다른 악기의 블리드처럼 크기가 계속 바뀌는 것도 있어요. 블리드 쪽이 더 까다로워요.</li> ' +
+          '<li><b>키 인 필터(사이드체인 필터)</b>: 게이트가 「듣는」 소리에만 필터를 거는 기능이에요. 그러면 원하는 부분(예: 탐의 낮은 소리)에 더 잘 반응해요. 실제로 나가는 소리에는 필터가 걸리지 않아요.</li> ' +
           '<li>게이트는 잡음을 「없애는」 게 아니라 소리가 없을 때만 닫아요. 말하는 동안의 잡음은 그대로 남아요.</li></ul>',
-        check: { q: '말소리(작게 말하는 부분)와 잡음의 크기가 거의 같다면 게이트는?', options: [
-          { t: '잘 구분하지 못해 말이 잘리거나 잡음이 남는다', ok: true, why: '맞아요. 이럴 때는 마이크 거리·잡음원부터 바로잡아요.' },
-          { t: '잡음만 정확히 골라 없앤다', why: '게이트는 크기로만 판단해서, 크기가 같으면 구분하지 못해요.' },
-          { t: 'Range 를 −∞ 로 하면 해결된다', why: 'Range 는 닫혔을 때 줄이는 양일 뿐, 구분하는 능력은 그대로예요.' }] } },
+        check: { q: '작게 말하는 부분과 잡음의 크기가 거의 같다면 게이트는?', options: [
+          { t: '잘 구분하지 못해 말이 잘리거나 잡음이 남아요', ok: true, why: '맞아요. 크기 차이가 없으면 구분할 수 없기 때문이에요. 이럴 때는 마이크 거리·잡음을 내는 것부터 바로잡아요.' },
+          { t: '잡음만 정확히 골라 없애요', why: '아니에요. 게이트는 크기로만 판단해요. 크기가 같으면 구분하지 못해요.' },
+          { t: 'Range 를 −∞ 로 하면 해결돼요', why: '아니에요. Range 는 닫혔을 때 줄이는 양일 뿐이에요. 구분하는 능력은 그대로예요.' }] } },
       { title: '말의 시작과 끝이 잘리는 문제', visual: 'gateChop',
-        body: '말은 「ㅅ」「ㅎ」 같은 작은 소리로 시작하고, 끝은 점점 작아지며 사라져요. Threshold 가 높거나 Release 가 짧으면 이 <b>작은 시작과 끝</b>이 잘려요. 첫소리 「ㅅ」이 잘리면 「사랑합니다」가 「아랑합니다」처럼 들리고, 끝이 잘리면 말끝이 「뚝」 끊겨요. 이런 부분은 작아도 알아듣는 데 아주 중요해요.',
-        more: '<ul><li><b>시작이 잘릴 때</b>: Threshold 를 조금 낮추고, Attack 을 짧게 해요.</li>' +
-          '<li><b>끝이 잘릴 때</b>: Hold 와 Release 를 늘려요. 그래도 어색하면 Range 를 얕게 해요.</li>' +
-          '<li><b>확인 방법</b>: 게이트를 껐다 켜 보며(바이패스) 첫소리와 끝소리가 똑같이 들리는지 들어 봐요. 말하는 도중에 게이트 표시가 자주 꺼지면 Threshold 가 너무 높은 거예요.</li>' +
-          '<li>「ㅅ·ㅆ·ㅎ·ㅍ」 같은 자음은 모음보다 훨씬 작아서 먼저 잘려요(그림의 크기는 교육용 근사).</li></ul>',
+        body: '말은 「ㅅ」「ㅎ」 같은 작은 소리로 시작해요. 끝은 점점 작아지며 사라져요. Threshold 가 높거나 Release 가 짧으면 이 <b>작은 시작과 끝</b>이 잘려요. 첫소리 「ㅅ」이 잘리면 「사랑합니다」가 「아랑합니다」처럼 들려요. 끝이 잘리면 말끝이 「뚝」 끊겨요. 이런 부분은 작아도 말을 알아듣는 데 아주 중요해요.',
+        more: '<ul><li><b>시작이 잘릴 때</b>: Threshold 를 조금 낮추고, Attack 을 짧게 해요.</li> ' +
+          '<li><b>끝이 잘릴 때</b>: Hold 와 Release 를 늘려요. 그래도 어색하면 Range 를 얕게 해요.</li> ' +
+          '<li><b>확인 방법</b>: 게이트를 껐다 켜 보며(바이패스) 첫소리와 끝소리가 똑같이 들리는지 들어 봐요. 말하는 도중에 게이트 표시가 자주 꺼지면 Threshold 가 너무 높은 거예요.</li> ' +
+          '<li>「ㅅ·ㅆ·ㅎ·ㅍ」 같은 자음은 모음보다 훨씬 작아요. 그래서 먼저 잘려요(그림의 크기는 교육용 어림값).</li></ul>',
         check: { q: '설교자 말의 첫소리가 자꾸 잘려요(「아랑합니다」). 알맞은 조치는?', options: [
-          { t: 'Threshold 를 조금 낮추고 Attack 을 짧게 한다', ok: true, why: '맞아요. 작은 첫소리에도 빨리 열리게 해요.' },
-          { t: 'Threshold 를 높이고 Range 를 −∞ 로 한다', why: '더 많이, 더 깊게 잘려요.' },
-          { t: 'Release 를 아주 짧게 한다', why: 'Release 는 끝부분이에요. 짧게 하면 말끝까지 잘려요.' }] } },
+          { t: 'Threshold 를 조금 낮추고 Attack 을 짧게 해요', ok: true, why: '맞아요. 작은 첫소리에도 빨리 열리게 해야 하기 때문이에요.' },
+          { t: 'Threshold 를 높이고 Range 를 −∞ 로 해요', why: '아니에요. 더 많이, 더 깊게 잘려요.' },
+          { t: 'Release 를 아주 짧게 해요', why: '아니에요. Release 는 끝부분이에요. 짧게 하면 말끝까지 잘려요.' }] } },
       { title: '라이브에서의 한계와 드럼 게이트', visual: 'gateTom',
-        body: '게이트는 <b>소리와 사이가 분명한 곳</b>에 잘 맞아요. 대표가 <b>드럼 탐 마이크</b>예요. 탐은 가끔만 치는데, 마이크는 늘 스네어·심벌 소리(블리드)를 받아요. 탐을 칠 때만 열리게 하면 드럼 소리가 깔끔해져요. 반대로 <b>설교·보컬</b>은 작은 소리·숨결·말끝까지 중요해서, 게이트를 쓰면 오히려 어색해지기 쉬워요.',
-        more: '<ul><li><b>게이트를 피하거나 약하게 쓸 곳</b>: 설교·기도·낭독 마이크, 리드 보컬, 성가대 마이크, 피아노·어쿠스틱 기타처럼 여리게 연주하는 악기. 꼭 쓰려면 Range 를 얕게(−10 dB 정도) 해요.</li>' +
-          '<li><b>왜 위험할까?</b> 말을 시작하는 순간이 잘리거나, 작게 기도하는 부분이 통째로 닫혀 「마이크가 꺼졌다」고 느낄 수 있어요. 디지털 콘솔에서 소리가 갑자기 안 나면 게이트 Threshold 도 확인할 곳이에요.</li>' +
-          '<li><b>드럼 탐</b>: Attack 은 짧게, Threshold 는 스네어 블리드보다 높게, Release 는 탐 울림이 자연스럽게 끝날 만큼(보통 수백 ms) 둬요. 세게 치는 연주자와 여리게 치는 연주자는 값이 달라요.</li>' +
-          '<li><b>킥(베이스 드럼)</b>에도 게이트를 자주 써요. 하지만 오버헤드(심벌 위 마이크)처럼 늘 소리가 있는 마이크에는 쓰지 않아요.</li>' +
-          '<li>무대 모니터가 크면 그 소리도 블리드가 되어 게이트가 엉뚱하게 열려요. 모니터 음량을 알맞게 하는 것이 먼저예요.</li></ul>',
+        body: '게이트는 <b>소리와 쉬는 사이가 분명한 곳</b>에 잘 맞아요. 대표가 <b>드럼 탐 마이크</b>예요. 탐은 가끔만 쳐요. 그런데 탐 마이크에는 늘 스네어·심벌 소리(블리드)가 들어와요. 탐을 칠 때만 열리게 하면 드럼 소리가 깔끔해져요. 반대로 <b>설교·보컬</b>은 작은 소리·숨결·말끝까지 중요해요. 그래서 게이트를 쓰면 오히려 어색해지기 쉬워요.',
+        more: '<ul><li><b>게이트를 피하거나 약하게 쓸 곳</b>: 설교·기도·낭독 마이크, 리드 보컬, 성가대 마이크예요. 피아노·어쿠스틱 기타처럼 여리게 연주하는 악기도 그래요. 꼭 쓰려면 Range 를 얕게(−10 dB 정도) 해요.</li> ' +
+          '<li><b>왜 위험할까요?</b> 말을 시작하는 순간이 잘릴 수 있어요. 작게 기도하는 부분이 통째로 닫혀 「마이크가 꺼졌다」고 느낄 수도 있어요. 디지털 콘솔에서 소리가 갑자기 안 나면 게이트 Threshold 도 확인해 봐요.</li> ' +
+          '<li><b>드럼 탐</b>: Attack 은 짧게 둬요. Threshold 는 스네어 블리드보다 높게 둬요. Release 는 탐 울림이 자연스럽게 끝날 만큼(보통 수백 ms) 둬요. 세게 치는 연주자와 여리게 치는 연주자는 값이 달라요.</li> ' +
+          '<li><b>킥(베이스 드럼)</b>에도 게이트를 자주 써요. 하지만 오버헤드(심벌 위 마이크)처럼 늘 소리가 있는 마이크에는 쓰지 않아요.</li> ' +
+          '<li>무대 모니터가 크면 그 소리도 블리드가 돼요. 그러면 게이트가 엉뚱하게 열려요. 모니터 음량을 알맞게 하는 것이 먼저예요.</li></ul>',
         check: { q: '게이트가 가장 잘 맞는 마이크는?', options: [
-          { t: '드럼 탐 마이크', ok: true, why: '맞아요. 탐을 칠 때와 안 칠 때의 크기 차이가 분명하고, 사이에 블리드만 있어요.' },
-          { t: '설교 마이크', why: '작은 목소리·말끝이 잘리기 쉬워 보통 쓰지 않거나 아주 약하게 써요.' },
-          { t: '성가대 마이크', why: '여러 사람의 작은 소리까지 받아야 해서 게이트가 어색하게 끊어요.' }] } },
+          { t: '드럼 탐 마이크', ok: true, why: '맞아요. 탐을 칠 때와 안 칠 때의 크기 차이가 분명하고, 그 사이에는 블리드만 있기 때문이에요.' },
+          { t: '설교 마이크', why: '아니에요. 작은 목소리·말끝이 잘리기 쉬워 보통 쓰지 않거나 아주 약하게 써요.' },
+          { t: '성가대 마이크', why: '아니에요. 여러 사람의 작은 소리까지 받아야 해서 게이트가 어색하게 끊어요.' }] } },
       { title: 'CL5 채널 게이트 살펴보기', visual: 'gateCl5',
-        body: '3층 CL5 는 입력 채널마다 <b>Dynamics 1</b> 에서 게이트를 고를 수 있어요(제조사 자료). THRESHOLD · RANGE · ATTACK · HOLD · DECAY 를 정하고, 게이트가 얼마나 줄이고 있는지 미터로 확인해요. 값의 범위는 넓지만, 맞추는 순서는 이 모듈에서 배운 것과 같아요.',
-        more: '<ul><li><b>CL5 게이트 범위 (제조사 자료, 48 kHz 동작 기준)</b>: THRESHOLD −72 ~ 0 dB · RANGE −∞ ~ 0 dB · ATTACK 0 ~ 120 ms · HOLD 0.02 ms ~ 1.96 s · DECAY 5 ms ~ 42.3 s</li>' +
-          '<li>CL5 의 <b>DECAY</b> 가 이 모듈의 Release 와 같은 역할(Hold 뒤 닫히는 속도)이에요.</li>' +
-          '<li>Dynamics 1 은 GATE 말고도 DUCKING · COMPRESSOR · EXPANDER 로 바꿀 수 있고, Dynamics 2 는 COMPRESSOR · COMPANDER-H · COMPANDER-S · DE-ESSER 예요(제조사 자료).</li>' +
-          '<li><b>맞추는 순서 예시</b>: ① 게이트를 켜고 Threshold 를 가장 낮게 ② 소리가 없을 때 잡음이 닫힐 때까지 Threshold 를 천천히 올림 ③ 말·연주를 시키며 첫소리·끝소리가 잘리지 않는지 확인 ④ HOLD·DECAY·RANGE 로 자연스럽게 다듬기 ⑤ 게이트를 껐다 켜며 비교</li>' +
-          '<li>MG12XU 사양에는 게이트가 없어요. 다이내믹 기능은 1–4번 채널의 원 노브 컴프레서뿐이에요(제조사 자료).</li></ul>',
+        body: '3층 CL5 는 입력 채널마다 <b>Dynamics 1</b> 에서 게이트를 고를 수 있어요. (제조사 자료) THRESHOLD · RANGE · ATTACK · HOLD · DECAY 를 정해요. 게이트가 얼마나 줄이고 있는지는 미터로 확인해요. 값의 범위는 넓지만, 맞추는 순서는 이 모듈에서 배운 것과 같아요.',
+        more: '<ul><li><b>CL5 게이트 범위</b> (제조사 자료, 48 kHz 기준 — 1초에 4만 8천 번 소리를 재는 설정)<ul><li>THRESHOLD: −72 ~ 0 dB</li> <li>RANGE: −∞ ~ 0 dB</li> <li>ATTACK: 0 ~ 120 ms</li> <li>HOLD: 0.02 ms ~ 1.96 s</li> <li>DECAY: 5 ms ~ 42.3 s</li></ul></li> ' +
+          '<li>CL5 의 <b>DECAY</b> 가 이 모듈의 Release 와 같은 역할(Hold 뒤 닫히는 빠르기)이에요.</li> ' +
+          '<li>Dynamics 1 은 GATE 말고도 DUCKING · COMPRESSOR · EXPANDER 로 바꿀 수 있어요. Dynamics 2 는 COMPRESSOR · COMPANDER-H · COMPANDER-S · DE-ESSER 예요(제조사 자료).</li> ' +
+          '<li><b>맞추는 순서 예시</b><ul><li>① 게이트를 켜고 Threshold 를 가장 낮게 둬요.</li> <li>② 소리가 없을 때 잡음이 닫힐 때까지 Threshold 를 천천히 올려요.</li> <li>③ 말·연주를 해 보며 첫소리·끝소리가 잘리지 않는지 확인해요.</li> <li>④ HOLD·DECAY·RANGE 로 자연스럽게 다듬어요.</li> <li>⑤ 게이트를 껐다 켜며 비교해요.</li></ul></li> ' +
+          '<li>MG12XU 사양에는 게이트가 없어요. 소리 크기를 다루는 기능은 1–4번 채널의 원 노브 컴프레서뿐이에요(제조사 자료).</li></ul>',
         check: { q: 'CL5 게이트에서 「Hold 가 끝난 뒤 닫히는 속도」를 정하는 값은?', options: [
-          { t: 'DECAY', ok: true, why: '맞아요. 이 모듈의 Release 와 같은 역할이에요.' },
-          { t: 'ATTACK', why: 'ATTACK 은 열리는 속도예요.' },
-          { t: 'THRESHOLD', why: 'THRESHOLD 는 열리고 닫히는 기준 크기예요.' }] } }
+          { t: 'DECAY', ok: true, why: '맞아요. 이 모듈의 Release 와 같은 역할이기 때문이에요.' },
+          { t: 'ATTACK', why: '아니에요. ATTACK 은 열리는 속도예요.' },
+          { t: 'THRESHOLD', why: '아니에요. THRESHOLD 는 열리고 닫히는 기준 크기예요.' }] } }
     ],
     practice: {
       kind: 'gateSim',
-      lead: '실제 보컬 녹음에 일정한 배경 잡음(쉬—)을 섞었어요. Threshold·Attack·Hold·Release·Range 를 움직이며 게이트가 열리고 닫히는 모습을 파형과 미터로 보고, 「소리 켜기」로 들어 보세요. 드럼 녹음으로 바꿀 수도 있어요.',
-      note: '게이트 동작(검출·Hold·Release 곡선)과 배경 잡음은 교육용 근사 모델이에요. 값의 범위는 CL5 게이트(제조사 자료)를 참고해 줄였어요. 결과(말소리 통과·잡음 닫힘·말끝 보존)는 설정을 바꾼 뒤부터 새로 세요. 소리를 끈 상태에서도 같은 계산으로 파형과 미터가 움직여요.',
+      lead: '실제 보컬 녹음에 일정한 배경 잡음(쉬—)을 섞었어요. Threshold·Attack·Hold·Release·Range 를 움직여 보세요. 게이트가 열리고 닫히는 모습이 파형(소리 모양)과 미터에 보여요. 「소리 켜기」로 들어 볼 수도 있어요. 드럼 녹음으로 바꿀 수도 있어요.',
+      note: '게이트 동작(소리 감지·Hold·Release 곡선)과 배경 잡음은 교육용 어림 모델(근사)이에요. 값의 범위는 CL5 게이트(제조사 자료)를 참고해 줄였어요. 결과(말소리 통과·잡음 닫힘·말끝 살아 있음)는 설정을 바꾼 뒤부터 새로 세요. 소리를 끈 상태에서도 같은 계산으로 파형과 미터가 움직여요.',
       tasks: [
-        { id: 'close', title: '말 사이 잡음 닫기', text: 'Range 는 −20 dB 보다 깊게 두고 Threshold 를 올려, 말 사이 잡음은 70% 이상 닫히고 말소리는 95% 이상 통과하게 하세요.' },
-        { id: 'tail', title: '말끝이 잘리지 않게 Hold·Release', text: '잡음은 닫힌 채로 Hold 나 Release 를 늘려, 말끝(작아지며 사라지는 부분)이 85% 이상 살아 있게 하세요(잡음 닫힘 50% 이상).' },
-        { id: 'range', title: 'Range 로 자연스럽게', text: 'Range 를 −8 ~ −20 dB 로 얕게 해, 잡음을 완전히 끄지 않고 조금만 줄이세요(잡음 닫힘 60% 이상).' },
-        { id: 'toohigh', title: 'Threshold 가 너무 높을 때', text: 'Threshold 를 −20 dB 이상으로 올려, 말하는 도중에도 게이트가 닫혀(말소리 통과 85% 이하) 말이 끊기는 것을 확인하세요.' },
-        { id: 'drum', title: '드럼: Attack 과 타격음', text: '드럼으로 바꿔 북 사이를 닫고, Attack 을 20 ms 이상으로 길게 했다가 1 ms 이하로 줄여 타격음 첫머리가 살아나는 것을 확인하세요.' }
+        { id: 'close', title: '말 사이 잡음 닫기', text: 'Range 는 −20 dB 보다 깊게 두고 Threshold 를 올리세요. 말 사이 잡음은 70% 이상 닫히고, 말소리는 95% 이상 통과하면 성공이에요.' },
+        { id: 'tail', title: '말끝이 잘리지 않게 Hold·Release', text: '잡음은 닫힌 채로 Hold 나 Release 를 늘리세요. 말끝(작아지며 사라지는 부분)이 85% 이상 살아 있으면 성공이에요(잡음 닫힘 50% 이상).' },
+        { id: 'range', title: 'Range 로 자연스럽게', text: 'Range 를 −8 ~ −20 dB 로 얕게 하세요. 잡음을 완전히 끄지 않고 조금만 줄여요(잡음 닫힘 60% 이상).' },
+        { id: 'toohigh', title: 'Threshold 가 너무 높을 때', text: 'Threshold 를 −20 dB 이상으로 올려 보세요. 말하는 도중에도 게이트가 닫혀 말이 끊기는 것을 확인해요(말소리 통과 85% 이하).' },
+        { id: 'drum', title: '드럼: Attack 과 타격음', text: '드럼으로 바꿔 북 사이를 닫으세요. Attack 을 20 ms 이상으로 길게 했다가 1 ms 이하로 줄여 보세요. 북을 친 첫머리(타격음)가 살아나는 것을 확인해요.' }
       ],
       links: [
         { title: '3층 음향 시스템 · 신호 따라가기', text: '강대상 마이크가 게이트가 있는 CL5 채널까지 가는 길을 봐요.', go: { tab: 'tab2', trace: 'mic_podium_L' } },
-        { title: 'Ear Training', text: '작은 볼륨 변화와 대역 차이를 귀로 구분하는 연습을 해요.', go: { tab: 'tab3' } }
+        { title: 'Ear Training', text: '작은 볼륨 변화와 높이(대역) 차이를 귀로 구분하는 연습을 해요.', go: { tab: 'tab3' } }
       ]
     },
     quiz: [
-      { q: '말 사이 잡음이 미터에서 약 −50 dB, 말소리는 −25 ~ −8 dB 예요. Threshold 로 가장 알맞은 것은?', options: [
-        { t: '약 −40 dB', ok: true, why: '맞아요. 잡음보다 조금 높고 말소리보다 낮아요. 실제로는 들으며 조금씩 조절해요.' },
-        { t: '약 −60 dB', why: '잡음보다 낮아서 게이트가 늘 열려 있어요.' },
-        { t: '약 −15 dB', why: '말소리 일부보다 높아서 말이 끊겨요.' }] },
+      { q: '말 사이 잡음은 미터에서 약 −50 dB, 말소리는 −25 ~ −8 dB 예요. Threshold 로 가장 알맞은 것은?', options: [
+        { t: '약 −40 dB', ok: true, why: '맞아요. 잡음보다 조금 높고 말소리보다 낮기 때문이에요. 실제로는 들으며 조금씩 조절해요.' },
+        { t: '약 −60 dB', why: '아니에요. 잡음보다 낮아서 게이트가 늘 열려 있어요.' },
+        { t: '약 −15 dB', why: '아니에요. 말소리 일부보다 높아서 말이 끊겨요.' }] },
       { q: '게이트 Range 를 −∞ 에서 −12 dB 로 바꾸면?', options: [
-        { t: '닫혔을 때도 소리를 12 dB 만 줄여 더 자연스럽다', ok: true, why: '맞아요. 잡음은 줄면서 「뚝 끊기는」 느낌은 덜해요.' },
-        { t: '게이트가 더 빨리 열린다', why: '열리는 속도는 Attack 이 정해요.' },
-        { t: 'Threshold 가 12 dB 높아진다', why: 'Range 와 Threshold 는 서로 다른 값이에요.' }] },
-      { q: 'Hold 를 0, Release 를 아주 짧게 하면 말하는 도중 생기기 쉬운 현상은?', options: [
-        { t: '채터링(덜덜 끊김)과 말끝 잘림', ok: true, why: '맞아요. 말소리가 순간순간 작아질 때마다 바로 닫혀요.' },
-        { t: '근접 효과', why: '근접 효과는 마이크를 입에 바짝 댈 때 저음이 커지는 현상이에요.' },
-        { t: '클리핑', why: '클리핑은 신호가 너무 클 때 생겨요.' }] },
-      { q: '예배 중 기도 인도자의 작은 목소리가 갑자기 들리지 않아요(디지털 콘솔, 게이트 사용 중). 의심할 것은?', options: [
-        { t: 'Threshold 가 작은 목소리보다 높아 게이트가 닫혔다', ok: true, why: '맞아요. 게이트 표시와 GR 미터를 확인하고 Threshold 를 낮추거나 게이트를 꺼요.' },
-        { t: 'Attack 이 짧다', why: '짧은 Attack 은 빨리 열리게 할 뿐이에요.' },
-        { t: 'Range 가 얕다', why: '얕은 Range 는 오히려 덜 줄여요.' }] },
+        { t: '닫혔을 때도 소리를 12 dB 만 줄여 더 자연스러워요', ok: true, why: '맞아요. 잡음은 줄면서 「뚝 끊기는」 느낌은 덜하기 때문이에요.' },
+        { t: '게이트가 더 빨리 열려요', why: '아니에요. 열리는 빠르기는 Attack 이 정해요.' },
+        { t: 'Threshold 가 12 dB 높아져요', why: '아니에요. Range 와 Threshold 는 서로 다른 값이에요.' }] },
+      { q: 'Hold 를 0, Release 를 아주 짧게 하면 말하는 도중 어떤 일이 생기기 쉬울까요?', options: [
+        { t: '채터링(덜덜 끊김)과 말끝 잘림', ok: true, why: '맞아요. 말소리가 순간순간 작아질 때마다 바로 닫히기 때문이에요.' },
+        { t: '근접 효과', why: '아니에요. 근접 효과는 마이크를 입에 바짝 댈 때 저음이 커지는 현상이에요.' },
+        { t: '클리핑', why: '아니에요. 클리핑(소리가 잘려 찌그러짐)은 신호가 너무 클 때 생겨요.' }] },
+      { q: '예배 중 기도 인도자의 작은 목소리가 갑자기 안 들려요(디지털 콘솔, 게이트 사용 중). 무엇을 의심할까요?', options: [
+        { t: 'Threshold 가 작은 목소리보다 높아 게이트가 닫혔어요', ok: true, why: '맞아요. 게이트 표시와 GR(줄이는 양) 미터를 확인해요. 그리고 Threshold 를 낮추거나 게이트를 꺼요.' },
+        { t: 'Attack 이 짧아요', why: '아니에요. 짧은 Attack 은 빨리 열리게 할 뿐이에요.' },
+        { t: 'Range 가 얕아요', why: '아니에요. 얕은 Range 는 오히려 덜 줄여요.' }] },
       { q: '드럼 탐 마이크에 게이트를 쓰는 주된 이유는?', options: [
-        { t: '탐을 치지 않을 때 들어오는 스네어·심벌 블리드를 줄이려고', ok: true, why: '맞아요. 탐을 칠 때만 열어 드럼 소리를 깔끔하게 해요.' },
-        { t: '탐 소리를 더 크게 키우려고', why: '게이트는 소리를 키우지 않아요. 닫을 때 줄일 뿐이에요.' },
-        { t: '피드백을 완전히 없애려고', why: '게이트는 피드백을 해결하는 도구가 아니에요.' }] }
+        { t: '탐을 치지 않을 때 들어오는 스네어·심벌 블리드를 줄이려고', ok: true, why: '맞아요. 탐을 칠 때만 열어 드럼 소리를 깔끔하게 하기 때문이에요.' },
+        { t: '탐 소리를 더 크게 키우려고', why: '아니에요. 게이트는 소리를 키우지 않아요. 닫을 때 줄일 뿐이에요.' },
+        { t: '피드백을 완전히 없애려고', why: '아니에요. 게이트는 피드백을 해결하는 도구가 아니에요.' }] }
     ],
     missions: [
-      { title: '음향 트러블슈팅 · 미션 A', text: '「마이크 소리가 나오지 않음」을 신호를 따라가며 해결해요. 디지털 콘솔이라면 게이트가 닫혀 있는지도 확인 목록에 넣어 두세요.', go: { tab: 'tab7', ts: 'A' } },
+      { title: '음향 트러블슈팅 · 미션 A', text: '「마이크 소리가 나오지 않음」 문제를 신호를 따라가며 해결해요. 디지털 콘솔이라면 게이트가 닫혀 있는지도 확인 목록에 넣어 두세요.', go: { tab: 'tab7', ts: 'A' } },
       { title: 'CL5 콘솔 트레이닝', text: '예배 순서에 맞춰 채널을 켜고 끄는 연습을 해요. 쓰지 않는 마이크는 게이트보다 채널 ON/OFF 로 정리하는 것이 기본이에요.', go: { tab: 'tab5' } }
     ],
     deeper: [
-      { title: '익스팬더 (Expander)', text: '게이트처럼 기준 아래를 줄이지만, 한 번에 닫지 않고 비율(Ratio)만큼 천천히 줄여요. 게이트가 어색한 보컬에 더 자연스러워요. CL5 Dynamics 1 에서 고를 수 있어요(제조사 자료).', more: '예를 들어 Ratio 1:2 면 기준보다 10 dB 작은 소리는 20 dB 작아져요. 작은 소리를 「끄는」 게 아니라 「더 작게」 해요.' },
-      { title: '키 인 (사이드체인)', text: '게이트가 다른 신호를 듣고 열리게 할 수 있어요. 예를 들어 킥 드럼이 칠 때만 다른 채널의 게이트를 여는 식이에요. CL5 는 다이내믹의 키 인 소스를 고를 수 있어요(제조사 자료).', more: '' },
-      { title: '게이트와 컴프레서의 순서', text: '보통 게이트를 컴프레서 앞에 둬요. 컴프레서가 먼저 큰 소리를 누르고 메이크업 게인으로 전체를 키우면, 작은 잡음도 커져서 게이트가 소리와 잡음을 구분하기 어려워져요.', more: '다음 모듈 「Compressor」에서 Threshold·Ratio·Makeup Gain 을 자세히 배워요.' }
+      { title: '익스팬더 (Expander)', text: '게이트처럼 기준 아래 소리를 줄여요. 하지만 한 번에 닫지 않고, 정한 비율(Ratio)만큼 천천히 줄여요. 그래서 게이트가 어색한 보컬에 더 자연스러워요. CL5 Dynamics 1 에서 고를 수 있어요(제조사 자료).', more: '예를 들어 Ratio 1:2 라면, 기준보다 10 dB 작은 소리는 기준보다 20 dB 작게 나와요. 작은 소리를 「끄는」 게 아니라 「더 작게」 해요.' },
+      { title: '키 인 (사이드체인)', text: '게이트가 다른 신호(다른 채널의 소리 등)를 듣고 열리게 할 수 있어요. 예를 들어 킥 드럼을 칠 때만 다른 채널의 게이트를 여는 식이에요. CL5 는 다이내믹의 키 인 소스(무엇을 듣고 열지)를 고를 수 있어요(제조사 자료).', more: '' },
+      { title: '게이트와 컴프레서의 순서', text: '보통 게이트를 컴프레서 앞에 둬요. 컴프레서가 먼저 큰 소리를 누르고, 메이크업 게인으로 전체를 키운다고 해 봐요. 그러면 작은 잡음도 함께 커져요. 그래서 게이트가 소리와 잡음을 구분하기 어려워져요.', more: '다음 모듈 「Compressor」에서 Threshold·Ratio·Makeup Gain 을 자세히 배워요.' }
     ],
     sources: [
       { t: 'Yamaha CL5/CL3/CL1 Reference Manual (Dynamics Parameters, 제조사)', url: 'https://data.yamaha.com/files/download/other_assets/1/392941/cl5_3_1_en_rm_d1.pdf' },

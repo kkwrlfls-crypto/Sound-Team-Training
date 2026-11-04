@@ -30,13 +30,13 @@
     function xlrF(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="14" fill="#1f2937"/>' + [[-6, -4], [6, -4], [0, 7]].map(function (p) { return '<circle cx="' + (x + p[0]) + '" cy="' + (y + p[1]) + '" r="2.4" fill="#cbd5e1"/>'; }).join(''); }
     function xlrM(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="14" fill="#334155"/>' + [[-6, -4], [6, -4], [0, 7]].map(function (p) { return '<circle cx="' + (x + p[0]) + '" cy="' + (y + p[1]) + '" r="2.4" fill="#fbbf24"/>'; }).join(''); }
     function jack(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="9" fill="#cbd5e1" stroke="#64748b" stroke-width="1.5"/><circle cx="' + x + '" cy="' + y + '" r="4" fill="#111827"/>'; }
-    var s = '<rect x="4" y="4" width="592" height="176" rx="12" fill="#0f172a"/>' + t(14, 22, 'MG12XU 입력·출력 단자 — 실제 배치가 아니라 종류별로 모아 단순화한 그림', { size: 11, fill: '#cbd5e1', anchor: 'start' });
+    var s = '<rect x="4" y="4" width="592" height="176" rx="12" fill="#0f172a"/>' + t(14, 22, 'MG12XU 입력·출력 단자 — 실제 위치가 아니라 종류별로 모아 그린 그림', { size: 11, fill: '#cbd5e1', anchor: 'start' });
     // 입력
     s += '<rect x="12" y="30" width="318" height="142" rx="8" fill="none" stroke="' + C.cyan + '" stroke-dasharray="4 3"/>' + t(170, 46, '입력', { size: 11, fill: C.cyan, weight: 800 });
     [0, 1, 2, 3].forEach(function (i) { var x = 32 + i * 38; s += t(x, 66, String(i + 1), { size: 10, fill: '#e2e8f0', weight: 700 }) + combo(x, 86) + '<rect x="' + (x - 13) + '" y="110" width="12" height="9" rx="1.5" fill="#94a3b8"/><rect x="' + (x + 1) + '" y="110" width="12" height="9" rx="1.5" fill="#64748b"/>'; });
     s += t(89, 140, 'CH1–4 MIC/LINE 콤보', { size: 10, fill: '#e2e8f0' }) + t(89, 154, 'PAD 26dB · HPF 80Hz', { size: 9.5, fill: '#94a3b8' });
     [0, 1].forEach(function (i) { var x = 192 + i * 42; s += t(x, 66, i ? '7/8' : '5/6', { size: 10, fill: '#e2e8f0', weight: 700 }) + xlrF(x, 86) + jack(x - 9, 118) + jack(x + 11, 118); });
-    s += t(210, 140, 'CH5–8 MIC·LINE', { size: 9.5, fill: '#e2e8f0' }) + t(210, 154, 'LINE 은 UNBAL', { size: 9.5, fill: '#94a3b8' });
+    s += t(210, 140, 'CH5–8 MIC·LINE', { size: 9.5, fill: '#e2e8f0' }) + t(210, 154, 'LINE 은 언밸런스', { size: 9.5, fill: '#94a3b8' });
     [0, 1].forEach(function (i) { var x = 280 + i * 28; s += t(x, 66, i ? '11/12' : '9/10', { size: 9, fill: '#e2e8f0', weight: 700 }) + jack(x, 86) + jack(x, 112); });
     s += t(296, 140, 'CH9–12 LINE', { size: 9.5, fill: '#e2e8f0' }) + t(294, 154, '−10dBu · UNBAL', { size: 9.5, fill: '#94a3b8' });
     // 출력
@@ -48,7 +48,7 @@
     // 2026-10-23: 3층 CL5 대신 공통 규칙
     s += '<rect x="4" y="190" width="592" height="66" rx="12" fill="' + C.bg + '" stroke="' + C.line + '"/>' +
       t(16, 214, '입력 = 소리가 들어오는 곳 · 출력 = 소리가 나가는 곳', { size: 12, weight: 800, anchor: 'start' }) +
-      t(16, 238, '출력끼리·입력끼리 이으면 소리가 안 나고, 스피커 출력을 입력에 꽂으면 장비가 망가질 수 있어요', { size: 11, fill: C.sub, anchor: 'start' });
+      t(16, 238, '출력끼리·입력끼리 이으면 소리가 안 나요. 스피커 출력을 입력에 꽂으면 장비가 망가질 수 있어요', { size: 11, fill: C.sub, anchor: 'start' });
     return svg(600, 262, s, 'MG12XU 입력·출력 단자 (종류별 단순화 그림)');
   };
 
@@ -56,7 +56,7 @@
   V.consoleInputStage = function () {
     var s = box(6, 40, 82, 44, '입력', 'MIC (XLR)') + arrow(88, 62, 110, 62, C.ink) +
       box(110, 40, 92, 44, 'PAD', '−26 dB (CH1–4)', { stroke: '#94a3b8', dash: '5 3' }) + arrow(202, 62, 224, 62, C.ink) +
-      box(224, 34, 104, 56, 'GAIN', '프리앰프 (크게)', { fill: C.teal, stroke: C.teal, color: '#fff', subColor: '#e0f2fe' }) + arrow(328, 62, 350, 62, C.ink) +
+      box(224, 34, 104, 56, 'GAIN', '소리 키우기', { fill: C.teal, stroke: C.teal, color: '#fff', subColor: '#e0f2fe' }) + arrow(328, 62, 350, 62, C.ink) +
       box(350, 40, 92, 44, 'HPF', '80 Hz 아래 ↓') + arrow(442, 62, 464, 62, C.ink) + box(464, 40, 130, 44, 'COMP · EQ …', '다음 단계') +
       box(6, 112, 82, 40, '+48V', '팬텀 전원', { fill: '#fff7ed', stroke: C.amber, color: '#b45309' }) + '<path d="M47 112 V84" stroke="' + C.amber + '" stroke-width="2.5" stroke-dasharray="5 4"/>' +
       t(96, 128, 'MG12XU: 스위치 하나 → CH1–7/8 MIC 모두', { size: 10.5, fill: '#b45309', anchor: 'start' }) + t(96, 144, '디지털 콘솔: 채널마다 따로 켜고 끄는 경우가 많아요', { size: 10.5, fill: C.sub, anchor: 'start' });
@@ -65,14 +65,14 @@
     var d = ''; for (var f = 20; f <= 2000; f *= 1.05) { var r = Math.pow(f / 80, 2), g = 20 * Math.log10(r / Math.sqrt(1 + r * r)); d += (d ? 'L' : 'M') + fx(f).toFixed(1) + ' ' + fy(Math.max(-30, g)).toFixed(1); }
     s += [20, 80, 200, 1000].map(function (f) { return '<path d="M' + fx(f).toFixed(1) + ' ' + y0 + 'V' + y1 + '" stroke="' + C.line + '"/>' + t(fx(f), y1 + 13, f >= 1000 ? '1k' : f, { size: 9.5, fill: C.sub }); }).join('') +
       [0, -12, -24].map(function (v) { return '<path d="M' + x0 + ' ' + fy(v).toFixed(1) + 'H' + x1 + '" stroke="' + C.line + '" stroke-dasharray="3 3"/>' + t(x0 - 4, fy(v) + 4, v, { size: 9.5, fill: C.sub, anchor: 'end' }); }).join('') +
-      '<path d="' + d + '" fill="none" stroke="' + C.teal + '" stroke-width="2.5"/>' + t(x1, y0 - 6, 'HPF 80 Hz · 12 dB/oct 응답 (계산)', { size: 10, fill: C.sub, anchor: 'end' }) + t(fx(150), fy(-14), '← 80 Hz 아래 저음이 줄어요', { size: 9.5, fill: C.teal, anchor: 'start' }) + t(fx(150), fy(-14) + 13, '(무대 울림·핸들링 소음)', { size: 9.5, fill: C.teal, anchor: 'start' });
-    s += t(6, 20, '입력 단계 순서 (MG12XU 기준 단순화)', { size: 11, fill: C.sub, anchor: 'start' }) + t(6, 184, '※ 큰 입력: PAD 켜고 GAIN 다시 맞추기', { size: 10.5, fill: C.ink, anchor: 'start' }) + t(6, 200, '※ 마이크를 꽂고 뺄 때는 +48V 끄기', { size: 10.5, fill: C.red, anchor: 'start' });
+      '<path d="' + d + '" fill="none" stroke="' + C.teal + '" stroke-width="2.5"/>' + t(x1, y0 - 6, 'HPF 80 Hz 가 저음을 줄이는 모양 (계산)', { size: 10, fill: C.sub, anchor: 'end' }) + t(fx(150), fy(-14), '← 80 Hz 아래 저음이 줄어요', { size: 9.5, fill: C.teal, anchor: 'start' }) + t(fx(150), fy(-14) + 13, '(무대 울림·마이크 잡는 소리)', { size: 9.5, fill: C.teal, anchor: 'start' });
+    s += t(6, 20, '입력 쪽 순서 (MG12XU 를 간단히 그림)', { size: 11, fill: C.sub, anchor: 'start' }) + t(6, 184, '※ 입력이 너무 크면: PAD 켜고 GAIN 다시 맞추기', { size: 10.5, fill: C.ink, anchor: 'start' }) + t(6, 200, '※ 마이크를 꽂고 뺄 때는 +48V 끄기', { size: 10.5, fill: C.red, anchor: 'start' });
     return svg(600, 216, s, '입력 단계: PAD, GAIN, HPF, 팬텀 전원');
   };
 
   // 3) 채널 안의 순서 — EQ·다이내믹, ON, 페이더와 보내는 지점
   V.consoleStrip = function () {
-    var st = [['입력', ''], ['GAIN', 'PAD·HPF'], ['COMP', 'CH1–4'], ['EQ', '3밴드'], ['ON', '켜기/끄기'], ['페이더', '섞는 양'], ['PAN', '좌우'], ['버스', 'ST · 1-2']];
+    var st = [['입력', ''], ['GAIN', 'PAD·HPF'], ['COMP', 'CH1–4'], ['EQ', '음색 3칸'], ['ON', '켜기/끄기'], ['페이더', '섞는 양'], ['PAN', '좌우'], ['버스', 'ST · 1-2']];
     var w = 64, gap = 9, y = 58, s = '';
     st.forEach(function (a, i) { var x = 6 + i * (w + gap), hot = a[0] === 'ON' || a[0] === '페이더';
       s += box(x, y, w, 46, a[0], a[1], { fill: hot ? C.ink : C.bg, stroke: hot ? C.ink : C.line, color: hot ? '#fff' : C.ink, subColor: hot ? '#cbd5e1' : C.sub, size: 12, subSize: 9.5 });
@@ -85,7 +85,7 @@
     var xPfl = (cx(3) + cx(4)) / 2, xPre = (cx(4) + cx(5)) / 2, xPost = (cx(5) + cx(6)) / 2;
     s += tap(xPfl, 0, 'PFL', '헤드폰·미터로', C.blue, false) + tap(xPre, 0, 'AUX1 PRE', '페이더 앞', C.orange, true) + tap(xPost, 0, 'AUX1 POST · FX', '페이더 뒤', C.purple, false);
     s += '<rect x="6" y="182" width="588" height="44" rx="8" fill="' + C.bg + '" stroke="' + C.line + '"/>' + t(16, 200, 'MG12XU: ON 을 끄면 ST·GROUP·AUX·FX 어디로도 나가지 않지만 PFL 로는 들을 수 있어요 (설명서)', { size: 10.5, anchor: 'start' }) +
-      t(16, 217, '그림은 MG12XU 채널을 보기 쉽게 단순화한 「교육용」 순서예요. 디지털 콘솔은 보내는 지점을 설정으로 고를 수 있어요.', { size: 10, fill: C.sub, anchor: 'start' });
+      t(16, 217, 'MG12XU 채널을 보기 쉽게 줄여 그린 공부용 순서예요. 디지털 콘솔은 꺼내는 곳을 설정에서 고를 수 있어요.', { size: 10, fill: C.sub, anchor: 'start' });
     return svg(600, 232, s, '채널 신호 순서와 PFL, AUX PRE, POST 보내는 지점');
   };
 
@@ -94,7 +94,7 @@
     var s = box(6, 70, 96, 46, '보컬 채널', 'PFL 누름', { fill: '#eef2ff', stroke: '#c7d2fe' }) +
       arrow(102, 84, 190, 40, C.blue, { w: 3 }) + box(190, 16, 150, 46, '헤드폰 · 레벨 미터', '엔지니어만 들어요', { fill: '#eff6ff', stroke: C.blue, color: C.blue }) +
       arrow(102, 100, 190, 132, C.teal, { w: 3 }) + box(190, 110, 150, 46, '메인 (STEREO)', '그대로 나가요', { fill: '#ecfeff', stroke: C.teal, color: C.teal }) + arrow(340, 133, 400, 133, C.teal, { w: 3 }) + box(400, 110, 116, 46, '메인 스피커', '회중이 듣는 소리') +
-      t(196, 78, '↑ PFL: 페이더 앞 신호', { size: 10.5, fill: C.blue, anchor: 'start' }) + t(120, 152, '변화 없음', { size: 10.5, fill: C.teal, anchor: 'start' });
+      t(196, 78, '↑ PFL: 페이더 앞 소리', { size: 10.5, fill: C.blue, anchor: 'start' }) + t(120, 152, '변화 없음', { size: 10.5, fill: C.teal, anchor: 'start' });
     // 미터
     var segs = [-30, -20, -10, -6, -3, 0, 3, 6, 10];
     s += '<rect x="372" y="10" width="60" height="96" rx="6" fill="#0b0d10"/>' + segs.map(function (v, i) { var yy = 96 - i * 9.6, on = v <= 0; return '<rect x="398" y="' + yy.toFixed(1) + '" width="22" height="7" rx="1" fill="' + (v >= 10 ? '#ef4444' : v >= 0 ? '#eab308' : '#22c55e') + '" fill-opacity="' + (on ? 1 : 0.2) + '"/>'; }).join('') +
@@ -118,13 +118,13 @@
       arrow(lx + 244, 82, lx + 244, 112, C.purple) + box(lx + 194, 112, 100, 38, 'FX RTN', '페이더 · ST', { fill: '#f5f3ff', stroke: C.purple, color: C.purple, subSize: 9.5 }) +
       arrow(lx + 194, 131, lx + 124, 131, C.teal) + box(lx + 24, 112, 100, 38, 'STEREO', '메인 믹스', { fill: '#ecfeff', stroke: C.teal, color: C.teal, subSize: 9.5 }) +
       '<path d="M' + (lx + 41) + ' 78 V112" stroke="' + C.teal + '" stroke-width="2.2"/>' + t(lx + 48, 98, '원래 소리(ST)', { size: 9.5, fill: C.teal, anchor: 'start' }) +
-      t(lx + 141, 172, '원래 소리 + 이펙트 소리가 메인에서 섞여요', { size: 10.5, fill: C.ink }) + t(lx + 141, 190, 'MG12XU 내장 SPX: 프로그램 24가지 (제조사 자료)', { size: 9.5, fill: C.sub });
+      t(lx + 141, 172, '원래 소리 + 이펙트 소리가 메인에서 섞여요', { size: 10.5, fill: C.ink }) + t(lx + 141, 190, 'MG12XU 안에 든 SPX: 프로그램 24가지 (제조사 자료)', { size: 9.5, fill: C.sub });
     return svg(600, 214, s, 'AUX PRE와 POST의 차이, FX 보내기와 돌려받기');
   };
 
   // 6) 버스·라우팅·씬
   V.consoleRouting = function () {
-    var s = '<rect x="4" y="4" width="592" height="104" rx="10" fill="' + C.bg + '" stroke="' + C.line + '"/>' + t(14, 22, 'MG12XU — 버튼으로 정하는 라우팅', { size: 11.5, weight: 800, anchor: 'start' }) +
+    var s = '<rect x="4" y="4" width="592" height="104" rx="10" fill="' + C.bg + '" stroke="' + C.line + '"/>' + t(14, 22, 'MG12XU — 버튼으로 소리 길 정하기 (라우팅)', { size: 11.5, weight: 800, anchor: 'start' }) +
       box(14, 40, 84, 42, '채널', 'ST · 1-2 버튼') + arrow(98, 52, 168, 40, C.teal) + arrow(98, 70, 168, 84, C.purple) +
       box(168, 28, 112, 28, 'STEREO 버스', '', { size: 11, fill: '#ecfeff', stroke: C.teal, color: C.teal }) + box(168, 70, 112, 28, 'GROUP 1-2 버스', '', { size: 11, fill: '#f5f3ff', stroke: C.purple, color: C.purple }) +
       arrow(280, 42, 350, 42, C.teal) + box(350, 28, 112, 28, 'STEREO OUT', '', { size: 11 }) + arrow(280, 84, 350, 84, C.purple) + box(350, 70, 112, 28, 'GROUP OUT 1·2', '', { size: 11 }) +
@@ -136,7 +136,7 @@
       arrow(290, 173, 326, 173, C.purple) + box(326, 150, 96, 46, 'ST 버튼', 'GROUP → 메인', { subSize: 9.5 }) +
       arrow(422, 173, 458, 173, C.teal) + box(458, 150, 128, 46, 'STEREO (메인)', '회중석 스피커', { fill: '#ecfeff', stroke: C.teal, color: C.teal, subSize: 9.5 }) +
       t(14, 240, '보컬은 ST 로 바로 메인에 보내고, 악기만 GROUP 페이더로 함께 줄였다 키웠다 해요.', { size: 10.5, fill: C.ink, anchor: 'start' }) +
-      t(14, 256, '디지털 콘솔은 화면의 「패치」로 라우팅해요 → 심화 학습 「디지털 콘솔」', { size: 10, fill: C.sub, anchor: 'start' });
+      t(14, 256, '디지털 콘솔은 화면의 「패치」로 소리 길을 정해요 → 03-2 디지털 콘솔 과정', { size: 10, fill: C.sub, anchor: 'start' });
     return svg(600, 268, s, 'MG12XU 버스 할당과 GROUP 사용 예');
   };
 
@@ -228,7 +228,7 @@
     function fader(k, name) { return '<input type="range" class="sim-vfader" min="0" max="1000" step="1" data-f="' + k + '" aria-label="' + name + '" orient="vertical"><b data-o="' + k + '"></b>'; }
     el.innerHTML = '<div class="sim-con">' +
       '<div class="sim-con-desk" aria-label="가상 콘솔 (MG12XU 를 단순화)">' +
-        '<div class="sim-con-col ch"><div class="sim-con-name">CH1 · 보컬</div><div class="sim-con-small">GAIN 은 알맞게<br>맞춰 둠</div>' + knob('aux1', 'AUX1 (모니터)') + btn('pre', 'PRE', 'AUX1 PRE 스위치') + knob('fx', 'AUX2/FX') +
+        '<div class="sim-con-col ch"><div class="sim-con-name">CH1 · 보컬</div><div class="sim-con-small">GAIN 은 미리<br>알맞게 맞춰 둠</div>' + knob('aux1', 'AUX1 (모니터)') + btn('pre', 'PRE', 'AUX1 PRE 스위치') + knob('fx', 'AUX2/FX') +
           btn('on', 'ON', '채널 ON') + btn('st', 'ST', 'ST 버스 할당') + btn('pfl', 'PFL', 'PFL') + fader('fader', '채널 페이더') + '<div class="sim-con-small">채널 페이더</div></div>' +
         '<div class="sim-con-col"><div class="sim-con-name">FX RTN</div><div class="sim-con-small">SPX<br>REV HALL 1</div>' + btn('fxst', 'ST', 'FX RTN ST 버스 할당') + fader('fxrtn', 'FX RTN 페이더') + '<div class="sim-con-small">리버브 돌려받는 양</div></div>' +
         '<div class="sim-con-col"><div class="sim-con-name">SEND MASTER</div>' + knob('a1m', 'AUX1') + knob('a2m', 'AUX2') + '<div class="sim-con-name" style="margin-top:4px">STEREO</div>' + fader('stm', 'STEREO 페이더') + '</div>' +
@@ -243,7 +243,7 @@
           '<label>무대 모니터 (웨지)<select data-p="pMon">' + PATCH.map(function (p) { return '<option value="' + p[0] + '">' + p[1] + '</option>'; }).join('') + '</select></label></div></div>' +
         '<div class="sim-box sim-read" data-role="read"></div>' +
       '</div>' +
-      '<div class="sim-con-flowwrap"><div data-role="flow"></div><p>밝은 색 선 = 지금 보컬 신호가 지나가는 길, 회색 점선 = 막힌 길. (MG12XU 를 단순화한 교육용 그림)</p></div>' +
+      '<div class="sim-con-flowwrap"><div data-role="flow"></div><p>밝은 색 선 = 지금 보컬 소리가 지나가는 길, 회색 점선 = 막힌 길이에요. (MG12XU 를 간단히 그린 공부용 그림)</p></div>' +
     '</div>';
     var q = function (s) { return el.querySelector(s); }, read = q('[data-role=read]'), flow = q('[data-role=flow]');
 
@@ -298,21 +298,21 @@
         if (!S.on) return '채널 ON 이 꺼져 있어요';
         if (S.pMon === 'aux1' && S.aux1 <= 0) return '채널의 AUX1 노브가 0 이에요';
         if (S.pMon === 'aux1' && S.a1m <= 0) return 'SEND MASTER AUX1 이 0 이에요';
-        if (S.pMon === 'aux1' && !S.pre && S.fader <= 0) return 'POST 라서 페이더가 −∞ 면 모니터도 꺼져요';
+        if (S.pMon === 'aux1' && !S.pre && S.fader <= 0) return 'POST 라서 페이더가 −∞(소리 없음)면 모니터도 꺼져요';
       }
       return '소리가 아주 작아요';
     }
     function lvTxt(d, target) { return d === NINF || d < -60 ? '<b class="bad">소리 없음 — ' + why(target) + '</b>' : '<b class="' + (d > 6 ? 'warn' : 'ok') + '">' + fmt(d) + ' dB</b>'; }
     function renderRead(l) {
       var pn = function (k) { return PATCH.filter(function (p) { return p[0] === k; })[0][1]; };
-      read.innerHTML = '<h4>지금 상태 <small>교육용 근사 · 보컬 최대 순간 기준</small></h4>' +
+      read.innerHTML = '<h4>지금 상태 <small>보컬이 가장 클 때 기준 · 교육용 근사</small></h4>' +
         '<div class="sim-row"><span>메인 스피커 ← ' + esc(pn(S.pMain)) + '</span>' + lvTxt(l.spkMain, 'main') + '</div>' +
         (S.pMain === 'st' && isFinite(l.mainWet) && l.mainWet > -60 ? '<div class="sim-row"><span>└ 그중 리버브(FX RTN)</span><b>' + fmt(l.mainWet) + ' dB</b></div>' : '') +
         '<div class="sim-row"><span>무대 모니터 ← ' + esc(pn(S.pMon)) + '</span>' + lvTxt(l.spkMon, 'mon') + '</div>' +
         '<div class="sim-row"><span>AUX1 보내는 지점</span><b>' + (S.pre ? 'PRE (페이더 앞)' : 'POST (페이더 뒤)') + '</b></div>' +
         '<div class="sim-row"><span>헤드폰</span><b>' + (S.pfl ? 'PFL — 보컬만 (페이더 앞)' : 'STEREO 메인 믹스') + '</b></div>' +
         '<div class="sim-row"><span>PRE/POST 비교</span><b>' + (S.sawPre ? '✓ PRE 그대로' : '· PRE') + ' / ' + (S.sawPost ? '✓ POST 따라감' : '· POST') + '</b></div>' +
-        '<p class="sim-note">PFL 을 켜도 메인 출력은 바뀌지 않아요. 실제 MG12XU 는 PFL 을 누르면 레벨 미터가 PFL 신호를 보여 줘요(여기서는 미터를 따로 나눔).</p>';
+        '<p class="sim-note">PFL 을 켜도 메인 소리는 바뀌지 않아요. 실제 MG12XU 는 PFL 을 누르면 미터가 PFL 소리를 보여 줘요. 여기서는 보기 쉽게 미터를 따로 나눴어요.</p>';
     }
     function flowSvg(l) {
       var on = '#0e7490', aux = C.orange, fxc = C.purple, pflc = C.blue, off = '#cbd5e1';
@@ -369,7 +369,7 @@
       set(N.lMain, S.listen === 'main' ? 1 : 0); set(N.lMon, S.listen === 'mon' ? 1 : 0); set(N.lPh, S.listen === 'phones' ? 1 : 0);
     }
     function startAudio() {
-      if (!vox || !vox.buffer) { q('[data-role=src]').textContent = '녹음을 불러오지 못해 소리는 들을 수 없어요(미터는 가상 신호로 동작).'; return; }
+      if (!vox || !vox.buffer) { q('[data-role=src]').textContent = '녹음을 불러오지 못해 소리는 들을 수 없어요. 미터는 가상 신호로 움직여요.'; return; }
       var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
       actx = actx || new AC(); if (actx.resume) actx.resume();
       function G(v) { var n = actx.createGain(); n.gain.value = v == null ? 1 : v; return n; }
@@ -410,7 +410,7 @@
     }
     el.addEventListener('input', onInput); el.addEventListener('change', onChange); el.addEventListener('click', onClick);
     update(); tick();
-    getVox(function (d) { if (!alive) return; vox = d; S.t0 = performance.now(); q('[data-role=src]').textContent = d.synthetic ? '녹음을 불러오지 못해 미터만 가상 신호로 보여 줘요.' : '보컬 녹음(MG12XU 실습과 같은 음원)이 반복 재생돼요. 들을 곳을 고르면 그 스피커로 가는 소리를 들려줘요.'; });
+    getVox(function (d) { if (!alive) return; vox = d; S.t0 = performance.now(); q('[data-role=src]').textContent = d.synthetic ? '녹음을 불러오지 못해 미터만 가상 신호로 보여 줘요.' : '보컬 녹음(MG12XU 실습과 같은 음원)이 계속 반복돼요. 들을 곳을 고르면 그 스피커로 가는 소리를 들려줘요.'; });
 
     return {
       destroy: function () { alive = false; cancelAnimationFrame(raf); stopAudio(); if (actx && actx.close) { try { actx.close(); } catch (e) { /* noop */ } }
@@ -436,117 +436,117 @@
   window.STA_MODULES = window.STA_MODULES || {};
   window.STA_MODULES.console = {
     id: 'console', path: 'hardware', no: 3, noLabel: '03-1', status: 'ready', level: '중급', minutes: 45, img: 'img/modules/mg12xu_full.jpg',   /* 2026-11-03: 「콘솔」 → 03-1 아날로그 콘솔 */
-    title: '아날로그 콘솔', sub: '노브·스위치로 신호를 다듬고 섞는 콘솔 — MG12XU',
+    title: '아날로그 콘솔', sub: '노브·스위치로 소리를 다듬고 섞는 콘솔 — MG12XU',
     overview: {
-      lead: '콘솔(믹서)은 여러 입력 신호를 받아 <b>크기와 음색을 다듬고</b>, 하나로 섞어 <b>필요한 곳(메인 스피커, 무대 모니터, 이펙터, 녹음)으로 나눠 보내는</b> 장비예요. 이 과정은 우리가 실습하는 아날로그 콘솔 <b>Yamaha MG12XU</b> 를 기준으로 배워요. 아날로그 콘솔은 채널마다 노브와 스위치가 하나씩 달려 있어서, 보이는 그대로 신호가 지나가요. 채널 하나의 신호 순서와 버스(모으는 길)를 이해하면, 다음 과정인 <b>03-2 디지털 콘솔</b>도 같은 원리로 다룰 수 있어요.',
+      lead: '콘솔(믹서)은 여러 소리를 한곳에 모으는 장비예요. 마이크와 악기 소리를 받아서 <b>크기와 음색</b>(소리 빛깔)을 다듬어요. 다듬은 소리를 하나로 섞은 뒤, <b>필요한 곳</b>으로 나눠 보내요. 보내는 곳은 메인 스피커, 무대 모니터, 이펙터(울림을 만드는 장비), 녹음 장비예요. 이 과정은 우리가 실습하는 아날로그 콘솔 <b>Yamaha MG12XU</b> 로 배워요. 아날로그 콘솔은 채널마다 노브와 스위치가 하나씩 달려 있어요. 그래서 눈에 보이는 그대로 소리가 지나가요. 채널 하나에서 소리가 지나가는 순서와 <b>버스</b>(소리를 모으는 길)를 알면 돼요. 그러면 다음 과정인 <b>03-2 디지털 콘솔</b>도 같은 원리로 다룰 수 있어요.',
       terms: [
-        ['채널 스트립', '입력 하나를 다루는 세로 한 줄이에요. 위에서부터 GAIN, EQ, AUX, PAN, ON, 페이더 순서로 신호가 지나가요.'],
-        ['프리앰프 (GAIN)', '아주 작은 마이크 신호를 콘솔 안에서 쓰는 크기로 키우는 첫 단계예요.'],
-        ['PAD', '너무 큰 입력을 미리 줄이는 스위치예요. MG12XU 의 CH1–4 에는 26 dB PAD 가 있어요.'],
-        ['HPF (하이패스 필터)', '정한 주파수보다 낮은 저음을 줄이는 필터예요. MG12XU 는 80 Hz 예요. 무대 울림·핸들링 소음을 줄여요.'],
-        ['버스', '여러 채널의 소리를 모으는 길이에요. 메인(STEREO), AUX, GROUP, FX 같은 버스가 있어요.'],
-        ['AUX (PRE / POST)', '메인과 따로 섞어 모니터·이펙터로 보내는 길이에요. PRE 는 페이더 앞, POST 는 페이더 뒤에서 보내요.'],
-        ['PFL', 'Pre Fader Listen. 그 채널의 페이더 앞 신호를 헤드폰과 미터로만 미리 듣는 기능이에요. 메인 출력에는 영향이 없어요.'],
-        ['GROUP', '여러 채널을 한 버스로 모아 페이더 하나로 함께 조절하거나 따로 내보내는 길이에요. MG12XU 에는 GROUP 1-2 가 있어요.']
+        ['채널 스트립', '마이크나 악기 하나를 다루는 세로 한 줄이에요. 위에서부터 GAIN, EQ, AUX, PAN, ON, 페이더 순서로 소리가 지나가요.'],
+        ['프리앰프 (GAIN)', '아주 작은 마이크 소리를 콘솔에서 쓰기 좋은 크기로 키우는 첫 단계예요. GAIN 노브로 키우는 양을 정해요.'],
+        ['PAD', '너무 큰 입력을 미리 줄이는 스위치예요. MG12XU 의 CH1–4 에는 26 dB(신호를 약 20분의 1로) 줄이는 PAD 가 있어요.'],
+        ['HPF (하이패스 필터)', '아주 낮은 저음만 걸러 내는 스위치예요. 높은 소리는 그대로 지나가게(pass) 해서 붙은 이름이에요. MG12XU 는 80 Hz(1초에 80번 떨리는 낮은 소리) 아래를 줄여요. 무대 울림과 마이크 잡는 소리가 줄어요.'],
+        ['버스', '여러 채널 소리를 한데 모으는 길이에요. 여러 개울이 모여 강이 되는 것과 비슷해요. 메인(STEREO), AUX, GROUP, FX 버스가 있어요.'],
+        ['AUX (PRE / POST)', '메인과 따로 섞어서 모니터나 이펙터로 보내는 길이에요. PRE 는 페이더 앞에서, POST 는 페이더 뒤에서 소리를 꺼내요.'],
+        ['PFL', 'Pre Fader Listen(페이더 앞에서 듣기)의 줄임말이에요. 한 채널 소리를 헤드폰과 미터로만 미리 들어요. 메인 소리는 바뀌지 않아요.'],
+        ['GROUP', '여러 채널을 한 버스로 모으는 길이에요. 모은 소리를 페이더 하나로 함께 조절하거나 따로 내보내요. MG12XU 에는 GROUP 1-2 가 있어요.']
       ],
       points: [
-        '신호 순서: <b>입력 → GAIN(PAD·HPF) → EQ·다이내믹 → ON → 페이더 → 버스 → 출력</b>. 소리가 안 나면 이 순서대로 따라가며 막힌 곳을 찾아요.',
-        '무대 모니터는 보통 <b>AUX PRE</b>(메인 페이더와 상관없이 일정), 리버브 같은 이펙트는 <b>POST</b>(페이더를 따라감)로 보내요.',
-        '<b>PFL 은 듣기·보기 전용</b>이라 눌러도 메인 소리는 바뀌지 않아요. 확인이 끝나면 꼭 꺼요.'
+        '소리 순서: <b>입력 → GAIN(PAD·HPF) → EQ·COMP → ON → 페이더 → 버스 → 출력</b>. 소리가 안 나면 이 순서대로 따라가며 막힌 곳을 찾아요.',
+        '무대 모니터는 보통 <b>AUX PRE</b> 로 보내요. 메인 페이더와 상관없이 일정해서예요. 리버브 같은 이펙트는 <b>POST</b> 로 보내요. 페이더를 따라 함께 변해서예요.',
+        '<b>PFL 은 듣고 보기만 하는 기능</b>이에요. 눌러도 메인 소리는 바뀌지 않아요. 확인이 끝나면 꼭 꺼요.'
       ],
       model: 'mg12xu'
     },
     theory: [
       { title: '입력과 출력 — 콘솔의 단자', visual: 'consoleIO',
-        body: '콘솔의 단자는 크게 <b>입력</b>(마이크·악기·장비가 들어오는 곳)과 <b>출력</b>(스피커·모니터·녹음으로 나가는 곳)으로 나뉘어요. MG12XU 는 CH1–4 가 마이크와 라인을 함께 받는 <b>콤보 단자</b>, CH5–8 은 MIC(XLR)와 LINE 이 따로, CH9–12 는 스테레오 LINE 이에요. 출력은 메인(STEREO OUT), AUX SEND, GROUP OUT, MONITOR OUT, PHONES 가 있어요.',
-        more: '<ul><li><b>MG12XU (제조사 자료)</b>: STEREO OUT 은 XLR·폰 단자 밸런스, 기준 +4 dBu(최대 +24 dBu). AUX SEND·GROUP OUT·MONITOR OUT 은 폰 단자(임피던스 밸런스), 기준 +4 dBu. CH9–12 LINE 은 −10 dBu 기준이고, 9/10·11/12 에는 RCA 단자와 USB 입력 선택도 있어요.</li><li>입력은 신호가 들어오는 곳, 출력은 나가는 곳이에요. 출력끼리, 입력끼리 연결하면 소리가 나지 않고, 스피커 출력을 입력에 넣으면 장비가 망가질 수 있어요.</li><li>다른 콘솔도 이름만 조금 다를 뿐 <b>MAIN(메인)·AUX(모니터)·GROUP·REC(녹음)</b> 같은 출력이 있어요. 처음 보는 콘솔은 단자 옆에 적힌 이름부터 읽어 보세요. 단자가 윗면에 있는 콘솔도, 뒷면에 있는 콘솔도 있어요.</li></ul>',
-        check: { q: 'MG12XU 에 키보드의 스테레오 출력(라인 레벨, L·R)을 꽂으려고 해요. 알맞은 곳은?', options: [
-          { t: 'CH9/10 같은 스테레오 LINE 입력', ok: true, why: '맞아요. 라인 레벨 스테레오 신호는 스테레오 LINE 입력(L·R)에 꽂아요.' },
-          { t: 'STEREO OUT 단자', why: 'STEREO OUT 은 메인 믹스가 나가는 출력이에요. 입력이 아니에요.' },
-          { t: 'AUX1 SEND 단자', why: 'AUX SEND 도 모니터로 보내는 출력이에요.' }] } },
+        body: '콘솔의 단자(케이블을 꽂는 구멍)는 크게 두 가지예요. <b>입력</b>은 마이크·악기·장비의 소리가 들어오는 곳이에요. <b>출력</b>은 스피커·모니터·녹음 장비로 소리가 나가는 곳이에요. MG12XU 의 CH1–4 는 <b>콤보 단자</b>예요. 구멍 하나에 마이크(XLR) 케이블과 라인(폰) 케이블을 둘 다 꽂을 수 있어요. 라인은 키보드·노트북 같은 장비가 내보내는, 마이크보다 큰 신호예요. CH5–8 은 마이크(XLR) 구멍과 라인 구멍이 따로 있어요. CH9–12 는 왼쪽·오른쪽 두 줄을 함께 받는 스테레오 LINE 입력이에요. 출력에는 메인(STEREO OUT), AUX SEND, GROUP OUT 이 있어요. MONITOR OUT 과 PHONES(헤드폰)도 있어요.',
+        more: '<ul><li><b>MG12XU (제조사 자료)</b>: STEREO OUT 은 XLR·폰 단자예요. 잡음에 강한 밸런스 방식이에요. 기준 크기는 +4 dBu(약 1.23 V)이고, 최대 +24 dBu 까지 나가요.</li> <li>AUX SEND·GROUP OUT·MONITOR OUT 은 폰 단자(임피던스 밸런스)예요. 기준은 +4 dBu 예요.</li> <li>CH9–12 LINE 은 기준이 −10 dBu 예요(+4 dBu 보다 작은 신호). 9/10·11/12 에는 RCA 단자와 USB 입력 선택도 있어요.</li> <li>입력은 소리가 들어오는 곳, 출력은 나가는 곳이에요. 출력끼리, 입력끼리 이으면 소리가 나지 않아요. 스피커 출력을 입력에 꽂으면 장비가 망가질 수 있어요.</li> <li>다른 콘솔도 이름만 조금 달라요. <b>MAIN(메인)·AUX(모니터)·GROUP·REC(녹음)</b> 같은 출력이 있어요. 처음 보는 콘솔은 단자 옆에 적힌 이름부터 읽어 보세요. 단자는 콘솔 윗면에 있기도 하고, 뒷면에 있기도 해요.</li></ul>',
+        check: { q: 'MG12XU 에 키보드의 스테레오 출력(L·R 두 줄, 라인 신호)을 꽂으려고 해요. 어디에 꽂을까요?', options: [
+          { t: 'CH9/10 같은 스테레오 LINE 입력', ok: true, why: '맞아요. 키보드의 L·R 라인 신호는 스테레오 LINE 입력에 꽂아요.' },
+          { t: 'STEREO OUT 단자', why: '아니에요. STEREO OUT 은 메인 소리가 나가는 출력이에요.' },
+          { t: 'AUX1 SEND 단자', why: '아니에요. AUX SEND 도 모니터로 소리를 내보내는 출력이에요.' }] } },
       { title: '프리앰프 · PAD · HPF · 팬텀 전원', visual: 'consoleInputStage',
-        body: '마이크 신호는 아주 작아서 <b>프리앰프(GAIN)</b>로 크게 키워요. 입력이 너무 커서 GAIN 을 최소로 해도 찌그러지면 <b>PAD</b> 로 먼저 줄여요. 말소리·보컬에 필요 없는 아주 낮은 저음(무대 울림, 마이크 잡는 소리)은 <b>HPF</b> 로 걸러요. 콘덴서 마이크를 쓸 때는 <b>팬텀 전원(+48V)</b>을 켜요.',
-        more: '<ul><li><b>MG12XU (제조사 자료·패널 표기)</b>: PAD 26 dB 는 CH1–4 에 있어요. HPF 는 80 Hz, 12 dB/oct 이고 CH1–4 와 CH5/6·7/8 의 MIC 입력에 있어요. <b>PHANTOM +48V 스위치는 하나</b>라서 켜면 CH1–7/8 의 MIC 입력에 한꺼번에 걸려요.</li><li>그래서 팬텀이 걸리면 안 되는 장비(리본 마이크 등 제조사가 금지한 장비)를 MG12XU 의 MIC 입력에 함께 꽂지 않도록 조심해요. SM58 같은 다이내믹 마이크는 대부분 괜찮아요.</li><li>디지털 콘솔은 팬텀 전원을 <b>채널마다 따로</b> 켜고 끌 수 있는 경우가 많아요.</li><li>GAIN 맞추는 방법은 「Gain Structure」 모듈에서 자세히 연습해요.</li></ul>',
-        check: { q: 'GAIN 을 최소로 내렸는데도 PEAK 가 켜지는 큰 입력이에요(드럼 킥, 라인 장비). 무엇을 할까요?', options: [
-          { t: 'PAD 를 켜고 GAIN 을 다시 맞춘다', ok: true, why: '맞아요. PAD 가 입력을 26 dB 먼저 줄여 줘요.' },
-          { t: 'HPF 를 켠다', why: 'HPF 는 80 Hz 아래 저음만 줄여요. 전체 크기 문제는 해결되지 않아요.' },
-          { t: '채널 페이더를 내린다', why: '찌그러짐은 프리앰프에서 생기고 있어서 페이더로는 해결되지 않아요.' }] } },
-      { title: '채널 안의 순서 — EQ·다이내믹, ON, 페이더', visual: 'consoleStrip',
-        body: '채널 안에서 소리는 <b>위에서 아래로</b> 지나가요. GAIN 으로 키운 신호를 <b>COMP(다이내믹)</b>와 <b>EQ</b> 로 다듬고, <b>ON</b> 으로 채널을 켜고 끄고, <b>페이더</b>로 버스에 섞는 양을 정해요. 중간중간 <b>PFL</b>, <b>AUX PRE</b>, <b>AUX POST·FX</b> 처럼 신호를 꺼내 가는 지점이 있어서, 어디서 꺼내는지에 따라 페이더의 영향이 달라져요.',
-        more: '<ul><li><b>MG12XU (패널 표기)</b>: CH1–4 에 원 노브 COMP, EQ 는 HIGH 10 kHz · MID 2.5 kHz · LOW 100 Hz (±15 dB). CH9/10·11/12 는 HIGH·LOW 만 있어요.</li><li><b>ON</b> 은 잠깐 끄는 스위치(음소거)예요. MG12XU 는 ON 을 끄면 STEREO·GROUP·AUX·FX 어디로도 나가지 않지만, PFL 로는 계속 들을 수 있어요(설명서).</li><li><b>잠깐 끄기는 ON, 크기 조절은 페이더</b>. 설교 전 찬양팀 마이크를 끌 때 페이더를 끝까지 내리면 다시 올릴 때 위치를 잃기 쉬워요.</li><li>디지털 콘솔은 채널마다 HPF·EQ 와 게이트·컴프레서를 모두 쓸 수 있는 경우가 많아요(03-2 디지털 콘솔 과정).</li></ul>',
+        body: '마이크 소리는 아주 작아요. 그래서 <b>프리앰프</b>로 먼저 크게 키워요. 키우는 양을 정하는 노브가 GAIN 이에요. 드럼 킥처럼 소리가 너무 크면 GAIN 을 다 내려도 소리가 찌그러져요. 이때는 <b>PAD</b> 스위치로 신호를 먼저 줄여요. 무대 울림이나 마이크 잡는 소리 같은 아주 낮은 저음은 말소리에 필요 없어요. 이런 저음은 <b>HPF</b>(낮은 소리를 걸러 내는 스위치)로 줄여요. 콘덴서 마이크는 전기가 있어야 동작해요. 그래서 콘솔이 마이크 케이블로 전기를 보내 주는 <b>팬텀 전원(+48V)</b>을 켜요.',
+        more: '<ul><li><b>MG12XU (제조사 자료·패널 표기)</b>: PAD 는 26 dB(신호를 약 20분의 1로 줄임)예요. CH1–4 에 있어요.</li> <li>HPF 는 80 Hz 아래 저음을 줄여요. 기울기는 12 dB/oct 예요. 한 옥타브(음 높이가 절반) 내려갈 때마다 12 dB 씩 더 줄어든다는 뜻이에요. HPF 는 CH1–4 와 CH5/6·7/8 의 MIC 입력에 있어요.</li> <li><b>PHANTOM +48V 스위치는 하나뿐</b>이에요. 켜면 CH1–7/8 의 MIC 입력 모두에 한꺼번에 전기가 가요.</li> <li>그래서 팬텀 전원을 받으면 안 되는 장비는 MG12XU 의 MIC 입력에 함께 꽂지 않게 조심해요. 리본 마이크처럼 제조사가 금지한 장비가 그래요. SM58 같은 다이내믹 마이크는 대부분 괜찮아요.</li> <li>디지털 콘솔은 팬텀 전원을 <b>채널마다 따로</b> 켜고 끌 수 있는 경우가 많아요.</li> <li>GAIN 맞추는 방법은 「Gain Structure」 과정에서 자세히 연습해요.</li></ul>',
+        check: { q: 'GAIN 을 다 내려도 PEAK 불(너무 크다는 빨간 불)이 켜지는 큰 입력이에요. 무엇을 할까요?', options: [
+          { t: 'PAD 를 켜고 GAIN 을 다시 맞춘다', ok: true, why: '맞아요. PAD 가 입력을 26 dB 먼저 줄여 주기 때문이에요.' },
+          { t: 'HPF 를 켠다', why: '아니에요. HPF 는 80 Hz 아래 저음만 줄여요. 소리 전체가 큰 문제는 그대로예요.' },
+          { t: '채널 페이더를 내린다', why: '아니에요. 찌그러짐은 페이더보다 앞인 프리앰프에서 생겨요. 그래서 페이더로는 고칠 수 없어요.' }] } },
+      { title: '채널 안의 순서 — EQ·COMP, ON, 페이더', visual: 'consoleStrip',
+        body: '채널 안에서 소리는 <b>위에서 아래로</b> 지나가요. 먼저 GAIN 으로 소리를 키워요. 그다음 <b>COMP</b> 와 <b>EQ</b> 로 소리를 다듬어요. COMP 는 큰 소리를 눌러 크기를 고르게 하는 장치예요. EQ 는 높은·중간·낮은 소리의 양을 바꾸는 노브예요. <b>ON</b> 버튼으로 채널을 켜고 꺼요. <b>페이더</b>(위아래로 미는 손잡이)로 버스에 섞는 양을 정해요. 중간중간 소리를 옆으로 꺼내 가는 곳이 있어요. <b>PFL</b>, <b>AUX PRE</b>, <b>AUX POST·FX</b> 예요. 어디에서 꺼내느냐에 따라 페이더를 움직였을 때의 영향이 달라요.',
+        more: '<ul><li><b>MG12XU (패널 표기)</b>: CH1–4 에는 노브 하나로 쓰는 COMP 가 있어요.</li> <li>EQ 는 세 칸이에요. HIGH 는 10 kHz(1초에 만 번 떨리는 높은 소리)예요. MID 는 2.5 kHz(가운데 소리), LOW 는 100 Hz(낮은 소리)예요. 칸마다 최대 15 dB 까지 키우거나 줄여요(±15 dB). CH9/10·11/12 에는 HIGH·LOW 만 있어요.</li> <li><b>ON</b> 은 채널을 잠깐 끄는 스위치(음소거)예요. MG12XU 에서 ON 을 끄면 STEREO·GROUP·AUX·FX 어디로도 소리가 나가지 않아요. 그래도 PFL 로는 계속 들을 수 있어요(설명서).</li> <li><b>잠깐 끌 때는 ON, 크기를 바꿀 때는 페이더</b>를 써요. 설교 전에 찬양팀 마이크를 페이더로 끝까지 내리면, 다시 올릴 때 원래 위치를 잊기 쉬워요.</li> <li>디지털 콘솔은 채널마다 HPF·EQ·게이트·컴프레서를 모두 쓸 수 있는 경우가 많아요(03-2 디지털 콘솔 과정).</li></ul>',
         check: { q: 'MG12XU 에서 채널 ON 을 끄면 어떻게 될까요?', options: [
-          { t: '메인·AUX·FX 어디로도 나가지 않지만, PFL 로는 들을 수 있다', ok: true, why: '맞아요. 그래서 예배 중 꺼 둔 채널도 PFL 로 미리 확인할 수 있어요.' },
-          { t: '메인만 꺼지고 모니터(AUX)는 그대로 나간다', why: 'MG12XU 는 ON 을 끄면 AUX 로도 나가지 않아요(설명서).' },
-          { t: 'PFL 로도 들을 수 없다', why: 'PFL 은 ON 과 상관없이 들을 수 있어요.' }] } },
+          { t: '메인·AUX·FX 어디로도 안 나가지만, PFL 로는 들을 수 있다', ok: true, why: '맞아요. 그래서 예배 중 꺼 둔 채널도 PFL 로 미리 들어 볼 수 있어요.' },
+          { t: '메인만 꺼지고 모니터(AUX)는 그대로 나간다', why: '아니에요. MG12XU 는 ON 을 끄면 AUX 로도 나가지 않아요(설명서).' },
+          { t: 'PFL 로도 들을 수 없다', why: '아니에요. PFL 은 ON 과 상관없이 들을 수 있어요.' }] } },
       { title: 'ON · 페이더 · PFL — 메인을 건드리지 않고 듣기', visual: 'consolePfl',
-        body: '<b>PFL</b> 을 누르면 그 채널의 페이더 앞 신호가 <b>헤드폰과 레벨 미터</b>로 가요. 메인 스피커로 나가는 소리는 그대로라 예배 중에도 회중 모르게 확인할 수 있어요. GAIN 을 맞추거나, 이상한 소리가 어느 채널에서 나는지 찾을 때 써요.',
-        more: '<ul><li>MG12XU 는 PFL 을 누르면 미터 아래 PFL 표시등이 켜지고, 미터가 그 채널의 PFL 신호를 보여 줘요. 그래서 <b>PFL 을 켜 둔 채 잊으면 메인 레벨을 잘못 읽을 수 있어요.</b></li><li>헤드폰(PHONES)으로 평소에는 SOURCE 스위치로 고른 STEREO 나 GROUP 을 듣다가, PFL 을 누르면 PFL 소리를 들어요.</li><li>여러 채널의 PFL 을 함께 누르면 섞여서 들려요. 하나씩 확인해요.</li><li>다른 콘솔에서는 같은 기능을 <b>SOLO</b> 나 <b>CUE</b> 라고 부르기도 해요.</li></ul>',
-        check: { q: '예배 중 기타 소리가 이상해서 확인하려고 해요. 메인 소리를 바꾸지 않고 들으려면?', options: [
-          { t: '기타 채널의 PFL 을 누르고 헤드폰으로 듣는다', ok: true, why: '맞아요. PFL 은 헤드폰·미터로만 보내서 메인은 그대로예요.' },
-          { t: '기타 페이더를 크게 올려 본다', why: '회중이 듣는 메인 소리가 바뀌어요.' },
-          { t: '다른 채널을 모두 끈다(ON 끄기)', why: '예배 중 메인 소리가 끊겨요.' }] } },
+        body: '<b>PFL</b> 을 누르면 그 채널 소리가 <b>헤드폰과 레벨 미터</b>로 가요. 레벨 미터는 소리 크기를 불빛 막대로 보여 주는 표시예요. 이때 가는 소리는 페이더 앞의 소리예요. 메인 스피커로 나가는 소리는 그대로예요. 그래서 예배 중에도 회중 모르게 엔지니어 혼자 한 채널을 들어 볼 수 있어요. GAIN 을 맞출 때나, 이상한 소리가 어느 채널에서 나는지 찾을 때 써요.',
+        more: '<ul><li>MG12XU 에서 PFL 을 누르면 미터 아래 PFL 불이 켜져요. 그리고 미터가 그 채널의 PFL 소리 크기를 보여 줘요. 그래서 <b>PFL 을 켜 둔 채 잊으면 메인 크기를 잘못 읽을 수 있어요.</b></li> <li>헤드폰(PHONES)은 평소에 SOURCE 스위치로 고른 STEREO 나 GROUP 소리를 들려줘요. PFL 을 누르면 PFL 소리로 바뀌어요.</li> <li>여러 채널의 PFL 을 함께 누르면 소리가 섞여 들려요. 하나씩 확인해요.</li> <li>다른 콘솔에서는 같은 기능을 <b>SOLO</b> 나 <b>CUE</b> 라고 부르기도 해요.</li></ul>',
+        check: { q: '예배 중 기타 소리가 이상해요. 메인 소리는 그대로 두고 기타만 들으려면?', options: [
+          { t: '기타 채널의 PFL 을 누르고 헤드폰으로 듣는다', ok: true, why: '맞아요. PFL 은 헤드폰·미터로만 보내서 메인은 그대로이기 때문이에요.' },
+          { t: '기타 페이더를 크게 올려 본다', why: '아니에요. 그러면 회중이 듣는 메인 소리가 바뀌어요.' },
+          { t: '다른 채널을 모두 끈다(ON 끄기)', why: '아니에요. 예배 중에 메인 소리가 끊겨요.' }] } },
       { title: '메인 · AUX(PRE/POST) · FX 보내기와 돌려받기', visual: 'consoleAux',
-        body: '메인(STEREO) 말고도 <b>AUX</b> 로 따로 섞은 소리를 무대 모니터에 보내요. <b>PRE</b> 는 페이더 앞에서 보내서, 엔지니어가 메인을 위해 페이더를 움직여도 모니터는 그대로예요. <b>POST</b> 는 페이더 뒤에서 보내서 페이더를 따라 함께 변해요. 리버브 같은 이펙트는 AUX(FX)로 <b>보내고(Send)</b>, 처리된 소리를 <b>FX RTN 으로 돌려받아(Return)</b> 메인에 섞어요.',
-        more: '<ul><li><b>MG12XU (패널 표기)</b>: AUX1 은 채널마다 <b>PRE 스위치</b>가 있어 누르면 페이더 앞에서 보내요. AUX2/FX 에는 PRE 스위치가 없고, 내장 SPX 이펙터와 AUX2 SEND 단자로 가요.</li><li>전체 보내는 양은 SEND MASTER(AUX1·AUX2)로, 돌아온 이펙트 양은 FX RTN 페이더로 정해요. FX RTN 에도 ST 버튼이 있어 켜야 메인으로 가요. 내장 SPX 는 리버브·딜레이 등 프로그램 24가지예요(제조사 자료).</li><li>모니터를 POST 로 보내면, 메인에서 보컬 페이더를 내릴 때 인도자의 모니터도 함께 작아져 혼란이 생겨요. 그래서 모니터는 보통 PRE 로 보내요.</li><li>리버브는 POST 로 보내야 페이더를 내렸을 때 리버브도 함께 줄어 「리버브만 남는」 일이 없어요.</li></ul>',
-        check: { q: '찬양 인도자 모니터를 AUX1 PRE 로 보내고 있어요. 메인에서 그 보컬 페이더를 내리면 모니터는?', options: [
-          { t: '그대로예요', ok: true, why: '맞아요. PRE 는 페이더 앞에서 보내서 페이더와 상관없어요.' },
-          { t: '페이더만큼 같이 작아져요', why: '그건 POST 로 보낼 때예요.' },
-          { t: '완전히 꺼져요', why: '페이더를 내려도 PRE 로 보내는 소리는 꺼지지 않아요.' }] } },
+        body: '메인(STEREO) 말고도 <b>AUX</b> 로 따로 섞은 소리를 무대 모니터에 보내요. 무대 모니터는 찬양팀이 자기 소리를 듣는 무대 위 스피커예요. <b>PRE</b> 는 페이더 앞에서 소리를 꺼내요. 그래서 엔지니어가 메인 때문에 페이더를 움직여도 모니터는 그대로예요. <b>POST</b> 는 페이더 뒤에서 꺼내요. 그래서 페이더를 따라 모니터 소리도 함께 변해요. 수도관으로 치면 PRE 는 수도꼭지 앞에서, POST 는 수도꼭지 뒤에서 물을 나눠 받는 셈이에요. 리버브(목욕탕 같은 울림) 같은 이펙트는 <b>보내기(Send)</b>로 AUX(FX)에 보내요. 울림이 더해진 소리는 <b>돌려받기(Return)</b>로 FX RTN 에 받아서 메인에 섞어요.',
+        more: '<ul><li><b>MG12XU (패널 표기)</b>: AUX1 은 채널마다 <b>PRE 스위치</b>가 있어요. 누르면 페이더 앞에서 보내요.</li> <li>AUX2/FX 에는 PRE 스위치가 없어요. 이 소리는 안에 든 SPX 이펙터와 AUX2 SEND 단자로 가요.</li> <li>전체 보내는 양은 SEND MASTER(AUX1·AUX2)로 정해요. 돌아온 이펙트 양은 FX RTN 페이더로 정해요. FX RTN 에도 ST 버튼이 있어요. 이 버튼을 켜야 메인으로 가요.</li> <li>안에 든 SPX 에는 리버브·딜레이(메아리) 등 프로그램이 24가지 있어요(제조사 자료).</li> <li>모니터를 POST 로 보내면 문제가 생겨요. 메인에서 보컬 페이더를 내릴 때 인도자 모니터도 함께 작아지기 때문이에요. 그래서 모니터는 보통 PRE 로 보내요.</li> <li>리버브는 POST 로 보내요. 그래야 페이더를 내렸을 때 리버브도 함께 줄어요. 「울림만 남는」 일이 생기지 않아요.</li></ul>',
+        check: { q: '인도자 모니터를 AUX1 PRE 로 보내고 있어요. 메인에서 그 보컬 페이더를 내리면 모니터는?', options: [
+          { t: '그대로예요', ok: true, why: '맞아요. PRE 는 페이더 앞에서 꺼내서 페이더와 상관없기 때문이에요.' },
+          { t: '페이더만큼 같이 작아져요', why: '아니에요. 그건 POST 로 보낼 때예요.' },
+          { t: '완전히 꺼져요', why: '아니에요. 페이더를 내려도 PRE 로 보내는 소리는 꺼지지 않아요.' }] } },
       { title: '버스 · 라우팅 — ST 와 GROUP', visual: 'consoleRouting',
-        body: '<b>버스</b>는 여러 채널을 모으는 길이고, <b>라우팅</b>은 어떤 채널을 어느 버스·출력으로 보낼지 정하는 일이에요. MG12XU 는 채널마다 있는 <b>ST·1-2 버튼</b>으로 메인(STEREO)과 GROUP 1-2 중 어디로 보낼지 정해요. <b>GROUP</b> 은 여러 채널을 모아 페이더 하나로 함께 조절하거나, GROUP OUT 으로 따로 내보낼 때 써요.',
-        more: '<ul><li><b>MG12XU</b>: ST 를 누르면 STEREO(메인) 버스로, 1-2 를 누르면 GROUP 1-2 버스로 가요. GROUP 은 GROUP OUT 으로 따로 내보내거나, GROUP 의 ST 버튼으로 메인에 합칠 수 있어요.</li><li><b>한 채널을 ST 와 1-2 에 모두 켜면</b> 메인에 두 번 들어가 소리가 갑자기 커지거나 음색이 이상해질 수 있어요. GROUP 으로 모을 채널은 ST 를 꺼요.</li><li>PAN 은 STEREO 에서는 왼쪽·오른쪽, GROUP 에서는 GROUP 1·2 로 보내는 비율을 정해요(패널 L1·R2).</li><li>디지털 콘솔은 버튼 대신 화면의 <b>패치</b>로 라우팅하고, 설정 전체를 <b>씬</b>으로 저장해요. 03-2 디지털 콘솔 과정에서 다뤄요.</li></ul>',
+        body: '<b>버스</b>는 여러 채널 소리를 한데 모으는 길이에요. <b>라우팅</b>은 소리 길을 정하는 일이에요. 어떤 채널을 어느 버스·출력으로 보낼지 정해요. MG12XU 는 채널마다 <b>ST·1-2 버튼</b>이 있어요. 이 버튼으로 메인(STEREO)과 GROUP 1-2 중 어디로 보낼지 정해요. <b>GROUP</b> 은 여러 채널을 모아 페이더 하나로 함께 조절할 때 써요. GROUP OUT 으로 따로 내보낼 수도 있어요.',
+        more: '<ul><li><b>MG12XU</b>: ST 를 누르면 STEREO(메인) 버스로 가요. 1-2 를 누르면 GROUP 1-2 버스로 가요.</li> <li>GROUP 소리는 GROUP OUT 으로 따로 내보낼 수 있어요. GROUP 의 ST 버튼을 누르면 메인에 합칠 수도 있어요.</li> <li><b>한 채널에 ST 와 1-2 를 모두 켜면</b> 메인에 같은 소리가 두 번 들어가요. 그러면 소리가 갑자기 커지거나 음색이 이상해질 수 있어요. 그래서 GROUP 으로 모을 채널은 ST 를 꺼요.</li> <li>PAN(좌우 노브)은 STEREO 에서는 왼쪽·오른쪽으로 보내는 비율을 정해요. GROUP 에서는 GROUP 1·2 로 보내는 비율을 정해요(패널 L1·R2).</li> <li>디지털 콘솔은 버튼 대신 화면의 <b>패치</b>(연결 정하기)로 라우팅해요. 설정 전체는 <b>씬</b>으로 저장해요. 03-2 디지털 콘솔 과정에서 다뤄요.</li></ul>',
         check: { q: '찬양팀 악기 6채널을 페이더 하나로 함께 줄였다 키웠다 하고 싶어요. MG12XU 에서 알맞은 방법은?', options: [
-          { t: '6채널의 1-2 버튼을 켜고 ST 는 끈 뒤, GROUP 1-2 페이더로 조절하고 GROUP 의 ST 로 메인에 보낸다', ok: true, why: '맞아요. 악기들이 GROUP 에 모여서 GROUP 페이더 하나로 함께 움직여요.' },
-          { t: '6채널의 PFL 을 모두 누른다', why: 'PFL 은 헤드폰·미터로 듣는 기능이라 메인 크기는 바뀌지 않아요.' },
-          { t: '6채널을 AUX1 로 보낸다', why: 'AUX1 은 무대 모니터로 가는 길이에요. 메인 크기 조절과는 달라요.' }] } }
+          { t: '6채널은 1-2 켜고 ST 끄기 → GROUP 1-2 페이더로 조절 → GROUP 의 ST 로 메인에 보내기', ok: true, why: '맞아요. 악기들이 GROUP 에 모여서 GROUP 페이더 하나로 함께 움직이기 때문이에요.' },
+          { t: '6채널의 PFL 을 모두 누른다', why: '아니에요. PFL 은 헤드폰·미터로 듣는 기능이라 메인 크기는 바뀌지 않아요.' },
+          { t: '6채널을 AUX1 로 보낸다', why: '아니에요. AUX1 은 무대 모니터로 가는 길이에요. 메인 크기 조절과는 달라요.' }] } }
     ],
     practice: {
       kind: 'consoleRouting',
-      lead: '가상 콘솔(MG12XU 를 단순화)과 라우팅 보드예요. 보컬을 메인 스피커와 무대 모니터로 보내고, AUX1 의 PRE/POST 를 바꿔 페이더를 움직여 보고, PFL 과 FX 보내기·돌려받기를 해 봐요. 「소리 켜기」 후 들을 곳(메인 스피커·무대 모니터·헤드폰)을 고르면 그 스피커로 가는 소리를 실제 보컬 녹음으로 들을 수 있어요.',
-      note: '레벨(dB)과 노브·페이더 눈금, 리버브 소리는 교육용 근사 모델이에요. 구조는 MG12XU 를 따랐지만 단순화했어요.',
+      lead: 'MG12XU 를 단순하게 만든 가상 콘솔과 라우팅 보드(소리 길 그림)예요. 보컬을 메인 스피커와 무대 모니터로 보내 봐요. AUX1 을 PRE 와 POST 로 바꿔 가며 페이더를 움직여 봐요. PFL 로 듣기와 FX 보내기·돌려받기도 해 봐요. 「소리 켜기」를 누르고 들을 곳(메인 스피커·무대 모니터·헤드폰)을 고르세요. 그러면 그 스피커로 가는 소리를 실제 보컬 녹음으로 들을 수 있어요.',
+      note: '소리 크기(dB), 노브·페이더 눈금, 리버브 소리는 공부용으로 비슷하게 만든 값(교육용 근사)이에요. 구조는 MG12XU 를 따랐지만 더 단순해요.',
       tasks: [
-        { id: 'main', title: '보컬을 메인으로', text: '메인 스피커를 STEREO OUT 에 연결하고, 채널 ON·ST 와 페이더로 메인 스피커 레벨이 −20 dB 이상 나오게 하세요.' },
-        { id: 'monitor', title: '무대 모니터 보내기', text: '무대 모니터를 AUX1 SEND 에 연결하고, 채널 AUX1 과 SEND MASTER AUX1 을 올려 모니터 레벨이 −20 dB 이상 나오게 하세요.' },
-        { id: 'prepost', title: 'PRE 와 POST 비교', text: '모니터가 나오는 상태에서 PRE 일 때 페이더를 10 dB 이상 움직여 모니터가 그대로인 것, POST 일 때 함께 변하는 것을 모두 확인하세요.' },
-        { id: 'pfl', title: 'PFL 로 듣기', text: '메인으로 보컬이 나가는 동안 PFL 을 켜고 「헤드폰」으로 들어 보세요. 메인 스피커 레벨은 그대로예요.' },
-        { id: 'fx', title: 'FX 보내고 돌려받기', text: '채널 AUX2/FX 와 SEND MASTER AUX2 로 SPX 에 보내고, FX RTN(ST 켜짐) 페이더를 올려 메인에 리버브가 −30 dB 이상 섞이게 하세요.' }
+        { id: 'main', title: '보컬을 메인으로', text: '메인 스피커를 STEREO OUT 에 연결하세요. 채널 ON·ST 를 켜고 페이더를 올려요. 메인 스피커 크기가 −20 dB 이상(0 에 더 가까운 쪽)이면 성공이에요.' },
+        { id: 'monitor', title: '무대 모니터 보내기', text: '무대 모니터를 AUX1 SEND 에 연결하세요. 채널의 AUX1 노브와 SEND MASTER AUX1 을 올려요. 모니터 크기가 −20 dB 이상이면 성공이에요.' },
+        { id: 'prepost', title: 'PRE 와 POST 비교', text: '모니터 소리가 나오는 상태에서 해요. PRE 로 두고 페이더를 10 dB 이상 움직이면 모니터가 그대로인지 봐요. POST 로 두고 움직이면 모니터도 함께 변하는지 봐요. 둘 다 확인하세요.' },
+        { id: 'pfl', title: 'PFL 로 듣기', text: '메인으로 보컬이 나가는 동안 PFL 을 켜세요. 그리고 「헤드폰」을 골라 들어 보세요. 메인 스피커 크기는 그대로예요.' },
+        { id: 'fx', title: 'FX 보내고 돌려받기', text: '채널 AUX2/FX 노브와 SEND MASTER AUX2 를 올려 SPX 로 보내세요. FX RTN 의 ST 를 켜고 FX RTN 페이더를 올려요. 메인에 리버브가 −30 dB 이상 섞이면 성공이에요.' }
       ],
       links: [
-        { title: 'MG12XU 실습 · 오디오 테스트', text: '실제 MG12XU 사진 위에서 멀티트랙을 섞고 AUX·FX 를 들어 봐요.', go: { tab: 'tab6', audio: true } },
+        { title: 'MG12XU 실습 · 오디오 테스트', text: '실제 MG12XU 사진 위에서 여러 악기 소리를 섞어 봐요. AUX·FX 소리도 들어 봐요.', go: { tab: 'tab6', audio: true } },
         { title: '확성 시스템의 기본 · 3D 실습 ③', text: 'MG12XU 의 메인 출력을 파워앰프와 스피커에 연결하고 소리를 내 봐요.', go: { tab: 'tab1', card: 's3' } }
       ]
     },
     quiz: [
-      { q: '보컬 소리가 메인에서 전혀 안 나요. PFL 로 들으면 소리가 있어요. 확인 순서로 가장 알맞은 것은?', options: [
-        { t: 'ON → ST 할당 → 채널 페이더 → STEREO 페이더 → 출력 연결', ok: true, why: '맞아요. 입력은 살아 있으니 PFL 뒤의 단계를 신호 순서대로 따라가요.' },
-        { t: 'GAIN 을 최대로 올린다', why: 'PFL 로 소리가 들리면 입력은 이미 들어오고 있어요. GAIN 을 올리면 찌그러질 수 있어요.' },
-        { t: '팬텀 전원을 켠다', why: '입력 신호는 이미 있어요. 막힌 곳은 그 뒤예요.' }] },
+      { q: '메인에서 보컬 소리가 전혀 안 나요. 그런데 PFL 로 들으면 소리가 있어요. 어떤 순서로 확인할까요?', options: [
+        { t: 'ON → ST 버튼 → 채널 페이더 → STEREO 페이더 → 출력 연결', ok: true, why: '맞아요. 입력은 살아 있어요. 그러니 PFL 뒤의 단계를 소리 순서대로 따라가요.' },
+        { t: 'GAIN 을 최대로 올린다', why: '아니에요. PFL 로 소리가 들리면 입력은 이미 들어오고 있어요. GAIN 을 올리면 찌그러질 수 있어요.' },
+        { t: '팬텀 전원을 켠다', why: '아니에요. 입력 신호는 이미 있어요. 막힌 곳은 그 뒤예요.' }] },
       { q: '리버브를 AUX2/FX(POST)로 보내고 있어요. 보컬 페이더를 내리면 리버브는?', options: [
-        { t: '보컬과 함께 작아져요', ok: true, why: '맞아요. POST 는 페이더 뒤에서 보내요.' },
-        { t: '그대로 남아요', why: '그건 PRE 로 보낼 때예요. 그러면 페이더를 내려도 리버브만 남아요.' },
-        { t: '더 커져요', why: '페이더를 내리면 보내는 양도 줄어요.' }] },
-      { q: 'PFL 을 누른 채 깜빡 잊고 두면 생길 수 있는 일은?', options: [
-        { t: '미터가 PFL 채널을 보여 줘서 메인 레벨을 잘못 읽을 수 있다', ok: true, why: '맞아요. 확인이 끝나면 꼭 PFL 을 꺼요.' },
-        { t: '그 채널만 메인 스피커로 크게 나간다', why: 'PFL 은 메인 출력을 바꾸지 않아요.' },
-        { t: '그 채널이 꺼진다', why: 'PFL 은 듣기·보기 전용이에요.' }] },
-      { q: 'MG12XU 의 CH3 에 콘덴서 마이크를 꽂고 PHANTOM +48V 를 켜면?', options: [
-        { t: '+48V 가 CH1–7/8 의 MIC 입력에 한꺼번에 걸린다', ok: true, why: '맞아요. MG12XU 는 팬텀 스위치가 하나예요(패널 표기 CH 1-7/8 MIC).' },
-        { t: 'CH3 에만 걸린다', why: '채널마다 따로 켤 수 있는 것은 일부 디지털 콘솔이에요. MG12XU 는 스위치가 하나예요.' },
-        { t: 'CH9–12 LINE 입력에도 걸린다', why: '팬텀 전원은 MIC(XLR) 입력에만 걸려요.' }] },
+        { t: '보컬과 함께 작아져요', ok: true, why: '맞아요. POST 는 페이더 뒤에서 꺼내기 때문이에요.' },
+        { t: '그대로 남아요', why: '아니에요. 그건 PRE 로 보낼 때예요. 그러면 페이더를 내려도 울림만 남아요.' },
+        { t: '더 커져요', why: '아니에요. 페이더를 내리면 보내는 양도 줄어요.' }] },
+      { q: 'PFL 을 누른 채 깜빡 잊으면 어떤 일이 생길까요?', options: [
+        { t: '미터가 PFL 채널을 보여 줘서 메인 크기를 잘못 읽을 수 있다', ok: true, why: '맞아요. 그래서 확인이 끝나면 꼭 PFL 을 꺼요.' },
+        { t: '그 채널만 메인 스피커로 크게 나간다', why: '아니에요. PFL 은 메인 출력을 바꾸지 않아요.' },
+        { t: '그 채널이 꺼진다', why: '아니에요. PFL 은 듣고 보기만 하는 기능이에요.' }] },
+      { q: 'MG12XU 의 CH3 에 콘덴서 마이크를 꽂고 PHANTOM +48V 를 켰어요. 어떻게 될까요?', options: [
+        { t: '+48V 가 CH1–7/8 의 MIC 입력 모두에 한꺼번에 들어간다', ok: true, why: '맞아요. MG12XU 는 팬텀 스위치가 하나뿐이에요(패널 표기 CH 1-7/8 MIC).' },
+        { t: 'CH3 에만 들어간다', why: '아니에요. 채널마다 따로 켜는 것은 일부 디지털 콘솔이에요. MG12XU 는 스위치가 하나예요.' },
+        { t: 'CH9–12 LINE 입력에도 들어간다', why: '아니에요. 팬텀 전원은 MIC(XLR) 입력에만 들어가요.' }] },
       { q: '설교 시간에 찬양팀 보컬 마이크를 잠깐 꺼 두려고 해요. MG12XU 에서 가장 알맞은 방법은?', options: [
-        { t: '채널 ON 을 끈다', ok: true, why: '맞아요. 페이더·GAIN 위치는 그대로라 다시 켜면 바로 같은 크기로 돌아와요.' },
-        { t: '채널 페이더를 끝까지 내린다', why: '다시 올릴 때 원래 위치를 잃기 쉬워요. 잠깐 끄기는 ON 으로 해요.' },
-        { t: 'GAIN 을 최소로 내린다', why: 'GAIN 은 입력 크기를 맞추는 곳이라 다시 맞춰야 하고, 모니터(PRE)에도 영향을 줘요.' }] }
+        { t: '채널 ON 을 끈다', ok: true, why: '맞아요. 페이더·GAIN 위치가 그대로 남아요. 그래서 다시 켜면 바로 같은 크기로 돌아와요.' },
+        { t: '채널 페이더를 끝까지 내린다', why: '아니에요. 다시 올릴 때 원래 위치를 잊기 쉬워요. 잠깐 끌 때는 ON 을 써요.' },
+        { t: 'GAIN 을 최소로 내린다', why: '아니에요. GAIN 은 입력 크기를 맞추는 곳이라 나중에 다시 맞춰야 해요. 모니터(PRE)에도 영향을 줘요.' }] }
     ],
     missions: [
-      { title: '음향 트러블슈팅 · 미션 A', text: '입력은 있는데 소리가 안 날 때, 채널 ON·ST·페이더·출력 순서로 막힌 곳을 찾아요.', go: { tab: 'tab7', ts: 'A' } },
-      { title: 'MG12XU 실습 · 채널 배정 게임', text: '악기·보컬을 알맞은 채널에 꽂고 메인·모니터로 보내는 연결을 직접 맞춰 봐요.', go: { tab: 'tab6' } }
+      { title: '음향 트러블슈팅 · 미션 A', text: '입력은 있는데 소리가 안 날 때를 연습해요. 채널 ON·ST·페이더·출력 순서로 막힌 곳을 찾아요.', go: { tab: 'tab7', ts: 'A' } },
+      { title: 'MG12XU 실습 · 채널 배정 게임', text: '악기와 보컬을 알맞은 채널에 꽂아요. 메인·모니터로 보내는 연결도 직접 맞춰 봐요.', go: { tab: 'tab6' } }
     ],
     deeper: [
-      { title: '아날로그 콘솔과 디지털 콘솔', text: '아날로그 콘솔은 채널마다 노브·스위치가 따로 있어서 보이는 그대로 조작해요. 디지털 콘솔은 소리를 숫자로 바꿔 처리하고, 채널을 골라(SELECT) 화면과 공용 노브로 조절해요. 신호 순서(GAIN → EQ·다이내믹 → 페이더 → 버스)는 둘이 똑같아요.', more: '<ul><li>디지털 콘솔은 모든 채널에 게이트·컴프레서·EQ 가 있고, 이펙터가 콘솔 안에 들어 있어요.</li><li>설정 전체를 <b>씬</b>으로 저장했다 불러오고, 페이더 줄을 <b>레이어</b>로 바꿔 많은 채널을 다뤄요.</li><li>자세한 내용은 다음 과정 <b>03-2 디지털 콘솔</b>(Behringer X32 기준)에서 배워요.</li></ul>' },
-      { title: 'GROUP 과 DCA 의 차이', text: 'GROUP 은 여러 채널 소리를 실제로 한 버스에 모아 함께 처리·출력하고, DCA 는 소리를 모으지 않고 여러 채널 페이더를 한 번에 움직이는 리모컨이에요.', more: 'MG12XU 의 GROUP 1-2 는 GROUP OUT 으로 따로 내보내거나 ST 버튼으로 메인에 합칠 수 있어요. DCA 는 주로 디지털 콘솔에 있는 기능이에요.' },
-      { title: 'MATRIX', text: '메인·모니터 버스를 다시 섞어 로비·녹음·방송용으로 보내는 버스예요. 주로 디지털 콘솔에 있어요.', more: '예: 예배당 메인 믹스에 설교 마이크를 조금 더 올린 방송·녹음용 믹스를 만들 때 써요.' },
-      { title: '모니터 요청 받는 법', text: '「제 소리 더 주세요」 요청이 오면 그 사람의 모니터(AUX) 안에서 그 채널 보내는 양을 올려요. 메인 페이더를 올리면 회중석 소리만 바뀌어요(PRE 일 때).', more: '모니터를 너무 키우면 피드백이 나기 쉬워요. 다른 소리를 조금 줄여 주는 것도 좋은 방법이에요.' }
+      { title: '아날로그 콘솔과 디지털 콘솔', text: '아날로그 콘솔은 채널마다 노브·스위치가 따로 있어요. 그래서 보이는 그대로 조작해요. 디지털 콘솔은 소리를 숫자로 바꿔서 다듬어요. 채널을 골라(SELECT) 화면과 함께 쓰는 노브로 조절해요. 소리가 지나가는 순서(GAIN → EQ·COMP → 페이더 → 버스)는 둘이 똑같아요.', more: '<ul><li>디지털 콘솔은 모든 채널에 게이트(작은 잡음을 막는 문)·컴프레서·EQ 가 있어요. 이펙터도 콘솔 안에 들어 있어요.</li> <li>설정 전체를 <b>씬</b>으로 저장했다가 불러와요. 페이더 줄을 <b>레이어</b>로 바꿔 가며 많은 채널을 다뤄요.</li> <li>자세한 내용은 다음 과정 <b>03-2 디지털 콘솔</b>(Behringer X32 기준)에서 배워요.</li></ul>' },
+      { title: 'GROUP 과 DCA 의 차이', text: 'GROUP 은 여러 채널 소리를 실제로 한 버스에 모아요. 모은 소리를 함께 다듬거나 따로 내보낼 수 있어요. DCA 는 소리를 모으지 않아요. 여러 채널 페이더를 한 번에 움직이는 리모컨이에요.', more: 'MG12XU 의 GROUP 1-2 는 GROUP OUT 으로 따로 내보낼 수 있어요. ST 버튼으로 메인에 합칠 수도 있어요. DCA 는 주로 디지털 콘솔에 있는 기능이에요.' },
+      { title: 'MATRIX', text: 'MATRIX 는 메인·모니터 버스를 한 번 더 섞는 버스예요. 섞은 소리를 로비·녹음·방송으로 보내요. 주로 디지털 콘솔에 있어요.', more: '예를 들어 방송·녹음용 소리를 따로 만들 때 써요. 예배당 메인 소리에 설교 마이크만 조금 더 키울 수 있어요.' },
+      { title: '모니터 요청 받는 법', text: '「제 소리 더 주세요」라는 요청이 올 때가 있어요. 그러면 그 사람의 모니터(AUX)에서 그 채널 보내는 양을 올려요. 메인 페이더를 올리면 회중석 소리만 바뀌어요(PRE 일 때).', more: '모니터를 너무 키우면 피드백(삐- 하고 우는 소리)이 나기 쉬워요. 다른 소리를 조금 줄여 주는 것도 좋은 방법이에요.' }
     ],
     sources: [
       { t: 'Yamaha MG12X/MG12XU 기술 사양 — 출력 레벨·단자, HPF 80 Hz 12 dB/oct', url: 'https://data.yamaha.com/files/download/other_assets/6/1525326/mg12x_en_ts_a0.pdf' },

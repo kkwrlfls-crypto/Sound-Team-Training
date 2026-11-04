@@ -17,16 +17,16 @@
    ============================================================================= */
 window.STA_BRANDS = {
   asOf: '2026년 10월',
-  dateNote: '브랜드·제품 정보(대표 제품 3단계 포함)는 2026년 10월 기준으로 확인했고, 바뀔 수 있어요. 회사 소속(모회사)은 자주 바뀌니, 확인된 경우에만 적었어요.',
-  lead: '현장에서 장비 이름표를 보면 브랜드가 먼저 눈에 들어와요. 브랜드마다 잘하는 분야와 쓰는 방식이 조금씩 달라요. 순위를 매기려는 게 아니라, 「이 장비는 어떤 회사가 어떤 용도로 만든 것인지」 알아보는 게 목적이에요.',
+  dateNote: '브랜드 · 제품 정보(대표 제품 3단계 포함)는 2026년 10월에 확인했어요. 앞으로 바뀔 수 있어요. 회사가 어느 그룹에 속하는지(모회사)는 자주 바뀌어서, 확인된 것만 적었어요.',
+  lead: '현장에서 장비 이름표를 보면 브랜드(만든 회사 이름)가 먼저 눈에 들어와요. 브랜드마다 잘하는 분야와 쓰는 방식이 조금씩 달라요. 여기서는 순위를 매기지 않아요. 「이 장비는 어떤 회사가 어떤 용도로 만들었는지」 알아보는 게 목적이에요.',
   tierLabels: { entry: '엔트리', mid: '중급', high: '하이엔드' },
-  tierLegend: '엔트리(입문) · 중급 · 하이엔드는 가격·용도 기준의 대략적인 구분이에요. 같은 브랜드 안에서 제품군을 비교해 보는 용도이고, 하이엔드가 우리 공간에 꼭 더 맞는 것은 아니에요.',
+  tierLegend: '엔트리(입문) · 중급 · 하이엔드(가장 높은 단계)는 가격·용도 기준의 대략적인 구분이에요(값과 쓰임새로 대충 나눈 것). 같은 브랜드 안에서 제품을 비교해 보려는 구분이에요. 하이엔드가 우리 공간에 꼭 더 맞는 것은 아니에요.',
 
   categories: [
     { id: 'mic', title: '마이크(유선)', short: '마이크', icon: 'mic',
       modules: [{ id: 'mic', label: '유선 마이크 과정' }],
-      intro: '유선 마이크는 브랜드마다 주력 분야가 달라요. 라이브 보컬용 다이내믹 마이크가 강한 회사도 있고, 스튜디오용 콘덴서나 몸에 붙이는 작은 마이크가 강한 회사도 있어요.',
-      look: ['다이내믹인지 콘덴서인지 (콘덴서는 팬텀 전원 필요)', '지향성 — 카디오이드·슈퍼카디오이드·무지향', '용도 — 보컬, 악기, 설교용 헤드셋·핀마이크, 성가대', '현장에서 떨어뜨려도 버티는 내구성'],
+      intro: '유선 마이크는 브랜드마다 잘 만드는 분야가 달라요. 무대 보컬용 다이내믹 마이크(튼튼하고 전원이 필요 없는 마이크)가 강한 회사도 있어요. 녹음실용 콘덴서 마이크(작은 소리도 섬세하게 받는 마이크)나 몸에 붙이는 작은 마이크가 강한 회사도 있어요. 카디오이드는 앞쪽 소리를 잘 받는 마이크예요. 슈퍼 · 하이퍼카디오이드는 앞쪽을 더 좁게 받아요. 진동판은 소리에 떨리는 얇은 막이에요.',
+      look: ['다이내믹인지 콘덴서인지 (콘덴서는 팬텀 전원 필요)', '소리를 받는 방향(지향성) — 카디오이드 · 슈퍼카디오이드 · 무지향(모든 방향)', '용도 — 보컬, 악기, 설교용 헤드셋·핀마이크, 성가대', '현장에서 떨어뜨려도 버티는 내구성'],
       sources: [
         { t: 'Shure — Wikipedia (본사·제품군 연혁)', u: 'https://en.wikipedia.org/wiki/Shure' },
         { t: 'Shure SM58S (스위치 있는 SM58) — Full Compass 제품 페이지', u: 'https://fullcompass.com/prod/019046-shure-sm58s-cardioid-dynamic-vocal-mic-with-on-off-switch' },
@@ -44,7 +44,7 @@ window.STA_BRANDS = {
       ] },
     { id: 'wireless', title: '무선 마이크', short: '무선 마이크', icon: 'wireless',
       modules: [{ id: 'mic-wireless', label: '무선 마이크 과정' }, { id: 'mic', label: '유선 마이크 과정' }],
-      intro: '무선 마이크는 마이크 소리만큼 「전파」가 중요해요. 브랜드와 시리즈마다 쓰는 주파수 대역, 디지털 방식, 동시에 쓸 수 있는 채널 수, 배터리 관리 방법이 달라요.',
+      intro: '무선 마이크는 마이크 소리만큼 「전파」가 중요해요. 브랜드와 시리즈마다 다른 점이 있어요. 쓰는 전파 자리(주파수 대역), 디지털 방식, 한꺼번에 쓸 수 있는 마이크 수(채널 수), 배터리 관리 방법이에요. UHF 와 2.4GHz 는 무선 마이크가 쓰는 전파 대역의 이름이에요.',
       look: ['국내에서 쓸 수 있는 주파수 대역인지, 국내 전파 인증(KC)을 받은 정식 유통 제품인지', '디지털/아날로그 방식과 동시에 쓸 채널 수', '배터리 — 건전지인지 충전식인지, 남은 양이 수신기에 보이는지', '수신기 출력 — 아날로그(XLR)만인지, Dante 같은 네트워크 출력도 있는지'],
       sources: [
         { t: 'Shure — Wikipedia (ULX-D·SLX-D·Axient Digital 연혁)', u: 'https://en.wikipedia.org/wiki/Shure' },
@@ -59,8 +59,8 @@ window.STA_BRANDS = {
       ] },
     { id: 'console', title: '콘솔(믹서)', short: '콘솔', icon: 'console',
       modules: [{ id: 'console', label: '아날로그 콘솔 과정' }, { id: 'console-digital', label: '디지털 콘솔 과정' }, { id: 'gain-structure', label: 'Gain Structure 모듈' }],
-      intro: '콘솔은 기본 원리(GAIN → EQ → 페이더 → 버스)는 같지만, 브랜드마다 화면 구성과 메뉴 이름이 달라요. 한 브랜드에 익숙해지면 같은 브랜드의 다른 모델은 금방 배워요.',
-      look: ['필요한 입력·출력(AUX·모니터) 채널 수', '아날로그인지 디지털인지 — 디지털은 씬 저장·불러오기 가능', '지금 쓰는 무대 입출력 장비와 연결 방식(Dante·AES50 등)이 맞는지', '봉사자가 배우기 쉬운지, 교육 자료가 있는지'],
+      intro: '콘솔의 기본 원리(GAIN → EQ → 페이더 → 버스)는 어느 브랜드나 같아요. 하지만 브랜드마다 화면 모양과 메뉴 이름이 달라요. 한 브랜드에 익숙해지면 같은 브랜드의 다른 모델은 금방 배워요.',
+      look: ['필요한 입력·출력(AUX·모니터) 채널 수', '아날로그인지 디지털인지 — 디지털은 설정 전체(씬)를 저장 · 불러오기 가능', '지금 쓰는 무대 입출력 장비와 연결 방식(Dante · AES50 같은 디지털 연결)이 맞는지', '봉사자가 배우기 쉬운지, 교육 자료가 있는지'],
       sources: [
         { t: 'Yamaha 믹서 제품군 (CL·QL 단종 표시 포함) — 제조사', u: 'https://usa.yamaha.com/products/proaudio/mixers/' },
         { t: 'Yamaha 회사 개요 (하마마쓰 본사) — 제조사', u: 'https://www.yamaha.com/en/about/profile' },
@@ -81,8 +81,8 @@ window.STA_BRANDS = {
       ] },
     { id: 'amp', title: '파워앰프', short: '파워앰프', icon: 'amp',
       modules: [{ id: 'amp', label: '아날로그 앰프 과정' }, { id: 'amp-digital', label: '디지털 앰프 과정' }],
-      intro: '파워앰프는 「얼마나 큰 힘을 몇 채널로 내는지」가 기본이고, 브랜드에 따라 스피커 전용 설정(프리셋), 네트워크 원격 감시, 설치용·투어용 구분이 달라요. 어떤 스피커 회사는 자기 스피커에 맞춘 전용 앰프를 함께 만들어요.',
-      look: ['출력(W)과 스피커 임피던스(Ω)가 맞는지', '채널 수 — 2채널, 4채널, 8채널', '스피커 회사 전용 설정이 필요한지 (전용 앰프)', '설치용(랙 고정·원격 감시)인지 이동·투어용인지'],
+      intro: '파워앰프는 「얼마나 큰 힘을 몇 채널로 내는지」가 기본이에요. 브랜드마다 다른 점도 있어요. 스피커 전용 설정(프리셋), 멀리서 네트워크로 상태 보기(원격 감시), 설치용 · 투어용 구분이에요. 어떤 스피커 회사는 자기 스피커에 맞춘 전용 앰프를 함께 만들어요. DSP 는 앰프 안에서 소리를 계산해 다듬는 칩이에요. 2U 는 장비 선반(랙)에서 두 칸 높이라는 뜻이에요.',
+      look: ['출력(W)과 스피커 임피던스(Ω)가 맞는지', '채널 수 — 2채널, 4채널, 8채널', '스피커 회사 전용 설정이 필요한지 (전용 앰프)', '설치용(랙에 고정 · 원격 감시)인지 이동 · 투어용인지'],
       sources: [
         { t: 'Crown XLi 1500 (2채널, 예배당·이동 PA 등) — JBL Pro/HARMAN', u: 'https://jblpro.com/en/products/xli-1500' },
         { t: 'Crown International — Wikipedia', u: 'https://en.wikipedia.org/wiki/Crown_International' },
@@ -103,8 +103,8 @@ window.STA_BRANDS = {
       ] },
     { id: 'speaker', title: '스피커(라이브·설치용)', short: '스피커', icon: 'speaker',
       modules: [{ id: 'speaker-passive', label: '패시브 스피커 과정' }, { id: 'speaker', label: '액티브 스피커 과정' }],
-      intro: '스피커 브랜드는 대형 공연용 라인 어레이부터 예배당에 고정하는 설치용, 들고 다니는 파워드 스피커까지 주력 분야가 달라요. 같은 브랜드 안에서도 시리즈마다 용도가 뚜렷하게 나뉘어요.',
-      look: ['공간 크기와 소리가 퍼지는 각도(커버리지)', '앰프 내장(파워드)인지, 따로 앰프가 필요한(패시브) 것인지', '설치용(고정·색상 맞춤)인지 이동용인지', '전용 앰프·소프트웨어로 설정하는 시스템인지'],
+      intro: '스피커 브랜드마다 잘 만드는 분야가 달라요. 대형 공연용 라인 어레이, 예배당에 고정하는 설치용, 들고 다니는 파워드 스피커 등이에요. 같은 브랜드 안에서도 시리즈마다 용도가 뚜렷하게 나뉘어요. 라인 어레이는 스피커 여러 대를 세로로 길게 매달아 멀리까지 보내는 방식이에요. 포인트 소스는 한 통에서 소리가 퍼져 나가는 보통 스피커예요. 파워드(앰프 내장)는 앰프가 안에 든 스피커, 패시브는 앰프가 따로 필요한 스피커예요. 동축형은 고음 스피커가 저음 스피커 한가운데에 겹쳐 있는 모양이에요.',
+      look: ['공간 크기와 소리가 퍼지는 각도(커버리지)', '앰프 내장(파워드)인지, 따로 앰프가 필요한(패시브) 것인지', '설치용(고정 · 색상 맞춤)인지 이동용인지', '전용 앰프 · 소프트웨어로 설정하는 시스템인지'],
       sources: [
         { t: 'd&b audiotechnik — Wikipedia', u: 'https://en.wikipedia.org/wiki/D%26b_audiotechnik' },
         { t: 'd&b E8 (시리즈 목록 포함) — 제조사', u: 'https://www.dbaudio.com/global/en/products/series/e-series/e8/' },
@@ -130,10 +130,10 @@ window.STA_BRANDS = {
     { id: 'connector', title: '커넥터', short: '커넥터', icon: 'connector',
       modules: [{ id: 'cable', label: '아날로그 케이블 과정' }],
       tierLabels: { entry: 'XLR', mid: '폰 (TS·TRS)', high: '그 밖의 대표 제품' },
-      tierLegend: '커넥터는 엔트리·중급·하이엔드 대신 종류(XLR · 폰 · 그 밖의 대표 제품)로 나눠서 대표 제품을 보여 줘요.',
-      intro: '커넥터는 케이블 끝에 달려 장비와 장비를 이어 주는 「플러그」예요. 잘 만든 커넥터는 잘 빠지지 않고, 오래 써도 접촉 불량이 적어요.',
-      look: ['XLR · 6.3mm 폰 플러그 · 스피콘 등 어떤 단자인지 먼저 확인해요', '잠금(래치) 구조와 케이블을 꽉 잡아 주는 부분(스트레인 릴리프)을 확인해요', '케이블 굵기에 맞는 크기인지 확인해요 (예: Neutrik NC3MXX 는 지름 3.5~8mm)', '정품인지 확인해요 (Neutrik XX 시리즈에는 정품 홀로그램이 있어요)'],
-      others: '이 밖에도 Amphenol, Hosa, Canare, 그리고 Neutrik 그룹의 보급형 브랜드인 REAN 같은 커넥터 브랜드도 현장에서 자주 볼 수 있어요.',
+      tierLegend: '커넥터는 엔트리 · 중급 · 하이엔드 대신 종류로 나눠서 대표 제품을 보여 줘요. XLR · 폰 · 그 밖의 대표 제품이에요.',
+      intro: '커넥터는 케이블 끝에 달려 장비와 장비를 이어 주는 「플러그」예요. 잘 만든 커넥터는 잘 빠지지 않아요. 오래 써도 선이 잘 안 닿는 일(접촉 불량)이 적어요. 수(Male)는 핀이 나온 쪽, 암(Female)은 구멍이 있는 쪽이에요. TS 는 2극, TRS 는 3극 폰 플러그예요.',
+      look: ['XLR · 6.3mm 폰 플러그 · 스피콘 등 어떤 단자인지 먼저 확인해요', '잠금(래치) 구조와, 케이블을 꽉 잡아 주는 부분(스트레인 릴리프)을 확인해요', '케이블 굵기에 맞는 크기인지 확인해요 (예: Neutrik NC3MXX 는 지름 3.5~8mm)', '정품인지 확인해요 (Neutrik XX 시리즈에는 정품 홀로그램이 있어요)'],
+      others: '현장에서는 다른 커넥터 브랜드도 자주 볼 수 있어요. Amphenol, Hosa, Canare, 그리고 Neutrik 그룹의 보급형 브랜드인 REAN 등이에요.',
       sources: [
         { t: 'Neutrik — Wikipedia', u: 'https://en.wikipedia.org/wiki/Neutrik' },
         { t: 'History — Neutrik Group', u: 'https://www.neutrikgroup.com/en/about/history' },
@@ -147,10 +147,10 @@ window.STA_BRANDS = {
     { id: 'cable', title: '케이블', short: '케이블', icon: 'cable',
       modules: [{ id: 'cable', label: '아날로그 케이블 과정' }, { id: 'cable-digital', label: '디지털 케이블 과정' }],
       tierLabels: { entry: '마이크 케이블', mid: '멀티 · 디지털', high: '스피커 케이블' },
-      tierLegend: '케이블은 엔트리·중급·하이엔드 대신 용도(마이크 · 멀티/디지털 · 스피커)로 나눠서 대표 제품을 보여 줘요.',
-      intro: '케이블은 마이크·악기·스피커의 소리를 실어 나르는 길이에요. 좋은 케이블은 잡음이 적고, 자주 감고 풀어도 잘 끊어지지 않아요.',
+      tierLegend: '케이블은 엔트리 · 중급 · 하이엔드 대신 용도로 나눠서 대표 제품을 보여 줘요. 마이크 케이블 · 멀티/디지털 · 스피커 케이블이에요.',
+      intro: '케이블은 마이크 · 악기 · 스피커의 소리를 실어 나르는 길이에요. 좋은 케이블은 잡음이 적고, 자주 감고 풀어도 잘 끊어지지 않아요. 4심(쿼드 · 스타쿼드)은 속선이 4가닥이라 잡음에 강한 구조예요. 스네이크(멀티)는 여러 채널을 한 줄로 묶은 케이블이에요. AWG 는 선 굵기 번호인데, 숫자가 작을수록 굵어요. 차폐는 속선을 감싸 잡음을 막는 막이에요.',
       look: ['마이크용 · 스네이크(멀티) · 스피커용 · 디지털(AES)용 등 용도를 먼저 확인해요', '쿼드(4심) 구조인지 확인해요. 쿼드 케이블은 잡음에 더 강해요', '스피커 케이블은 거리가 길수록 굵은 것(AWG 숫자가 작은 것)을 골라요', '무대에서 감고 푸는 용도인지, 벽 속에 까는 설치용인지 확인해요'],
-      others: '이 밖에도 Klotz, Sommer Cable, Gotham, Van Damme, Cordial, Proel 같은 케이블 브랜드도 현장에서 자주 써요.',
+      others: '현장에서는 다른 케이블 브랜드도 자주 써요. Klotz, Sommer Cable, Gotham, Van Damme, Cordial, Proel 등이에요.',
       sources: [
         { t: 'MOGAMI — Best Cable (나가노 생산, Marshall Electronics)', u: 'https://mogamicable.com/additional/best_cable.php' },
         { t: 'MOGAMI — Neglex Quad Microphone Cables', u: 'https://mogamicable.com/category/bulk/microphone/quad/' },
@@ -173,7 +173,7 @@ window.STA_BRANDS = {
       known: 'SM58(1966년)·SM57(1965년) 같은 다이내믹 마이크로 잘 알려져 있어요. 교회·공연장·학교 어디서나 흔히 만나요.',
       families: [
         { n: 'SM 시리즈 (SM58·SM57 등)', d: '보컬·악기용 다이내믹 마이크. SM58S 는 손잡이에 ON/OFF 스위치가 달린 SM58 이에요.' },
-        { n: 'Beta 시리즈', d: '지향성이 좁은(슈퍼카디오이드) 라이브용 마이크 — 큰 무대 소리 속에서 목소리를 따로 잡을 때.' },
+        { n: 'Beta 시리즈', d: '앞쪽을 더 좁게 받는(슈퍼카디오이드) 무대용 마이크 — 큰 무대 소리 속에서 목소리만 따로 잡을 때.' },
         { n: 'KSM 시리즈', d: '녹음용·무대용 고급 마이크(1999년 KSM32 부터).' }
       ],
       meet: ['교회 강단', '찬양팀', '공연장', '학교·강당'],
@@ -185,7 +185,7 @@ window.STA_BRANDS = {
           url: 'https://www.shure.com/en-US/products/microphones/sm58?variant=SM58S',
           img: "https://products.shureweb.eu/shure_product_db/product_main_images/files/31e/242/4b-/setcard/8f8ab8329c1107e0758c041654d7cc30.jpeg", credit: "Shure 공식 웹사이트 이미지", creditUrl: "https://www.shure.com/en-US/products/microphones/sm58?variant=SM58S", ours: true, discontinued: false },
         { id: 'mic-shure-mid', tier: 'mid', model: 'Beta 58A', family: 'Beta 시리즈',
-          text: '지향성이 더 좁은 슈퍼카디오이드 다이내믹 — 큰 무대 소리 속에서 목소리를 따로 잡을 때.',
+          text: '앞쪽을 더 좁게 받는 슈퍼카디오이드 다이내믹 — 큰 무대 소리 속에서 목소리만 따로 잡을 때.',
           url: 'https://www.shure.com/en-US/products/microphones/beta_58a',
           img: "https://products.shureweb.eu/shure_product_db/product_main_images/files/304/6c7/1b-/setcard/6ae20df360e613eae4581a188d076e5e.jpeg", credit: "Shure 공식 웹사이트 이미지", creditUrl: "https://www.shure.com/en-US/products/microphones/beta_58a", ours: false, discontinued: false },
         { id: 'mic-shure-high', tier: 'high', model: 'KSM9', family: 'KSM 시리즈',
@@ -195,10 +195,10 @@ window.STA_BRANDS = {
       ] },
     { id: 'sennheiser-mic', cat: 'mic', name: 'Sennheiser', ko: '젠하이저', country: '독일',
       identity: '1945년 하노버 근처 베데마르크에서 시작한 가족 경영 음향 회사예요.',
-      known: '라이브용 evolution 마이크, 오래 쓰여 온 악기용 MD 421, 방송용 MKH 샷건 마이크로 알려져 있어요.',
+      known: '무대용 evolution 마이크, 오래 쓰여 온 악기용 MD 421 로 알려져 있어요. 방송용 MKH 샷건 마이크(멀리 앞쪽 소리만 받는 긴 마이크)도 유명해요.',
       families: [
         { n: 'evolution 시리즈 (e 835·e 945 등)', d: '보컬·악기용 라이브 마이크. e 945 는 슈퍼카디오이드라 주변 소리·피드백을 줄이는 데 도움이 돼요.' },
-        { n: 'MD 421', d: '1960년부터 이어진 다이내믹 마이크 — 드럼·앰프 등 악기 수음에 많이 써요.' },
+        { n: 'MD 421', d: '1960년부터 이어진 다이내믹 마이크 — 드럼 · 기타 앰프 같은 악기 소리를 받을 때(수음) 많이 써요.' },
         { n: 'MKH 시리즈', d: '방송·영상용 콘덴서(샷건) 마이크.' }
       ],
       meet: ['찬양팀', '공연장', '방송·영상'],
@@ -223,7 +223,7 @@ window.STA_BRANDS = {
       known: '라이브 마이크, 녹음용 콘덴서, 헤드폰까지 폭넓게 만들어요.',
       families: [
         { n: 'Artist Elite (AE) 시리즈', d: '보컬·악기용 라이브 마이크.' },
-        { n: 'Artist 시리즈 (ATM 등)', d: '보컬·드럼·악기 수음용 마이크.' },
+        { n: 'Artist 시리즈 (ATM 등)', d: '보컬 · 드럼 · 악기 소리를 받는 마이크.' },
         { n: '40 시리즈 (AT4033 등)', d: '녹음 스튜디오용 콘덴서 마이크.' }
       ],
       meet: ['교회', '학교·강당', '녹음실'],
@@ -246,7 +246,7 @@ window.STA_BRANDS = {
       identity: '1947년 오스트리아 빈에서 시작했어요. 지금은 HARMAN(삼성전자 자회사)의 전문 음향 브랜드예요.',
       known: '여러 지향성을 고를 수 있는 콘덴서 마이크 C414, 킥드럼용 D112 로 알려져 있어요.',
       families: [
-        { n: 'C414', d: '지향성 패턴을 여러 개 고를 수 있는 대형 진동판 콘덴서 — 피아노·성가대·악기 녹음.' },
+        { n: 'C414', d: '소리 받는 방향(지향성 패턴)을 여러 개 고를 수 있는 대형 진동판 콘덴서 — 피아노 · 성가대 · 악기 녹음.' },
         { n: 'D112', d: '대형 진동판 다이내믹 — 킥드럼(베이스 드럼)에 많이 써요.' },
         { n: 'D5 등 라이브 보컬 마이크', d: '무대 보컬용 다이내믹 마이크.' }
       ],
@@ -259,11 +259,11 @@ window.STA_BRANDS = {
           url: 'https://www.akg.com/microphones/dynamic-microphones/D5.html',
           img: "https://www.akg.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dw9b7278af/AKG_d5.png?sw=1000&sh=1000", credit: "AKG 공식 웹사이트 이미지", creditUrl: "https://www.akg.com/microphones/dynamic-microphones/D5.html", ours: false, discontinued: false },
         { id: 'mic-akg-mid', tier: 'mid', model: 'C214', family: '콘덴서 마이크',
-          text: '대형 진동판 카디오이드 콘덴서 — 보컬·어쿠스틱 악기 녹음과 수음.',
+          text: '대형 진동판 카디오이드 콘덴서 — 보컬 · 어쿠스틱 악기 녹음과 소리 받기.',
           url: 'https://www.akg.com/microphones/condenser-microphones/C214.html',
           img: "https://www.akg.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwd51609ac/AKG_c214.png?sw=1000&sh=1000", credit: "AKG 공식 웹사이트 이미지", creditUrl: "https://www.akg.com/microphones/condenser-microphones/C214.html", ours: false, discontinued: false },
         { id: 'mic-akg-high', tier: 'high', model: 'C414 XLII', family: 'C414',
-          text: '지향성 패턴 9가지를 고를 수 있는 대형 진동판 콘덴서 — 피아노·성가대·악기.',
+          text: '소리 받는 방향(지향성 패턴) 9가지를 고를 수 있는 대형 진동판 콘덴서 — 피아노 · 성가대 · 악기.',
           url: 'https://www.akg.com/microphones/condenser-microphones/C414+XLII.html',
           img: "https://www.akg.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dw56d937a9/AKG_c414_xlII.png?sw=1000&sh=1000", credit: "AKG 공식 웹사이트 이미지", creditUrl: "https://www.akg.com/C414+XLII.html", ours: false, discontinued: false }
       ] },
@@ -272,7 +272,7 @@ window.STA_BRANDS = {
       known: '녹음 스튜디오용 콘덴서 마이크로 잘 알려져 있고, 무대용 콘덴서 보컬 마이크도 만들어요.',
       families: [
         { n: 'KMS 104 / KMS 105', d: '무대용 콘덴서 보컬 마이크. KMS 105 는 슈퍼카디오이드라 뒤쪽 소리를 더 잘 막아요.' },
-        { n: 'KM 184 등 소형 진동판 콘덴서', d: '카디오이드 소형 진동판 콘덴서 — 녹음·악기 수음.' },
+        { n: 'KM 184 등 소형 진동판 콘덴서', d: '카디오이드 소형 진동판 콘덴서 — 녹음 · 악기 소리 받기.' },
         { n: 'U 87 Ai 등 스튜디오 마이크', d: '녹음실·방송용 대형 진동판 콘덴서.' }
       ],
       meet: ['녹음실', '고급 공연', '방송'],
@@ -296,10 +296,10 @@ window.STA_BRANDS = {
         { n: 'd:fine 헤드셋', d: '귀에 거는 헤드셋 마이크 — 설교·뮤지컬·강연.' },
         { n: 'd:screet 미니어처', d: '옷에 다는 아주 작은 무지향 마이크(핀마이크).' },
         { n: '4099 악기용', d: '악기에 클립으로 붙이는 콘덴서 마이크.' },
-        { n: '핸드헬드 보컬 (2028·d:facto)', d: '무대용 콘덴서 보컬 마이크.' }
+        { n: '핸드헬드 보컬 (2028·d:facto)', d: '손에 들고 쓰는(핸드헬드) 무대용 콘덴서 보컬 마이크.' }
       ],
       meet: ['설교자 헤드셋', '뮤지컬·연극', '방송'],
-      tip: '이런 작은 마이크는 무선 바디팩 송신기에 연결해 쓰는 경우가 많아요. 송신기 브랜드에 맞는 커넥터(어댑터)를 확인해요.',
+      tip: '이런 작은 마이크는 허리에 차는 무선 송신기(바디팩)에 연결해 쓰는 경우가 많아요. 송신기 브랜드에 맞는 커넥터(어댑터)를 확인해요.',
       tierNote: 'DPA 는 업무용 고급 마이크 위주라 입문 단계가 따로 없어요. 같은 용도(핸드헬드 보컬)로 두 단계를 골랐어요.',
       tiers: [
         { id: 'mic-dpa-mid', tier: 'mid', model: '2028', family: '핸드헬드 보컬 마이크',
@@ -318,7 +318,7 @@ window.STA_BRANDS = {
       known: '디지털 무선 SLX-D·ULX-D·Axient Digital 로 알려져 있어요.',
       families: [
         { n: 'SLX-D / SLX-D+', d: '보급형 디지털 무선(2020년). 2026년 2월에 후속 SLX-D+ 가 나왔어요.' },
-        { n: 'ULX-D', d: '2012년에 나온 디지털 무선. 기업·교육·예배·공연 시설용으로 만들어졌고, 암호화와 배터리 관리 기능이 있어요.' },
+        { n: 'ULX-D', d: '2012년에 나온 디지털 무선. 기업 · 교육 · 예배 · 공연 시설용으로 만들었어요. 남이 엿듣지 못하게 막는 암호화와 배터리 관리 기능이 있어요.' },
         { n: 'Axient Digital', d: '대형 공연·방송용 상위 무선 시스템(2017년).' }
       ],
       meet: ['교회 강단·찬양팀', '공연장', '방송'],
@@ -326,11 +326,11 @@ window.STA_BRANDS = {
       ours: { label: 'ULX-D 수신기', where: '3층 예배당' },
       tiers: [
         { id: 'wireless-shure-entry', tier: 'entry', model: 'SLX-D+ (예: SLXD24+/58)', family: 'SLX-D+',
-          text: '보급형 디지털 무선(2026년 출시). SM58·Beta 58A 캡슐 핸드헬드를 골라 써요.',
+          text: '보급형 디지털 무선(2026년 출시). 손에 드는 마이크 머리(캡슐)를 SM58 · Beta 58A 중에서 골라 써요.',
           url: 'https://www.shure.com/en-US/products/wireless-systems/slxd-plus',
           img: "https://products.shureweb.eu/shure_product_db/product_main_images/files/eee/1bd/82-/setcard/c7e2df96ebadd9d6ee26e63b14db1b8d.jpeg", credit: "Shure 공식 웹사이트 이미지", creditUrl: "https://www.shure.com/en-US/products/wireless-systems/slxd-plus/slxd24plus-58", ours: false, discontinued: false },
         { id: 'wireless-shure-mid', tier: 'mid', model: 'ULX-D', family: 'ULX-D',
-          text: '기업·교육·예배·공연 시설용 디지털 무선. 암호화와 배터리 관리 기능이 있어요.',
+          text: '기업 · 교육 · 예배 · 공연 시설용 디지털 무선. 엿듣기를 막는 암호화와 배터리 관리 기능이 있어요.',
           url: 'https://www.shure.com/en-US/products/wireless-systems/ulx-d_digital_wireless',
           img: "https://products.shureweb.eu/shure_product_db/product_main_images/files/68a/4d6/77-/setcard/2cfe2b93a73ffd339e0fbf5c9bbaac57.jpeg", credit: "Shure 공식 웹사이트 이미지 · 시리즈 대표 사진", creditUrl: "https://www.shure.com/en-US/products/wireless-systems/ulx-d_digital_wireless", ours: true, discontinued: false },
         { id: 'wireless-shure-high', tier: 'high', model: 'Axient Digital (예: AD4Q 수신기)', family: 'Axient Digital',
@@ -368,7 +368,7 @@ window.STA_BRANDS = {
       families: [
         { n: 'System 10 / System 10 PRO', d: '2.4GHz 디지털 무선 시스템.' },
         { n: '3000 시리즈', d: '주파수를 바꿔 쓸 수 있는 UHF 무선 마이크.' },
-        { n: '5000 시리즈', d: '주파수를 바꿔 쓸 수 있는 UHF 무선(트루 다이버시티) — 투어·방송용.' }
+        { n: '5000 시리즈', d: '주파수를 바꿔 쓸 수 있는 UHF 무선(안테나 두 개로 받는 트루 다이버시티) — 투어 · 방송용.' }
       ],
       meet: ['교회', '학교·강당', '행사'],
       tip: '여러 대를 함께 쓸 때는 제조사 설명서의 채널(주파수) 조합표를 따라 설정해요.',
@@ -455,7 +455,7 @@ window.STA_BRANDS = {
           url: 'https://www.allen-heath.com/hardware/sq/sq-6/',
           img: "https://www.allen-heath.com/content/uploads/2023/06/SQ-6-Front-High-1024x683.jpg.webp", credit: "Allen & Heath 공식 웹사이트 이미지", creditUrl: "https://www.allen-heath.com/hardware/sq/sq-6/", ours: false, discontinued: false },
         { id: 'console-allenheath-high', tier: 'high', model: 'dLive (예: S5000)', family: 'dLive',
-          text: '제조사가 대표(flagship) 플랫폼으로 소개하는 대형 디지털 믹싱 시스템.',
+          text: '제조사가 가장 대표 제품(flagship)으로 소개하는 대형 디지털 믹싱 시스템.',
           url: 'https://www.allen-heath.com/hardware/dlive-series/',
           img: "https://www.allen-heath.com/content/uploads/2023/02/dLive-S5000-800x600-1.jpg.webp", credit: "Allen & Heath 공식 웹사이트 이미지 · 사진은 dLive S5000", creditUrl: "https://www.allen-heath.com/hardware/dlive-series/dlive-surfaces/", ours: false, discontinued: false }
       ] },
@@ -493,7 +493,7 @@ window.STA_BRANDS = {
         { n: 'X AIR (XR18 등)', d: '소형 디지털 믹서.' }
       ],
       meet: ['교회', '소규모 공연장', '행사'],
-      tip: '태블릿·와이파이로 조작하는 믹서를 쓴다면, 와이파이가 끊길 때를 대비해 유선 연결이나 다른 조작 방법을 준비해요.',
+      tip: '태블릿 · 와이파이로 조작하는 믹서는 와이파이가 끊길 수 있어요. 그때를 대비해 유선 연결이나 다른 조작 방법을 준비해요.',
       group: 'Music Tribe 그룹',
       tiers: [
         { id: 'console-behringer-entry', tier: 'entry', model: 'XR18', family: 'X AIR',
@@ -555,15 +555,15 @@ window.STA_BRANDS = {
       ] },
     { id: 'avid-console', cat: 'console', name: 'Avid', ko: '아비드', country: '미국',
       identity: '녹음 프로그램 Pro Tools 로 알려진 회사로, 본사는 미국 매사추세츠주 벌링턴에 있어요.',
-      known: '라이브 콘솔 VENUE | S6L 은 Pro Tools 와 연동돼요.',
+      known: '라이브 콘솔 VENUE | S6L 은 Pro Tools 와 바로 이어서 쓸 수 있어요(연동).',
       families: [
-        { n: 'VENUE | S6L', d: '공연·모니터·방송·공연장용 모듈형 라이브 콘솔. Pro Tools 와 연동돼요.' }
+        { n: 'VENUE | S6L', d: '공연 · 모니터 · 방송 · 공연장용 라이브 콘솔. 부품을 골라 조합하는 모듈형이고, Pro Tools 와 연동돼요.' }
       ],
       meet: ['대형 공연', '방송', '투어'],
       tierNote: 'Avid 의 라이브 콘솔은 VENUE | S6L 한 라인이라 하이엔드만 보여요.',
       tiers: [
         { id: 'console-avid-high', tier: 'high', model: 'VENUE | S6L', family: 'VENUE | S6L',
-          text: '공연·방송용 모듈형 라이브 콘솔 — Pro Tools 와 연동돼요.',
+          text: '공연 · 방송용 모듈형(부품을 골라 조합하는) 라이브 콘솔 — Pro Tools 와 연동돼요.',
           url: 'https://www.avid.com/products/venue-s6l-system/features',
           img: "https://edge.sitecorecloud.io/avidtech-d6a2e9a9/media/images/venue-s6l-system/avid-venue-s6l-48d-digital-mixer-broadcast-large-concerts.jpg?h=600&iar=0&w=1200", credit: "Avid 공식 웹사이트 이미지 · 사진은 S6L-48D 콘솔", creditUrl: "https://www.avid.com/products/venue-s6l-system/features", ours: false, discontinued: false }
       ] },
@@ -590,7 +590,7 @@ window.STA_BRANDS = {
           url: 'https://www.crownaudio.com/en-US/products/dci-4-600n',
           img: "https://adn.harmanpro.com/product_attachments/product_attachments/2123_1728943243/DCi_4-600N_front_no_top_shadow_x_large_2x.webp", credit: "Crown 공식 웹사이트 이미지", creditUrl: "https://www.crownaudio.com/en-US/products/dci-4-600n", ours: false, discontinued: false },
         { id: 'amp-crown-high', tier: 'high', model: 'I-Tech 4x3500HD', family: 'I-Tech HD',
-          text: '4채널 투어용 앰프 — 아날로그·AES3·CobraNet 입력.',
+          text: '4채널 투어용 앰프 — 아날로그 · AES3 · CobraNet(디지털 신호) 입력.',
           url: 'https://www.crownaudio.com/en-US/products/i-tech-4x3500hd',
           img: "https://adn.harmanpro.com/product_attachments/product_attachments/2141_1728943168/ITHD4_3500_front_no_top_shadow_original_x_large_2x.webp", credit: "Crown 공식 웹사이트 이미지", creditUrl: "https://www.crownaudio.com/en-US/products/i-tech-4x3500hd", ours: false, discontinued: false }
       ] },
@@ -626,7 +626,7 @@ window.STA_BRANDS = {
       ],
       meet: ['교회', '회의실·강당', '행사'],
       group: 'Acuity Brands',
-      tierNote: 'QSC 앰프는 지금 제조사 사이트에서 Q-SYS 네트워크 앰프(CX-Q) 중심으로 소개돼요. 예전 이동용 앰프(GXD·PLD 등)는 현재 판매 제품으로 확인되지 않아 넣지 않았어요.',
+      tierNote: 'QSC 앰프는 지금 제조사 사이트에서 Q-SYS 네트워크 앰프(CX-Q) 위주로 소개돼요. 예전 이동용 앰프(GXD · PLD 등)는 지금 파는 제품인지 확인되지 않아서 넣지 않았어요.',
       tiers: [
         { id: 'amp-qsc-mid', tier: 'mid', model: 'CX-Q 4K4', family: 'CX-Q',
           text: 'Q-SYS 와 바로 연결되는 4채널 네트워크 앰프(4·8채널 모델이 있어요).',
@@ -643,7 +643,7 @@ window.STA_BRANDS = {
       ],
       meet: ['공연장', '투어', '설치 현장'],
       group: 'Music Tribe 그룹',
-      tierNote: '투어·설치용 대형 앰프(D·PLM 시리즈)는 제조사 사이트에 「Legacy(이전 제품)」로 표시돼 있어 「단종」으로 표시했어요.',
+      tierNote: '투어 · 설치용 대형 앰프(D · PLM 시리즈)는 제조사 사이트에 「Legacy(이전 제품)」로 나와 있어요. 그래서 「단종」으로 표시했어요.',
       tiers: [
         { id: 'amp-labgruppen-entry', tier: 'entry', model: 'FA2402', family: 'FA 시리즈',
           text: '2×240W 상업 공간용 앰프 — 매장·회의실 배경음악·안내 방송.',
@@ -659,15 +659,15 @@ window.STA_BRANDS = {
           img: "https://cdn-media.empowertribe.com/49653f3d312747bf9c40c21a5bdddd0a/Image_LG_0107-AAH_PLM-20K44-SP_Front_XL.png", credit: "Lab.gruppen 공식 웹사이트 이미지", creditUrl: "https://www.labgruppen.com/en/products/0107-AAH", ours: false, discontinued: true }
       ] },
     { id: 'db-amp', cat: 'amp', name: 'd&b audiotechnik', ko: '디앤비 오디오테크닉', country: '독일',
-      identity: '스피커 회사이면서, 자기 스피커를 구동하는 전용 앰프도 함께 만들어요.',
-      known: 'd&b 앰프는 d&b 스피커를 구동하도록 만들어요. 예를 들어 D40 은 KSL·V·Y·T 시리즈를 구동하는 앰프예요.',
+      identity: '스피커 회사이면서, 자기 스피커를 울리는(구동하는) 전용 앰프도 함께 만들어요.',
+      known: 'd&b 앰프는 d&b 스피커를 울리도록 만들어요. 예를 들어 D40 은 KSL · V · Y · T 시리즈를 울리는 앰프예요.',
       families: [
         { n: '10D · 30D · 40D', d: '설치용 4채널 앰프(2U). 10D 는 작은 공간, 30D 는 중대형 공간용이에요(제조사 설명).' },
         { n: 'D40 · D80 등', d: '이동·투어용 4채널 앰프.' },
         { n: 'R1 소프트웨어', d: '앰프를 원격으로 보고 조정하는 프로그램.' }
       ],
       meet: ['대형 교회', '공연장', '렌탈 업체'],
-      tip: '10D·30D 는 아날로그 입력 4개와 디지털(AES/EBU) 입력 4개를 받아 어느 출력으로든 보낼 수 있어요.',
+      tip: '10D · 30D 는 아날로그 입력 4개와 디지털(AES/EBU) 입력 4개를 받아요. 받은 소리는 어느 출력으로든 보낼 수 있어요.',
       ours: { label: '10D · 40D', where: '3층 앰프 랙' },
       tiers: [
         { id: 'amp-db-entry', tier: 'entry', model: '10D', family: 'xD 설치용 앰프',
@@ -679,7 +679,7 @@ window.STA_BRANDS = {
           url: 'https://www.dbaudio.com/global/en/products/amplifiers/40d/',
           img: 'img/brands/amp-db-mid.jpg', credit: '3층에 설치된 d&b 40D (제조사 제품 사진)', ours: true, discontinued: false },
         { id: 'amp-db-high', tier: 'high', model: 'D80', family: 'D 이동·투어용 앰프',
-          text: '4채널 투어용 앰프 — 대형 공연 시스템을 구동해요.',
+          text: '4채널 투어용 앰프 — 대형 공연 스피커 시스템을 울려요.',
           url: 'https://www.dbaudio.com/global/en/products/amplifiers/d80/',
           img: "https://www.dbaudio.com/assets/products/_processed_/4/b/csm_dbaudio-D80-amplifier-front_80bfe63d46.png", credit: "d&b audiotechnik 공식 웹사이트 이미지", creditUrl: "https://www.dbaudio.com/global/en/products/amplifiers/d80/", ours: false, discontinued: false }
       ] },
@@ -687,15 +687,15 @@ window.STA_BRANDS = {
     /* ===== 스피커 ===== */
     { id: 'db-spk', cat: 'speaker', name: 'd&b audiotechnik', ko: '디앤비 오디오테크닉', country: '독일',
       identity: '1981년에 생긴 독일 바크낭의 스피커 회사예요.',
-      known: '렌탈·설치 시장에서 주로 쓰이고, 스피커·앰프·설계 소프트웨어를 하나의 시스템으로 묶어 만들어요.',
+      known: '빌려주는 업체(렌탈)와 설치 현장에서 주로 써요. 스피커 · 앰프 · 설계 소프트웨어를 하나의 시스템으로 묶어 만들어요.',
       families: [
         { n: 'E 시리즈 (E8 등)', d: '작은 2웨이 스피커. E8 은 8인치 동축형으로, 말·음악용 단독 시스템이나 무대 모니터로도 써요.' },
         { n: 'Y 시리즈 (Y7P 등, 설치용 Yi)', d: '중소형 공간용 포인트 소스·라인 소스. Yi 는 설치용 버전이에요.' },
-        { n: 'V 시리즈 (설치용 Vi7P·Vi10P)', d: 'Vi7P·Vi10P 는 설치용 포인트 소스예요. 작은 라인 어레이 대신 쓸 수 있을 만큼 큰 소리를 내요.' },
+        { n: 'V 시리즈 (설치용 Vi7P·Vi10P)', d: 'Vi7P · Vi10P 는 설치용 포인트 소스예요. 작은 라인 어레이 대신 쓸 수 있을 만큼 큰 소리를 내요.' },
         { n: 'SL 시리즈 · A 시리즈', d: '라인 어레이 계열(SL 시리즈에는 GSL 등이 있어요).' }
       ],
       meet: ['대형 교회', '공연장', '렌탈 업체'],
-      tip: 'Y 시리즈의 설치용(Yi) 모델은 이동용과 통 만듦새·설치 부품만 달라요. 설치용은 색상 맞춤·방수 옵션도 있어요.',
+      tip: 'Y 시리즈의 설치용(Yi) 모델은 이동용과 통 만듦새 · 설치 부품만 달라요. 설치용은 색상 맞춤 · 방수 옵션도 있어요.',
       ours: { label: 'E8 · Yi7P · Vi10P', where: '3층 예배당' },
       tiers: [
         { id: 'speaker-db-entry', tier: 'entry', model: 'E8', family: 'E 시리즈',
@@ -713,10 +713,10 @@ window.STA_BRANDS = {
       ] },
     { id: 'lacoustics-spk', cat: 'speaker', name: 'L-Acoustics', ko: '엘어쿠스틱스', country: '프랑스',
       identity: '1984년 크리스티안 하일 박사가 세운 회사로, 본사는 파리 남쪽 마르쿠시에 있어요.',
-      known: '대형 공연용 라인 어레이와 몰입형 음향 기술 L-ISA 로 알려져 있어요.',
+      known: '대형 공연용 라인 어레이로 알려져 있어요. 소리가 사방에서 감싸듯 들리게 하는 몰입형 음향 기술 L-ISA 도 유명해요.',
       families: [
         { n: 'K 시리즈 (K1·K2·K3·Kara II·Kiva II)', d: '공연용 라인 어레이.' },
-        { n: 'L 시리즈 · A 시리즈', d: 'L 시리즈(2023년~)는 라인 소스 어레이, A 시리즈는 Wide·Focus 모델로 나뉘어요.' },
+        { n: 'L 시리즈 · A 시리즈', d: 'L 시리즈(2023년~)는 라인 소스 어레이예요. A 시리즈는 Wide(넓게) · Focus(멀리) 모델로 나뉘어요.' },
         { n: 'X 시리즈 (X8·X12 등)', d: '동축형 스피커.' },
         { n: 'LA 앰프 컨트롤러 (LA4X·LA12X 등)', d: '전용 앰프.' }
       ],
@@ -745,7 +745,7 @@ window.STA_BRANDS = {
       meet: ['공연장', '극장', '대형 교회'],
       tiers: [
         { id: 'speaker-meyer-entry', tier: 'entry', model: 'ULTRA-X20', family: 'ULTRA-X',
-          text: '앰프 내장 소형 포인트 소스 — 넓게 퍼지는 근거리·보조용.',
+          text: '앰프 내장 소형 포인트 소스 — 가까운 자리를 넓게 채우는 보조용.',
           url: 'https://meyersound.com/product/ultra-x20/',
           img: "https://meyersound.com/wp-content/uploads/2020/02/ultra-x20_full.jpg", credit: "Meyer Sound 공식 웹사이트 이미지", creditUrl: "https://meyersound.com/product/ultra-x20/", ours: false, discontinued: false },
         { id: 'speaker-meyer-mid', tier: 'mid', model: 'LEOPARD', family: 'LEO 계열 라인 어레이',
@@ -786,13 +786,13 @@ window.STA_BRANDS = {
       identity: '1927년 미국 인디애나주 사우스벤드에서 시작했어요. 2025년 7월부터 Keenfinity 그룹 브랜드예요.',
       known: '스피커와 마이크를 함께 만들어요. 방송용 마이크 RE20 도 이 회사 제품이에요.',
       families: [
-        { n: 'ZX · ZXA (ZX1·ZXA1)', d: '8인치 2웨이 소형 스피커. ZXA1 은 앰프 내장(파워드), ZX1 은 앰프가 따로 필요한 패시브예요.' },
+        { n: 'ZX · ZXA (ZX1·ZXA1)', d: '8인치 2웨이(저음 · 고음 스피커 2개) 소형 스피커. ZXA1 은 앰프 내장(파워드), ZX1 은 앰프가 따로 필요한 패시브예요.' },
         { n: 'ZLX', d: '2013년부터 나온 스피커 시리즈.' },
         { n: 'EVOLVE', d: '들고 다니는 기둥(컬럼)형 파워드 스피커.' },
         { n: 'X-Line Advance', d: '공연용 라인 어레이.' }
       ],
       meet: ['교회', '행사', '소규모 공연'],
-      tip: '모델 이름의 「A」는 앰프 내장(Active)을 뜻하는 경우가 많아요. ZXA1 은 전원 코드, ZX1 은 앰프의 스피커 케이블이 필요해요.',
+      tip: '모델 이름의 「A」는 앰프 내장(Active)을 뜻할 때가 많아요. ZXA1 은 전원 코드가 필요해요. ZX1 은 앰프에서 오는 스피커 케이블이 필요해요.',
       ours: { label: 'ZXA1 · ZX1', where: '확성 실습' },
       group: 'Keenfinity 그룹 (2025년 Bosch 에서 분리)',
       tiers: [
@@ -840,7 +840,7 @@ window.STA_BRANDS = {
       families: [
         { n: 'GEO 시리즈 · STM', d: '라인 어레이.' },
         { n: 'P+ · ID 시리즈', d: '포인트 소스·소형 스피커.' },
-        { n: 'NXAMP', d: '전용 앰프 겸 프로세서.' }
+        { n: 'NXAMP', d: '전용 앰프 겸 프로세서(소리를 다듬는 계산 장치).' }
       ],
       meet: ['공연장', '교회', '행사'],
       group: 'Yamaha',
@@ -854,7 +854,7 @@ window.STA_BRANDS = {
           url: 'https://www.nexo-sa.com/systems/geo-m10/overview/',
           img: "https://www.nexo-sa.com/wp-content/uploads/GEO-M10-module-pic-1200x476.jpg", credit: "NEXO 공식 웹사이트 이미지 · 사진은 GEO M10 모듈", creditUrl: "https://www.nexo-sa.com/products/geo-m1012/", ours: false, discontinued: false },
         { id: 'speaker-nexo-high', tier: 'high', model: 'STM M46', family: 'STM 시리즈',
-          text: '모듈을 조합해 쓰는 투어용 라인 어레이.',
+          text: '여러 통(모듈)을 조합해 쓰는 투어용 라인 어레이.',
           url: 'https://www.nexo-sa.com/products/stm-m46-main-module/',
           img: "https://www.nexo-sa.com/wp-content/uploads/stm-main-module.jpg", credit: "NEXO 공식 웹사이트 이미지", creditUrl: "https://www.nexo-sa.com/products/stm-m46-main-module/", ours: false, discontinued: false }
       ] },
@@ -874,7 +874,7 @@ window.STA_BRANDS = {
           url: 'https://martin-audio.com/products/loudspeakers/blacklinex12',
           img: "https://static.martin-audio.com/img/products/mobile/blacklineX12-side.jpg", credit: "Martin Audio 공식 웹사이트 이미지", creditUrl: "https://martin-audio.com/products/loudspeakers/blacklinex12", ours: false, discontinued: false },
         { id: 'speaker-martin-mid', tier: 'mid', model: 'TORUS T1230', family: 'TORUS',
-          text: '곡률이 일정한(constant curvature) 어레이 — 중형 공연장·설치.',
+          text: '스피커를 같은 각도로 휘어 이은(constant curvature) 어레이 — 중형 공연장 · 설치.',
           url: 'https://martin-audio.com/products/loudspeakers/t1230',
           img: "https://static.martin-audio.com/img/products/web/t1230-front.jpg", credit: "Martin Audio 공식 웹사이트 이미지", creditUrl: "https://martin-audio.com/products/loudspeakers/t1230", ours: false, discontinued: false },
         { id: 'speaker-martin-high', tier: 'high', model: 'WPL', family: 'Wavefront Precision',
@@ -883,37 +883,37 @@ window.STA_BRANDS = {
           img: "https://static.martin-audio.com/img/products/web/wpl-black.jpg", credit: "Martin Audio 공식 웹사이트 이미지", creditUrl: "https://martin-audio.com/products/loudspeakers/wpl", ours: false, discontinued: false }
       ] },
     /* ===== 커넥터 · 케이블 (2026-10-23) ===== */
-    {"id": "neutrik-con", "cat": "connector", "name": "Neutrik", "ko": "뉴트릭", "country": "리히텐슈타인", "identity": "1975년 리히텐슈타인에서 시작한 커넥터 회사예요. 지금은 여러 나라에 지사를 둔 Neutrik 그룹이 됐어요.", "known": "스피커용 speakON, 전원용 powerCON, 랜선용 etherCON 처럼 공연 현장의 「표준」이 된 커넥터로 유명해요.", "families": [{"n": "XLR (XX 시리즈)", "d": "마이크·라인 케이블에 쓰는 3핀 커넥터예요."}, {"n": "speakON", "d": "스피커·앰프를 잇는 잠금식 커넥터예요(1987년)."}, {"n": "powerCON", "d": "돌려서 잠그는 AC 전원 커넥터예요(1996년)."}, {"n": "etherCON", "d": "튼튼한 잠금식 RJ45(랜) 커넥터예요(2001년)."}], "meet": ["방송실·무대 마이크 케이블", "스피커·앰프 랙", "방송·중계 장비"], "tip": "XLR 을 뺄 때는 케이블이 아니라 몸통을 잡고, 잠금 버튼을 누른 채 빼요.", "group": "Neutrik 그룹 (NEUTRIK · REAN · CONTRIK)", "tiers": [{"id": "connector-neutrik-entry", "tier": "entry", "model": "NC3MXX (암: NC3FXX)", "family": "XLR (XX 시리즈)", "text": "니켈 몸통에 은도금 핀을 쓴 3핀 수 XLR 커넥터예요. 케이블을 잡아 주는 부분이 튼튼해 잘 빠지지 않아요.", "url": "https://www.neutrik.com/en/product/nc3mxx", "img": "https://www.neutrik.com/uploads/media/400x/00/310-nc3mxx.jpg?v=1-0", "credit": "Neutrik 공식 웹사이트 이미지", "creditUrl": "https://www.neutrik.com/en/product/nc3mxx", "ours": false, "discontinued": false}, {"id": "connector-neutrik-mid", "tier": "mid", "model": "NP3X", "family": "Plug X 시리즈 (6.3mm)", "text": "3극(TRS) 6.3mm 폰 플러그예요. 악기·라인 케이블과 믹서 연결에 두루 써요.", "url": "https://www.neutrik.com/en/product/np3x", "img": "https://www.neutrik.com/uploads/media/400x/04/684-np3x.jpg?v=1-0", "credit": "Neutrik 공식 웹사이트 이미지", "creditUrl": "https://www.neutrik.com/en/product/np3x", "ours": false, "discontinued": false}, {"id": "connector-neutrik-high", "tier": "high", "model": "NL4FXX-W-S", "family": "speakON", "text": "4극 스피콘 케이블 커넥터예요. 돌려서 잠그는 방식이라 스피커 선이 쉽게 빠지지 않아요(예전 NL4FX 의 후속 제품).", "url": "https://www.neutrik.com/en/product/nl4fxx-w-s", "img": "https://www.neutrik.com/uploads/media/400x/03/17103-NL4FXX-W-S--view-45-degree.png?v=1-3", "credit": "Neutrik 공식 웹사이트 이미지", "creditUrl": "https://www.neutrik.com/en/product/nl4fxx-w-s", "ours": false, "discontinued": false}]},
-    {"id": "switchcraft-con", "cat": "connector", "name": "Switchcraft", "ko": "스위치크래프트", "country": "미국", "identity": "1946년 미국 시카고에서 잭·플러그·스위치를 만들려고 세운 회사예요. 지금도 시카고에 본사가 있어요.", "known": "튼튼한 XLR · 6.3mm 플러그와 패치베이, DI 박스로 알려진 오디오 커넥터 회사예요.", "families": [{"n": "AAA 시리즈 XLR", "d": "마이크 케이블용 XLR 커넥터예요."}, {"n": "6.3mm 플러그 (280 · 297)", "d": "오래 쓰여 온 금속 폰 플러그예요."}, {"n": "패치베이", "d": "방송실 장비 연결을 한곳에 모아 바꿔 꽂게 해 주는 판이에요."}, {"n": "DI 박스 (SC700 · SC800 · SC900)", "d": "악기나 노트북 소리를 콘솔에 맞는 마이크 신호로 바꿔 줘요."}], "meet": ["방송실 패치베이 · DI 박스", "녹음 스튜디오", "방송 장비"], "tip": "어쿠스틱 기타나 키보드 소리가 너무 크게 들어오면 DI 박스의 패드(-20dB) 스위치를 켜 보세요.", "group": "HEICO Corporation (2011년부터)", "tiers": [{"id": "connector-switchcraft-entry", "tier": "entry", "model": "AAA3FZ (수: AAA3MZ)", "family": "AAA 시리즈", "text": "은도금 핀과 잠금 버튼이 있는 3핀 암 XLR 케이블 커넥터예요.", "url": "https://www.switchcraft.com/aaa-series-3-pin-xlr-female-cable-mount-silver-pins-nickel-metal/aaa3fz/", "img": "https://www.switchcraft.com/assets/1/24/DimLarge/AAA3FZ.png?2821", "credit": "Switchcraft 공식 웹사이트 이미지", "creditUrl": "https://www.switchcraft.com/aaa-series-3-pin-xlr-female-cable-mount-silver-pins-nickel-metal/aaa3fz/", "ours": false, "discontinued": false}, {"id": "connector-switchcraft-mid", "tier": "mid", "model": "280 (TS) · 297 (TRS)", "family": "6.3mm 플러그", "text": "금속 손잡이에 케이블 클램프가 달린 6.3mm 플러그예요. 280 은 2극(TS), 297 은 3극(TRS)이에요.", "url": "https://www.switchcraft.com/1-4-mono-2-conductor-cable-mount-plug-nickel-metal-handle-w-solder-lugs-and-cable-clamp/280/", "img": "https://www.switchcraft.com/assets/1/24/DimLarge/280.png?2291", "credit": "Switchcraft 공식 웹사이트 이미지", "creditUrl": "https://www.switchcraft.com/1-4-mono-2-conductor-cable-mount-plug-nickel-metal-handle-w-solder-lugs-and-cable-clamp/280/", "ours": false, "discontinued": false}, {"id": "connector-switchcraft-high", "tier": "high", "model": "SC800CT", "family": "DI 박스", "text": "악기용 DI 박스예요. 기타·베이스 신호를 콘솔용 밸런스 마이크 신호로 바꾸고, 6.3mm 스루 단자가 2개 있어요.", "url": "https://www.switchcraft.com/instrument-direct-box-custom-transformer/sc800ct/", "img": null, "credit": null, "creditUrl": null, "ours": false, "discontinued": false}]},
-    {"id": "mogami-cable", "cat": "cable", "name": "Mogami", "ko": "모가미", "country": "일본", "identity": "일본 나가노에서 케이블을 만드는 회사예요. 모가미 케이블은 모두 나가노에서 만들어요.", "known": "스튜디오와 무대에서 「깨끗한 소리」로 유명한 마이크·악기 케이블 브랜드예요.", "families": [{"n": "Neglex 쿼드 마이크 케이블", "d": "W2534 처럼 4심 구조로 잡음에 강한 마이크 케이블이에요."}, {"n": "스네이크(멀티코어)", "d": "여러 채널을 한 줄에 묶은 케이블이에요."}, {"n": "스피커 케이블", "d": "W3104 처럼 굵고 유연한 스피커 케이블이에요."}, {"n": "악기·패치 케이블", "d": "기타·키보드·패치베이용 완성 케이블이에요."}], "meet": ["강단 마이크 케이블", "녹음 스튜디오", "공연장 무대"], "tip": "전기 장비가 많아 잡음이 생기는 자리에는 W2534 같은 쿼드 케이블이 도움이 돼요.", "group": "沖電線(Oki Electric Cable) — 2015년 인수", "tiers": [{"id": "cable-mogami-entry", "tier": "entry", "model": "W2534", "family": "Neglex 쿼드 마이크 케이블", "text": "4심(쿼드) 구조의 기본 마이크 케이블이에요. 굵기는 6.0mm예요.", "url": "https://mogamicable.com/category/bulk/microphone/quad/", "img": "https://mogamicable.com/category/bulk/microphone/quad/images/w2534.jpg", "credit": "Mogami 공식 웹사이트 이미지", "creditUrl": "https://mogamicable.com/category/bulk/microphone/quad/", "ours": false, "discontinued": false}, {"id": "cable-mogami-mid", "tier": "mid", "model": "W2932", "family": "스네이크 (멀티코어)", "text": "8채널을 한 줄로 묶은 스네이크 케이블이에요. 채널마다 따로 차폐돼 있어요.", "url": "https://mogamicable.com/category/bulk/snake/", "img": null, "credit": null, "creditUrl": null, "ours": false, "discontinued": false}, {"id": "cable-mogami-high", "tier": "high", "model": "W3104", "family": "스피커 케이블", "text": "4심 OFC 스피커 케이블이에요. 한 가닥이 12 AWG(4mm²)로 굵고 유연해요.", "url": "https://mogamicable.com/category/bulk/speaker_cable/conventional_configuration/", "img": "https://mogamicable.com/category/bulk/speaker_cable/images/w3104.gif", "credit": "Mogami 공식 웹사이트 이미지", "creditUrl": "https://mogamicable.com/category/bulk/speaker_cable/conventional_configuration/", "ours": false, "discontinued": false}]},
-    {"id": "canare-cable", "cat": "cable", "name": "Canare", "ko": "카나레", "country": "일본", "identity": "1970년 일본 나고야에서 시작한 케이블·커넥터 회사예요. 1974년에 다채널 오디오 스네이크 케이블을 내놓았어요.", "known": "잡음을 줄여 주는 스타쿼드(Star Quad) 마이크 케이블과 방송용 영상 케이블·BNC 커넥터로 유명해요.", "families": [{"n": "Star Quad 마이크 케이블", "d": "L-4E6S 처럼 4심을 꼬아 잡음에 강한 마이크 케이블이에요."}, {"n": "멀티채널 스네이크", "d": "MR202 시리즈처럼 여러 채널을 묶은 케이블이에요."}, {"n": "스피커 케이블 (4S 시리즈)", "d": "4심 스타쿼드 구조의 스피커 케이블이에요."}, {"n": "75Ω 영상 케이블 · BNC", "d": "방송용 영상 신호를 나르는 케이블과 커넥터예요."}], "meet": ["방송실 · 영상 시스템", "방송국", "공연장"], "tip": "스피커 선이 길면 4S11 처럼 굵은 케이블을 쓰고, 같은 색 두 가닥씩 묶어서 연결해요.", "tiers": [{"id": "cable-canare-entry", "tier": "entry", "model": "L-4E6S", "family": "Star Quad 마이크 케이블", "text": "지름 6.0mm 스타쿼드 마이크 케이블이에요. 유연하고 잡음에 강해요.", "url": "https://www.canare.co.jp/en/products/cables/index.php?tid=4_001", "img": "https://static.wixstatic.com/media/00a28a_874bceca5086496893f9af6beda1bcbc~mv2.png", "credit": "Canare 공식 웹사이트 이미지", "creditUrl": "https://www.canare.co.jp/en/products/cables/index.php?tid=4_001", "ours": false, "discontinued": false}, {"id": "cable-canare-mid", "tier": "mid", "model": "MR202-AT 시리즈", "family": "멀티채널 스네이크", "text": "2~32채널을 묶은 다채널 스네이크 케이블이에요. 채널은 색으로 구분해요.", "url": "https://www.canare.com/multichannelanalogaudio", "img": "https://static.wixstatic.com/media/00a28a_9ded91586b5c4b629b975ec5433b872b~mv2.png", "credit": "Canare 공식 웹사이트 이미지", "creditUrl": "https://www.canare.com/multichannelanalogaudio", "ours": false, "discontinued": false}, {"id": "cable-canare-high", "tier": "high", "model": "4S11", "family": "스피커 케이블 (4S 시리즈)", "text": "4심 스타쿼드 스피커 케이블이에요. 두 가닥씩 묶어 쓰면 약 11 AWG 굵기가 돼요.", "url": "https://www.canare.co.jp/en/products/cables/index.php?tid=4_008", "img": null, "credit": null, "creditUrl": null, "ours": false, "discontinued": false}]},
-    {"id": "belden-cable", "cat": "cable", "name": "Belden", "ko": "벨덴", "country": "미국", "identity": "1902년 미국 시카고에서 전선 회사로 시작했어요. 지금은 네트워크·신호 케이블을 만드는 큰 회사예요.", "known": "건물 설치용 오디오 케이블과 디지털(AES/EBU) 케이블로 잘 알려져 있어요.", "families": [{"n": "마이크 케이블", "d": "1192A 같은 스타쿼드 마이크 케이블이에요."}, {"n": "디지털 오디오 케이블", "d": "1800F 처럼 110Ω AES/EBU 신호용 케이블이에요."}, {"n": "스피커 케이블", "d": "5000UE 처럼 건물 설치용 스피커 케이블이에요."}, {"n": "네트워크 케이블", "d": "이더넷 등 데이터 케이블도 많이 만들어요."}], "meet": ["건물 설치 배선(벽·천장)", "방송국", "네트워크 오디오 시스템"], "tip": "디지털(AES) 신호에는 일반 마이크 케이블 말고 1800F 같은 110Ω 케이블을 써요.", "tiers": [{"id": "cable-belden-entry", "tier": "entry", "model": "1192A", "family": "스타쿼드 마이크 케이블", "text": "24 AWG 4심 스타쿼드 마이크 케이블이에요. 전자파 잡음이 많은 곳에 맞아요.", "url": "https://www.belden.com/products/cable/audio-cable/digital-audio-cable/1192a", "img": null, "credit": null, "creditUrl": null, "ours": false, "discontinued": false}, {"id": "cable-belden-mid", "tier": "mid", "model": "1800F", "family": "디지털 오디오 (AES/EBU)", "text": "110Ω 1페어 디지털 오디오 케이블이에요. AES/EBU 신호에 맞춰 만들었고 유연해요.", "url": "https://www.belden.com/products/cable/audio-cable/analog-audio-cable/1800f", "img": null, "credit": null, "creditUrl": null, "ours": false, "discontinued": false}, {"id": "cable-belden-high", "tier": "high", "model": "5000UE", "family": "설치용 스피커 케이블", "text": "12 AWG 2심 스피커 케이블이에요. 건물 안 수직 배선용(CL3R) 등급이에요.", "url": "https://www.belden.com/products/cable/audio-cable/speaker-cable/5000ue", "img": null, "credit": null, "creditUrl": null, "ours": false, "discontinued": false}]}
+    {"id": "neutrik-con", "cat": "connector", "name": "Neutrik", "ko": "뉴트릭", "country": "리히텐슈타인", "identity": "1975년 리히텐슈타인에서 시작한 커넥터 회사예요. 지금은 여러 나라에 지사를 둔 Neutrik 그룹이 됐어요.", "known": "공연 현장의 「표준」이 된 커넥터로 유명해요. 스피커용 speakON, 전원용 powerCON, 랜선용 etherCON 등이에요.", "families": [{"n": "XLR (XX 시리즈)", "d": "마이크·라인 케이블에 쓰는 3핀 커넥터예요."}, {"n": "speakON", "d": "스피커·앰프를 잇는 잠금식 커넥터예요(1987년)."}, {"n": "powerCON", "d": "돌려서 잠그는 AC 전원 커넥터예요(1996년)."}, {"n": "etherCON", "d": "튼튼한 잠금식 RJ45(랜) 커넥터예요(2001년)."}], "meet": ["방송실·무대 마이크 케이블", "스피커·앰프 랙", "방송·중계 장비"], "tip": "XLR 을 뺄 때는 케이블이 아니라 몸통을 잡고, 잠금 버튼을 누른 채 빼요.", "group": "Neutrik 그룹 (NEUTRIK · REAN · CONTRIK)", "tiers": [{"id": "connector-neutrik-entry", "tier": "entry", "model": "NC3MXX (암: NC3FXX)", "family": "XLR (XX 시리즈)", "text": "니켈 몸통에 은도금 핀을 쓴 3핀 수(Male) XLR 커넥터예요. 케이블을 잡아 주는 부분이 튼튼해서 잘 빠지지 않아요.", "url": "https://www.neutrik.com/en/product/nc3mxx", "img": "https://www.neutrik.com/uploads/media/400x/00/310-nc3mxx.jpg?v=1-0", "credit": "Neutrik 공식 웹사이트 이미지", "creditUrl": "https://www.neutrik.com/en/product/nc3mxx", "ours": false, "discontinued": false}, {"id": "connector-neutrik-mid", "tier": "mid", "model": "NP3X", "family": "Plug X 시리즈 (6.3mm)", "text": "3극(TRS) 6.3mm 폰 플러그예요. 악기·라인 케이블과 믹서 연결에 두루 써요.", "url": "https://www.neutrik.com/en/product/np3x", "img": "https://www.neutrik.com/uploads/media/400x/04/684-np3x.jpg?v=1-0", "credit": "Neutrik 공식 웹사이트 이미지", "creditUrl": "https://www.neutrik.com/en/product/np3x", "ours": false, "discontinued": false}, {"id": "connector-neutrik-high", "tier": "high", "model": "NL4FXX-W-S", "family": "speakON", "text": "4극 스피콘 케이블 커넥터예요. 돌려서 잠그는 방식이라 스피커 선이 쉽게 빠지지 않아요. 예전 NL4FX 다음에 나온 제품이에요.", "url": "https://www.neutrik.com/en/product/nl4fxx-w-s", "img": "https://www.neutrik.com/uploads/media/400x/03/17103-NL4FXX-W-S--view-45-degree.png?v=1-3", "credit": "Neutrik 공식 웹사이트 이미지", "creditUrl": "https://www.neutrik.com/en/product/nl4fxx-w-s", "ours": false, "discontinued": false}]},
+    {"id": "switchcraft-con", "cat": "connector", "name": "Switchcraft", "ko": "스위치크래프트", "country": "미국", "identity": "1946년 미국 시카고에서 잭·플러그·스위치를 만들려고 세운 회사예요. 지금도 시카고에 본사가 있어요.", "known": "튼튼한 XLR · 6.3mm 플러그와 패치베이, DI 박스로 알려진 오디오 커넥터 회사예요.", "families": [{"n": "AAA 시리즈 XLR", "d": "마이크 케이블용 XLR 커넥터예요."}, {"n": "6.3mm 플러그 (280 · 297)", "d": "오래 쓰여 온 금속 폰 플러그예요."}, {"n": "패치베이", "d": "방송실 장비 연결을 한곳에 모아 바꿔 꽂게 해 주는 판이에요."}, {"n": "DI 박스 (SC700 · SC800 · SC900)", "d": "악기나 노트북 소리를 콘솔에 맞는 마이크 신호로 바꿔 줘요."}], "meet": ["방송실 패치베이 · DI 박스", "녹음 스튜디오", "방송 장비"], "tip": "어쿠스틱 기타나 키보드 소리가 너무 크게 들어오면 DI 박스의 패드(-20dB) 스위치를 켜 보세요.", "group": "HEICO Corporation (2011년부터)", "tiers": [{"id": "connector-switchcraft-entry", "tier": "entry", "model": "AAA3FZ (수: AAA3MZ)", "family": "AAA 시리즈", "text": "은도금 핀과 잠금 버튼이 있는 3핀 암(Female) XLR 케이블 커넥터예요.", "url": "https://www.switchcraft.com/aaa-series-3-pin-xlr-female-cable-mount-silver-pins-nickel-metal/aaa3fz/", "img": "https://www.switchcraft.com/assets/1/24/DimLarge/AAA3FZ.png?2821", "credit": "Switchcraft 공식 웹사이트 이미지", "creditUrl": "https://www.switchcraft.com/aaa-series-3-pin-xlr-female-cable-mount-silver-pins-nickel-metal/aaa3fz/", "ours": false, "discontinued": false}, {"id": "connector-switchcraft-mid", "tier": "mid", "model": "280 (TS) · 297 (TRS)", "family": "6.3mm 플러그", "text": "금속 손잡이에 케이블 클램프가 달린 6.3mm 플러그예요. 280 은 2극(TS), 297 은 3극(TRS)이에요.", "url": "https://www.switchcraft.com/1-4-mono-2-conductor-cable-mount-plug-nickel-metal-handle-w-solder-lugs-and-cable-clamp/280/", "img": "https://www.switchcraft.com/assets/1/24/DimLarge/280.png?2291", "credit": "Switchcraft 공식 웹사이트 이미지", "creditUrl": "https://www.switchcraft.com/1-4-mono-2-conductor-cable-mount-plug-nickel-metal-handle-w-solder-lugs-and-cable-clamp/280/", "ours": false, "discontinued": false}, {"id": "connector-switchcraft-high", "tier": "high", "model": "SC800CT", "family": "DI 박스", "text": "악기용 DI 박스예요. 기타 · 베이스 신호를 콘솔용 밸런스 마이크 신호로 바꿔요. 받은 신호를 그대로 내보내는 6.3mm 스루 단자가 2개 있어요.", "url": "https://www.switchcraft.com/instrument-direct-box-custom-transformer/sc800ct/", "img": null, "credit": null, "creditUrl": null, "ours": false, "discontinued": false}]},
+    {"id": "mogami-cable", "cat": "cable", "name": "Mogami", "ko": "모가미", "country": "일본", "identity": "일본 나가노에서 케이블을 만드는 회사예요. 모가미 케이블은 모두 나가노에서 만들어요.", "known": "스튜디오와 무대에서 「깨끗한 소리」로 유명한 마이크·악기 케이블 브랜드예요.", "families": [{"n": "Neglex 쿼드 마이크 케이블", "d": "W2534 처럼 4심 구조로 잡음에 강한 마이크 케이블이에요."}, {"n": "스네이크(멀티코어)", "d": "여러 채널을 한 줄에 묶은 케이블이에요."}, {"n": "스피커 케이블", "d": "W3104 처럼 굵고 유연한 스피커 케이블이에요."}, {"n": "악기·패치 케이블", "d": "기타·키보드·패치베이용 완성 케이블이에요."}], "meet": ["강단 마이크 케이블", "녹음 스튜디오", "공연장 무대"], "tip": "전기 장비가 많아 잡음이 생기는 자리에는 W2534 같은 쿼드 케이블이 도움이 돼요.", "group": "沖電線(Oki Electric Cable) — 2015년 인수", "tiers": [{"id": "cable-mogami-entry", "tier": "entry", "model": "W2534", "family": "Neglex 쿼드 마이크 케이블", "text": "4심(쿼드) 구조의 기본 마이크 케이블이에요. 굵기는 6.0mm예요.", "url": "https://mogamicable.com/category/bulk/microphone/quad/", "img": "https://mogamicable.com/category/bulk/microphone/quad/images/w2534.jpg", "credit": "Mogami 공식 웹사이트 이미지", "creditUrl": "https://mogamicable.com/category/bulk/microphone/quad/", "ours": false, "discontinued": false}, {"id": "cable-mogami-mid", "tier": "mid", "model": "W2932", "family": "스네이크 (멀티코어)", "text": "8채널을 한 줄로 묶은 스네이크 케이블이에요. 채널마다 따로 잡음 막이(차폐)로 감싸져 있어요.", "url": "https://mogamicable.com/category/bulk/snake/", "img": null, "credit": null, "creditUrl": null, "ours": false, "discontinued": false}, {"id": "cable-mogami-high", "tier": "high", "model": "W3104", "family": "스피커 케이블", "text": "4심 OFC(산소를 뺀 순수한 구리) 스피커 케이블이에요. 한 가닥이 12 AWG(4mm²)로 굵고 유연해요.", "url": "https://mogamicable.com/category/bulk/speaker_cable/conventional_configuration/", "img": "https://mogamicable.com/category/bulk/speaker_cable/images/w3104.gif", "credit": "Mogami 공식 웹사이트 이미지", "creditUrl": "https://mogamicable.com/category/bulk/speaker_cable/conventional_configuration/", "ours": false, "discontinued": false}]},
+    {"id": "canare-cable", "cat": "cable", "name": "Canare", "ko": "카나레", "country": "일본", "identity": "1970년 일본 나고야에서 시작한 케이블 · 커넥터 회사예요. 1974년에 여러 채널을 묶은 오디오 스네이크 케이블을 내놓았어요.", "known": "잡음을 줄여 주는 스타쿼드(Star Quad) 마이크 케이블과 방송용 영상 케이블·BNC 커넥터로 유명해요.", "families": [{"n": "Star Quad 마이크 케이블", "d": "L-4E6S 처럼 4심을 꼬아 잡음에 강한 마이크 케이블이에요."}, {"n": "멀티채널 스네이크", "d": "MR202 시리즈처럼 여러 채널을 묶은 케이블이에요."}, {"n": "스피커 케이블 (4S 시리즈)", "d": "4심 스타쿼드 구조의 스피커 케이블이에요."}, {"n": "75Ω 영상 케이블 · BNC", "d": "방송용 영상 신호를 나르는 케이블과 커넥터예요."}], "meet": ["방송실 · 영상 시스템", "방송국", "공연장"], "tip": "스피커 선이 길면 4S11 처럼 굵은 케이블을 써요. 그리고 같은 색 두 가닥씩 묶어서 연결해요.", "tiers": [{"id": "cable-canare-entry", "tier": "entry", "model": "L-4E6S", "family": "Star Quad 마이크 케이블", "text": "지름 6.0mm 스타쿼드 마이크 케이블이에요. 유연하고 잡음에 강해요.", "url": "https://www.canare.co.jp/en/products/cables/index.php?tid=4_001", "img": "https://static.wixstatic.com/media/00a28a_874bceca5086496893f9af6beda1bcbc~mv2.png", "credit": "Canare 공식 웹사이트 이미지", "creditUrl": "https://www.canare.co.jp/en/products/cables/index.php?tid=4_001", "ours": false, "discontinued": false}, {"id": "cable-canare-mid", "tier": "mid", "model": "MR202-AT 시리즈", "family": "멀티채널 스네이크", "text": "2~32채널을 묶은 다채널 스네이크 케이블이에요. 채널은 색으로 구분해요.", "url": "https://www.canare.com/multichannelanalogaudio", "img": "https://static.wixstatic.com/media/00a28a_9ded91586b5c4b629b975ec5433b872b~mv2.png", "credit": "Canare 공식 웹사이트 이미지", "creditUrl": "https://www.canare.com/multichannelanalogaudio", "ours": false, "discontinued": false}, {"id": "cable-canare-high", "tier": "high", "model": "4S11", "family": "스피커 케이블 (4S 시리즈)", "text": "4심 스타쿼드 스피커 케이블이에요. 두 가닥씩 묶어 쓰면 약 11 AWG 굵기가 돼요.", "url": "https://www.canare.co.jp/en/products/cables/index.php?tid=4_008", "img": null, "credit": null, "creditUrl": null, "ours": false, "discontinued": false}]},
+    {"id": "belden-cable", "cat": "cable", "name": "Belden", "ko": "벨덴", "country": "미국", "identity": "1902년 미국 시카고에서 전선 회사로 시작했어요. 지금은 네트워크·신호 케이블을 만드는 큰 회사예요.", "known": "건물 설치용 오디오 케이블과 디지털(AES/EBU) 케이블로 잘 알려져 있어요.", "families": [{"n": "마이크 케이블", "d": "1192A 같은 스타쿼드 마이크 케이블이에요."}, {"n": "디지털 오디오 케이블", "d": "1800F 처럼 110Ω AES/EBU 신호용 케이블이에요."}, {"n": "스피커 케이블", "d": "5000UE 처럼 건물 설치용 스피커 케이블이에요."}, {"n": "네트워크 케이블", "d": "이더넷 등 데이터 케이블도 많이 만들어요."}], "meet": ["건물 설치 배선(벽·천장)", "방송국", "네트워크 오디오 시스템"], "tip": "디지털(AES) 신호에는 일반 마이크 케이블 말고 1800F 같은 110Ω 케이블을 써요.", "tiers": [{"id": "cable-belden-entry", "tier": "entry", "model": "1192A", "family": "스타쿼드 마이크 케이블", "text": "24 AWG 4심 스타쿼드 마이크 케이블이에요. 전자파 잡음이 많은 곳에 맞아요.", "url": "https://www.belden.com/products/cable/audio-cable/digital-audio-cable/1192a", "img": null, "credit": null, "creditUrl": null, "ours": false, "discontinued": false}, {"id": "cable-belden-mid", "tier": "mid", "model": "1800F", "family": "디지털 오디오 (AES/EBU)", "text": "110Ω 1페어(두 가닥 한 쌍) 디지털 오디오 케이블이에요. AES/EBU 신호에 맞춰 만들었고 유연해요.", "url": "https://www.belden.com/products/cable/audio-cable/analog-audio-cable/1800f", "img": null, "credit": null, "creditUrl": null, "ours": false, "discontinued": false}, {"id": "cable-belden-high", "tier": "high", "model": "5000UE", "family": "설치용 스피커 케이블", "text": "12 AWG 2심 스피커 케이블이에요. 건물 안에서 층과 층 사이를 잇는 배선용(CL3R) 등급이에요.", "url": "https://www.belden.com/products/cable/audio-cable/speaker-cable/5000ue", "img": null, "credit": null, "creditUrl": null, "ours": false, "discontinued": false}]}
   ],
 
   /* ---------------------------------------------------- 브랜드보다 중요한 것 */
   principles: [
-    { t: '우리 공간과 용도에 맞는지', d: '유명한 브랜드라도 예배당 크기, 소리가 퍼지는 범위, 쓰는 사람(설교·찬양·성가대)에 맞지 않으면 좋은 소리가 나지 않아요.' },
-    { t: '국내 지원과 수리', d: '고장 났을 때 국내 정식 수입·서비스 업체가 있는지, 부품을 구할 수 있는지가 오래 쓰는 데 더 중요해요. 무선 장비는 국내 전파 인증(KC) 제품인지도 꼭 봐요.' },
+    { t: '우리 공간과 용도에 맞는지', d: '유명한 브랜드라도 우리에게 맞아야 좋은 소리가 나요. 예배당 크기, 소리가 퍼지는 범위, 쓰는 사람(설교 · 찬양 · 성가대)에 맞는지 봐요.' },
+    { t: '국내 지원과 수리', d: '고장 났을 때 국내 정식 수입 · 서비스 업체가 있는지 봐요. 부품을 구할 수 있는지도 오래 쓰는 데 중요해요. 무선 장비는 국내 전파 인증(KC) 제품인지도 꼭 봐요.' },
     { t: '지금 시스템과의 짝', d: '무선 수신기와 콘솔, 앰프와 스피커처럼 서로 짝이 맞아야 하는 장비가 많아요. 새 장비는 「지금 있는 장비와 연결되는지」부터 확인해요.' },
-    { t: '봉사자가 배울 수 있는지', d: '봉사자가 바뀌어도 이어서 쓸 수 있도록, 조작이 익숙하고 교육 자료가 있는 장비가 운영에 유리해요. 결국 소리를 만드는 건 장비보다 사람이에요.' }
+    { t: '봉사자가 배울 수 있는지', d: '봉사자가 바뀌어도 이어서 쓸 수 있어야 해요. 그래서 조작이 익숙하고 교육 자료가 있는 장비가 좋아요. 결국 소리를 만드는 건 장비보다 사람이에요.' }
   ],
 
   /* ---------------------------------------------------------------- 퀴즈 */
   quiz: [
     { q: '우리 교회 3층 예배당의 무선 마이크 수신기는 어느 브랜드의 어떤 제품일까요?',
       options: [{ t: 'Sennheiser EW-D' }, { t: 'Audio-Technica 3000 시리즈' }, { t: 'Shure ULX-D', ok: true }, { t: 'Sony UWP-D' }],
-      why: '3층은 Shure 의 디지털 무선 ULX-D 수신기를 써요. 기업·교육·예배·공연 시설을 위해 만든 시리즈로, Shure 무선 가운데 중급 단계예요.' },
+      why: '3층은 Shure 의 디지털 무선 ULX-D 수신기를 써요. 기업 · 교육 · 예배 · 공연 시설을 위해 만든 시리즈예요. Shure 무선 가운데 중급 단계예요.' },
     { q: 'Electro-Voice ZXA1 과 ZX1 의 차이로 맞는 것은?',
       options: [{ t: 'ZXA1 은 마이크, ZX1 은 스피커' }, { t: 'ZXA1 은 앰프 내장(파워드), ZX1 은 앰프가 따로 필요한 패시브', ok: true }, { t: '둘은 이름만 다른 같은 제품' }, { t: 'ZX1 이 앰프 내장, ZXA1 이 패시브' }],
-      why: 'ZXA1 은 앰프가 들어 있어 전원만 연결하면 되고, ZX1 은 Crown XLi 1500 같은 파워앰프에서 스피커 케이블로 받아야 소리가 나요.' },
+      why: 'ZXA1 은 앰프가 들어 있어서 전원만 연결하면 돼요. ZX1 은 Crown XLi 1500 같은 파워앰프에서 스피커 케이블로 받아야 소리가 나요.' },
     { q: '이 탭의 「엔트리 · 중급 · 하이엔드」 구분을 바르게 이해한 것은?',
       options: [{ t: '하이엔드일수록 어느 공간에서나 소리가 더 좋다' }, { t: '제조사가 공식으로 정한 등급이다' }, { t: '가격·용도 기준의 대략적인 구분이고, 우리 공간과 용도에 맞는 것이 좋은 장비다', ok: true }, { t: '엔트리 제품은 교회에서 쓰면 안 된다' }],
-      why: '세 단계는 같은 브랜드 안의 제품군을 비교하려는 대략적인 구분이에요. 우리 교회도 실습에서 엔트리 단계의 SM58S·MG12XU 를 잘 쓰고 있어요. 공간·용도·봉사자가 다루기 쉬운지가 더 중요해요.' },
+      why: '세 단계는 같은 브랜드 안의 제품을 비교하려고 대략 나눈 거예요. 우리 교회도 실습에서 엔트리 단계의 SM58S · MG12XU 를 잘 쓰고 있어요. 공간 · 용도에 맞는지, 봉사자가 다루기 쉬운지가 더 중요해요.' },
     { q: '3층 방송실의 Yamaha CL5 처럼 제조사 사이트에 「단종」 표시가 붙은 장비는 어떻게 봐야 할까요?',
       options: [{ t: '바로 사용을 멈추고 바꿔야 한다' }, { t: '새로 만들지 않는다는 뜻 — 계속 쓸 수 있지만 수리·부품 지원 기간을 따로 확인한다', ok: true }, { t: '소리 품질이 떨어졌다는 뜻이다' }, { t: '펌웨어를 올리면 단종 표시가 사라진다' }],
-      why: '「단종」은 새로 생산하지 않는다는 뜻이에요. 지금 잘 동작하는 장비는 계속 쓰되, 고장에 대비해 수리·부품 지원 기간과 후속 모델(Yamaha 는 DM7·RIVAGE PM)을 알아 두면 좋아요.' },
+      why: '「단종」은 새로 만들지 않는다는 뜻이에요. 지금 잘 동작하는 장비는 계속 써요. 다만 고장에 대비해 수리 · 부품 지원 기간과 다음 모델(Yamaha 는 DM7 · RIVAGE PM)을 알아 두면 좋아요.' },
     { q: '해외 쇼핑몰에서 싸고 좋아 보이는 무선 마이크를 찾았어요. 교회에 들이기 전에 가장 먼저 볼 것은?',
       options: [{ t: '유명 브랜드 이름이 붙어 있는지만' }, { t: '국내 전파 인증(KC)을 받은 정식 유통 제품인지, 국내에서 수리할 수 있는지', ok: true }, { t: '디자인이 예배당과 어울리는지' }, { t: '가장 비싼 모델인지' }],
-      why: '해외 직구 무선 제품 중에는 국내 전파 안전성 시험에서 부적합 판정을 받은 사례가 있어요. 무선 장비는 인증과 국내 지원부터 확인해요.' }
+      why: '해외 직구 무선 제품 중에는 국내 전파 안전 시험에서 「부적합(쓰면 안 됨)」 판정을 받은 경우가 있어요. 무선 장비는 인증과 국내 지원부터 확인해요.' }
   ]
 };

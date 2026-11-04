@@ -29,9 +29,9 @@
   var TASKS = [
     { id: 'ro1', mode: 'ringout', t: '첫 하울링 주파수 찾아 3 dB 이상 깎기', d: 'AUX 를 천천히 올려 처음 울린 대역을 GEQ 에서 3 dB 이상 깎아요.' },
     { id: 'ro2', mode: 'ringout', t: '하울링 여유 +6 dB 더 확보하기', d: '처음(EQ 평평)보다 여유를 6 dB 이상 늘려요. 깎는 대역은 4개까지만.' },
-    { id: 'ro3', mode: 'ringout', t: '모니터를 마이크 뒤로 옮기기', d: 'AUX 를 올려 하울링 직전(여유 3 dB 미만)까지 간 뒤, 모니터를 마이크 바로 뒤로 옮겨 여유가 크게 느는 걸 확인해요.' },
-    { id: 'ro4', mode: 'ringout', t: '필요 없는 대역은 깎지 않기', d: '여유 +6 dB 를 얻으면서, 울림과 상관없는 대역을 3 dB 이상 깎은 곳은 1개 이하로.' },
-    { id: 'em', mode: 'emerg', t: '예배 중 돌발 하울링 5라운드', d: '5라운드 중 4번 이상 방금 올린 페이더·센드를 내려서 해결하고, MAIN 은 한 번도 내리지 않기.' },
+    { id: 'ro3', mode: 'ringout', t: '모니터를 마이크 뒤로 옮기기', d: 'AUX 를 올려 하울링 직전(여유 3 dB 미만)까지 가요. 그다음 모니터를 마이크 바로 뒤로 옮겨 여유가 크게 느는 걸 확인해요.' },
+    { id: 'ro4', mode: 'ringout', t: '필요 없는 대역은 깎지 않기', d: '여유를 +6 dB 얻어요. 이때 울림과 상관없는 대역을 3 dB 이상 깎은 곳은 1개 이하로 해요.' },
+    { id: 'em', mode: 'emerg', t: '예배 중 돌발 하울링 5라운드', d: '5라운드 중 4번 이상, 방금 올린 페이더 · 센드를 내려서 해결해요. MAIN 은 한 번도 내리지 않아요.' },
     { id: 'ear', mode: 'ear', t: '귀로 주파수 맞히기 8 / 10', d: '10문제 중 8개 이상을 ±1칸 안으로 맞혀요.' }
   ];
   var MODES = [['theory', '원리 보기'], ['ringout', '링아웃 연습'], ['emerg', '예배 중 돌발 대응'], ['ear', '귀로 주파수 맞히기']];
@@ -318,10 +318,10 @@
   function emOutcomeText(r) {
     var c = ctlName(r.path, r.ch), rt = r.rt != null ? r.rt.toFixed(1) + '초' : '', extra = r.wrong ? ' (다른 조작 ' + r.wrong + '번은 효과가 없었어요.)' : '';
     if (r.outcome === 'ok') return '✅ 정답! ' + rt + ' 만에 방금 올린 ' + c + '를 내려서 하울링이 멈췄어요. 소리도 그대로 살아 있어요.' + extra;
-    if (r.outcome === 'mute') return '⚠️ 하울링은 멈췄지만 ' + CHS[r.ch].name + ' 소리가 끊겼어요 — 뮤트는 최후 수단이에요. 방금 올린 ' + c + '를 3 dB 쯤 내리면 소리를 살리면서 멈출 수 있어요.' + extra;
-    if (r.outcome === 'main') return '❌ MAIN 을 내려서 설교·찬양 모두 끊겼어요. 회중 전체가 소리를 잃어요.' + (r.path === 'mon' ? ' 게다가 모니터 하울링은 MAIN 과 따로 가서(AUX 는 보통 프리 페이더) MAIN 으로는 멈추지 않아요.' : '') + ' 방금 올린 ' + c + '부터 내려요.';
-    if (r.outcome === 'late') return '⏰ 8초가 지나 선배가 대신 내렸어요. 하울링이 나면 「방금 바뀐 것」을 바로 떠올려 그 페이더를 3 dB 이상 내려요.';
-    return '하울링이 나기 전에 되돌렸어요. 이번 훈련은 하울링이 났을 때 반응하는 연습이라 정답으로 세지 않아요.';
+    if (r.outcome === 'mute') return '⚠️ 하울링은 멈췄지만 ' + CHS[r.ch].name + ' 소리가 끊겼어요. 뮤트(소리 끄기)는 최후 수단이에요. 방금 올린 ' + c + '를 3 dB 쯤 내리면 소리를 살리면서 멈출 수 있어요.' + extra;
+    if (r.outcome === 'main') return '❌ MAIN 을 내려서 설교 · 찬양이 모두 끊겼어요. 회중 전체가 소리를 잃어요.' + (r.path === 'mon' ? ' 게다가 모니터 하울링은 MAIN 과 따로 가요(AUX 는 보통 페이더 앞에서 보내는 프리 페이더). 그래서 MAIN 으로는 멈추지 않아요.' : '') + ' 방금 올린 ' + c + '부터 내려요.';
+    if (r.outcome === 'late') return '⏰ 8초가 지나 선배가 대신 내렸어요. 하울링이 나면 「방금 바뀐 것」을 바로 떠올려요. 그리고 그 페이더를 3 dB 이상 내려요.';
+    return '하울링이 나기 전에 되돌렸어요. 이번 훈련은 하울링이 난 뒤에 대응하는 연습이에요. 그래서 정답으로 세지 않아요.';
   }
   function emInput(kind, ch, val) {
     var cur = EM.cur, prevMain = EM.main;
@@ -335,7 +335,7 @@
       var helps = isPath || (kind === 'mute' && ch === cur.ch) || (kind === 'main' && cur.path === 'main');
       if (!helps && !(kind === 'main' && EM.main >= prevMain)) cur.wrong++;
       if (emL() <= 0) { emFinish(cur.mainPulled ? 'main' : EM.ch[cur.ch].mute ? 'mute' : 'ok'); return; }
-      if (kind === 'main' && cur.path === 'mon' && cur.mainPulled) EM.msg = 'MAIN 을 내렸지만 무대 쪽 하울링은 그대로예요 — 그리고 회중석 소리는 끊겼어요.';
+      if (kind === 'main' && cur.path === 'mon' && cur.mainPulled) EM.msg = 'MAIN 을 내렸지만 무대 쪽 하울링은 그대로예요. 그리고 회중석 소리는 끊겼어요.';
     }
     emUI();
   }
@@ -580,8 +580,8 @@
     b.textContent = S.sound ? '🔇 소리 끄기' : '🔊 소리 켜기'; b.classList.toggle('on', S.sound);
     var AC = window.AudioContext || window.webkitAudioContext, txt;
     if (!AC) txt = '이 브라우저는 소리를 낼 수 없어요. 화면과 숫자로는 그대로 연습할 수 있어요.';
-    else if (S.mode === 'ear') txt = '「▶ 문제 소리 듣기」를 누르면 짧고 작은 울림 소리가 나요. 처음엔 소리 크기를 작게 두고 시작하세요.';
-    else if (S.mode === 'ringout') txt = S.sound ? (STEM ? '실제 보컬 녹음이 모니터로 나가요. 시스템이 한계를 넘을 때만 울림(삐—) 소리가 나고, 고치면 부드럽게 사라져요.' : (stemTried ? '녹음을 불러오지 못해 목소리 없이 울림 소리만 들려요.' : '녹음을 불러오는 중…')) : '소리를 꺼도 그래프와 숫자로 연습할 수 있어요. 울림 소리는 최대 −18 dBFS 로 작게 묶여 있어요.';
+    else if (S.mode === 'ear') txt = '「▶ 문제 소리 듣기」를 누르면 짧고 작은 울림 소리가 나요. 처음에는 소리 크기를 작게 두고 시작해요.';
+    else if (S.mode === 'ringout') txt = S.sound ? (STEM ? '실제 보컬 녹음이 모니터로 나가요. 한계를 넘을 때만 울림(삐—) 소리가 나요. 고치면 부드럽게 사라져요.' : (stemTried ? '녹음을 불러오지 못해 목소리 없이 울림 소리만 들려요.' : '녹음을 불러오는 중…')) : '소리를 꺼도 그래프와 숫자로 연습할 수 있어요. 울림 소리는 −18 dBFS 를 넘지 않게 작게 묶여 있어요.';
     else txt = S.sound ? '예배 소리(보컬 녹음)가 작게 나와요. 하울링이 나면 울림 소리가 들려요.' : '「훈련 시작」을 누르면 소리가 켜져요. 소리를 꺼도 화면으로 연습할 수 있어요.';
     m.textContent = txt;
   }
@@ -613,22 +613,22 @@
   function renderTheory() {
     $('[data-role=body]').innerHTML = '<div class="fbt-theory">' +
       '<section class="fbt-sec"><h3 class="fbt-h">하울링은 왜 생겨요?</h3>' + loopSvg() +
-        '<p class="fbt-p">마이크로 들어간 소리는 콘솔 → 앰프 → 스피커를 지나 <b>공기를 타고 다시 마이크로</b> 들어가요. 한 바퀴 돌아온 소리가 처음보다 작으면(루프 이득 1 미만) 금방 사라지지만, <b>어느 한 주파수에서라도 한 바퀴 이득이 1 이상(0 dB 이상)이고 박자(위상)가 맞아 더해지면</b> 그 주파수가 돌 때마다 커져서 「삐—」, 「우웅—」 하는 하울링이 돼요.</p>' +
-        '<p class="fbt-p">방의 울림, 스피커·마이크의 주파수 특성은 고르지 않아서 <b>몇몇 주파수가 먼저</b> 0 dB 를 넘어요. 그래서 하울링은 보통 한 음처럼 들려요. 대략 250–500 Hz 는 「우웅」, 1 kHz 근처는 노래하듯, 2 kHz 이상은 「삐익」 소리로 들려요.</p>' +
-        '<p class="fbt-p"><b>하울링까지 남은 여유</b> = 지금보다 몇 dB 더 올리면 하울링이 시작되는지예요. 이 여유가 클수록 안전해요.</p></section>' +
+        '<p class="fbt-p">마이크로 들어간 소리는 콘솔 → 앰프 → 스피커를 지나 <b>공기를 타고 다시 마이크로</b> 들어가요. 한 바퀴 돌아온 소리가 처음보다 작으면 금방 사라져요(루프 이득 1 미만). 그런데 <b>어느 한 높이(주파수)에서라도 돌아온 소리가 처음보다 작지 않을 때</b>가 있어요(한 바퀴 이득 1 이상, 0 dB 이상). 거기에 박자(위상)까지 맞아 더해지면, 그 소리는 돌 때마다 커져요. 이것이 「삐—」, 「우웅—」 하는 하울링이에요.</p>' +
+        '<p class="fbt-p">방의 울림과 스피커 · 마이크는 높이마다 소리를 고르게 내지 않아요(주파수 특성). 그래서 <b>몇몇 높이가 먼저</b> 0 dB 를 넘어요. 그 때문에 하울링은 보통 한 음처럼 들려요. 대략 250–500 Hz 는 「우웅」 하고 울려요. 1 kHz(1초에 천 번 떨림) 근처는 노래하듯, 2 kHz 이상은 「삐익」 하고 들려요.</p>' +
+        '<p class="fbt-p"><b>하울링까지 남은 여유</b>는 지금보다 몇 dB 더 올리면 하울링이 시작되는지예요. 이 여유가 클수록 안전해요.</p></section>' +
       '<div style="display:grid;gap:12px;min-width:0">' +
       '<section class="fbt-sec"><h3 class="fbt-h">여유를 늘리는 방법</h3><ul class="fbt-good">' +
-        '<li><b>마이크를 입 가까이</b> — 거리가 절반이 되면 목소리가 약 6 dB 커져서, 볼륨을 그만큼 덜 올려도 돼요.</li>' +
-        '<li><b>모니터는 마이크가 가장 둔한 쪽(널)에</b> — 카디오이드(SM58 등)는 바로 뒤(180°), 슈퍼카디오이드는 뒤쪽 비스듬히(약 120–130°)예요.</li>' +
-        '<li><b>안 쓰는 마이크는 꺼요</b> — 열린 마이크 수가 2배가 될 때마다 여유가 약 3 dB 줄어요.</li>' +
-        '<li><b>울리는 주파수만 좁게 깎기</b> — 링아웃: GEQ 에서 울리는 한 칸을 약 3 dB 깎고, 다시 올려서 다음 울림을 찾아요.</li>' +
-        '<li><b>무대 소리 줄이기</b> — 모니터·악기 앰프를 필요한 만큼만. 스피커와 마이크는 멀리 둬요.</li>' +
-        '<li><b>그릴(마이크 머리)을 손으로 감싸 쥐지 않기</b> — 지향성이 무지향처럼 바뀌어 하울링이 잘 나요.</li></ul></section>' +
+        '<li><b>마이크를 입 가까이</b> — 거리가 절반이 되면 목소리가 약 6 dB 커져요. 그만큼 볼륨을 덜 올려도 돼요.</li>' +
+        '<li><b>모니터는 마이크가 가장 둔한 쪽(널)에</b> — 널은 마이크가 소리를 가장 덜 받는 방향이에요. 카디오이드(SM58 등)는 바로 뒤(180°)예요. 슈퍼카디오이드는 뒤쪽 비스듬히(약 120–130°)예요.</li>' +
+        '<li><b>안 쓰는 마이크는 꺼요</b> — 켜진 마이크 수가 2배가 될 때마다 여유가 약 3 dB 줄어요.</li>' +
+        '<li><b>울리는 주파수만 좁게 깎기</b> — 이것을 링아웃이라고 해요. GEQ(높이마다 밀대가 한 칸씩 있는 EQ)에서 울리는 한 칸을 약 3 dB 깎아요. 다시 올려서 다음 울림을 찾아요.</li>' +
+        '<li><b>무대 소리 줄이기</b> — 모니터 · 악기 앰프는 필요한 만큼만 키워요. 스피커와 마이크는 멀리 둬요.</li>' +
+        '<li><b>그릴(마이크 머리)을 손으로 감싸 쥐지 않기</b> — 마이크가 모든 방향 소리를 받게 바뀌어요(무지향처럼). 그래서 하울링이 잘 나요.</li></ul></section>' +
       '<section class="fbt-sec"><h3 class="fbt-h">이렇게 하면 안 돼요</h3><ul class="fbt-bad">' +
-        '<li><b>예배 중에 MAIN 마스터를 확 내리기</b> — 설교·찬양이 모두 끊겨요. 모니터(AUX) 하울링이면 소용도 없어요. <b>방금 올린 페이더나 모니터 센드</b>부터 내려요.</li>' +
-        '<li><b>모든 대역을 넓고 깊게 깎기</b> — 소리가 답답하고 작아져서 결국 볼륨을 더 올리게 돼요. 울리는 곳만, 필요한 만큼만.</li>' +
-        '<li><b>울리는 채로 오래 두기</b> — 귀와 스피커(특히 고음 드라이버)를 상하게 할 수 있어요. 울리면 바로 내려요.</li></ul></section></div>' +
-      '<section class="fbt-sec wide"><h3 class="fbt-h">이 탭에서 연습할 것</h3><p class="fbt-p" style="margin:0">「링아웃 연습」에서 모니터를 천천히 올려 울리는 대역을 찾아 깎고, 「예배 중 돌발 대응」에서 하울링이 났을 때 어떤 페이더를 내려야 하는지 몸에 익히고, 「귀로 주파수 맞히기」로 울리는 높이를 귀로 알아듣는 연습을 해요. 울림 소리는 실제 하울링이 아니라 작은 사인파로 만든 소리라 안전해요.</p></section>' +
+        '<li><b>예배 중에 MAIN 마스터를 확 내리기</b> — 설교 · 찬양이 모두 끊겨요. 모니터(AUX) 하울링이라면 효과도 없어요. <b>방금 올린 페이더나 모니터 센드(보내는 양)</b>부터 내려요.</li>' +
+        '<li><b>모든 대역을 넓고 깊게 깎기</b> — 소리가 답답하고 작아져요. 그러면 결국 볼륨을 더 올리게 돼요. 울리는 곳만, 필요한 만큼만 깎아요.</li>' +
+        '<li><b>울리는 채로 오래 두기</b> — 귀와 스피커(특히 고음 드라이버)가 상할 수 있어요. 울리면 바로 내려요.</li></ul></section></div>' +
+      '<section class="fbt-sec wide"><h3 class="fbt-h">이 탭에서 연습할 것</h3><p class="fbt-p" style="margin:0">「링아웃 연습」에서는 모니터를 천천히 올려 울리는 높이를 찾아 깎아요. 「예배 중 돌발 대응」에서는 하울링이 났을 때 어떤 페이더를 내려야 하는지 몸에 익혀요. 「귀로 주파수 맞히기」에서는 울리는 높이를 귀로 알아듣는 연습을 해요. 여기서 나는 울림 소리는 진짜 하울링이 아니에요. 작은 사인파(「삐」 하는 깨끗한 시험음)로 만든 소리라 안전해요.</p></section>' +
       '</div>';
   }
 
@@ -650,7 +650,7 @@
     var body = $('[data-role=body]'), pl = placeOf(RO.place), mv = RO.lastMove;
     var cols = BANDS.map(function (f, i) { return '<div class="fbt-anacol" data-ana="' + i + '"><i></i></div>'; }).join('');
     var geq = BANDS.map(function (f, i) { return '<div class="fbt-geqcol" data-gcol="' + i + '"><input type="range" min="0" max="12" step="1" value="' + RO.geq[i] + '" data-geq="' + i + '" aria-label="' + fmtHzL(f) + ' 깎기(dB)"><b data-gv="' + i + '">0</b><span>' + fmtHz(f) + '</span></div>'; }).join('');
-    body.innerHTML = '<p class="fbt-note">교육용 근사: 방·모니터·마이크의 울림을 단순한 숫자로 만든 연습용 모델이에요(울리기 쉬운 곳 3–4군데). 실제 방에서는 주파수와 dB 가 달라요. 실제 링아웃은 볼륨을 아주 조금씩 올리고, 울리면 바로 내려요.</p>' +
+    body.innerHTML = '<p class="fbt-note">교육용 근사(실제를 간단히 흉내 낸 연습)예요. 방 · 모니터 · 마이크의 울림을 간단한 숫자로 만들었어요(울리기 쉬운 곳 3–4군데). 실제 방에서는 주파수와 dB 가 달라요. 실제 링아웃은 볼륨을 아주 조금씩 올리고, 울리면 바로 내려요.</p>' +
       '<div class="fbt-ro"><div class="fbt-side">' +
         '<div class="sim-box fbt-o1"><h4>모니터 보내는 양 (AUX) <small>보컬 → 모니터</small></h4>' +
           '<label class="sim-range"><span>센드 <b data-out="send">' + sint(RO.send) + ' dB</b></span><input type="range" min="-30" max="10" step="1" value="' + RO.send + '" data-fbt="send" aria-label="모니터 보내는 양 (AUX) dB"></label>' +
@@ -669,9 +669,9 @@
           '<div class="fbt-ana' + (S.analyzer ? '' : ' off') + '" data-role="ana"><div class="fbt-line" style="bottom:80%"><span>하울링 선 0 dB</span></div><div class="fbt-line warn" style="bottom:70%"><span>−3 dB</span></div><div class="fbt-g19">' + cols + '</div>' +
             '<div class="fbt-ana__off">귀로만 듣는 중이에요. 소리를 켜고, 울리는 높이를 귀로 찾아 GEQ 에서 깎아 보세요.</div></div>' +
           '<div class="fbt-g19 fbt-geq">' + geq + '</div></div></div>' +
-        '<p class="sim-note" style="margin:0">위 막대: 대역별 「한 바퀴 이득」(루프 이득, 교육용 근사). 빨간 선(0 dB)을 넘는 대역이 울려요. 아래 GEQ 는 깎기만 해요(0 ~ −12 dB). 한 칸을 깎으면 옆 칸도 조금(약 35 %) 같이 내려가요.</p>' +
+        '<p class="sim-note" style="margin:0">위 막대는 높이(대역)마다 소리가 한 바퀴 돌아온 크기예요(루프 이득, 교육용 근사). 빨간 선(0 dB)을 넘는 대역이 울려요. 아래 GEQ 는 깎기만 해요(0 ~ −12 dB). 한 칸을 깎으면 옆 칸도 조금(약 35 %) 같이 내려가요.</p>' +
         '<details class="fbt-how fbt-o10" open><summary>링아웃 순서 (예배 전 사운드체크 때)</summary><ol>' +
-          '<li>「소리 켜기」를 누르고 전체 소리 크기를 편하게 맞춰요.</li><li>AUX 를 1 dB 씩 천천히 올려요.</li><li>울리기 시작하면 바로 1–2 dB 내리고, 그 대역을 GEQ 에서 3 dB 쯤 깎아요.</li>' +
+          '<li>「소리 켜기」를 누르고 전체 소리 크기를 편하게 맞춰요.</li><li>AUX 를 1 dB 씩 천천히 올려요.</li><li>울리기 시작하면 바로 1–2 dB 내려요. 그리고 그 대역을 GEQ 에서 3 dB 쯤 깎아요.</li>' +
           '<li>다시 조금씩 올려서 다음 울림을 찾아요(보통 3–4군데까지).</li><li>모니터를 마이크 뒤쪽으로 놓으면 여유가 크게 늘어요.</li></ol></details>' +
       '</div></div>';
     roUI();
@@ -727,7 +727,7 @@
     var sum = '';
     if (st === 'done') { var s = emSummary(), good = s.ok >= 4 && s.main === 0;
       sum = '<p class="fbt-sum' + (good ? ' good' : '') + '" data-out="emsum">5라운드 결과: 정답 ' + s.ok + ' · 뮤트 ' + s.mute + ' · MAIN 내림 ' + s.main + ' · 시간 초과 ' + s.late + (s.early ? ' · 미리 되돌림 ' + s.early : '') + ' — ' + (good ? '🎉 과제 달성! 하울링이 나면 「방금 바꾼 것」을 되돌리는 습관이 잘 잡혔어요.' : '정답 4번 이상, MAIN 0번이 목표예요. 다시 해 볼까요?') + '</p>'; }
-    body.innerHTML = '<p class="fbt-note">교육용 근사: 예배 중 선배가 페이더나 모니터 센드를 올리고, 잠시 뒤 그 경로에서 하울링이 나요. 방금 올린 것을 3 dB 이상 내리면 멈춰요. 모니터(AUX)는 보통 프리 페이더라 채널 페이더·MAIN 과 따로 움직여요. 라운드마다 콘솔은 처음 상태로 돌아가요.</p>' +
+    body.innerHTML = '<p class="fbt-note">교육용 근사(실제를 간단히 흉내 낸 연습)예요. 예배 중에 선배가 페이더나 모니터 센드(보내는 양)를 올려요. 잠시 뒤 그 길에서 하울링이 나요. 방금 올린 것을 3 dB 이상 내리면 멈춰요. 모니터(AUX)는 보통 프리 페이더(페이더 앞에서 보냄)예요. 그래서 채널 페이더 · MAIN 과 따로 움직여요. 라운드마다 콘솔은 처음 상태로 돌아가요.</p>' +
       '<div class="fbt-em__st"><div class="fbt-em__top"><span data-out="emround">' + (st === 'idle' ? '준비' : '라운드 ' + Math.min(5, n + (EM.cur ? 1 : 0)) + ' / 5') + '</span><span class="fbt-em__timer" data-out="emtimer"></span></div>' +
         '<p class="fbt-em__ann" data-out="emann"></p><p class="fbt-em__hint" data-out="emhint" hidden></p></div>' +
       '<div class="fbt-console" role="group" aria-label="미니 콘솔">' + chs +
@@ -752,7 +752,7 @@
     var mo = $('[data-emv=main]'); if (mo) mo.textContent = sint(EM.main);
     var ann = $('[data-out=emann]'), hint = $('[data-out=emhint]'), tm = $('[data-out=emtimer]');
     if (!ann) return;
-    if (st === 'idle') { ann.textContent = '「훈련 시작」을 누르면 예배가 시작돼요. 선배가 콘솔을 만지면 잘 보고 들으세요. 하울링이 나면 바로 대응해요!'; hint.hidden = true; tm.textContent = ''; }
+    if (st === 'idle') { ann.textContent = '「훈련 시작」을 누르면 예배가 시작돼요. 선배가 콘솔을 만지면 잘 보고 들어요. 하울링이 나면 바로 대응해요!'; hint.hidden = true; tm.textContent = ''; }
     else if (cur) {
       ann.textContent = '📣 방금 ' + (cur.path === 'mon' ? CHS[cur.ch].mon + '(' + CHS[cur.ch].name + ' MON)를' : CHS[cur.ch].name + ' 페이더를') + ' +' + cur.d + ' dB 올렸어요' + (cur.path === 'mon' ? ' — "제 소리가 잘 안 들려요" 라고 해서요.' : ' — "뒤쪽에서 잘 안 들려요" 라고 해서요.');
       if (st === 'howl') {
@@ -782,7 +782,7 @@
       else { fcls = 'no'; fb = '아니에요. 정답은 ' + fmtHzL(BANDS[last.target]) + ' 였어요 (고른 것: ' + fmtHzL(BANDS[last.pick]) + '). 「비교해 듣기」로 두 소리를 번갈아 들어 보세요.'; }
     } else if (!fin) fb = EAR.heard ? '어느 대역이었나요? 아래에서 골라요.' : '「▶ 문제 소리 듣기」를 먼저 눌러요.';
     var dots = []; for (var i = 0; i < 10; i++) { var r = EAR.results[i]; dots.push('<li class="' + (r ? (r.diff === 0 ? 'ok' : Math.abs(r.diff) === 1 ? 'near' : 'no') : '') + '">' + (i + 1) + '</li>'); }
-    body.innerHTML = '<p class="fbt-note">짧고 작은 울림 소리(사인파)를 듣고 1/3옥타브 19칸 중 어느 칸인지 골라요. 실제 하울링도 이렇게 한 음처럼 들려요. ±1칸 안이면 실전에서 GEQ 를 찾기에 충분해요.</p>' +
+    body.innerHTML = '<p class="fbt-note">짧고 작은 울림 소리(사인파)를 들어요. 그리고 19칸(1/3옥타브 간격) 중 어느 칸인지 골라요. 실제 하울링도 이렇게 한 음처럼 들려요. 옆 칸까지(±1칸) 맞히면 실전에서 GEQ 를 찾기에 충분해요.</p>' +
       '<div class="sim-box"><div class="fbt-ear__top"><span class="fbt-ear__q" data-out="earq">' + (fin ? '끝!' : '문제 ' + (n + (EAR.answered ? 0 : 1)) + ' / 10') + '</span>' +
         (fin ? '' : '<button type="button" class="sim-btn on" data-fbt="earplay"' + (EAR.answered ? ' disabled' : '') + '>▶ 문제 소리 듣기</button>') +
         '<label class="fbt-opt"><input type="checkbox" data-fbt="earmix"' + (EAR.mix ? ' checked' : '') + '> 작은 목소리 위에 섞기</label>' +

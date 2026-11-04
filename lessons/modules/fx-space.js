@@ -64,9 +64,9 @@
     var x0 = 52, x1 = 380, y0 = 24, y1 = 178, fx = function (s) { return x0 + s / 3 * (x1 - x0); }, fy = function (d) { return y0 + (-d) / 60 * (y1 - y0); };
     var grid = [0, -20, -40, -60].map(function (d) { return '<path d="M' + x0 + ' ' + fy(d) + 'H' + x1 + '" stroke="' + C.line + '" stroke-dasharray="' + (d === -60 ? '0' : '3 3') + '"/>' + t(x0 - 6, fy(d) + 4, nd(d), { size: 10, fill: C.sub, anchor: 'end' }); }).join('') +
       [0, 0.5, 1, 1.5, 2, 2.5, 3].map(function (s) { return t(fx(s), y1 + 15, s + ' s', { size: 9, fill: C.sub }); }).join('');
-    var L = [[0.6, C.teal, '흡음 많은 작은 방 0.6 s'], [1.5, C.blue, '중간 크기 예배당 1.5 s'], [2.5, C.red, '돌·유리 많은 큰 공간 2.5 s']];
+    var L = [[0.6, C.teal, '소리를 먹는 작은 방 0.6 s'], [1.5, C.blue, '중간 크기 예배당 1.5 s'], [2.5, C.red, '돌·유리 많은 큰 공간 2.5 s']];
     var body = grid + L.map(function (l) { return '<path d="M' + fx(0) + ' ' + fy(0) + 'L' + fx(l[0]) + ' ' + fy(-60) + '" stroke="' + l[1] + '" stroke-width="3"/><circle cx="' + fx(l[0]) + '" cy="' + fy(-60) + '" r="4" fill="' + l[1] + '"/>'; }).join('') +
-      t(x0, 14, '잔향 크기 (dB)', { size: 10, fill: C.sub, anchor: 'start' });
+      t(x0, 14, '울림(잔향) 크기 (dB)', { size: 10, fill: C.sub, anchor: 'start' });
     body += L.map(function (l, i) { var y = 48 + i * 26; return '<path d="M400 ' + (y - 4) + 'h20" stroke="' + l[1] + '" stroke-width="3"/>' + t(426, y, l[2], { size: 11, anchor: 'start' }); }).join('') +
       '<circle cx="408" cy="' + 122 + '" r="4" fill="' + C.ink + '"/>' + t(418, 126, '점 = −60 dB 까지 걸린 시간(RT60)', { size: 11, anchor: 'start', weight: 700 }) +
       t(400, 152, '사람·카펫·쿠션: 흡수 ↑ → 짧아짐', { size: 11, fill: C.sub, anchor: 'start' }) + t(400, 170, '콘크리트·유리·돌: 반사 ↑ → 길어짐', { size: 11, fill: C.sub, anchor: 'start' }) +
@@ -116,16 +116,16 @@
     o = o || {}; var post = o.mode !== 'pre', on = '#0e7490', off = '#cbd5e1', fOff = o.faderOff;
     function box(x, y, w, l1, l2, hot, dim) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="46" rx="9" fill="' + (hot ? on : dim ? '#f1f5f9' : C.bg) + '" stroke="' + (hot ? on : C.line) + '" stroke-width="1.6"/>' + t(x + w / 2, y + 20, l1, { size: 12, weight: 800, fill: hot ? '#fff' : dim ? '#94a3b8' : C.ink }) + (l2 ? t(x + w / 2, y + 36, l2, { size: 10, fill: hot ? '#e0f2fe' : C.sub }) : ''); }
     var h = box(8, 30, 76, '입력', '보컬 마이크') + arrow(84, 53, 110, 53, C.ink) + box(112, 30, 84, 'GAIN·EQ', '') + arrow(196, 53, 234, 53, C.ink) +
-      box(236, 30, 84, '채널 페이더', fOff ? '내려감' : 'Dry 양', false, fOff) + arrow(320, 53, 358, 53, fOff ? off : C.ink) + box(360, 30, 84, 'ST 버스', '메인 믹스') + arrow(444, 53, 482, 53, C.ink) + box(484, 30, 104, '메인 스피커', '회중석');
+      box(236, 30, 84, '채널 페이더', fOff ? '내려감' : 'Dry 양', false, fOff) + arrow(320, 53, 358, 53, fOff ? off : C.ink) + box(360, 30, 84, 'ST 버스', '메인으로 섞기') + arrow(444, 53, 482, 53, C.ink) + box(484, 30, 104, '메인 스피커', '회중석');
     var pre = !post, preCol = pre ? on : '#94a3b8', postCol = post ? on : '#94a3b8';
     h += '<circle cx="216" cy="53" r="6" fill="' + (pre ? on : '#fff') + '" stroke="' + preCol + '" stroke-width="2"/>' + t(216, 22, 'PRE', { size: 10, weight: 800, fill: preCol });
     h += '<circle cx="340" cy="53" r="6" fill="' + (post ? on : '#fff') + '" stroke="' + postCol + '" stroke-width="2"/>' + t(340, 22, 'POST', { size: 10, weight: 800, fill: postCol });
     h += '<path d="M216 59V136" stroke="' + preCol + '" stroke-width="' + (pre ? 2.6 : 1.4) + '" stroke-dasharray="' + (pre ? '0' : '4 3') + '"/>';
     h += '<path d="M340 59V118H250V136" fill="none" stroke="' + postCol + '" stroke-width="' + (post ? 2.6 : 1.4) + '" stroke-dasharray="' + (post ? '0' : '4 3') + '"/>';
-    h += box(150, 136, 120, 'FX SEND', o.live ? 'FX1·FX2 Send' : 'AUX2/FX 노브') + arrow(270, 159, 298, 159, C.ink) + box(300, 136, 116, '이펙터', o.live ? '리버브 · 딜레이' : 'SPX (100% Wet)') + arrow(416, 159, 444, 159, C.ink) + box(446, 136, 100, 'FX RTN', 'Return 양');
+    h += box(150, 136, 120, 'FX SEND', o.live ? 'FX1·FX2 Send' : 'AUX2/FX 노브') + arrow(270, 159, 298, 159, C.ink) + box(300, 136, 116, '이펙터', o.live ? '리버브 · 딜레이' : 'SPX (100% Wet)') + arrow(416, 159, 444, 159, C.ink) + box(446, 136, 100, 'FX RTN', '돌아오는 양');
     h += '<path d="M496 136V100H402V80" fill="none" stroke="' + C.ink + '" stroke-width="2"/><path d="M396 86L402 78L408 86" fill="none" stroke="' + C.ink + '" stroke-width="2"/>';
     h += (post ? t(348, 128, 'POST: 페이더 지난 소리', { size: 10, fill: on, anchor: 'start', weight: 700 }) : '') + (pre ? t(208, 112, 'PRE: 페이더 앞 소리', { size: 10, fill: on, anchor: 'end', weight: 700 }) : '');
-    if (!o.live) h += t(300, 204, 'MG12XU: 채널 AUX2/FX 노브 → 내장 SPX → FX RTN 페이더 → ST (제조사 자료를 바탕으로 단순화)', { size: 10, fill: C.sub });
+    if (!o.live) h += t(300, 204, 'MG12XU: 채널 AUX2/FX 노브 → 내장 SPX → FX RTN 페이더 → ST (제조사 자료를 바탕으로 간단히 그림)', { size: 10, fill: C.sub });
     return svg(600, o.live ? 190 : 212, h, 'FX Send/Return 신호 흐름과 PRE·POST 보내는 위치');
   }
   VIS.fxSendReturn = function () { return flowSvg({ mode: 'post' }); };
@@ -181,15 +181,15 @@
       '<div class="sim-fx">' +
         '<div class="sim-fx-main">' +
           '<div class="sim-fx-flow" data-role="flow"></div>' +
-          '<div class="sim-fx-pbox"><canvas data-cv="echo" aria-label="에코그램: 직접음, 리버브, 딜레이 반복"></canvas><small>에코그램(교육용 근사) · 검은 선 = Dry(직접음) · 청록 = 리버브 · 주황 = 딜레이 반복 · 점선 = 이 곡의 4분음표(' + SONG_BPM + ' BPM)</small></div>' +
-          '<div class="sim-fx-pbox"><canvas data-cv="zoom" aria-label="첫 150 ms 확대"></canvas><small>첫 150 ms 확대 · 색 띠 = 자음 구간(직접음 뒤 첫 30 ms)</small></div>' +
+          '<div class="sim-fx-pbox"><canvas data-cv="echo" aria-label="에코그램: 직접음, 리버브, 딜레이 반복"></canvas><small>에코그램(소리가 도착하는 시간 그림 · 교육용 어림값) · 검은 선 = Dry(직접음) · 청록 = 리버브 · 주황 = 딜레이 반복 · 점선 = 이 곡의 4분음표(' + SONG_BPM + ' BPM)</small></div>' +
+          '<div class="sim-fx-pbox"><canvas data-cv="zoom" aria-label="첫 150 ms 확대"></canvas><small>첫 150 ms 를 크게 본 그림 · 색 띠 = 자음 구간(직접음 뒤 첫 30 ms)</small></div>' +
           '<div class="sim-fx-mtrs" data-role="mtrs">' + ['dry', 'wet', 'main'].map(function (k) { return '<div class="sim-fx-mrow"><span>' + { dry: 'Dry', wet: 'Wet (FX)', main: '메인 출력' }[k] + '</span><i class="sim-fx-bar" data-m="' + k + '"><i></i></i><b data-o="' + k + '">−∞</b></div>'; }).join('') + '</div>' +
         '</div>' +
         '<div class="sim-side">' +
           '<div class="sim-box"><h4>소리</h4><button type="button" class="sim-btn sim-play" data-sim="play">🔊 소리 켜기</button><p class="sim-note" data-role="src"></p></div>' +
           '<div class="sim-box"><h4>채널 (보컬)</h4>' + rng2('fader') +
             '<div class="sim-fx-seg" role="radiogroup" aria-label="FX 보내는 위치"><span>FX 보내는 위치</span><label><input type="radio" name="simFxMode" value="pre"><b>PRE</b><small>페이더 앞</small></label><label><input type="radio" name="simFxMode" value="post"><b>POST</b><small>페이더 뒤</small></label></div></div>' +
-          '<div class="sim-box"><h4>FX1 · 리버브 <small>교육용 근사</small></h4>' + rng2('revSend') + rng2('decay') + rng2('pre') + rng2('revRtn') + '</div>' +
+          '<div class="sim-box"><h4>FX1 · 리버브 <small>교육용 어림값</small></h4>' + rng2('revSend') + rng2('decay') + rng2('pre') + rng2('revRtn') + '</div>' +
           '<div class="sim-box"><h4>FX2 · 딜레이</h4>' + rng2('dlySend') + rng2('time') +
             '<div class="sim-fx-time"><label>ms 직접 입력 <input type="number" min="50" max="1200" step="1" data-sim="timeNum" aria-label="딜레이 시간 ms"></label>' +
             '<label>탭 음표 <select data-sim="note" aria-label="탭 템포 음표">' + Object.keys(NOTES).map(function (k) { return '<option value="' + k + '">' + NOTES[k][1] + '</option>'; }).join('') + '</select></label>' +
@@ -239,7 +239,7 @@
       var maskTxt = { off: ['', '— (리버브 꺼짐)'], many: ['bad', '많음 — 가사가 흐려요'], some: ['warn', '조금'], few: ['ok', S.pre >= 100 ? '적음 · 잔향이 따로 들릴 수 있어요' : '적음 — 자음이 먼저 들려요'] }[c.mask];
       var revQ = !c.revOn ? ['', ''] : c.revAmt > -6 ? ['bad', ' · 아주 많음'] : c.revAmt > -15 ? ['warn', ' · 많은 편(찬양)'] : ['ok', ' · 적은 편(설교)'];
       var bpmNow = 60000 / S.time, err = c.tempoErr;
-      read.innerHTML = '<h4>지금 상태 <small>교육용 근사</small></h4>' +
+      read.innerHTML = '<h4>지금 상태 <small>교육용 어림값</small></h4>' +
         '<div class="sim-row"><span>리버브 양 (Dry 대비)</span><b class="' + revQ[0] + '">' + (c.revOn ? amt(c.F === -Infinity && !c.post ? Infinity : c.revAmt) + revQ[1] : '꺼짐') + '</b></div>' +
         '<div class="sim-row"><span>Decay / Pre-delay</span><b>' + S.decay.toFixed(1) + ' s / ' + Math.round(S.pre) + ' ms</b></div>' +
         '<div class="sim-row"><span>자음 가림</span><b class="' + maskTxt[0] + '">' + maskTxt[1] + '</b></div>' +
@@ -301,7 +301,7 @@
       if (N.rt !== S.decay) { clearTimeout(irTimer); irTimer = setTimeout(function () { if (N && N.rt !== S.decay) { N.rt = S.decay; N.conv.buffer = makeIR(S.decay); } }, 150); }
     }
     function startAudio() {
-      if (!Vx || !Vx.buf) { $('[data-role=src]').textContent = '녹음을 불러오지 못해 소리는 들을 수 없어요(미터는 가상 신호로 동작).'; return; }
+      if (!Vx || !Vx.buf) { $('[data-role=src]').textContent = '녹음을 불러오지 못해 소리는 들을 수 없어요. 미터는 가상 신호로 움직여요.'; return; }
       var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
       actx = actx || new AC(); if (actx.resume) actx.resume();
       var g = function () { return actx.createGain(); }, src = actx.createBufferSource(); src.buffer = Vx.buf; src.loop = true;
@@ -415,77 +415,77 @@
     title: '공간계 이펙트', sub: 'Reverb 와 Delay 로 공간감 더하기',
     prereq: ['signal-flow'],
     overview: {
-      lead: '큰 공간에서 소리는 벽·바닥·천장에 부딪히며 여러 번 반사된 뒤 귀에 도착해요. <b>리버브</b>는 이런 수많은 반사가 겹친 「울림」을, <b>딜레이</b>는 같은 소리가 일정한 시간 뒤 또렷하게 들리는 「반복」을 만들어요. 콘솔에서는 채널 소리의 일부를 <b>FX 버스로 보내(Send)</b> 이펙터를 지난 효과음(Wet)을 <b>다시 섞어(Return)</b> 공간감을 더해요. 공간감은 소리를 풍성하게 하지만, 많을수록 말은 덜 또렷해져요.',
+      lead: '큰 공간에서 소리는 벽·바닥·천장에 여러 번 튕긴(반사된) 뒤 귀에 도착해요. 목욕탕에서 노래하면 소리가 울리는 것과 같아요. <b>리버브</b>는 이런 수많은 반사가 겹친 「울림」을 만들어요. <b>딜레이</b>는 같은 소리가 일정한 시간 뒤 또렷하게 들리는 「반복」(메아리)을 만들어요. 콘솔에서는 채널 소리의 일부를 <b>FX 버스(효과기로 가는 길)로 보내요</b>. 이것을 Send 라고 해요. 이펙터를 지난 효과음(Wet)은 <b>다시 섞어요</b>. 이것은 Return 이에요. 공간감은 소리를 풍성하게 해요. 하지만 많을수록 말은 덜 또렷해져요.',
       terms: [
-        ['직접음', '음원(입·스피커)에서 귀로 곧바로 오는 첫 소리예요. 소리의 방향과 또렷함을 정해요.'],
-        ['초기 반사음', '가까운 벽·바닥·천장에 한두 번 튕겨 직접음 뒤 수십 ms 안에 오는 소리예요. 공간의 크기를 느끼게 해요.'],
+        ['직접음', '음원(입·스피커)에서 귀로 곧바로 오는 첫 소리예요. 소리가 어디서 나는지와 또렷함을 정해요.'],
+        ['초기 반사음', '가까운 벽·바닥·천장에 한두 번 튕겨, 직접음 뒤 수십 ms 안에 오는 소리예요. 공간의 크기를 느끼게 해요.'],
         ['잔향 (Reverb tail)', '셀 수 없이 많은 반사가 겹치며 점점 작아지는 울림이에요.'],
-        ['RT60 · Decay', '소리를 멈춘 뒤 잔향이 60 dB 작아질 때까지 걸리는 시간이에요. 리버브의 Decay(Reverb Time)가 이 길이를 정해요.'],
-        ['Pre-delay', '직접음이 지나간 뒤 잔향이 시작되기까지의 틈(ms)이에요. 적당히 주면 가사가 잔향에 덜 묻혀요.'],
-        ['Delay Time · Feedback', '딜레이에서 한 번 반복되기까지의 시간(ms)과, 반복이 몇 번 이어질지를 정하는 양이에요.'],
-        ['Wet / Dry', 'Dry 는 효과가 없는 원래 소리, Wet 은 이펙터를 지난 효과음이에요. 둘의 비율이 공간감의 양이에요.'],
-        ['FX Send / Return', '채널 소리를 이펙터로 보내는 길(Send)과, 효과음이 콘솔로 돌아와 메인에 섞이는 길(Return)이에요.']
+        ['RT60 · Decay', '소리를 멈춘 뒤 잔향이 60 dB 작아질 때까지(거의 안 들릴 때까지) 걸리는 시간이에요. 리버브의 Decay(Reverb Time)가 이 길이를 정해요.'],
+        ['Pre-delay', '직접음이 지나간 뒤 잔향이 시작되기까지의 틈(ms)이에요. 알맞게 주면 가사가 잔향에 덜 묻혀요.'],
+        ['Delay Time · Feedback', 'Delay Time 은 한 번 반복되기까지의 시간(ms)이에요. Feedback 은 반복이 몇 번 이어질지 정하는 양이에요.'],
+        ['Wet / Dry', 'Dry 는 효과가 없는 원래 소리, Wet 은 이펙터를 지난 효과음이에요. 둘을 섞는 비율이 공간감의 양이에요.'],
+        ['FX Send / Return', 'Send 는 채널 소리를 이펙터로 보내는 길이에요. Return 은 효과음이 콘솔로 돌아와 메인에 섞이는 길이에요.']
       ],
       points: [
-        '소리는 1 m 를 가는 데 약 <b>2.9 ms</b> 걸려요(343 m/s, 20 °C). 반사음이 늦게 올수록 공간이 크게 느껴져요.',
-        '<b>설교·광고는 리버브를 짧고 적게</b>, 찬양은 조금 더. 말이 또렷하게 들리는지가 먼저예요.',
-        '리버브·딜레이는 보통 <b>POST(페이더 뒤)</b>로 보내요. 페이더를 내리면 효과음도 함께 줄어들어요.'
+        '소리는 1 m 를 가는 데 약 <b>2.9 ms</b>(1000분의 2.9초) 걸려요(343 m/s, 20 °C). 반사음이 늦게 올수록 공간이 크게 느껴져요.',
+        '<b>설교·광고는 리버브를 짧고 적게</b>, 찬양은 조금 더 써요. 말이 또렷하게 들리는지가 먼저예요.',
+        '리버브·딜레이는 보통 <b>POST(페이더 뒤)</b>로 보내요. 그래야 페이더를 내리면 효과음도 함께 줄어들어요.'
       ],
       model: 'fxEchogram'
     },
     theory: [
       { title: '반사음과 시간 지연', visual: 'fxReflections',
-        body: '소리는 공기 속에서 1초에 약 <b>343 m</b>(20 °C)를 가요. 그래서 <b>1 m 에 약 2.9 ms</b>, 10 m 면 약 29 ms 가 걸려요. 귀에는 ① 음원에서 곧바로 온 <b>직접음</b> ② 바닥·벽·천장에 한두 번 튕겨 조금 늦게 온 <b>초기 반사음</b> ③ 수많은 반사가 겹쳐 점점 작아지는 <b>잔향</b>이 차례로 도착해요. 반사음은 더 먼 길을 돌아오니 늦게 오고, 벽에 일부가 흡수되어 더 작아요.',
-        more: '<ul><li><b>지연 시간 = 거리 차이 ÷ 343 m/s</b>. 예: 직접음 경로가 10 m, 천장 반사 경로가 14 m 면 4 m 차이 → 약 11.7 ms 늦게 도착해요.</li><li><b>선행음 효과(하스 효과)</b>: 같은 소리가 약 30 ms 안에 뒤따라 오면 귀는 둘을 하나로 듣고, 먼저 도착한 쪽에서 소리가 난다고 느껴요. 뒤 소리가 조금(약 10 dB 까지) 더 커도 방향은 먼저 온 쪽으로 느껴져요.</li><li>약 50 ms 보다 늦게 오는 큰 반사는 따로 떨어진 <b>메아리(에코)</b>로 들리기 쉬워 말을 흐려요.</li><li>그래서 회중석 중간·뒤를 맡는 <b>딜레이 스피커</b>는 메인 스피커 소리가 도착하는 시간에 맞춰 신호를 늦춰 보내요. 3층 본당 3D 모델에서 메인 스피커와 천장 가운데 스피커(d&amp;b Yi10P)는 앞뒤로 약 14.5 m 떨어져 있어서, 그 뒤쪽 자리에는 메인 소리가 약 42 ms 늦게 도착해요. (교육용 근사 — 실제 설정값은 측정과 시스템 튜닝으로 정해요)</li><li>그림의 공간과 경로는 계산을 보여 주기 위한 <b>예시</b>예요(반사할 때 소리의 30% 가 흡수된다고 가정).</li></ul>',
+        body: '소리는 공기 속에서 1초에 약 <b>343 m</b>(20 °C)를 가요. 그래서 <b>1 m 에 약 2.9 ms</b>, 10 m 면 약 29 ms 가 걸려요. 귀에는 세 가지 소리가 차례로 도착해요. ① 음원에서 곧바로 온 <b>직접음</b>이 먼저 와요. ② 바닥·벽·천장에 한두 번 튕긴 <b>초기 반사음</b>이 조금 늦게 와요. ③ 수많은 반사가 겹쳐 점점 작아지는 <b>잔향</b>이 마지막에 와요. 반사음은 더 먼 길을 돌아와서 늦게 와요. 벽에 일부가 빨려 들어가서(흡수) 더 작아요.',
+        more: '<ul><li><b>늦게 오는 시간(지연) = 거리 차이 ÷ 343 m/s</b>예요. 예를 들어 직접음 길이 10 m, 천장 반사 길이 14 m 라고 해 봐요. 4 m 차이라서 약 11.7 ms 늦게 도착해요.</li> <li><b>선행음 효과(하스 효과)</b>: 같은 소리가 약 30 ms 안에 뒤따라 오면 귀는 둘을 하나로 들어요. 그리고 먼저 도착한 쪽에서 소리가 난다고 느껴요. 뒤 소리가 조금(약 10 dB 까지) 더 커도 방향은 먼저 온 쪽으로 느껴져요.</li> <li>약 50 ms 보다 늦게 오는 큰 반사는 따로 떨어진 <b>메아리(에코)</b>로 들리기 쉬워요. 그러면 말이 흐려져요.</li> <li>그래서 회중석 중간·뒤를 맡는 <b>딜레이 스피커</b>는 신호를 늦춰 보내요. 메인 스피커 소리가 도착하는 시간에 맞추는 거예요. 3층 본당 3D 모델을 예로 들어 봐요. 메인 스피커와 천장 가운데 스피커(d&amp;b Yi10P)는 앞뒤로 약 14.5 m 떨어져 있어요. 그래서 그 뒤쪽 자리에는 메인 소리가 약 42 ms 늦게 도착해요. 이 값은 교육용 어림값이에요. 실제 설정값은 측정과 시스템 튜닝으로 정해요.</li> <li>그림의 공간과 경로는 계산을 보여 주기 위한 <b>예시</b>예요. 반사할 때 소리의 30% 가 흡수된다고 정했어요(가정).</li></ul>',
         check: { q: '스피커에서 17 m 떨어진 자리에는 소리가 약 얼마 뒤에 도착할까요?', options: [
-          { t: '약 5 ms', why: '1 m 에 약 2.9 ms 라서 17 m 면 약 50 ms 예요.' },
-          { t: '약 50 ms', ok: true, why: '맞아요. 17 × 2.9 ≈ 49.6 ms 예요(17 ÷ 343 초).' },
-          { t: '약 500 ms', why: '500 ms 는 약 170 m 떨어졌을 때예요.' }] } },
+          { t: '약 5 ms', why: '아니에요. 1 m 에 약 2.9 ms 라서 17 m 면 약 50 ms 예요.' },
+          { t: '약 50 ms', ok: true, why: '맞아요. 17 × 2.9 ≈ 49.6 ms 이기 때문이에요(17 ÷ 343 초).' },
+          { t: '약 500 ms', why: '아니에요. 500 ms 는 약 170 m 떨어졌을 때예요.' }] } },
       { title: '공간이 더하는 잔향 — 예배당도 리버브예요', visual: 'fxRoomDecay',
-        body: '예배당은 그 자체로 커다란 리버브 장치예요. 스피커에서 나온 소리도 벽·천장에 반사되어 잔향이 생겨요. 잔향의 길이는 보통 <b>RT60</b>(소리를 멈춘 뒤 60 dB 작아질 때까지의 시간)으로 말해요. 공간이 크고 단단한 면(콘크리트·유리·돌)이 많을수록 길고, 흡음(카펫·의자 쿠션·사람)이 많을수록 짧아요. 이미 울림이 많은 본당에서는 콘솔 리버브를 조금만 넣어도 충분하거나, 거의 넣지 않아도 될 때가 있어요.',
-        more: '<ul><li>콘솔에서 넣은 리버브는 공간의 잔향에 <b>더해져요</b>. 공간의 울림을 콘솔에서 빼 줄 수는 없어요.</li><li>사람이 가득 찬 예배 때는 사람과 옷이 소리를 흡수해 빈 본당에서 리허설할 때보다 잔향이 짧아져요. 리허설 때 맞춘 리버브 양이 예배 때는 다르게 들릴 수 있어요.</li><li>잔향이 길면 앞 음절의 울림이 다음 음절을 덮어 말이 뭉개져요. 그래서 말을 전하는 공간은 잔향이 짧을수록 유리해요.</li><li>그림의 RT60 값들은 비교를 위한 <b>예시</b>예요. 우리 본당의 측정값이 아니에요.</li></ul>',
+        body: '예배당은 그 자체로 커다란 리버브 장치예요. 스피커에서 나온 소리도 벽·천장에 반사되어 울림(잔향)이 생겨요. 잔향의 길이는 보통 <b>RT60</b> 으로 말해요. 소리를 멈춘 뒤 60 dB 작아질 때까지의 시간이에요. 공간이 크고 단단한 면(콘크리트·유리·돌)이 많을수록 길어요. 소리를 빨아들이는 것(흡음: 카펫·의자 쿠션·사람)이 많을수록 짧아요. 이미 울림이 많은 본당에서는 콘솔 리버브를 조금만 넣어도 충분해요. 거의 넣지 않아도 될 때도 있어요.',
+        more: '<ul><li>콘솔에서 넣은 리버브는 공간의 잔향에 <b>더해져요</b>. 공간의 울림을 콘솔에서 빼 줄 수는 없어요.</li> <li>사람이 가득 찬 예배 때는 사람과 옷이 소리를 빨아들여요. 그래서 빈 본당에서 리허설할 때보다 잔향이 짧아져요. 리허설 때 맞춘 리버브 양이 예배 때는 다르게 들릴 수 있어요.</li> <li>잔향이 길면 앞 음절의 울림이 다음 음절을 덮어 말이 뭉개져요. 그래서 말을 전하는 공간은 잔향이 짧을수록 유리해요.</li> <li>그림의 RT60 값들은 비교를 위한 <b>예시</b>예요. 우리 본당의 측정값이 아니에요.</li></ul>',
         check: { q: '사람이 가득 찬 예배 때는 빈 본당에서 리허설할 때보다 울림이 어떨까요?', options: [
-          { t: '사람과 옷이 소리를 흡수해 잔향이 짧아진다', ok: true, why: '맞아요. 흡음이 늘어 잔향이 짧아져요. 리허설 때 맞춘 효과가 달리 들릴 수 있어요.' },
-          { t: '사람이 많으면 잔향이 길어진다', why: '사람은 소리를 흡수해서 잔향을 줄여요.' },
-          { t: '아무 차이가 없다', why: '흡음이 늘면 잔향이 달라져요.' }] } },
+          { t: '사람과 옷이 소리를 흡수해 잔향이 짧아져요', ok: true, why: '맞아요. 소리를 빨아들이는 것이 늘어 잔향이 짧아지기 때문이에요. 리허설 때 맞춘 효과가 달리 들릴 수 있어요.' },
+          { t: '사람이 많으면 잔향이 길어져요', why: '아니에요. 사람은 소리를 빨아들여서 잔향을 줄여요.' },
+          { t: '아무 차이가 없어요', why: '아니에요. 소리를 빨아들이는 것이 늘면 잔향이 달라져요.' }] } },
       { title: 'Reverb 와 Delay 의 차이', visual: 'fxRevVsDelay',
-        body: '<b>리버브</b>는 아주 많은 반사가 촘촘히 이어지며 줄어드는 「울림」이에요. 소리를 큰 공간에 둔 것처럼 풍성하게 해요. <b>딜레이</b>는 같은 소리가 정해 둔 시간 뒤에 또렷하게 「반복」되는 효과예요. 리버브는 주로 <b>Decay(잔향 길이)·Pre-delay</b>로, 딜레이는 <b>Delay Time(반복 간격)·Feedback(반복 횟수)</b>으로 조절해요.',
-        more: '<ul><li><b>MG12XU 내장 SPX</b>: 24개 프로그램 중 PROGRAM 노브로 골라요. REV HALL 1·2, REV ROOM 1·2, REV STAGE 1·2, REV PLATE 같은 리버브와 SINGLE DLY, DELAY, VOCAL ECHO 같은 딜레이가 있어요. PARAMETER 노브는 리버브에서는 Reverb Time, 딜레이에서는 Delay Time 을 바꿔요. (제조사 자료)</li><li><b>CL5</b>: 내장 이펙트에 REV-X HALL·ROOM·PLATE, REVERB HALL·ROOM·STAGE·PLATE 같은 리버브와 MONO DELAY, STEREO DELAY, ECHO 같은 딜레이가 있어요. (제조사 자료)</li><li>Hall 은 크고 긴 울림, Room 은 작은 방처럼 짧은 울림, Plate 는 금속판 울림을 흉내 낸 밝은 잔향이에요.</li><li>그림은 두 효과의 반사 모양을 비교한 <b>예시</b>예요.</li></ul>',
+        body: '<b>리버브</b>는 아주 많은 반사가 촘촘히 이어지며 줄어드는 「울림」이에요. 소리를 큰 공간에 둔 것처럼 풍성하게 해요. <b>딜레이</b>는 같은 소리가 정해 둔 시간 뒤에 또렷하게 「반복」되는 효과예요. 산에서 「야호」 하면 돌아오는 메아리와 비슷해요. 리버브는 주로 <b>Decay(잔향 길이)·Pre-delay</b>로 조절해요. 딜레이는 <b>Delay Time(반복 간격)·Feedback(반복 횟수)</b>으로 조절해요.',
+        more: '<ul><li><b>MG12XU 내장 SPX(이펙터)</b>: 24개 프로그램 중 PROGRAM 노브로 골라요. (제조사 자료)<ul><li>리버브: REV HALL 1·2, REV ROOM 1·2, REV STAGE 1·2, REV PLATE 등</li> <li>딜레이: SINGLE DLY, DELAY, VOCAL ECHO 등</li> <li>PARAMETER 노브: 리버브에서는 Reverb Time, 딜레이에서는 Delay Time 을 바꿔요.</li></ul></li> <li><b>CL5 내장 이펙트</b> (제조사 자료)<ul><li>리버브: REV-X HALL·ROOM·PLATE, REVERB HALL·ROOM·STAGE·PLATE 등</li> <li>딜레이: MONO DELAY, STEREO DELAY, ECHO 등</li></ul></li> <li>Hall 은 크고 긴 울림이에요. Room 은 작은 방처럼 짧은 울림이에요. Plate 는 금속판 울림을 흉내 낸 밝은 잔향이에요.</li> <li>그림은 두 효과의 반사 모양을 비교한 <b>예시</b>예요.</li></ul>',
         check: { q: '같은 소리가 「똑… 똑… 똑…」 또렷하게 반복되어 들려요. 어떤 이펙트일까요?', options: [
-          { t: '딜레이', ok: true, why: '맞아요. 정해 둔 시간마다 또렷하게 반복되는 것이 딜레이예요.' },
-          { t: '리버브', why: '리버브는 반사가 촘촘히 이어져 하나의 울림으로 들려요.' },
-          { t: '컴프레서', why: '컴프레서는 음량 차이를 줄이는 장치예요.' }] } },
+          { t: '딜레이', ok: true, why: '맞아요. 정해 둔 시간마다 또렷하게 반복되는 것이 딜레이이기 때문이에요.' },
+          { t: '리버브', why: '아니에요. 리버브는 반사가 촘촘히 이어져 하나의 울림으로 들려요.' },
+          { t: '컴프레서', why: '아니에요. 컴프레서는 음량 차이를 줄이는 장치예요.' }] } },
       { title: 'Decay 와 Pre-delay', visual: 'fxPredelay',
-        body: '<b>Decay</b>(Reverb Time)는 잔향이 얼마나 오래 남는지, <b>Pre-delay</b> 는 직접음이 지나간 뒤 잔향이 시작되기까지의 틈이에요. Pre-delay 를 20–60 ms 쯤 주면 가사의 첫 자음이 잔향에 덮이기 전에 먼저 들려 또렷해지고, 울림은 그 뒤에 풍성하게 따라와요. 너무 길면(약 100 ms 이상) 잔향이 따로 떨어진 메아리처럼 들릴 수 있어요.',
-        more: '<ul><li>Decay 가 길수록 풍성하지만 앞 음절의 울림이 다음 음절을 덮어요. 빠른 곡은 짧게, 느린 곡은 조금 길게 두는 것이 보통이에요.</li><li>Pre-delay 는 「첫 반사가 오기까지 걸리는 시간」을 흉내 낸다고 생각해도 좋아요. 40 ms 는 소리가 약 14 m 를 더 돌아오는 시간이에요(40 ÷ 2.9).</li><li>그림의 「자음 구간」은 직접음 뒤 첫 30 ms 를 나타낸 <b>교육용 근사</b>예요.</li></ul>',
+        body: '<b>Decay</b>(Reverb Time)는 잔향이 얼마나 오래 남는지예요. <b>Pre-delay</b> 는 직접음이 지나간 뒤 잔향이 시작되기까지의 틈이에요. Pre-delay 를 20–60 ms 쯤 줘 봐요. 그러면 가사의 첫 자음이 잔향에 덮이기 전에 먼저 들려 또렷해져요. 울림은 그 뒤에 풍성하게 따라와요. 너무 길면(약 100 ms 이상) 잔향이 따로 떨어진 메아리처럼 들릴 수 있어요.',
+        more: '<ul><li>Decay 가 길수록 풍성해요. 하지만 앞 음절의 울림이 다음 음절을 덮어요. 빠른 곡은 짧게, 느린 곡은 조금 길게 두는 것이 보통이에요.</li> <li>Pre-delay 는 「첫 반사가 오기까지 걸리는 시간」을 흉내 낸다고 생각해도 좋아요. 40 ms 는 소리가 약 14 m 를 더 돌아오는 시간이에요(40 ÷ 2.9).</li> <li>그림의 「자음 구간」은 직접음 뒤 첫 30 ms 를 나타낸 <b>교육용 어림값(근사)</b>이에요.</li></ul>',
         check: { q: '찬양 보컬에 리버브를 넣었더니 가사가 흐려요. 울림은 살리면서 가사를 또렷하게 하려면?', options: [
-          { t: 'Pre-delay 를 조금(20–60 ms) 늘린다', ok: true, why: '맞아요. 자음이 잔향보다 먼저 들려 또렷해지고, 울림은 뒤에서 따라와요.' },
-          { t: 'Decay 를 두 배로 늘린다', why: '잔향이 더 길어져 가사가 더 흐려져요.' },
-          { t: 'Pre-delay 를 0 ms 로 한다', why: '잔향이 직접음과 바로 겹쳐 자음이 더 묻혀요.' }] } },
+          { t: 'Pre-delay 를 조금(20–60 ms) 늘려요', ok: true, why: '맞아요. 자음이 잔향보다 먼저 들려 또렷해지고, 울림은 뒤에서 따라오기 때문이에요.' },
+          { t: 'Decay 를 두 배로 늘려요', why: '아니에요. 잔향이 더 길어져 가사가 더 흐려져요.' },
+          { t: 'Pre-delay 를 0 ms 로 해요', why: '아니에요. 잔향이 직접음과 바로 겹쳐 자음이 더 묻혀요.' }] } },
       { title: '템포에 맞춘 딜레이', visual: 'fxTempo',
-        body: '딜레이의 반복이 곡의 박자에 맞으면 리듬 속에 자연스럽게 숨고, 어긋나면 지저분하게 들려요. 한 박(4분음표)의 길이는 <b>60000 ÷ BPM</b> (ms)이에요. 120 BPM 이면 500 ms, 8분음표는 그 절반인 250 ms, 점8분음표는 375 ms 예요. <b>Feedback</b> 은 반복이 몇 번 이어질지 정해요. 많이 올리면 반복이 쌓여 소리가 흐려져요.',
-        more: '<ul><li>예: 76 BPM → 60000 ÷ 76 ≈ 789 ms, 100 BPM → 600 ms.</li><li><b>탭 템포</b>: 박에 맞춰 버튼을 몇 번 두드리면 그 간격으로 딜레이 시간을 정해 줘요. CL5 의 이펙트에도 탭 템포 기능이 있어요. (제조사 자료)</li><li><b>MG12XU</b>: 딜레이 프로그램(SINGLE DLY·DELAY·VOCAL ECHO 등)을 고르면 PARAMETER 노브로 Delay Time 을 바꿔요. (제조사 자료)</li><li>설교에는 딜레이를 쓰지 않는 것이 보통이에요. 말이 겹쳐 알아듣기 어려워져요.</li></ul>',
+        body: '딜레이의 반복이 곡의 박자에 맞으면 리듬 속에 자연스럽게 숨어요. 어긋나면 지저분하게 들려요. BPM 은 1분에 몇 박인지예요. 한 박(4분음표)의 길이는 <b>60000 ÷ BPM</b> (ms)이에요. 120 BPM 이면 500 ms 예요. 8분음표는 그 절반인 250 ms, 점8분음표는 375 ms 예요. <b>Feedback</b> 은 반복이 몇 번 이어질지 정해요. 많이 올리면 반복이 쌓여 소리가 흐려져요.',
+        more: '<ul><li>예: 76 BPM → 60000 ÷ 76 ≈ 789 ms, 100 BPM → 600 ms 예요.</li> <li><b>탭 템포</b>: 박에 맞춰 버튼을 몇 번 두드리면 그 간격으로 딜레이 시간을 정해 줘요. CL5 의 이펙트에도 탭 템포 기능이 있어요. (제조사 자료)</li> <li><b>MG12XU</b>: 딜레이 프로그램(SINGLE DLY·DELAY·VOCAL ECHO 등)을 고르면 PARAMETER 노브로 Delay Time 을 바꿔요. (제조사 자료)</li> <li>설교에는 딜레이를 쓰지 않는 것이 보통이에요. 말이 겹쳐 알아듣기 어려워지기 때문이에요.</li></ul>',
         check: { q: '100 BPM 곡에서 4분음표 딜레이 시간은?', options: [
-          { t: '100 ms', why: '60000 ÷ 100 = 600 ms 예요.' },
-          { t: '600 ms', ok: true, why: '맞아요. 60000 ÷ 100 = 600 ms 예요.' },
-          { t: '1000 ms', why: '1000 ms 는 60 BPM 의 한 박이에요.' }] } },
-      { title: 'FX Send/Return 과 명료도', visual: 'fxSendReturn',
-        body: '콘솔에서는 채널마다 이펙터를 따로 꽂지 않고, 여러 채널이 <b>Send 노브</b>로 하나의 FX 버스에 소리를 보내요. 이펙터는 효과음(Wet)만 내보내고, 그 소리가 <b>FX Return</b> 으로 돌아와 메인에 섞여요. 원래 소리(Dry)는 채널 페이더로, 효과음 전체 양은 Return 으로 정해요. 리버브는 보통 <b>POST(페이더 뒤)</b>로 보내서 페이더를 내리면 효과음도 함께 줄어요. PRE 로 보내면 페이더를 내려도 효과음만 남는 실수가 생겨요.',
-        more: '<ul><li><b>MG12XU</b>: 채널의 AUX2/FX 노브가 AUX2 버스와 내장 이펙트(SPX)에 같은 양을 보내요. 효과음은 FX RTN 페이더로 ST(메인)나 GROUP 1-2 에 섞고, FX RTN 페이더는 AUX 로 보내는 양에는 영향을 주지 않아요. 이펙트 ON 버튼과 풋 스위치(별매 FC5)로 효과를 켜고 끌 수 있어요. (제조사 자료)</li><li>MG12XU 설명서의 빠른 시작: FX RTN 페이더를 「0」에 두고, FX RTN 페이더로 효과의 전체 깊이를 조절해요. (제조사 자료)</li><li>MG12XU 채널의 ON 을 끄면 그 채널 소리는 AUX·GROUP 버스로도 가지 않아요. (제조사 자료)</li><li><b>CL5</b>: 이펙트 랙이 8개 있고, MIX 버스로 보내는 지점을 Pre EQ · Pre Fader · Post On(페이더·ON 뒤) 중에서 고를 수 있어요. (제조사 자료)</li><li><b>공간감과 명료도</b>: 설교·기도·광고는 리버브를 짧고 적게(또는 끄고), 찬양은 조금 더. 리버브는 회중석에서 「있는 듯 없는 듯」할 때가 알맞은 경우가 많아요.</li><li>이펙터를 채널에 직접 꽂는(Insert) 방식이면 이펙터의 Wet/Dry(Mix) 비율로, Send/Return 방식이면 이펙터를 100% Wet 으로 두고 Send·Return 양으로 조절해요.</li></ul>',
-        check: { q: '리버브를 PRE 로 보내고 있었는데, 설교자 마이크 페이더를 끝까지 내렸어요. 어떻게 될까요?', options: [
-          { t: '리버브 소리만 계속 남아 들린다', ok: true, why: '맞아요. PRE 는 페이더 앞에서 보내서 페이더와 상관없이 효과음이 나가요.' },
-          { t: '리버브도 함께 꺼진다', why: '그것은 POST 로 보낼 때예요.' },
-          { t: '마이크 소리가 더 커진다', why: '페이더를 내리면 Dry 소리는 줄어요.' }] } }
+          { t: '100 ms', why: '아니에요. 60000 ÷ 100 = 600 ms 예요.' },
+          { t: '600 ms', ok: true, why: '맞아요. 60000 ÷ 100 = 600 ms 이기 때문이에요.' },
+          { t: '1000 ms', why: '아니에요. 1000 ms 는 60 BPM 의 한 박이에요.' }] } },
+      { title: 'FX Send/Return 과 또렷함(명료도)', visual: 'fxSendReturn',
+        body: '콘솔에서는 채널마다 이펙터를 따로 꽂지 않아요. 여러 채널이 <b>Send 노브</b>로 하나의 FX 버스에 소리를 보내요. 이펙터는 효과음(Wet)만 내보내요. 그 소리가 <b>FX Return</b> 으로 돌아와 메인에 섞여요. 원래 소리(Dry)는 채널 페이더로 정해요. 효과음 전체 양은 Return 으로 정해요. 리버브는 보통 <b>POST(페이더 뒤)</b>로 보내요. 그래야 페이더를 내리면 효과음도 함께 줄어요. PRE(페이더 앞)로 보내면 실수가 생길 수 있어요. 페이더를 내려도 효과음만 남아요.',
+        more: '<ul><li><b>MG12XU</b>: 채널의 AUX2/FX 노브가 AUX2 버스와 내장 이펙트(SPX)에 같은 양을 보내요. 효과음은 FX RTN 페이더로 ST(메인)나 GROUP 1-2 에 섞어요. FX RTN 페이더는 AUX 로 보내는 양에는 영향을 주지 않아요. 이펙트 ON 버튼과 풋 스위치(발로 밟는 스위치, 별매 FC5)로 효과를 켜고 끌 수 있어요. (제조사 자료)</li> <li>MG12XU 설명서의 빠른 시작: FX RTN 페이더를 「0」에 둬요. 그리고 FX RTN 페이더로 효과의 전체 깊이를 조절해요. (제조사 자료)</li> <li>MG12XU 채널의 ON 을 끄면 그 채널 소리는 AUX·GROUP 버스로도 가지 않아요. (제조사 자료)</li> <li><b>CL5</b>: 이펙트 랙(이펙터를 넣는 칸)이 8개 있어요. MIX 버스로 보내는 지점은 Pre EQ · Pre Fader · Post On(페이더·ON 뒤) 중에서 골라요. (제조사 자료)</li> <li><b>공간감과 또렷함(명료도)</b>: 설교·기도·광고는 리버브를 짧고 적게(또는 끄고) 해요. 찬양은 조금 더 써요. 리버브는 회중석에서 「있는 듯 없는 듯」할 때가 알맞은 경우가 많아요.</li> <li>이펙터를 채널에 직접 꽂는 방식(Insert)도 있어요. 이때는 이펙터의 Wet/Dry(Mix) 비율로 양을 정해요. Send/Return 방식에서는 이펙터를 100% Wet 으로 둬요. 그리고 Send·Return 양으로 조절해요.</li></ul>',
+        check: { q: '리버브를 PRE 로 보내고 있어요. 설교자 마이크 페이더를 끝까지 내리면 어떻게 될까요?', options: [
+          { t: '리버브 소리만 계속 남아 들려요', ok: true, why: '맞아요. PRE 는 페이더 앞에서 보내서, 페이더와 상관없이 효과음이 나가기 때문이에요.' },
+          { t: '리버브도 함께 꺼져요', why: '아니에요. 그것은 POST 로 보낼 때예요.' },
+          { t: '마이크 소리가 더 커져요', why: '아니에요. 페이더를 내리면 Dry 소리는 줄어요.' }] } }
     ],
     practice: {
       kind: 'fxSpaceSim',
-      lead: '실제 찬양 보컬 녹음을 가상 채널에 넣고 리버브(FX1)와 딜레이(FX2)로 보내요. Send·Return·Decay·Pre-delay·Delay Time·Feedback 과 PRE/POST 를 바꾸며 에코그램과 Dry·Wet 미터가 어떻게 바뀌는지 보세요. 「소리 켜기」로 바로 들을 수 있어요.',
-      note: '리버브는 지수로 줄어드는 잡음으로 만든 임펄스 응답(교육용 근사)이고, 딜레이는 실제 시간 지연과 피드백으로 처리해요. 에코그램의 레벨, 「자음 가림」 판정, 곡 템포(드럼 녹음을 분석한 약 127 BPM)는 교육용 근사예요. MG12XU SPX·CL5 이펙트의 실제 소리와는 달라요.',
+      lead: '실제 찬양 보컬 녹음을 가상 채널에 넣었어요. 이 소리를 리버브(FX1)와 딜레이(FX2)로 보내요. Send·Return·Decay·Pre-delay·Delay Time·Feedback 을 바꿔 보세요. PRE/POST 도 바꿔 보세요. 에코그램(소리가 도착하는 시간 그림)과 Dry·Wet 미터가 어떻게 바뀌는지 봐요. 「소리 켜기」로 바로 들을 수 있어요.',
+      note: '리버브는 점점 작아지는(지수로 줄어드는) 잡음으로 만든 울림 견본(임펄스 응답, 교육용 근사)이에요. 딜레이는 실제로 시간을 늦추고 되먹임(피드백)해서 처리해요. 에코그램의 크기, 「자음 가림」 판정, 곡 템포는 교육용 어림값이에요. 곡 템포 약 127 BPM 은 드럼 녹음을 분석한 값이에요. MG12XU SPX·CL5 이펙트의 실제 소리와는 달라요.',
       tasks: [
-        { id: 'sermon', title: '설교용: 리버브를 짧고 적게', text: 'Decay 를 1.0 s 이하로 줄이고, 리버브 양(Dry 대비)을 −15 dB 이하로 낮추세요(완전히 끄지는 말고). 딜레이는 꺼 두세요.' },
-        { id: 'predelay', title: '찬양 보컬: Pre-delay 로 명료도 살리기', text: 'Decay 1.5 s 이상, 리버브 양 −20 ~ −6 dB 의 풍성한 리버브에서 Pre-delay 를 20–80 ms 로 맞춰 「자음 가림: 적음」을 만드세요.' },
-        { id: 'tempo', title: 'BPM 에 맞춘 딜레이 시간', text: '이 곡은 약 127 BPM 이에요. 딜레이 Send·Return 을 올려 반복이 들리게 하고(양 −30 dB 이상), Delay Time 을 4분음표 길이(60000 ÷ BPM)에 ±5 ms 안으로 맞추세요.' },
-        { id: 'post', title: 'PRE 와 POST 비교', text: 'PRE 로 바꿔 페이더를 −40 dB 아래로 내리면 리버브만 남는 것을 본 뒤, POST 로 바꿔 페이더와 함께 리버브도 줄어드는 것을 확인하세요.' }
+        { id: 'sermon', title: '설교용: 리버브를 짧고 적게', text: 'Decay 를 1.0 s 이하로 줄이세요. 리버브 양(Dry 대비)은 −15 dB 이하로 낮춰요(완전히 끄지는 말고요). 딜레이는 꺼 두세요.' },
+        { id: 'predelay', title: '찬양 보컬: Pre-delay 로 또렷하게', text: 'Decay 1.5 s 이상, 리버브 양 −20 ~ −6 dB 로 풍성한 리버브를 만드세요. 그 상태에서 Pre-delay 를 20–80 ms 로 맞춰요. 「자음 가림: 적음」이 나오면 성공이에요.' },
+        { id: 'tempo', title: 'BPM 에 맞춘 딜레이 시간', text: '이 곡은 약 127 BPM 이에요. 딜레이 Send·Return 을 올려 반복이 들리게 하세요(양 −30 dB 이상). 그리고 Delay Time 을 4분음표 길이(60000 ÷ BPM)에 ±5 ms 안으로 맞춰요.' },
+        { id: 'post', title: 'PRE 와 POST 비교', text: 'PRE 로 바꾸고 페이더를 −40 dB 아래로 내려 보세요. 리버브만 남는 것을 봐요. 그다음 POST 로 바꿔요. 페이더와 함께 리버브도 줄어드는 것을 확인해요.' }
       ],
       links: [
         { title: 'MG12XU 기능부 설명 · AUX2/FX · SPX · FX RTN', text: '채널의 AUX2/FX 노브, SPX 이펙터(PROGRAM·PARAMETER), FX RTN 페이더가 콘솔 어디에 있는지 봐요.', go: { tab: 'tab6', sec: 'fx' } },
@@ -494,34 +494,34 @@
     },
     quiz: [
       { q: '설교 순서에 알맞은 리버브 설정은?', options: [
-        { t: '짧은 Decay, 적은 양 (또는 끔)', ok: true, why: '맞아요. 말은 또렷함이 먼저라 울림을 짧고 적게 해요.' },
-        { t: '긴 Decay, 많은 양', why: '말이 다음 음절의 울림에 덮여 알아듣기 어려워져요.' },
-        { t: '템포에 맞춘 딜레이를 크게', why: '말에 딜레이를 걸면 말이 겹쳐 들려요.' }] },
-      { q: '무대에서 34 m 떨어진 뒤쪽 벽에 반사되어 무대로 돌아오는 소리(왕복 68 m)는 약 얼마 뒤에 도착할까요?', options: [
-        { t: '약 20 ms', why: '1 m 에 약 2.9 ms 라서 68 m 면 약 200 ms 예요.' },
-        { t: '약 200 ms', ok: true, why: '맞아요. 68 ÷ 343 ≈ 0.198 s 로, 따로 들리는 메아리가 될 만큼 늦어요.' },
-        { t: '약 2 s', why: '2 s 면 약 690 m 를 가야 해요.' }] },
+        { t: '짧은 Decay, 적은 양 (또는 끔)', ok: true, why: '맞아요. 말은 또렷함이 먼저라 울림을 짧고 적게 해야 하기 때문이에요.' },
+        { t: '긴 Decay, 많은 양', why: '아니에요. 말이 다음 음절의 울림에 덮여 알아듣기 어려워져요.' },
+        { t: '템포에 맞춘 딜레이를 크게', why: '아니에요. 말에 딜레이를 걸면 말이 겹쳐 들려요.' }] },
+      { q: '무대에서 34 m 떨어진 뒤쪽 벽에 소리가 튕겨 무대로 돌아와요(왕복 68 m). 약 얼마 뒤에 도착할까요?', options: [
+        { t: '약 20 ms', why: '아니에요. 1 m 에 약 2.9 ms 라서 68 m 면 약 200 ms 예요.' },
+        { t: '약 200 ms', ok: true, why: '맞아요. 68 ÷ 343 ≈ 0.198 s 이기 때문이에요. 따로 들리는 메아리가 될 만큼 늦어요.' },
+        { t: '약 2 s', why: '아니에요. 2 s 면 약 690 m 를 가야 해요.' }] },
       { q: '84 BPM 곡에서 8분음표 딜레이 시간은 약 얼마일까요?', options: [
-        { t: '약 714 ms', why: '그것은 4분음표(60000 ÷ 84)예요. 8분음표는 그 절반이에요.' },
-        { t: '약 357 ms', ok: true, why: '맞아요. 60000 ÷ 84 ≈ 714 ms, 그 절반이 약 357 ms 예요.' },
-        { t: '약 84 ms', why: 'BPM 숫자를 그대로 ms 로 쓰면 안 돼요.' }] },
+        { t: '약 714 ms', why: '아니에요. 그것은 4분음표(60000 ÷ 84)예요. 8분음표는 그 절반이에요.' },
+        { t: '약 357 ms', ok: true, why: '맞아요. 60000 ÷ 84 ≈ 714 ms 이고, 그 절반이 약 357 ms 이기 때문이에요.' },
+        { t: '약 84 ms', why: '아니에요. BPM 숫자는 ms 가 아니에요. 60000 ÷ BPM 으로 계산해요.' }] },
       { q: 'Send/Return 방식에서 이펙터(리버브)의 Wet/Dry 는 보통 어떻게 둘까요?', options: [
-        { t: '100% Wet — 원래 소리는 채널 페이더로 따로 가니까', ok: true, why: '맞아요. Dry 는 채널에서 이미 메인으로 가고, Return 으로 효과음 양만 더해요.' },
-        { t: '100% Dry', why: '그러면 이펙터가 원래 소리만 다시 보내 효과가 없고 소리만 커져요.' },
-        { t: '50% / 50%', why: 'Send/Return 에서는 Dry 가 두 번 섞여 소리가 겹치고 커져요.' }] },
+        { t: '100% Wet — 원래 소리는 채널 페이더로 따로 가니까', ok: true, why: '맞아요. Dry 는 채널에서 이미 메인으로 가고, Return 으로는 효과음 양만 더하기 때문이에요.' },
+        { t: '100% Dry', why: '아니에요. 그러면 이펙터가 원래 소리만 다시 보내요. 효과는 없고 소리만 커져요.' },
+        { t: '50% / 50%', why: '아니에요. Send/Return 에서는 Dry 가 두 번 섞여 소리가 겹치고 커져요.' }] },
       { q: 'MG12XU 에서 내장 이펙트(SPX)로 보내는 양을 정하는 곳은?', options: [
-        { t: '채널의 AUX2/FX 노브', ok: true, why: '맞아요. 제조사 설명서: AUX2/FX 노브가 AUX2 버스와 FX 버스로 같은 양을 보내요. 효과음 전체 양은 FX RTN 페이더로 맞춰요.' },
-        { t: '채널의 GAIN 노브', why: 'GAIN 은 입력 크기를 맞추는 첫 단계예요.' },
-        { t: 'PHONES 노브', why: 'PHONES 는 헤드폰 음량이에요.' }] }
+        { t: '채널의 AUX2/FX 노브', ok: true, why: '맞아요. 제조사 설명서에 따르면 AUX2/FX 노브가 AUX2 버스와 FX 버스로 같은 양을 보내요. 효과음 전체 양은 FX RTN 페이더로 맞춰요.' },
+        { t: '채널의 GAIN 노브', why: '아니에요. GAIN 은 들어온 소리 크기를 맞추는 첫 단계예요.' },
+        { t: 'PHONES 노브', why: '아니에요. PHONES 는 헤드폰 음량이에요.' }] }
     ],
     missions: [
-      { title: '3층 음향 시스템 · 딜레이 스피커', text: '회중석 천장 가운데 스피커(d&b Yi10P)가 어디에 있고 신호가 어디서 오는지 따라가 보세요. 메인 스피커와의 거리로 지연 시간을 어림해 봐요(1 m ≈ 2.9 ms).', go: { tab: 'tab2', trace: 'y10p_C' } },
-      { title: 'CL5 콘솔 트레이닝 · 예배 식순', text: '식순에 맞춰 채널을 켜고 끄는 연습이에요. 찬양에서 설교로 넘어갈 때 리버브 양을 어떻게 바꿀지, 채널을 끄면 POST 로 보낸 효과음은 어떻게 되는지 함께 떠올려 보세요.', go: { tab: 'tab5' } }
+      { title: '3층 음향 시스템 · 딜레이 스피커', text: '회중석 천장 가운데 스피커(d&b Yi10P)가 어디에 있는지 찾아보세요. 신호가 어디서 오는지도 따라가 봐요. 메인 스피커와의 거리로 늦게 오는 시간을 어림해 봐요(1 m ≈ 2.9 ms).', go: { tab: 'tab2', trace: 'y10p_C' } },
+      { title: 'CL5 콘솔 트레이닝 · 예배 식순', text: '식순에 맞춰 채널을 켜고 끄는 연습이에요. 찬양에서 설교로 넘어갈 때 리버브 양을 어떻게 바꿀지 떠올려 보세요. 채널을 끄면 POST 로 보낸 효과음이 어떻게 되는지도 함께 생각해 봐요.', go: { tab: 'tab5' } }
     ],
     deeper: [
-      { title: '딜레이 스피커와 시간 맞추기', text: '메인에서 먼 자리를 돕는 스피커 소리가 메인 소리보다 먼저 도착하면, 소리가 그 스피커 쪽에서 나는 것처럼 들리고 울림이 지저분해져요. 그래서 거리만큼(1 m ≈ 2.9 ms) 신호를 늦추고, 선행음 효과를 생각해 몇 ms 를 더 주기도 해요.', more: '3층 본당의 천장 스피커(Yi10P·Yi7P)와 기둥 스피커(E8)가 이런 딜레이 스피커 역할을 해요. 실제 지연 값은 측정과 시스템 튜닝으로 정해요.' },
-      { title: '콤 필터 — 아주 짧은 지연이 만드는 음색 변화', text: '같은 소리가 1–10 ms 정도의 짧은 간격으로 겹치면 특정 주파수들이 서로 상쇄되어 「통 속에서 나는 듯한」 소리가 돼요. 마이크 두 개가 한 사람의 목소리를 함께 받을 때나 가까운 단단한 면의 반사에서도 생겨요.', more: '첫 상쇄 주파수는 1 ÷ (2 × 지연 시간)이에요. 예: 1 ms 지연이면 500 Hz, 1.5 kHz, 2.5 kHz … 에서 소리가 패여요. 마이크 모듈의 3:1 법칙도 이 문제를 줄이려는 것이에요.' },
-      { title: '모니터에도 리버브를 보낼까?', text: '무대 모니터에 리버브를 조금 보내면 싱어가 편하게 부르기도 하지만, 울림이 모니터로 나가면 피드백 여유가 줄고 소리가 흐려질 수 있어요. 필요할 때만 조금 쓰고, 설교자 모니터에는 보내지 않는 것이 보통이에요.', more: '' }
+      { title: '딜레이 스피커와 시간 맞추기', text: '메인에서 먼 자리를 돕는 스피커가 있어요. 그 스피커 소리가 메인 소리보다 먼저 도착하면 문제가 생겨요. 소리가 그 스피커 쪽에서 나는 것처럼 들리고, 울림이 지저분해져요. 그래서 거리만큼(1 m ≈ 2.9 ms) 신호를 늦춰요. 선행음 효과를 생각해 몇 ms 를 더 주기도 해요.', more: '3층 본당의 천장 스피커(Yi10P·Yi7P)와 기둥 스피커(E8)가 이런 딜레이 스피커 역할을 해요. 실제로 늦추는 값은 측정과 시스템 튜닝으로 정해요.' },
+      { title: '콤 필터 — 아주 짧은 시간 차이가 바꾸는 소리', text: '같은 소리가 1–10 ms 정도의 짧은 간격으로 겹칠 때가 있어요. 그러면 몇몇 높이의 소리가 서로 지워져요. 이것을 상쇄라고 해요. 그래서 「통 속에서 나는 듯한」 소리가 돼요. 마이크 두 개가 한 사람의 목소리를 함께 받을 때 생겨요. 가까운 단단한 면에 튕긴 소리에서도 생겨요.', more: '처음 지워지는 주파수는 1 ÷ (2 × 늦은 시간)이에요. 예: 1 ms 늦으면 500 Hz, 1.5 kHz, 2.5 kHz … 에서 소리가 패여요. 마이크 모듈의 3:1 법칙도 이 문제를 줄이려는 것이에요.' },
+      { title: '모니터에도 리버브를 보낼까?', text: '무대 모니터에 리버브를 조금 보내면 싱어가 편하게 부르기도 해요. 하지만 울림이 모니터로 나가면 피드백 여유가 줄고 소리가 흐려질 수 있어요. 필요할 때만 조금 써요. 설교자 모니터에는 보내지 않는 것이 보통이에요.', more: '' }
     ],
     sources: [
       { t: 'Yamaha MG20XU/MG16XU/MG12XU 사용설명서(제조사) — AUX2/FX·FX RTN·풋 스위치·SPX 24 프로그램 목록', url: MG_OM },
