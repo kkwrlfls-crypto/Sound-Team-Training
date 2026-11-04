@@ -212,7 +212,7 @@
     s += t(x0 + 30, 40, '1차: L = 반 파장', { size: 10, weight: 800, fill: C.blue, anchor: 'start' }) + t(x1 - 6, 40, '2차 (2배 주파수)', { size: 10, weight: 800, fill: C.orange, anchor: 'end' });
     s += '<circle cx="' + (x0 + 16) + '" cy="' + (ym) + '" r="7" fill="' + C.blue + '"/>' + t(x0 + 4, ym + 66, '벽 가까이: 크게', { size: 10, weight: 800, fill: C.blue, anchor: 'start' });
     s += '<circle cx="' + ((x0 + x1) / 2) + '" cy="' + ym + '" r="7" fill="#fff" stroke="' + C.blue + '" stroke-width="2.4"/>' + t((x0 + x1) / 2, ym + 66, '가운데(마디): 작게', { size: 10, weight: 800, fill: C.blue });
-    s += line(x0, 176, x1, 176, C.ink, 1.2) + t((x0 + x1) / 2, 172, 'L', { size: 11, weight: 800 });
+    s += line(x0, 176, x1, 176, C.ink, 1.2) + t(x0 + (x1 - x0) * 0.8, 172, '두 벽 사이 L', { size: 10, weight: 800 });
     s += rect(20, 190, 296, 44, '#eff6ff', '#93c5fd', 8) + t(168, 208, 'f = n × c ÷ 2L', { size: 13, weight: 900, fill: C.blue }) + t(168, 226, 'L = 8 m → 약 21 · 43 · 64 Hz (c = 343 m/s)', { size: 10, fill: C.ink });
     // 플러터
     var fx = 340, fw = 250;

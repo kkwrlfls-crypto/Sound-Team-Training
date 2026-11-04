@@ -101,7 +101,7 @@
     s += rect(318, 158, 40, 50, '#1f2933', null, 6) + t(338, 187, '앰프', { size: 10, weight: 800, fill: '#fff' });
     s += '<path d="M358 170H372V150H495V162M425 150V162M358 198H372V214H495V196M425 214V196" fill="none" stroke="' + C.red + '" stroke-width="2"/>';
     s += spk(402, 162, '8 Ω') + spk(472, 162, '8 Ω');
-    s += t(574, 182, '4 Ω', { size: 15, weight: 900, fill: C.teal, anchor: 'end' }) + t(574, 200, '8 × 8 ÷ (8 + 8)', { size: 10.5, fill: C.sub, anchor: 'end' });
+    s += t(580, 190, '4 Ω', { size: 15, weight: 900, fill: C.teal, anchor: 'end' }) + t(580, 140, '8 × 8 ÷ (8 + 8)', { size: 10.5, fill: C.sub, anchor: 'end' });
     return svg(600, 232, s, '전력 공식과 스피커 두 대의 직렬 병렬 임피던스');
   };
 

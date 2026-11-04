@@ -173,9 +173,9 @@
     var t = tex(c, false); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(1 / 160, 1 / 160);
     return (TEXCACHE.grain = t);
   }
-  function panelPrint(v, w, h, kind, rot) {   // 단자판 인쇄 (mm 크기 → 캔버스)
+  function panelPrint(v, w, h, kind, rot, ink) {   // 단자판 인쇄 (mm 크기 → 캔버스)
     var s = 6, c = canvas(Math.round(w * s), Math.round(h * s)), g = c.getContext('2d');
-    g.clearRect(0, 0, c.width, c.height); g.fillStyle = '#d7dbe0'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.clearRect(0, 0, c.width, c.height); g.fillStyle = ink || '#d7dbe0'; g.textAlign = 'center'; g.textBaseline = 'middle';
     function T(t, x, y, size, wgt) { g.font = (wgt || '700') + ' ' + size * s + 'px ' + FONT; g.fillText(t, x * s, y * s); }
     if (kind === 'conn') {
       if (rot) { T(v, w / 2, 6, 5, '900'); T('INPUT', w * 0.2, h - 5, 3.2); T('LINK', w * 0.8, h - 5, 3.2); T('1+ / 1−', w / 2, h - 5, 3, '600'); }
@@ -187,8 +187,9 @@
     var c = canvas(512, 160), g = c.getContext('2d');
     g.fillStyle = 'rgba(8,14,26,0.82)'; rrect(g, 4, 4, 504, 152, 26); g.fill(); g.strokeStyle = color; g.lineWidth = 6; g.stroke();
     g.fillStyle = '#ffffff'; g.textAlign = 'center'; g.textBaseline = 'middle';
-    g.font = '900 54px ' + FONT; g.fillText(lines[0], 256, lines[1] ? 58 : 80);
-    if (lines[1]) { g.font = '700 38px ' + FONT; g.fillStyle = color; g.fillText(lines[1], 256, 118); }
+    function fit(t, size, wgt) { var f = size; do { g.font = wgt + ' ' + f + 'px ' + FONT; f -= 2; } while (g.measureText(t).width > 470 && f > 14); }   // 칸에 맞게 글자 크기 줄임
+    fit(lines[0], 54, '900'); g.fillText(lines[0], 256, lines[1] ? 58 : 80);
+    if (lines[1]) { fit(lines[1], 38, '700'); g.fillStyle = color; g.fillText(lines[1], 256, 118); }
     return tex(c, true);
   }
 
@@ -224,7 +225,8 @@
     };
     var gt = grilleTex(opts.variant === 'E8' ? 0.72 : opts.variant === 'V-SUB' ? 0.66 : 0.68);
     m.grille = new S({ color: white ? pc : 0x2b2c2f, map: gt.map, bumpMap: gt.bump, bumpScale: 0.25, roughness: white ? 0.55 : 0.5, metalness: white ? 0.15 : 0.45 });
-    [m.body, m.pocket, m.cover, m.grille].forEach(function (x) { x.color.convertSRGBToLinear(); });
+    // 색 값은 sRGB 로 적었으므로 선형으로 바꿔 씀 (renderer.outputEncoding = sRGB)
+    Object.keys(m).forEach(function (k) { var x = m[k]; if (x && x.isMaterial) { x.color.convertSRGBToLinear(); if (x.emissive) x.emissive.convertSRGBToLinear(); } });
     m.white = white; return m;
   }
 
@@ -382,21 +384,21 @@
 
   // 드라이버 배치(사진 비례 · 추정): y = 바닥에서 중심 높이, z = 배플에서 앞면까지 들어간 깊이
   function driverLayout(v, rot) {
-    var L = [], sw = function (w, h) { return rot ? [h, w] : [w, h]; };
+    var L = [], sw = function (w, h, maxH) { var r = rot ? [h, w] : [w, h]; if (maxH) r[1] = Math.min(r[1], maxH); return r; };   // 돌리면 세로가 우퍼 사이 틈을 넘지 않게
     if (v === 'Vi10P') {
       L.push({ kind: 'cone', D: 262, y: 150, set: 1, cls: 'LF', label: ['10″ 우퍼', 'LF · 다이폴 아래'] }, { kind: 'cone', D: 262, y: 550, set: 1, cls: 'LF', label: ['10″ 우퍼', 'LF · 다이폴 위'] });
       L.push({ kind: 'cone', D: 210, y: 350, set: 78, cls: 'MF', label: ['8″ 미드', 'MF · 혼 로드'], labelDx: -1 });
-      var m = sw(250, 128); L.push({ kind: 'horn', y: 350, mw: m[0], mh: m[1], depth: 76, hf: 1.4, label: ['1.4″ 컴프레션 드라이버', 'CD 혼 ' + (rot ? '40° × 110°' : '110° × 40°') + ' (MF 와 동축)'], labelDx: 1 });
+      var m = sw(250, 128, 136); L.push({ kind: 'horn', y: 350, mw: m[0], mh: m[1], depth: 76, hf: 1.4, label: ['1.4″ 컴프레션 드라이버', 'CD 혼 ' + (rot ? '40° × 110°' : '110° × 40°') + ' (MF 와 동축)'], labelDx: 1 });
     } else if (v === 'Yi10P' || v === 'Yi7P') {
       L.push({ kind: 'cone', D: 210, y: 125, set: 1, cls: 'LF', label: ['8″ 우퍼', 'LF · 다이폴 아래'] }, { kind: 'cone', D: 210, y: 455, set: 1, cls: 'LF', label: ['8″ 우퍼', 'LF · 다이폴 위'] });
-      var mm = sw(v === 'Yi10P' ? 226 : 168, 104), dsp = v === 'Yi10P' ? (rot ? '40° × 110°' : '110° × 40°') : (rot ? '40° × 75°' : '75° × 40°');
+      var mm = sw(v === 'Yi10P' ? 226 : 168, 104, 118), dsp = v === 'Yi10P' ? (rot ? '40° × 110°' : '110° × 40°') : (rot ? '40° × 75°' : '75° × 40°');
       L.push({ kind: 'horn', y: 290, mw: mm[0], mh: mm[1], depth: 96, hf: 1.4, label: ['1.4″ 컴프레션 드라이버', '회전형 CD 혼 ' + dsp] });
     } else if (v === 'E8') {
       L.push({ kind: 'cone', D: 205, y: 195, set: 1, cls: 'LF', label: ['8″ / 1″ 동축 드라이버', '가운데 1″ HF · CD 혼 ' + (rot ? '50° × 90°' : '90° × 50°')], labelDy: -70 });
       var me = sw(84, 50); L.push({ kind: 'horn', y: 195, mw: me[0], mh: me[1], depth: 40, hf: 1.0, small: true, at: 2 });
     } else if (v === 'V-SUB') {
       L.push({ kind: 'cone', D: 460, y: 303, set: 2, cls: 'LF', label: ['18″ 우퍼', '앞 · 베이스 리플렉스'] });
-      L.push({ kind: 'cone', D: 310, y: 303, set: 0, rear: true, cls: 'MF', label: ['12″ 우퍼(뒤)', '2챔버 밴드패스 → 카디오이드'] });
+      L.push({ kind: 'cone', D: 310, y: 303, set: 0, rear: true, cls: 'LF', tint: 'MF', label: ['12″ 우퍼(뒤)', '2챔버 밴드패스 → 카디오이드'] });
     }
     return L;
   }
@@ -434,15 +436,15 @@
     var grille = new THREE.Mesh(grilleGeo(gLine, fr.y0, fr.y1, pitch), grilleMat); grille.name = 'dbSpeaker.grille'; c.add(grille);
 
     // 그릴 고정 Torx 나사 (공식: 윗면 · 아랫면) — E8 은 그릴 앞 위 · 아래 가운데(사진)
-    if (fr.wrap) { [-1, 1].forEach(function (sx) { addTorx(B, M, onFace(sx * (D.width / 2 - 34), H, -7, 0, 1, 0)); addTorx(B, M, onFace(sx * (D.width / 2 - 34), 0, -7, 0, -1, 0)); }); }
+    if (fr.wrap) { [-1, 1].forEach(function (sx) { addTorx(B, M, onFace(sx * (D.width / 2 - 34), H - 0.9, -7, 0, 1, 0)); addTorx(B, M, onFace(sx * (D.width / 2 - 34), 0.9, -7, 0, -1, 0)); }); }
     if (v === 'E8') { [372, 18].forEach(function (y) { addTorx(B, M, onFace(0, y, -1.0, 0, 0, 1)); }); }
 
     // ---- 리깅 M10 인서트 ----
     if (v === 'Vi10P') {
-      [-130, -330].forEach(function (z) { addM10(B, M, onFace(0, H + 0.05, z, 0, 1, 0)); addM10(B, M, onFace(0, -0.05, z, 0, -1, 0)); });
+      [-130, -330].forEach(function (z) { addM10(B, M, onFace(0, H - 0.5, z, 0, 1, 0)); addM10(B, M, onFace(0, 0.5, z, 0, -1, 0)); });
       [300, 400].forEach(function (y) { addM10(B, M, onFace(0, y, zr - 0.05, 0, 0, -1)); });
     } else if (v === 'Yi10P' || v === 'Yi7P') {
-      [-100, -250].forEach(function (z) { addM10(B, M, onFace(0, H + 0.05, z, 0, 1, 0)); addM10(B, M, onFace(0, -0.05, z, 0, -1, 0)); });
+      [-100, -250].forEach(function (z) { addM10(B, M, onFace(0, H - 0.5, z, 0, 1, 0)); addM10(B, M, onFace(0, 0.5, z, 0, -1, 0)); });
     } else if (v === 'E8') {
       [-1, 1].forEach(function (sx) { addM10(B, M, onFace(sx * 100.05, 195, -115, sx, 0, 0)); });   // 옆 오목부(브래킷 자리)
       [-160, -195].forEach(function (z) { addM10(B, M, onFace(0, H + 0.05, z, 0, 1, 0)); });
@@ -466,7 +468,7 @@
         else lay = [['nl4', 0, 22], ['nl4', 0, -20]];
         lay.forEach(function (L) { var m4 = new THREE.Matrix4().makeTranslation(L[1], L[2], pt).premultiply(base); if (L[0] === 'nl4') addNL4(B, M, m4); else addScrewTerminal(B, M, m4); });
       }
-      var pr = new THREE.Mesh(new THREE.PlaneGeometry(pw - 2, ph - 2), new THREE.MeshStandardMaterial({ map: panelPrint(v, pw - 2, ph - 2, r.panel, land), transparent: true, alphaTest: 0.05, depthWrite: false, roughness: 0.5, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
+      var pr = new THREE.Mesh(new THREE.PlaneGeometry(pw - 2, ph - 2), new THREE.MeshStandardMaterial({ map: panelPrint(v, pw - 2, ph - 2, r.panel, land, r.panel === 'cover' && M.white ? '#8f8e88' : null), transparent: true, alphaTest: 0.05, depthWrite: false, roughness: 0.5, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
       pr.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, pt + 0.05).premultiply(base)); pr.name = 'dbSpeaker.panelPrint.' + r.panel; c.add(pr);
     });
 
@@ -517,7 +519,7 @@
     driverLayout(v, rot).forEach(function (d, k) {
       var g = new THREE.Group(); g.name = 'dbSpeaker.driver.' + k;
       if (d.kind === 'cone') {
-        var G = coneGeos(d.D), mc = d.cls === 'MF' ? M.coneMF : M.coneLF, mr = d.cls === 'MF' ? M.rimMF : M.rimLF;
+        var tn = d.tint || d.cls, G = coneGeos(d.D), mc = tn === 'MF' ? M.coneMF : M.coneLF, mr = tn === 'MF' ? M.rimMF : M.rimLF;
         [[G.cone, mc], [G.cap, M.dustCap], [G.rim, mr], [G.basket, M.magnet], [G.mag, M.magnet]].forEach(function (p) { g.add(new THREE.Mesh(p[0], p[1])); });
         if (d.rear) { g.rotation.y = Math.PI; g.position.set(0, d.y, -D.depth * 0.55); }
         else g.position.set(0, d.y, zb - d.set);
@@ -530,7 +532,7 @@
       drv.add(g);
       drivers.push({ kind: d.kind, cls: d.cls || 'HF', sizeInch: d.kind === 'cone' ? { 460: 18, 310: 12, 262: 10, 210: 8, 205: 8 }[d.D] : d.hf, y: d.y, label: d.label, object: g });
       if (d.label) {
-        var col = d.kind === 'horn' ? '#38bdf8' : d.cls === 'MF' ? '#22c55e' : '#f59e0b';
+        var col = d.kind === 'horn' ? '#38bdf8' : (d.tint || d.cls) === 'MF' ? '#22c55e' : '#f59e0b';
         var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: labelTex(d.label, col), depthTest: false, depthWrite: false, transparent: true }));
         var sc = v === 'V-SUB' ? 1.25 : v === 'E8' ? 0.62 : 0.78; sp.scale.set(256 * sc, 80 * sc, 1); sp.renderOrder = 10;
         var lx = (d.labelDx || 0) * D.width * 0.62, ly = d.y + (d.labelDy || 0) + (d.labelDx ? (d.labelDx < 0 ? 60 : -60) : 0);
