@@ -18,7 +18,7 @@
   var C = { ink: '#0f1f33', sub: '#51627a', line: '#cbd5e1', bg: '#f8fafc', blue: '#2563eb', teal: '#0e7490', orange: '#ea580c', purple: '#7c3aed', red: '#dc2626', green: '#059669', amber: '#d97706' };
   var SOUND = 343;   // m/s, 20 °C 근처
   function svg(w, h, body, label) { return '<svg class="mod-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" font-family="Pretendard, system-ui, sans-serif">' + body + '</svg>'; }
-  function t(x, y, s, o) { o = o || {}; return '<text x="' + x + '" y="' + y + '" font-size="' + (o.size || 12) + '" font-weight="' + (o.weight || 500) + '" fill="' + (o.fill || C.ink) + '" text-anchor="' + (o.anchor || 'middle') + '">' + s + '</text>'; }
+  function t(x, y, s, o) { o = o || {}; return '<text x="' + x + '" y="' + y + '" font-size="' + (o.size || 12) + '" font-weight="' + (o.weight || 500) + '" fill="' + (o.fill || C.ink) + '" text-anchor="' + (o.anchor || 'middle') + '"' + (o.halo ? ' stroke="' + o.halo + '" stroke-width="4" stroke-linejoin="round" paint-order="stroke"' : '') + '>' + s + '</text>'; }
   function rect(x, y, w, h, fill, stroke, r) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + (r == null ? 8 : r) + '" fill="' + fill + '"' + (stroke ? ' stroke="' + stroke + '" stroke-width="1.5"' : '') + '/>'; }
   function arrow(x1, y1, x2, y2, col) { var a = Math.atan2(y2 - y1, x2 - x1), hx = x2 - 7 * Math.cos(a), hy = y2 - 7 * Math.sin(a); return '<path d="M' + x1 + ' ' + y1 + 'L' + x2 + ' ' + y2 + '" stroke="' + col + '" stroke-width="2" fill="none"/><path d="M' + x2 + ' ' + y2 + 'L' + (hx - 4 * Math.sin(a)).toFixed(1) + ' ' + (hy + 4 * Math.cos(a)).toFixed(1) + 'L' + (hx + 4 * Math.sin(a)).toFixed(1) + ' ' + (hy - 4 * Math.cos(a)).toFixed(1) + 'Z" fill="' + col + '"/>'; }
   function sine(x0, w, ym, amp, cyc, col, sw, ph, dash) { var d = ''; for (var i = 0; i <= 160; i++) { var x = x0 + i / 160 * w, y = ym - amp * Math.sin(i / 160 * Math.PI * 2 * cyc + (ph || 0)); d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); } return '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="' + (sw || 2.4) + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + '/>'; }
@@ -30,11 +30,11 @@
   V.pwHero = function () {
     var s = t(300, 18, '소리 = 공기 압력의 떨림 · 주파수 f · 파장 λ · 진폭 · dB', { size: 11.5, fill: C.sub });
     s += spk(30, 92, 1.4);
-    var x0 = 62, w = 520, lam = w / 2.5;
-    for (var j = 0; j < 3; j++) s += '<rect x="' + (x0 + lam * (j + 0.5) - lam * 0.18).toFixed(1) + '" y="40" width="' + (lam * 0.36).toFixed(1) + '" height="104" rx="6" fill="#dbeafe" opacity=".7"/>';
-    s += '<path d="M' + x0 + ' 92H582" stroke="' + C.line + '" stroke-dasharray="4 4"/>' + sine(x0, w, 92, 40, 2.5, C.blue, 3, -Math.PI / 2);
+    var x0 = 56, w = 496, lam = w / 2.5;
+    for (var j = 0; j < 2; j++) s += '<rect x="' + (x0 + lam * (j + 0.5) - lam * 0.18).toFixed(1) + '" y="40" width="' + (lam * 0.36).toFixed(1) + '" height="104" rx="6" fill="#dbeafe" opacity=".7"/>';
+    s += '<path d="M' + x0 + ' 92H' + (x0 + w) + '" stroke="' + C.line + '" stroke-dasharray="4 4"/>' + sine(x0, w, 92, 40, 2.5, C.blue, 3, -Math.PI / 2);
     s += brk(x0 + lam * 0.5, x0 + lam * 1.5, 156, '파장 λ (압력이 높은 곳 → 다음 높은 곳)', C.orange);
-    s += '<path d="M' + (x0 + lam * 2.5 - 8) + ' 52V92" stroke="' + C.purple + '" stroke-width="1.8"/>' + t(x0 + lam * 2.5 - 14, 66, '진폭', { size: 11, weight: 800, fill: C.purple, anchor: 'end' });
+    s += '<path d="M' + (x0 + w + 8) + ' 52V92M' + (x0 + w + 4) + ' 52H' + (x0 + w + 12) + '" stroke="' + C.purple + '" stroke-width="1.8"/>' + t(x0 + w + 14, 76, '진폭', { size: 11, weight: 800, fill: C.purple, anchor: 'start' });
     s += t(x0 + lam * 0.5, 36, '밀 (압력 높음)', { size: 10.5, weight: 700, fill: C.blue }) + t(x0 + lam, 36, '소 (압력 낮음)', { size: 10.5, weight: 700, fill: C.sub });
     var chips = [['100 Hz', 'λ ≈ 3.4 m', C.blue], ['1 kHz', 'λ ≈ 34 cm', C.teal], ['10 kHz', 'λ ≈ 3.4 cm', C.orange], ['음압 2배', '+6 dB', C.purple], ['거리 2배', '−6 dB', C.red]];
     chips.forEach(function (c, i) { var x = 8 + i * 118; s += rect(x, 182, 110, 50, '#fff', c[2]) + t(x + 55, 202, c[0], { size: 11.5, weight: 800, fill: c[2] }) + t(x + 55, 221, c[1], { size: 12, weight: 800 }); });
@@ -93,10 +93,10 @@
       var y = p[0], cy = y + 56, sx = 330, px = 450, arcs = '';
       for (var r = p[2]; r < 280; r += p[2]) arcs += '<circle cx="' + sx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + p[4] + '" stroke-width="' + (p[5] ? 1.1 : 2) + '" opacity=".55"/>';
       s += rect(312, y, 280, 100, '#f8fafc', C.line) + '<g clip-path="url(#' + p[1] + ')">' + arcs;
-      if (p[5]) s += '<path d="M' + (px + 8) + ' ' + (cy - 14) + 'L600 ' + (cy - 40) + 'L600 ' + (cy + 40) + 'L' + (px + 8) + ' ' + (cy + 14) + 'Z" fill="#f8fafc"/>' + t(540, cy + 4, '그늘', { size: 10.5, weight: 800, fill: C.sub });
-      s += '</g>' + '<circle cx="' + sx + '" cy="' + cy + '" r="6" fill="' + C.ink + '"/>' + rect(px, cy - 14, 16, 28, '#64748b', null, 3) + t(px + 8, cy + 30, '기둥', { size: 9.5, fill: C.sub });
+      if (p[5]) s += '<path d="M' + (px + 8) + ' ' + (cy - 14) + 'L600 ' + (cy - 40) + 'L600 ' + (cy + 40) + 'L' + (px + 8) + ' ' + (cy + 14) + 'Z" fill="#f8fafc"/>' + t(548, cy + 4, '그늘', { size: 10.5, weight: 800, fill: C.sub });
+      s += '</g>' + '<circle cx="' + sx + '" cy="' + cy + '" r="6" fill="' + C.ink + '"/>' + rect(px, cy - 14, 16, 28, '#64748b', null, 3) + t(px + 8, cy + 30, '기둥', { size: 9.5, weight: 700, fill: C.ink, halo: '#f8fafc' });
       s += '<circle cx="' + (px + 60) + '" cy="' + (cy - 2) + '" r="5" fill="' + (p[5] ? '#94a3b8' : C.green) + '"/>';
-      s += t(452, y + 16, p[3], { size: 10.5, weight: 800, fill: p[4] });
+      s += t(452, y + 16, p[3], { size: 10.5, weight: 800, fill: p[4], halo: '#f8fafc' });
     });
     return svg(600, 244, s, '주파수별 파장 길이와 기둥을 만난 저음 · 고음');
   };
@@ -110,11 +110,11 @@
     s += t(150, 230, 'SPL = 20 log(음압 ÷ 20 µPa) · 0 dB SPL = 20 µPa', { size: 10, fill: C.sub });
     s += t(452, 18, '역제곱 법칙: 거리 2배 → −6 dB', { size: 12, weight: 800 });
     s += '<defs><clipPath id="pwClipDb"><rect x="304" y="28" width="290" height="174" rx="8"/></clipPath></defs>' + rect(304, 28, 290, 174, '#f8fafc', C.line);
-    var sx = 322, sy = 120, u = 30;
-    s += '<g clip-path="url(#pwClipDb)">' + [1, 2, 4, 8].map(function (m) { return '<circle cx="' + sx + '" cy="' + sy + '" r="' + m * u + '" fill="none" stroke="' + C.blue + '" stroke-width="1.4" stroke-dasharray="4 4" opacity=".6"/>'; }).join('') + '</g>';
+    var sx = 322, sy = 112, R = function (m) { return 40 + Math.log(m) / Math.LN2 * 72; };
+    s += '<g clip-path="url(#pwClipDb)">' + [1, 2, 4, 8].map(function (m) { return '<circle cx="' + sx + '" cy="' + sy + '" r="' + R(m) + '" fill="none" stroke="' + C.blue + '" stroke-width="1.4" stroke-dasharray="4 4" opacity=".6"/>'; }).join('') + '</g>';
     s += spk(sx - 2, sy, 0.7);
-    [[1, '90'], [2, '84'], [4, '78'], [8, '72']].forEach(function (p) { var x = sx + p[0] * u; s += '<circle cx="' + x + '" cy="' + sy + '" r="5" fill="' + C.orange + '"/>' + t(x, sy - 12, p[1] + ' dB', { size: 11, weight: 800, fill: C.orange }) + t(x, sy + 20, p[0] + ' m', { size: 10.5, weight: 700 }); });
-    s += t(449, 190, '반사가 없을 때 · 1 m 에서 90 dB 은 예시 값', { size: 9.5, fill: C.sub });
+    [[1, '90'], [2, '84'], [4, '78'], [8, '72']].forEach(function (p) { var x = sx + R(p[0]); s += '<circle cx="' + x + '" cy="' + sy + '" r="5" fill="' + C.orange + '"/>' + t(x, sy - 12, p[1] + ' dB', { size: 11, weight: 800, fill: C.orange, halo: '#f8fafc' }) + t(x, sy + 20, p[0] + ' m', { size: 10.5, weight: 700, halo: '#f8fafc' }); });
+    s += t(449, 176, '반사가 없을 때 · 1 m 에서 90 dB 은 예시 값', { size: 9.5, fill: C.sub, halo: '#f8fafc' }) + t(449, 192, '(그림 속 간격은 실제 거리 비율이 아니에요)', { size: 9.5, fill: C.sub, halo: '#f8fafc' });
     s += t(449, 222, '실제 본당은 벽 · 천장 반사가 더해져 계산과 달라요', { size: 10, fill: C.sub });
     return svg(600, 238, s, 'dB 비율 표와 거리에 따른 음압 레벨 감소');
   };
@@ -134,15 +134,15 @@
     s += '<rect x="452" y="50" width="22" height="9" rx="4" fill="#334155"/><rect x="530" y="86" width="22" height="9" rx="4" fill="#334155"/>';
     s += '<path d="M436 70L452 55M436 75L530 90" stroke="' + C.purple + '" stroke-width="1.4" stroke-dasharray="3 3"/>';
     s += t(486, 46, '마이크 A', { size: 9.5, weight: 700 }) + t(560, 82, '마이크 B', { size: 9.5, weight: 700 }) + t(496, 112, 'B 까지 34 cm 더 멀면 약 1 ms 늦어요', { size: 9.5, weight: 700, fill: C.purple });
-    var X0 = 52, X1 = 584, Y0 = 140, Y1 = 230, dt = 0.34 / SOUND, Yd = function (db) { return Y0 + (8 - db) / 38 * (Y1 - Y0); }, d = '';
-    s += rect(8, 132, 584, 108, '#f8fafc', C.line);
-    for (var i = 0; i <= 400; i++) { var f = 20 * Math.pow(1000, i / 400), m = Math.abs(2 * Math.cos(Math.PI * f * dt)), db = Math.max(-30, 20 * Math.log10(Math.max(m, 1e-6))); d += (i ? 'L' : 'M') + lx(f, X0, X1, 20, 20000).toFixed(1) + ' ' + Yd(db).toFixed(1); }
+    var X0 = 52, X1 = 584, Y0 = 160, Y1 = 232, dt = 0.34 / SOUND, Yd = function (db) { return Y0 + (8 - db) / 38 * (Y1 - Y0); }, d = '';
+    s += rect(8, 132, 584, 124, '#f8fafc', C.line);
+    for (var i = 0; i <= 1200; i++) { var f = 20 * Math.pow(1000, i / 1200), m = Math.abs(2 * Math.cos(Math.PI * f * dt)), db = Math.max(-30, 20 * Math.log10(Math.max(m, 1e-6))); d += (i ? 'L' : 'M') + lx(f, X0, X1, 20, 20000).toFixed(1) + ' ' + Yd(db).toFixed(1); }
     s += '<path d="M' + X0 + ' ' + Yd(0).toFixed(1) + 'H' + X1 + '" stroke="#94a3b8" stroke-dasharray="3 3"/><path d="M' + X0 + ' ' + Yd(6).toFixed(1) + 'H' + X1 + '" stroke="' + C.green + '" stroke-dasharray="2 4" opacity=".7"/>';
     s += t(X0 - 4, Yd(6) + 4, '+6', { size: 9.5, fill: C.green, anchor: 'end' }) + t(X0 - 4, Yd(0) + 4, '0 dB', { size: 9.5, fill: C.sub, anchor: 'end' });
     s += '<path d="' + d + '" fill="none" stroke="' + C.purple + '" stroke-width="2"/>';
-    [[1 / dt / 2, '약 500 Hz'], [3 / dt / 2, '1.5 k'], [5 / dt / 2, '2.5 k']].forEach(function (n) { s += t(lx(n[0], X0, X1, 20, 20000).toFixed(1), Y1 + 2, n[1], { size: 9.5, weight: 800, fill: C.red }); });
-    s += t(300, 148, '콤 필터 — 거리차 34 cm 인 같은 크기 두 소리를 더한 주파수 그래프 (계산)', { size: 10, weight: 700, fill: C.sub });
-    return svg(600, 248, s, '같은 위상과 반대 위상의 합, 두 마이크 거리 차이로 생기는 콤 필터');
+    [[1 / dt / 2, '약 500 Hz'], [3 / dt / 2, '1.5 k'], [5 / dt / 2, '2.5 k']].forEach(function (n) { s += t(lx(n[0], X0, X1, 20, 20000).toFixed(1), Y1 + 16, n[1], { size: 9.5, weight: 800, fill: C.red }); });
+    s += t(300, 150, '콤 필터 — 거리차 34 cm 인 같은 크기 두 소리를 더한 주파수 그래프 (계산)', { size: 10, weight: 700, fill: C.sub });
+    return svg(600, 262, s, '같은 위상과 반대 위상의 합, 두 마이크 거리 차이로 생기는 콤 필터');
   };
 
   /* ---------------------------------------------------------------- 그림 6: 배음 · 등청감 곡선 (ISO 226:2003 식) */
@@ -165,10 +165,10 @@
     s += t(256, 40, 'dB', { size: 9, fill: C.sub });
     [[20, C.teal], [40, C.blue], [60, C.purple], [80, C.red]].forEach(function (ph) {
       var d = ISO_F.map(function (f, i) { return (i ? 'L' : 'M') + F(f).toFixed(1) + ' ' + Y(isoLp(i, ph[0])).toFixed(1); }).join('');
-      s += '<path d="' + d + '" fill="none" stroke="' + ph[1] + '" stroke-width="2"/>' + t(X1 - 2, Y(isoLp(28, ph[0])) - 5, ph[0] + ' phon', { size: 9.5, weight: 800, fill: ph[1], anchor: 'end' });
+      s += '<path d="' + d + '" fill="none" stroke="' + ph[1] + '" stroke-width="2"/>' + t(F(400), Y(isoLp(13, ph[0])) - 6, ph[0] + ' phon', { size: 9.5, weight: 800, fill: ph[1], halo: '#fff' });
     });
     var x100 = F(100); s += '<path d="M' + x100.toFixed(1) + ' ' + Y(110) + 'V236" stroke="' + C.orange + '" stroke-dasharray="3 3"/>' + t(x100 + 6, Y(112), '100 Hz', { size: 9.5, weight: 800, fill: C.orange, anchor: 'start' });
-    s += t(x100 + 6, Y(16), '작은 소리: 1 kHz 보다 +28 dB', { size: 9.5, weight: 700, fill: C.teal, anchor: 'start' });
+    s += t(x100 + 6, Y(8), '20 phon 에서 100 Hz 는 1 kHz 보다 약 +28 dB', { size: 9.5, weight: 700, fill: C.teal, anchor: 'start', halo: '#fff' });
     return svg(600, 262, s, '배음 막대 그림과 ISO 226 등청감 곡선');
   };
 
@@ -296,9 +296,9 @@
       var W = winW(), l = lam(), x0 = 24, x1 = 584, pxm = (x1 - x0) / W, lpx = l * pxm, k = 2 * Math.PI / lpx, av = clamp(S.a, 0, 4) / 4;
       var s = '<rect x="0" y="0" width="600" height="236" fill="#0b1626"/>';
       // 공기 알갱이 (변위 = sin, 압력 = −cos → 밀한 곳이 압력 높음)
-      var s0 = Math.min(0.8 * av + 0.1, 0.85) / k, dots = '';
+      var s0 = Math.min(0.55 * av + 0.35, 0.85) / k, dots = '';
       var step = Math.max(4, Math.min(9, lpx / 8));
-      if (lpx >= 6) for (var r = 0; r < 5; r++) { var y = 28 + r * 12; for (var xi = x0 + (r % 2) * step / 2; xi <= x1; xi += step) { var xd = xi + s0 * Math.sin(k * (xi - x0) - ph); if (xd >= x0 - 1 && xd <= x1 + 1) dots += '<circle cx="' + xd.toFixed(1) + '" cy="' + y + '" r="1.9"/>'; } }
+      if (lpx >= 6) for (var r = 0; r < 5; r++) { var y = 30 + r * 11; for (var xi = x0 + (r % 2) * step / 2; xi <= x1; xi += step) { var xd = xi + s0 * Math.sin(k * (xi - x0) - ph); if (xd >= x0 - 1 && xd <= x1 + 1) dots += '<circle cx="' + xd.toFixed(1) + '" cy="' + y + '" r="1.9"/>'; } }
       else dots = '<text x="300" y="56" font-size="13" fill="#94a3b8" text-anchor="middle">알갱이 간격보다 파장이 짧아 생략했어요</text>';
       s += '<g fill="#93c5fd">' + dots + '</g>';
       var ym = 132, A = 12 + 44 * av, d = '', n = Math.min(900, Math.max(200, Math.round((x1 - x0) / lpx * 24)));
@@ -308,29 +308,29 @@
       var xs = x0 + ((Math.PI + ph) / k) % lpx; if (xs < x0) xs += lpx;
       if (xs + lpx > x1) xs -= lpx;
       if (lpx >= 6 && xs >= x0 - 0.5) { var xe = xs + lpx; s += '<path d="M' + xs.toFixed(1) + ' 194V184M' + xs.toFixed(1) + ' 189H' + xe.toFixed(1) + 'M' + xe.toFixed(1) + ' 194V184" stroke="#fb923c" stroke-width="2" fill="none"/><path d="M' + xs.toFixed(1) + ' ' + (ym - A) .toFixed(1) + 'V184M' + xe.toFixed(1) + ' ' + (ym - A).toFixed(1) + 'V184" stroke="#fb923c" stroke-width="1" stroke-dasharray="2 3" opacity=".7"/>'; }
-      s += '<text x="300" y="210" font-size="15" font-weight="800" fill="#fdba74" text-anchor="middle">λ = 343 m/s ÷ ' + fmtF(S.f) + ' = ' + fmtL(l) + '</text>';
+      s += '<text x="300" y="210" font-size="20" font-weight="800" fill="#fdba74" text-anchor="middle">λ = 343 m/s ÷ ' + fmtF(S.f) + ' = ' + fmtL(l) + '</text>';
       // 눈금: 보이는 폭
       s += '<path d="M' + x0 + ' 226H' + x1 + '" stroke="#475569"/>';
       [0, 0.5, 1].forEach(function (u) { var x = x0 + u * (x1 - x0); s += '<path d="M' + x + ' 222V230" stroke="#64748b"/>'; });
-      s += '<text x="' + x0 + '" y="20" font-size="11" fill="#94a3b8">스피커 쪽</text><text x="' + x1 + '" y="20" font-size="11" fill="#94a3b8" text-anchor="end">보이는 폭 ' + fmtL(W) + ' →</text>';
+      s += '<text x="' + x0 + '" y="18" font-size="15" fill="#94a3b8">스피커 쪽</text><text x="' + x1 + '" y="18" font-size="15" fill="#94a3b8" text-anchor="end">보이는 폭 ' + fmtL(W) + ' →</text>';
       s += '<text x="10" y="' + (ym + 4) + '" font-size="11" fill="#64748b">0</text>';
       waveSvg.innerHTML = s;
     }
     function P(x, y) { return [OX + x * PX, OY + y * PX]; }
     function drawRoom() {
-      var s = '<rect x="0" y="0" width="600" height="322" fill="#f1f5f9"/><rect x="40" y="0" width="520" height="14" fill="#e2e8f0"/><text x="300" y="11" font-size="10" fill="#64748b" text-anchor="middle">강단</text>';
+      var s = '<rect x="0" y="0" width="600" height="322" fill="#f1f5f9"/><rect x="40" y="0" width="520" height="14" fill="#e2e8f0"/><text x="300" y="11" font-size="13" fill="#64748b" text-anchor="middle">강단</text>';
       var p1 = P(S1X, 0), p2 = P(S2X, 0), pl = P(S.L.x, S.L.y);
-      [1, 2, 4].forEach(function (m) { s += '<circle cx="' + p1[0] + '" cy="' + p1[1] + '" r="' + m * PX + '" fill="none" stroke="#60a5fa" stroke-width="1.2" stroke-dasharray="4 5" opacity=".75"/><text x="' + p1[0] + '" y="' + (p1[1] + m * PX - 4) + '" font-size="11" fill="#2563eb" text-anchor="middle">' + m + ' m</text>'; });
+      [1, 2, 4].forEach(function (m) { s += '<circle cx="' + p1[0] + '" cy="' + p1[1] + '" r="' + m * PX + '" fill="none" stroke="#60a5fa" stroke-width="1.2" stroke-dasharray="4 5" opacity=".75"/><text x="' + p1[0] + '" y="' + (p1[1] + m * PX - 4) + '" font-size="15" font-weight="700" fill="#2563eb" text-anchor="middle">' + m + ' m</text>'; });
       // 음원에서 듣는 사람까지
       s += '<path d="M' + p1[0] + ' ' + p1[1] + 'L' + pl[0] + ' ' + pl[1] + '" stroke="#2563eb" stroke-width="2"/>';
       if (S.s2) s += '<path d="M' + p2[0] + ' ' + p2[1] + 'L' + pl[0] + ' ' + pl[1] + '" stroke="#ea580c" stroke-width="2" stroke-dasharray="6 4"/>';
-      s += '<path d="M' + OX + ' 16V318" stroke="#94a3b8" stroke-dasharray="2 5"/><text x="' + (OX + 4) + '" y="316" font-size="10" fill="#64748b">가운데 선</text>';
+      s += '<path d="M' + OX + ' 16V318" stroke="#94a3b8" stroke-dasharray="2 5"/><text x="' + (OX + 4) + '" y="316" font-size="14" fill="#64748b">가운데 선</text>';
       s += '<rect x="' + (p1[0] - 16) + '" y="' + (p1[1] - 10) + '" width="32" height="18" rx="4" fill="#1d4ed8"/><text x="' + p1[0] + '" y="' + (p1[1] + 3) + '" font-size="11" font-weight="800" fill="#fff" text-anchor="middle">1</text>';
       s += '<rect x="' + (p2[0] - 16) + '" y="' + (p2[1] - 10) + '" width="32" height="18" rx="4" fill="' + (S.s2 ? '#ea580c' : '#cbd5e1') + '"/><text x="' + p2[0] + '" y="' + (p2[1] + 3) + '" font-size="11" font-weight="800" fill="#fff" text-anchor="middle">2</text>';
-      s += '<text x="' + (p1[0] - 22) + '" y="' + (p1[1] + 22) + '" font-size="10.5" fill="#1d4ed8" text-anchor="end">메인 L</text><text x="' + (p2[0] + 22) + '" y="' + (p2[1] + 22) + '" font-size="10.5" fill="' + (S.s2 ? '#c2410c' : '#94a3b8') + '">메인 R' + (S.s2 ? '' : ' (꺼짐)') + '</text>';
+      s += '<text x="' + (p1[0] - 22) + '" y="' + (p1[1] + 22) + '" font-size="15" font-weight="700" fill="#1d4ed8" text-anchor="end">메인 L</text><text x="' + (p2[0] + 22) + '" y="' + (p2[1] + 22) + '" font-size="15" font-weight="700" fill="' + (S.s2 ? '#c2410c' : '#94a3b8') + '">메인 R' + (S.s2 ? '' : ' (꺼짐)') + '</text>';
       s += '<circle cx="' + pl[0] + '" cy="' + pl[1] + '" r="26" fill="#ea580c" opacity=".12"/><circle cx="' + pl[0] + '" cy="' + pl[1] + '" r="11" fill="#f97316" stroke="#fff" stroke-width="3"/>';
-      var lab = r1().toFixed(2) + ' m · ' + lvl1().toFixed(1) + ' dB', lx2 = clamp(pl[0], 70, 530), ly2 = pl[1] > 270 ? pl[1] - 22 : pl[1] + 30;
-      s += '<text x="' + lx2 + '" y="' + ly2 + '" font-size="13" font-weight="800" fill="#9a3412" text-anchor="middle" stroke="#f1f5f9" stroke-width="4" paint-order="stroke">' + lab + '</text>';
+      var lab = r1().toFixed(2) + ' m · ' + lvl1().toFixed(1) + ' dB', lx2 = clamp(pl[0], 110, 490), ly2 = pl[1] > 270 ? pl[1] - 22 : pl[1] + 30;
+      s += '<text x="' + lx2 + '" y="' + ly2 + '" font-size="19" font-weight="800" fill="#9a3412" text-anchor="middle" stroke="#f1f5f9" stroke-width="4" paint-order="stroke">' + lab + '</text>';
       room.innerHTML = s;
     }
     function drawTime() {
@@ -339,16 +339,16 @@
       s += '<path d="M' + x0 + ' ' + ym + 'H' + x1 + '" stroke="#e2e8f0"/>';
       s += path(function (u) { return Math.sin(u); }, '#2563eb', 1.6);
       if (S.s2) { s += path(function (u) { return a2 * Math.sin(u + th2); }, '#ea580c', 1.6, '5 4'); s += path(function (u) { return Math.sin(u) + a2 * Math.sin(u + th2); }, '#059669', 3); }
-      var xm = x0 + (x1 - x0) / 2; s += '<path d="M' + x0 + ' 134V126M' + x0 + ' 130H' + xm + 'M' + xm + ' 134V126" stroke="#7c3aed" stroke-width="1.8" fill="none"/><text x="' + ((x0 + xm) / 2) + '" y="146" font-size="12" font-weight="800" fill="#7c3aed" text-anchor="middle">주기 T = 1 ÷ f = ' + fmtT(1000 / S.f) + '</text>';
-      s += '<text x="' + x1 + '" y="146" font-size="11" fill="#64748b" text-anchor="end">2 주기만 보여요</text>';
+      var xm = x0 + (x1 - x0) / 2; s += '<path d="M' + x0 + ' 134V126M' + x0 + ' 130H' + xm + 'M' + xm + ' 134V126" stroke="#7c3aed" stroke-width="1.8" fill="none"/><text x="' + ((x0 + xm) / 2) + '" y="146" font-size="18" font-weight="800" fill="#7c3aed" text-anchor="middle">주기 T = 1 ÷ f = ' + fmtT(1000 / S.f) + '</text>';
+      s += '<text x="' + x1 + '" y="146" font-size="14" fill="#64748b" text-anchor="end">2 주기만 보여요</text>';
       s += '<text x="4" y="' + (ym - H + 4) + '" font-size="10" fill="#64748b">+</text><text x="4" y="' + (ym + H + 4) + '" font-size="10" fill="#64748b">−</text>';
       q('[data-role=time]').innerHTML = s;
     }
     function drawComb() {
-      var s = '<rect x="0" y="0" width="600" height="150" fill="#fff"/>', X0 = 44, X1 = 588, Y = function (db) { return 10 + (8 - db) / 38 * 112; }, F = function (f) { return lx(f, X0, X1, 20, 20000); };
-      [6, 0, -10, -20, -30].forEach(function (db) { s += '<path d="M' + X0 + ' ' + Y(db).toFixed(1) + 'H' + X1 + '" stroke="' + (db === 0 ? '#94a3b8' : '#eef2f7') + '"' + (db === 0 ? ' stroke-dasharray="3 3"' : '') + '/><text x="' + (X0 - 4) + '" y="' + (Y(db) + 4).toFixed(1) + '" font-size="10" fill="#64748b" text-anchor="end">' + (db > 0 ? '+' : '') + db + '</text>'; });
-      [20, 100, 1000, 10000, 20000].forEach(function (f) { s += '<text x="' + F(f).toFixed(1) + '" y="146" font-size="10" fill="#64748b" text-anchor="middle">' + (f >= 1000 ? f / 1000 + 'k' : f) + '</text>'; });
-      if (!S.s2) { s += '<text x="316" y="70" font-size="13" fill="#94a3b8" text-anchor="middle">음원 2 를 켜면 두 소리를 합친 그래프가 나와요</text>'; q('[data-role=comb]').innerHTML = s; return; }
+      var s = '<rect x="0" y="0" width="600" height="150" fill="#fff"/>', X0 = 50, X1 = 584, Y = function (db) { return 10 + (8 - db) / 38 * 112; }, F = function (f) { return lx(f, X0, X1, 20, 20000); };
+      [6, 0, -10, -20, -30].forEach(function (db) { s += '<path d="M' + X0 + ' ' + Y(db).toFixed(1) + 'H' + X1 + '" stroke="' + (db === 0 ? '#94a3b8' : '#eef2f7') + '"' + (db === 0 ? ' stroke-dasharray="3 3"' : '') + '/><text x="' + (X0 - 4) + '" y="' + (Y(db) + 4).toFixed(1) + '" font-size="14" fill="#64748b" text-anchor="end">' + (db > 0 ? '+' : '') + db + '</text>'; });
+      [20, 100, 1000, 10000, 20000].forEach(function (f) { s += '<text x="' + F(f).toFixed(1) + '" y="147" font-size="14" fill="#64748b" text-anchor="middle">' + (f >= 1000 ? f / 1000 + 'k' : f) + '</text>'; });
+      if (!S.s2) { s += '<text x="316" y="70" font-size="17" fill="#94a3b8" text-anchor="middle">음원 2 를 켜면 두 소리를 합친 그래프가 나와요</text>'; q('[data-role=comb]').innerHTML = s; return; }
       var d = ''; for (var i = 0; i <= 500; i++) { var f = 20 * Math.pow(1000, i / 500); d += (i ? 'L' : 'M') + F(f).toFixed(1) + ' ' + Y(Math.max(-30, relAt(f))).toFixed(1); }
       s += '<path d="' + d + '" fill="none" stroke="#7c3aed" stroke-width="2"/>';
       if (S.f >= 20 && S.f <= 20000) { var xf = F(S.f), yv = Y(Math.max(-30, rel())); s += '<path d="M' + xf.toFixed(1) + ' 10V132" stroke="#ea580c" stroke-dasharray="3 3"/><circle cx="' + xf.toFixed(1) + '" cy="' + yv.toFixed(1) + '" r="5" fill="#ea580c"/>'; }
