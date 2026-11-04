@@ -178,7 +178,7 @@
     var h = (GL[m.id] || {}).hero, d3 = MODEL3D[m.overview.model], is3d = view.fig === '3d' && d3;
     var tools = d3 ? '<div class="mod-fig__tools" role="group" aria-label="보기 방식"><button type="button" data-mfig="photo" aria-pressed="' + !is3d + '">' + (h && h.zones ? '사진 · 기능부 설명' : '사진 설명') + '</button><button type="button" data-mfig="3d" aria-pressed="' + !!is3d + '">3D 로 돌려 보기</button></div>' : '';
     if (is3d) return '<figure class="mod-fig mod-fig--3d"><div class="mod-viewer" data-role="viewer"><div class="mod-viewer__msg">3D 모델을 불러오는 중…</div></div>' +
-      '<figcaption class="mod-fig__foot mod-viewer__bar">' + tools + '<span>끌어서 돌려 보기 · ' + esc(d3.label) + '</span>' + (d3.toggle ? '<button type="button" class="sim-btn" data-mviewer="switch">' + esc(d3.toggleTxt) + '</button>' : '') + '</figcaption></figure>';
+      '<figcaption class="mod-fig__foot mod-viewer__bar">' + tools + (d3.variants ? '<div class="mod-fig__vars" role="group" aria-label="제품 고르기">' + d3.variants.map(function (vv, vi) { return '<button type="button" data-mvar="' + vi + '" aria-pressed="' + (vi === (view.var3d || 0)) + '">' + esc(vv[1]) + '</button>'; }).join('') + '</div>' : '') + '<span>끌어서 돌려 보기 · ' + esc(d3.variants ? d3.variants[view.var3d || 0][2] || d3.label : d3.label) + '</span>' + (d3.toggle ? '<button type="button" class="sim-btn" data-mviewer="switch">' + esc(d3.toggleTxt) + '</button>' : '') + '</figcaption></figure>';
     if (h && h.vis && VIS[h.vis]) return '<figure class="mod-fig mod-fig--vis"><div class="mod-visual">' + VIS[h.vis]() + '</div>' + (tools ? '<div class="mod-fig__foot">' + tools + '</div>' : '') + '</figure>';
     var img = (h && h.img) || m.img; if (!img) return '';
     var v = (h && h.view) || [0.5, 0, 1], r = IMG_R[img] || 4 / 3, k = r / (v[2] * FIG_A), pts = (h && h.pts) || [];
@@ -231,7 +231,7 @@
         var ok = s.checks[i] === okIdx(x.check);
         return '<section class="mod-sec" id="modSec' + i + '"><h2 class="mod-sec__h"><span class="lsn-num">' + (i + 1) + '</span>' + esc(x.title) + (ok ? '<span class="mod-tick">✓</span>' : '') + '</h2>' +
           (x.visual && VIS[x.visual] ? '<div class="mod-visual">' + VIS[x.visual]() + '</div>' : '') + '<div class="mod-p mod-paras">' + paras(x.body) + '</div>' +
-          (x.more ? '<details class="mod-more"><summary>더 알아보기</summary><div>' + x.more + '</div></details>' : '') +
+          (x.more ? '<details class="mod-more"><summary>더 알아보기</summary><div' + (/<(ul|ol|table)\b/.test(x.more) ? '>' + x.more : ' class="mod-paras">' + paras(x.more)) + '</div></details>' : '') +
           qHtml(x.check, i, s.checks[i], 'mcheck') + '</section>';
       }).join('') + '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="practice">실습하기 →</button></div>';
   }
@@ -271,7 +271,7 @@
   function rich(x) { return /<\/?(b|ul|li|br|i|small)\b/.test(x || '') ? x : esc(x); }   // 2026-10-23: 데이터에 <b>·<ul> 이 있으면 그대로
   function tabDeeper(m) {
     var p = pathById(m.path), ids = p.modules, i = ids.indexOf(m.id), next = ids.slice(i + 1).map(function (id) { return MODS[id]; }).find(function (x) { return x && x.status === 'ready'; });
-    return '<div class="lsn-deep">' + m.deeper.map(function (d) { return '<div class="lsn-deep-item"><b>' + esc(d.title) + '</b><p>' + rich(d.text) + '</p>' + (d.more ? '<details><summary>자세히 보기</summary><div>' + rich(d.more) + '</div></details>' : '') + '</div>'; }).join('') + '</div>' +
+    return '<div class="lsn-deep">' + m.deeper.map(function (d) { return '<div class="lsn-deep-item"><b>' + esc(d.title) + '</b><div class="mod-paras">' + paras(rich(d.text)) + '</div>' + (d.more ? '<details><summary>자세히 보기</summary><div' + (/<(ul|ol|table)\b/.test(d.more) ? '>' + rich(d.more) : ' class="mod-paras">' + paras(rich(d.more))) + '</div></details>' : '') + '</div>'; }).join('') + '</div>' +
       
       '<div class="mod-next">' + (next ? '<button type="button" class="btn mod-cta" data-module="' + next.id + '">다음 과정: ' + esc(next.title) + ' →</button>' : '<button type="button" class="btn mod-cta" data-path="' + p.id + '">' + esc(p.title) + ' 과정 목록 →</button>') + '</div>';
   }
@@ -456,7 +456,7 @@
     var w = el.clientWidth || 360, h = el.clientHeight || 300, r;
     try { r = new THREE.WebGLRenderer({ antialias: true, alpha: true }); } catch (e) { el.querySelector('.mod-viewer__msg').textContent = '이 기기에서는 3D 를 표시할 수 없어요.'; return; }
     r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1)); r.setSize(w, h); r.outputEncoding = THREE.sRGBEncoding; r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.2;
-    var obj; try { obj = def.make(); } catch (e) { el.querySelector('.mod-viewer__msg').textContent = '3D 모델을 만들지 못했어요.'; r.dispose(); return; }
+    var obj; try { obj = def.make(def.variants ? def.variants[Math.min(view.var3d || 0, def.variants.length - 1)][0] : undefined); } catch (e) { el.querySelector('.mod-viewer__msg').textContent = '3D 모델을 만들지 못했어요.'; r.dispose(); return; }
     el.innerHTML = ''; el.appendChild(r.domElement);
     var sc = new THREE.Scene(); sc.add(new THREE.HemisphereLight(0xdfeaff, 0x1a2333, 0.9)); var k = new THREE.DirectionalLight(0xffffff, 2); k.position.set(2, 3, 3); sc.add(k); var rim = new THREE.DirectionalLight(0x7cc4ff, 1.4); rim.position.set(-3, 2, -2); sc.add(rim);
     sc.add(obj);
@@ -508,7 +508,7 @@
   function openPath(id) { if (!pathById(id)) return; view.path = id; hideBack(); destroySim(); destroyViewer(); switchTo('tabPath'); renderPath(); setHash('path-' + id); focusTitle(); }
   function openModule(id, tab, find) {
     var m = MODS[id]; if (!m || m.status !== 'ready') return;
-    if (view.mod !== id) view.fig = 'photo';
+    if (view.mod !== id) { view.fig = 'photo'; view.var3d = 0; }
     view.mod = id; view.path = m.path; view.tab = tab && TABS.some(function (t2) { return t2[0] === tab; }) ? tab : 'overview';
     var s = st(id); if (!s.opened) { s.opened = true; put(id, s); }
     hideBack(); switchTo('tabModule'); renderModule(); setHash('module-' + id + (view.tab !== 'overview' ? '-' + view.tab : '')); focusTitle();
@@ -553,6 +553,7 @@
     var th = t.closest('[data-mtheory]'); if (th) { var ti = +th.getAttribute('data-mtheory'); setTab('theory'); var sec = $('modSec' + ti); if (sec) { sec.scrollIntoView({ block: 'start', behavior: 'smooth' }); sec.classList.add('mod-sec--focus'); setTimeout(function () { sec.classList.remove('mod-sec--focus'); }, 2200); } return; }
     var fg = t.closest('[data-mfig]'); if (fg) { var y0 = window.scrollY; view.fig = fg.getAttribute('data-mfig') === '3d' ? '3d' : 'photo'; renderModule(); window.scrollTo(0, y0); return; }
     var mg = t.closest('[data-mgo]'); if (mg) { var pr = mg.getAttribute('data-mgo').split(':'), m = MODS[view.mod]; var item = pr[0] === 'practice' ? m.practice.links[+pr[1]] : m.missions[+pr[1]]; showBack(); go(item.go); return; }
+    var mv = t.closest('[data-mvar]'); if (mv) { var y1 = window.scrollY; view.var3d = +mv.getAttribute('data-mvar') || 0; renderModule(); window.scrollTo(0, y1); return; }   // 2026-11-04: 3D 제품 바꾸기(앰프 40D/10D · 스피커 · 커넥터)
     var vw = t.closest('[data-mviewer]'); if (vw && viewer) { var on = viewer.toggle(); vw.textContent = on ? '스위치 ON/OFF (지금 켜짐)' : '스위치 ON/OFF (지금 꺼짐)'; return; }
     var ck = t.closest('[data-mcheckchk],[data-mquizchk]');
     if (ck) {

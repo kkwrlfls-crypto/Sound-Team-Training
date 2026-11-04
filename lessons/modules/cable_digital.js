@@ -27,10 +27,17 @@
     var tos = function (cx, cy) { return '<path d="M' + (cx - 22) + ' ' + (cy - 18) + 'H' + (cx + 22) + 'V' + (cy + 8) + 'L' + (cx + 12) + ' ' + (cy + 18) + 'H' + (cx - 12) + 'L' + (cx - 22) + ' ' + (cy + 8) + 'Z" fill="#1f2937"/><circle cx="' + cx + '" cy="' + cy + '" r="6" fill="#ef4444"/><circle cx="' + cx + '" cy="' + cy + '" r="12" fill="#ef4444" fill-opacity=".25"/>'; };
     var bnc = function (cx, cy) { return '<circle cx="' + cx + '" cy="' + cy + '" r="22" fill="#e2e8f0" stroke="#475569" stroke-width="2.5"/><circle cx="' + cx + '" cy="' + cy + '" r="13" fill="#f8fafc" stroke="#94a3b8"/><circle cx="' + cx + '" cy="' + cy + '" r="3" fill="#b45309"/><rect x="' + (cx - 27) + '" y="' + (cy - 3) + '" width="6" height="6" fill="#475569"/><rect x="' + (cx + 21) + '" y="' + (cy - 3) + '" width="6" height="6" fill="#475569"/>'; };
     var ecn = function (cx, cy) { var s = '<circle cx="' + cx + '" cy="' + cy + '" r="26" fill="#cbd5e1" stroke="#475569" stroke-width="2"/><rect x="' + (cx - 16) + '" y="' + (cy - 12) + '" width="32" height="22" rx="3" fill="#1e3a8a"/>'; for (var i = 0; i < 8; i++) s += '<rect x="' + (cx - 13 + i * 3.4) + '" y="' + (cy - 9) + '" width="1.8" height="7" fill="#fbbf24"/>'; return s + '<rect x="' + (cx - 5) + '" y="' + (cy + 10) + '" width="10" height="5" fill="#1e3a8a"/>'; };
-    var usb = function (cx, cy) { return '<rect x="' + (cx - 30) + '" y="' + (cy - 12) + '" width="40" height="24" rx="4" fill="#334155"/><rect x="' + (cx + 10) + '" y="' + (cy - 9) + '" width="22" height="18" fill="#e5e7eb" stroke="#94a3b8"/><rect x="' + (cx + 13) + '" y="' + (cy - 5) + '" width="16" height="5" fill="#1f2937"/>'; };
+    /* 2026-11-04: USB 는 실제 플러그 모양(정면)으로 — A(컴퓨터 쪽 직사각) · B(오디오 장비 쪽 윗모서리 깎인 사각) · C(양면 둥근 타원) */
+    var usb = function (cx, cy) {
+      var a = cx - 52, b = cx - 6, c = cx + 40, y = cy - 4, lab = function (x, s) { return t(x, cy + 26, s, { size: 9.5, weight: 800, fill: C.sub }); };
+      var sA = '<rect x="' + (a - 17) + '" y="' + (y - 8) + '" width="34" height="16" rx="1.5" fill="#cbd5e1" stroke="#64748b" stroke-width="1.5"/><rect x="' + (a - 14) + '" y="' + (y - 5) + '" width="28" height="6" fill="#1e3a8a"/>' + [0, 1, 2, 3].map(function (k) { return '<rect x="' + (a - 11 + k * 6.4) + '" y="' + (y - 4) + '" width="3.6" height="2" fill="#fbbf24"/>'; }).join('');
+      var sB = '<path d="M' + (b - 12) + ' ' + (y + 11) + 'V' + (y - 5) + 'L' + (b - 6) + ' ' + (y - 11) + 'H' + (b + 6) + 'L' + (b + 12) + ' ' + (y - 5) + 'V' + (y + 11) + 'Z" fill="#cbd5e1" stroke="#64748b" stroke-width="1.5"/><rect x="' + (b - 5) + '" y="' + (y - 5) + '" width="10" height="11" rx="1" fill="#1f2937"/>' + [[-3, -3], [1.4, -3], [-3, 2], [1.4, 2]].map(function (q) { return '<rect x="' + (b + q[0]) + '" y="' + (y + q[1]) + '" width="1.8" height="2.6" fill="#fbbf24"/>'; }).join('');
+      var sC = '<rect x="' + (c - 16) + '" y="' + (y - 6) + '" width="32" height="12" rx="6" fill="#cbd5e1" stroke="#64748b" stroke-width="1.5"/><rect x="' + (c - 11) + '" y="' + (y - 2) + '" width="22" height="4" rx="2" fill="#1f2937"/>';
+      return sA + sB + sC + lab(a, 'USB-A') + lab(b, 'USB-B') + lab(c, 'USB-C');
+    };
     return svg(600, 310,
       card(0, 0, '전기 · 110 Ω', C.purple, xlr, 'AES/EBU (AES3)', 'XLR 모양 · 2채널 · 전문가용') + card(1, 0, '전기 · 75 Ω', C.orange, rca, 'S/PDIF 동축', 'RCA · 2채널 · 가정용') + card(2, 0, '빛 (광)', C.red, tos, 'TOSLINK 광', 'ADAT 8채널 · S/PDIF') +
-      card(0, 1, '전기 · 75 Ω', C.teal, bnc, 'BNC 동축', 'MADI 최대 64채널 · 워드클럭') + card(1, 1, '네트워크', C.blue, ecn, 'etherCON · RJ45', 'Dante · AES50 · Ultranet') + card(2, 1, '컴퓨터', C.sub, usb, 'USB', '녹음 · 2.0 은 한 구간 5 m'),
+      card(0, 1, '전기 · 75 Ω', C.teal, bnc, 'BNC 동축', 'MADI 최대 64채널 · 워드클럭') + card(1, 1, '네트워크', C.blue, ecn, 'etherCON · RJ45', 'Dante · AES50 · Ultranet') + card(2, 1, '컴퓨터', C.sub, usb, 'USB 2.0', '녹음 · 한 구간 5 m'),
       '디지털 오디오 연결에 쓰는 커넥터 여섯 가지');
   };
 

@@ -236,3 +236,19 @@
 /* 심화 주제에서 이론 주제로 바로 갔을 때 잠깐 강조 */
 .mod-sec--focus { box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.55); transition: box-shadow 0.4s; border-radius: var(--sta-r, 12px); }
 .home-adv__need { font-size: 0.76rem; opacity: 0.8; }
+
+/* 2026-11-04 가독성 정돈: 한 줄 길이를 읽기 좋은 폭으로, 제목은 고르게, 문단 끝 한 글자 줄 줄이기 */
+#tabModule .mod-sec__h, #tabModule .mod-box__h, #tabModule #modTitle, #tabModule .mod-q > b, #tabModule .lsn-deep-item > b, #tabModule .mod-link b, #tabPath .mod-card b { text-wrap: balance; }
+#tabModule .mod-paras > p, #tabModule .mod-term p, #tabModule .mod-points li, #tabModule .mod-more li, #tabModule .lsn-opt > span, #tabModule .mod-link span, #tabModule .mod-note, #tabModule .mod-tasks li p { text-wrap: pretty; }
+#tabModule .mod-sec .mod-paras > p, #tabModule .mod-lead.mod-paras > p, #tabModule .lsn-deep-item .mod-paras > p, #tabModule .mod-more .mod-paras > p { max-width: 46em; }
+#tabModule .mod-sec .mod-paras > p + p { margin-top: 0.15em; }
+#tabModule .lsn-deep-item .mod-paras { margin: 6px 0 0; }
+#tabModule .lsn-deep-item .mod-paras > p { margin: 0 0 0.4em; font-size: 0.88rem; line-height: 1.7; color: var(--sta-ink-2); }
+#tabModule .mod-more .mod-paras > p { margin: 0 0 0.35em; }
+#tabModule .mod-tasks li p { font-size: 0.8rem; line-height: 1.6; }
+#tabModule .mod-q > b { display: block; line-height: 1.5; }
+/* 2026-11-04: 3D 보기에서 제품 고르기 버튼 */
+.mod-fig__vars { display: flex; flex-wrap: wrap; gap: 6px; }
+.mod-fig__vars button { font: inherit; font-size: 0.78rem; font-weight: 700; padding: 5px 11px; border-radius: 999px; border: 1px solid #c8d5e6; background: #fff; color: var(--sta-ink); cursor: pointer; }
+.mod-fig__vars button[aria-pressed="true"] { background: var(--sta-navy, #0f2a4a); border-color: var(--sta-navy, #0f2a4a); color: #fff; }
+.mod-fig__vars button:focus-visible { outline: 2px solid #22d3ee; outline-offset: 2px; }
