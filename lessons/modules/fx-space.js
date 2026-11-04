@@ -150,7 +150,7 @@
       '<path d="M22 96H118V80H22Z" fill="#7dd3fc" stroke="' + C.ink + '" stroke-width="1.5"/>' + person(150, 96, C.blue);
     var bounce = '<path d="M150 60L198 30L120 12L20 40L80 112L198 86L150 64" fill="none" stroke="' + C.red + '" stroke-width="2" stroke-dasharray="5 3"/>';
     var tail = ''; for (var i = 0; i < 26; i++) { var x = 224 + i * 5, h = 58 * Math.exp(-i / 9); tail += '<path d="M' + x + ' 90V' + (90 - h).toFixed(1) + '" stroke="' + C.teal + '" stroke-width="2.4"/>'; }
-    return svgM(360, 130, room + bounce + t(105, 30, '목욕탕', { size: 14, weight: 800 }) + '<path d="M218 90H354" stroke="' + C.ink + '"/>' + tail + t(286, 112, '천천히 작아지는 울림', { size: 13.5, weight: 800, fill: C.teal }) + t(286, 128, '= 잔향', { size: 13.5, weight: 800, fill: C.teal }), '목욕탕에서 소리가 여러 번 튕겨 울림이 남는 모습');
+    return svgM(360, 130, room + bounce + '<rect x="74" y="16" width="62" height="22" rx="5" fill="#fff" stroke="' + C.line + '"/>' + t(105, 32, '목욕탕', { size: 14, weight: 800 }) + '<path d="M218 90H354" stroke="' + C.ink + '"/>' + tail + t(286, 112, '천천히 작아지는 울림', { size: 13.5, weight: 800, fill: C.teal }) + t(286, 128, '= 잔향', { size: 13.5, weight: 800, fill: C.teal }), '목욕탕에서 소리가 여러 번 튕겨 울림이 남는 모습');
   };
   VIS.fxTermPre = function () {
     var tail = ''; for (var i = 0; i < 30; i++) { var x = 196 + i * 5, h = 46 * Math.exp(-i / 11); tail += '<path d="M' + x + ' 84V' + (84 - h).toFixed(1) + '" stroke="' + C.teal + '" stroke-width="2.4"/>'; }
@@ -162,7 +162,7 @@
     var mt = '<path d="M196 112L262 30L300 70L322 46L356 112Z" fill="#cbd5e1" stroke="' + C.ink + '" stroke-width="2"/>';
     var call = [0, 1, 2, 3].map(function (k) { var x = 20 + k * 44, s = [17, 15, 14, 13][k]; return t(x, 52, '야호', { size: s, weight: 800, fill: k ? C.orange : C.ink, anchor: 'start' }).replace('<text', '<text fill-opacity="' + (1 - k * 0.2) + '"'); }).join('');
     return svgM(360, 130, mt + person(20, 112, C.blue) + call + '<path d="M24 72H186" stroke="' + C.orange + '" stroke-dasharray="4 3"/>' + [66, 108, 150].map(function (x) { return '<path d="M' + x + ' 66V78" stroke="' + C.orange + '" stroke-width="2"/>'; }).join('') +
-      t(108, 96, '같은 간격 = Delay Time', { size: 13.5, weight: 800, fill: C.orange }) + t(108, 118, '점점 작아짐 = Feedback', { size: 13.5, weight: 800, fill: C.sub }), '메아리처럼 같은 간격으로 반복되는 딜레이');
+      t(116, 96, '같은 간격 = Delay Time', { size: 13.5, weight: 800, fill: C.orange }) + t(116, 118, '점점 작아짐 = Feedback', { size: 13.5, weight: 800, fill: C.sub }), '메아리처럼 같은 간격으로 반복되는 딜레이');
   };
   VIS.fxTermWetDry = function () {   // 맑은 물(Dry) + 물감 물(Wet)을 섞는 비율
     function cup(x, fill, lab, sub, lv) { return '<path d="M' + x + ' 20L' + (x + 8) + ' 92H' + (x + 52) + 'L' + (x + 60) + ' 20" fill="none" stroke="' + C.ink + '" stroke-width="2.4"/><path d="M' + (x + 2 + (1 - lv) * 6) + ' ' + (92 - 70 * lv) + 'L' + (x + 8) + ' 92H' + (x + 52) + 'L' + (x + 58 - (1 - lv) * 6) + ' ' + (92 - 70 * lv) + 'Z" fill="' + fill + '"/>' + t(x + 30, 110, lab, { size: 14, weight: 800 }) + t(x + 30, 126, sub, { size: 12.5, fill: C.sub }); }
