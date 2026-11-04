@@ -450,7 +450,7 @@
     x32: { label: '3D 모델(Behringer X32)', need: 'BehringerX32', dir: [0.18, 0.95, 1], make: function () { return BehringerX32.create(); } },   // 2026-11-03: 공식 윗면·뒷면 사진 배치 기준
     /* 2026-11-04: 디지털 케이블 커넥터(절차적 모델) — [id, 버튼 이름, 설명, 카메라 방향, 거리 배수] */
     dconn: { label: '3D 모델(디지털 오디오 커넥터)', need: 'DigitalConnectors', dir: [0.6, 0.42, 1],
-      variants: [['set', '한눈에 비교', '실제 크기 비율로 나란히', [0.1, 0.8, 1], 1.2], ['etherCON', 'etherCON', 'Dante · AES50 랜선의 잠금 커넥터'], ['RJ45', 'RJ45', '일반 랜선 플러그'], ['AES-XLR', 'AES/EBU', '110 Ω 디지털 XLR'], ['BNC', 'BNC', '75 Ω 동축 · 워드클럭 · MADI'], ['TOSLINK', '광(TOSLINK)', 'ADAT · S/PDIF 광'], ['USB-C', 'USB-C', '양면 · 둥근 타원'], ['USB-AB', 'USB A-B', 'A(컴퓨터) ↔ B(오디오 장비)', [0.25, 0.85, 1], 1.3]],
+      variants: [['set', '한눈에 비교', '실제 크기 비율로 나란히', [0.1, 0.8, 1], 1.2], ['etherCON', 'etherCON', 'Dante · AES50 랜선의 잠금 커넥터'], ['RJ45', 'RJ45', '일반 랜선 플러그'], ['AES-XLR', 'AES/EBU', '110 Ω 디지털 XLR'], ['BNC', 'BNC', '75 Ω 동축 · 워드클럭 · MADI'], ['TOSLINK', '광(TOSLINK)', 'ADAT · S/PDIF 광'], ['USB-C', 'USB-C', '양면 · 둥근 타원'], ['USB-AB', 'USB A-B', 'A(컴퓨터) ↔ B(오디오 장비)', [0.25, 0.85, 1], 1.9]],
       make: function (v) { return DigitalConnectors.create({ variant: v }); } },
     /* 2026-11-04: 3층 랙 d&b 40D · 10D (절차적 모델) — 앞면 화면 · LED, 돌려 보면 뒷면 Phoenix 단자 · RJ45 */
     dbamp: { label: '3D 모델(d&b 40D · 10D)', need: 'DbAmps', dir: [0.35, 0.28, 1], dist: 1.25,
