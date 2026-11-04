@@ -90,7 +90,7 @@
     return linearize({
       front: new St({ color: 0x232427, roughness: 0.62, metalness: 0.35 }),
       frame: new St({ color: 0x18191b, roughness: 0.7, metalness: 0.3 }),
-      cover: new St({ color: 0x232427, roughness: 0.62, metalness: 0.45 }),
+      cover: new St({ color: 0x1f2023, roughness: 0.86, metalness: 0.2 }),
       ear: new St({ color: 0x1d1e21, roughness: 0.55, metalness: 0.45 }),
       plastic: new St({ color: 0x141517, roughness: 0.62, metalness: 0.05 }),
       plastic2: new St({ color: 0x1f2023, roughness: 0.5, metalness: 0.05 }),
@@ -417,7 +417,7 @@
 
   global.DbAmps = {
     VARIANTS: VARIANTS.slice(), DIMENSIONS_MM: DIMENSIONS_MM, LAYOUT: { REAR: REAR, FRONT: FRONT, PX_PER_MM: S },
-    VIEW_DIR: { '40D': [0.42, 0.3, 1], '10D': [0.42, 0.3, 1], rear: [-0.45, 0.32, -1] },
+    VIEW_DIR: { '40D': [0.35, 0.28, 1], '10D': [0.35, 0.28, 1], rear: [-0.45, 0.32, -1] },
     create: create,
     api: function (root) { return root && root.userData ? root.userData.dbAmp : null; }
   };

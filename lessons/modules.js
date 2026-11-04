@@ -452,6 +452,11 @@
     dconn: { label: '3D 모델(디지털 오디오 커넥터)', need: 'DigitalConnectors', dir: [0.6, 0.42, 1],
       variants: [['set', '한눈에 비교', '실제 크기 비율로 나란히', [0.1, 0.8, 1], 1.2], ['etherCON', 'etherCON', 'Dante · AES50 랜선의 잠금 커넥터'], ['RJ45', 'RJ45', '일반 랜선 플러그'], ['AES-XLR', 'AES/EBU', '110 Ω 디지털 XLR'], ['BNC', 'BNC', '75 Ω 동축 · 워드클럭 · MADI'], ['TOSLINK', '광(TOSLINK)', 'ADAT · S/PDIF 광'], ['USB-C', 'USB-C', '양면 · 둥근 타원'], ['USB-AB', 'USB A-B', 'A(컴퓨터) ↔ B(오디오 장비)', [0.25, 0.85, 1], 1.3]],
       make: function (v) { return DigitalConnectors.create({ variant: v }); } },
+    /* 2026-11-04: 3층 랙 d&b 40D · 10D (절차적 모델) — 앞면 화면 · LED, 돌려 보면 뒷면 Phoenix 단자 · RJ45 */
+    dbamp: { label: '3D 모델(d&b 40D · 10D)', need: 'DbAmps', dir: [0.35, 0.28, 1], dist: 1.25,
+      variants: [['40D', '40D', '4채널 · 터치스크린 · 메인 · 서브 · 천장 가운데'], ['10D', '10D', '4채널 · LED 표시 · 천장 좌우 · 기둥 · 모니터'], ['40D', '40D 뒷면', '입력 · 출력 · 네트워크 · 전원 단자', [-0.45, 0.32, -1]], ['10D', '10D 뒷면', '전원 스위치 · 단자', [-0.45, 0.32, -1]]],
+      toggleTxt: '전원 끄기', toggleLabel: function (on) { return on ? '전원 끄기' : '전원 켜기'; },
+      make: function (v) { return DbAmps.create({ variant: v }); }, toggle: function (m, on) { DbAmps.api(m).setPower(on); } },
     /* 2026-11-04: 3층 d&b 패시브 스피커(절차적 모델) — 「속 보기」로 그릴 뒤 드라이버 */
     dbspk: { label: '3D 모델(d&b 패시브 스피커)', need: 'DbSpeakers', dir: [0.6, 0.3, 1],
       variants: [['Vi10P', 'Vi10P · 메인', '무대 메인 L · R — 3웨이 패시브', [0.55, 0.28, 1], 2.3], ['Yi10P', 'Yi10P · 천장 가운데', '2웨이 · 110° × 40°', null, 2.3], ['Yi7P', 'Yi7P · 천장 좌우', '2웨이 · 75° × 40°', null, 2.3], ['E8', 'E8 · 기둥', '8″/1″ 동축 · 90° × 50°', [0.6, 0.32, 1], 2.2], ['V-SUB', 'V-SUB · 서브우퍼', '18″ + 12″ 저음', [0.7, 0.45, 1], 1.8]],
