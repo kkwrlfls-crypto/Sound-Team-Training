@@ -114,7 +114,7 @@
     var fr = f.front && ym > f.front.y0 && ym < f.front.y1 ? f.front : null;
     if (fr) {
       if (fr.wrap) { var xs = xAtZ(half, fr.zf); half = [[0, fr.zf], [xs, fr.zf]].concat(half.filter(function (p) { return p[1] < fr.zf; })); }
-      else { var zx = zAtX(half, fr.xmax); half = [[0, fr.zf], [fr.xmax, fr.zf], [fr.xmax, zx]].concat(half.filter(function (p) { return p[0] > fr.xmax; })); }
+      else { var zx = zAtX(half, fr.xmax); half = [[0, fr.zf], [fr.xmax, fr.zf], [fr.xmax, zx]].concat(half.slice(frontPart(half, fr.xmax).length)); }
     }
     f.side.forEach(function (s) {
       if (!(ym > s.y0 && ym < s.y1)) return;
@@ -355,8 +355,8 @@
     [[9.5, 12], [-9.5, -12]].forEach(function (p) { B.add(cylZ(1.8, 2.2, 10), M.steel, new THREE.Matrix4().makeTranslation(p[0], p[1], 0).premultiply(m4)); });
   }
   function addScrewTerminal(B, M, m4) {   // 2극 나사 단자(ST)
-    B.add(boxZ(14, 30, 9), M.nlBlack, m4);
-    [-7, 7].forEach(function (y) { B.add(cylZ(3, 9.6, 12), M.steel, new THREE.Matrix4().makeTranslation(0, y, 0).premultiply(m4)); B.add(boxZ(4.6, 0.8, 9.8), M.hole, new THREE.Matrix4().makeTranslation(0, y, 0).premultiply(m4)); });
+    B.add(boxZ(14, 30, 6), M.nlBlack, m4);
+    [-7, 7].forEach(function (y) { B.add(cylZ(3, 6.6, 12), M.steel, new THREE.Matrix4().makeTranslation(0, y, 0).premultiply(m4)); B.add(boxZ(4.6, 0.8, 6.8), M.hole, new THREE.Matrix4().makeTranslation(0, y, 0).premultiply(m4)); });
   }
   function addM10(B, M, m4) { B.add(cylZ(8, 0.6, 20), M.darkSteel, m4); B.add(cylZ(5, 0.8, 16), M.hole, m4); }
   function addTorx(B, M, m4) { B.add(cylZ(4.2, 1.2, 14), M.darkSteel, m4); B.add(cylZ(1.6, 1.4, 6), M.hole, m4); }

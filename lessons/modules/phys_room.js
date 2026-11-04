@@ -400,7 +400,7 @@
         s += '<path d="M' + f(X(w[0])) + ' ' + f(Y(w[1])) + 'L' + f(X(w[2])) + ' ' + f(Y(w[3])) + '" stroke="' + m.col + '" stroke-width="7" stroke-linecap="square"' + (k === 'front' ? '' : '') + (r.walls[k] === 'diffuser' ? ' stroke-dasharray="7 3"' : r.walls[k] === 'curtain' ? ' stroke-dasharray="3 2"' : '') + '/>'; });
       // 플러터: 두 옆벽 사이를 오가는 소리
       if (flutter()) { var span = Math.min(9, L * 0.4), fx0 = L * 0.55 - span / 2, zig = [], n = 6; for (var zi = 0; zi <= n; zi++) zig.push([X(fx0 + zi * span / n), Y(zi % 2 ? W - 0.3 : 0.3)]);
-        s += poly(zig, '#f59e0b', 2.2, ' stroke-dasharray="6 4" opacity=".9"') + t(X(fx0 + span / 2), Y(W / 2) + 4 * Z, '플러터', { size: 13 * Z, weight: 800, fill: '#b45309', halo: '#fff' }); }
+        s += poly(zig, '#f59e0b', 2.2, ' stroke-dasharray="6 4" opacity=".9"') + t(X(fx0 + span / 2), Y(W * 0.2) + 4 * Z, '플러터', { size: 13 * Z, weight: 800, fill: '#b45309', halo: '#fff' }); }
       // 벽 이름 · 재질 (벽 바깥쪽)
       var wl = function (k) { return (k === 'front' ? '앞벽 · ' : k === 'back' ? '뒷벽 · ' : '옆벽 · ') + MAT[r.walls[k]].n; }, fz = 12.5 * Z;
       s += t(X(L / 2), Y(0) - 7, wl('s1'), { size: fz, weight: 800, fill: MAT[r.walls.s1].col, halo: '#eef3f8' }) + t(X(L / 2), Y(W) + 6 + fz, wl('s2'), { size: fz, weight: 800, fill: MAT[r.walls.s2].col, halo: '#eef3f8' });
