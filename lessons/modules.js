@@ -160,7 +160,7 @@
   function metaHtml(m, c) {
     var n = (m.practice.links || []).length;
     return '<span class="mod-mi">' + mi('level') + esc(m.level) + '</span><span class="mod-mi">' + mi('time') + minutesTxt(m.minutes) + '</span>' +
-      (n ? '<span class="mod-mi">' + mi('prac') + '실습 연동 ' + n + '</span>' : '') + (tsLinked(m) ? '<span class="mod-mi">' + mi('ts') + '트러블슈팅 연결</span>' : '') +
+      (tsLinked(m) ? '<span class="mod-mi">' + mi('ts') + '트러블슈팅 연결</span>' : '') +
       dot(c.learnDone, '학습 ' + c.learn + '/' + c.learnN) + dot(c.pracDone, '실습 ' + c.prac + '/' + c.pracN) + dot(c.quizDone, '이해도 ' + c.quiz + '/' + c.quizN);
   }
   function progHtml(c) {
@@ -217,12 +217,10 @@
     var o = m.overview, g = (GL[m.id] || {}), h = g.hero || {}, links = m.practice.links || [];
     var showVis = VIS[o.model] && !(h.vis === o.model);
     return '<div class="mod-ov"><div class="mod-ov__main"><section class="mod-box mod-concept"><h2 class="mod-box__h">' + mi('bulb') + '핵심 개념</h2><div class="mod-lead mod-paras">' + paras(o.lead) + '</div>' +
-      (g.glance ? '<div class="mod-glance" aria-label="한눈에 보기"><h3>한눈에 보기</h3><dl>' + g.glance.map(function (x) { return '<div class="mod-gl"><dt>' + esc(x[0]) + '</dt><dd>' + esc(x[1]) + '</dd></div>'; }).join('') + '</dl></div>' : '') +
+      (g.glance ? matchHtml(g.glance) : '')   /* 2026-11-04: 「한눈에 보기」 → 단어 · 설명 짝 맞추기 */ +
       '<h3 class="mod-h3">주요 용어 <small>눌러서 뜻 보기</small></h3><div class="mod-terms">' + o.terms.map(function (t2) { return '<details class="mod-term"><summary>' + esc(t2[0]) + '</summary><p>' + esc(t2[1]) + '</p></details>'; }).join('') + '</div>' +
       (showVis ? '<div class="mod-visual">' + VIS[o.model]() + '</div>' : '') + '</section></div>' +
-      '<aside class="mod-ov__side">' + (links.length ? '<section class="mod-box mod-go"><h2 class="mod-box__h">관련 실습 바로가기</h2>' + links.map(function (x, i) { var info = PRACTICE_INFO[x.go && x.go.tab] || [], th = info[2];
-        return '<div class="mod-go__it"><span class="mod-go__th">' + (th ? '<img src="' + esc(th) + '" alt="" loading="lazy">' : '') + '</span><div><b>' + esc(x.title) + '</b>' + (x.text ? '<p>' + esc(x.text) + '</p>' : '') +
-          '<button type="button" class="ui-btn ' + (i ? 'ui-btn--secondary' : 'ui-btn--primary') + ' ui-btn--sm" data-mgo="practice:' + i + '">실습 시작하기 →</button></div></div>'; }).join('') + '</section>' : '') +
+      '<aside class="mod-ov__side">' +   /* 2026-11-04: 「관련 실습 바로가기」 상자 뺌 */
       '<div class="lsn-points mod-points"><h4>기억할 점</h4><ul>' + o.points.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div></aside></div>' +
       '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="theory">이론 학습 시작 →</button></div>';
   }
@@ -244,7 +242,7 @@
         return '<li class="' + (d ? 'done' : '') + '" data-task="' + t2.id + '"><span class="mod-task__ck">' + (d ? '✓' : '') + '</span><div><b>' + esc(t2.title) + '</b><p>' + esc(t2.text) + '</p></div></li>'; }).join('') + '</ol>' +
       (c.pracDone ? '<div class="mod-okline">🎉 실습 과제를 모두 마쳤어요. <b>실습 완료</b>!</div>' : '<p class="mod-small">과제는 실습 화면의 상태로 자동 확인돼요. 버튼을 누르기만 해서는 완료되지 않아요.</p>') + '</aside></div>' +
       '<p class="mod-note">⚠️ ' + esc(p.note) + '</p>' +
-      '<h3 class="mod-h3">이어서 해 볼 실습</h3><div class="mod-links">' + p.links.map(function (l, i) { return '<button type="button" class="mod-link" data-mgo="practice:' + i + '"><b>' + esc(l.title) + '</b><span>' + esc(l.text) + '</span><em>열기 →</em></button>'; }).join('') + '</div>' +
+      /* 2026-11-04: 「이어서 해 볼 실습」 링크 뺌 */
       '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="quiz">확인 문제 풀기 →</button></div>';
   }
   function tabQuiz(m) {
@@ -310,6 +308,76 @@
     sim = fn(el, { onTask: function (id) { var s = st(m.id); if (s.tasks[id]) return; s.tasks[id] = true; put(m.id, s); refreshHead(); } });
   }
   function destroySim() { if (sim) { try { sim.destroy(); } catch (e) { /* noop */ } sim = null; } }
+  /* 「한눈에 보기」 짝 맞추기 (2026-11-04): 왼쪽 단어 칸에 오른쪽 설명을 끌어다 놓기 · 또는 설명을 누르고 단어를 누르기 */
+  function shuffleIdx(n) { var a = []; for (var i = 0; i < n; i++) a.push(i); if (n < 2) return a; do { for (var j = n - 1; j > 0; j--) { var k = Math.floor(Math.random() * (j + 1)), t = a[j]; a[j] = a[k]; a[k] = t; } } while (a.every(function (v, i) { return v === i; })); return a; }
+  function matchHtml(items) {
+    var order = shuffleIdx(items.length);
+    return '<div class="mod-match" data-match="' + items.length + '" aria-label="한눈에 보기 — 단어와 설명 짝 맞추기">' +
+      '<div class="mod-match__hd"><h3>한눈에 보기 <small>짝 맞추기</small></h3><span class="mod-match__score" aria-live="polite">0 / ' + items.length + '</span></div>' +
+      '<p class="mod-match__hint">설명 카드를 끌어서 알맞은 단어 칸에 놓아요. 카드를 누른 뒤 단어 칸을 눌러도 돼요.</p>' +
+      '<div class="mod-match__grid"><ol class="mod-match__terms">' + items.map(function (x, i) {
+        return '<li class="mod-mrow" data-mi="' + i + '" tabindex="0" role="button" aria-label="' + esc(x[0]) + ' — 설명을 여기에 놓기"><b>' + esc(x[0]) + '</b><span class="mod-mslot">여기에 놓기</span></li>'; }).join('') + '</ol>' +
+      '<div class="mod-match__cards">' + order.map(function (i) { return '<button type="button" class="mod-mcard" data-mi="' + i + '">' + esc(items[i][1]) + '</button>'; }).join('') + '</div></div>' +
+      '<div class="mod-match__done" hidden><b>🎉 모두 맞혔어요!</b> <button type="button" class="mod-match__btn" data-match-reset="1">다시 하기</button></div>' +
+      '<div class="mod-match__foot"><button type="button" class="mod-match__btn ghost" data-match-show="1">정답 보기</button><button type="button" class="mod-match__btn ghost" data-match-reset="1">섞어서 다시</button></div></div>';
+  }
+  var mSel = null, mDrag = null;
+  function mBox(el) { return el && el.closest('.mod-match'); }
+  function mScore(box) { var n = +box.getAttribute('data-match'), ok = box.querySelectorAll('.mod-mrow.ok').length; box.querySelector('.mod-match__score').textContent = ok + ' / ' + n; box.querySelector('.mod-match__done').hidden = ok < n; box.classList.toggle('all', ok >= n); }
+  function mPlace(card, row) {
+    var box = mBox(card); if (!box || !row || row.classList.contains('ok')) return;
+    if (card.getAttribute('data-mi') === row.getAttribute('data-mi')) {
+      row.classList.add('ok'); row.querySelector('.mod-mslot').textContent = card.textContent; row.setAttribute('aria-label', row.querySelector('b').textContent + ' — 맞았어요'); card.remove(); mScore(box);
+    } else {
+      row.classList.remove('bad'); void row.offsetWidth; row.classList.add('bad'); card.classList.remove('bad'); void card.offsetWidth; card.classList.add('bad');
+      setTimeout(function () { row.classList.remove('bad'); card.classList.remove('bad'); }, 650);
+    }
+    mSelect(null);
+  }
+  function mSelect(card) { document.querySelectorAll('.mod-mcard.sel').forEach(function (c) { c.classList.remove('sel'); }); mSel = card; if (card) card.classList.add('sel'); document.querySelectorAll('.mod-match').forEach(function (b) { b.classList.toggle('picking', !!card && mBox(card) === b); }); }
+  function mReset(box, show) {
+    var items = [].map.call(box.querySelectorAll('.mod-mrow'), function (r) { return r.querySelector('b').textContent; }), n = items.length, descs = {};
+    box.querySelectorAll('.mod-mcard').forEach(function (c) { descs[c.getAttribute('data-mi')] = c.textContent; });
+    box.querySelectorAll('.mod-mrow.ok').forEach(function (r) { descs[r.getAttribute('data-mi')] = r.querySelector('.mod-mslot').textContent; });
+    var data = items.map(function (t, i) { return [t, descs[i]]; }), fresh = document.createElement('div'); fresh.innerHTML = matchHtml(data); var nb = fresh.firstChild; box.replaceWith(nb);
+    if (show) { nb.querySelectorAll('.mod-mcard').forEach(function (c) { mPlace(c, nb.querySelector('.mod-mrow[data-mi="' + c.getAttribute('data-mi') + '"]')); }); nb.classList.add('shown'); }
+  }
+  document.addEventListener('pointerdown', function (e) {
+    var card = e.target.closest && e.target.closest('.mod-mcard'); if (!card || e.button > 0) return;
+    mDrag = { card: card, x: e.clientX, y: e.clientY, ghost: null, id: e.pointerId, over: null };
+  });
+  document.addEventListener('pointermove', function (e) {
+    if (!mDrag || e.pointerId !== mDrag.id) return;
+    if (!mDrag.ghost) {
+      if (Math.abs(e.clientX - mDrag.x) + Math.abs(e.clientY - mDrag.y) < 7) return;
+      var r = mDrag.card.getBoundingClientRect(), g = mDrag.card.cloneNode(true); g.classList.add('ghost'); g.style.width = r.width + 'px'; g.style.left = r.left + 'px'; g.style.top = r.top + 'px';
+      mDrag.dx = e.clientX - r.left; mDrag.dy = e.clientY - r.top; document.body.appendChild(g); mDrag.ghost = g; mDrag.card.classList.add('lift'); mSelect(null);
+      try { mDrag.card.setPointerCapture(e.pointerId); } catch (x) { /* noop */ }
+    }
+    e.preventDefault();
+    mDrag.ghost.style.left = (e.clientX - mDrag.dx) + 'px'; mDrag.ghost.style.top = (e.clientY - mDrag.dy) + 'px';
+    var under = document.elementFromPoint(e.clientX, e.clientY), row = under && under.closest('.mod-mrow');
+    if (row && mBox(row) !== mBox(mDrag.card)) row = null;
+    if (mDrag.over && mDrag.over !== row) mDrag.over.classList.remove('over'); if (row && !row.classList.contains('ok')) row.classList.add('over'); mDrag.over = row;
+    var vh = window.innerHeight; if (e.clientY < 70) window.scrollBy(0, -12); else if (e.clientY > vh - 50) window.scrollBy(0, 12);
+  }, { passive: false });
+  function mEnd(e) {
+    if (!mDrag || (e && e.pointerId !== mDrag.id)) return; var d = mDrag; mDrag = null;
+    if (!d.ghost) return;   // 끌지 않았으면 클릭으로 처리
+    d.ghost.remove(); d.card.classList.remove('lift'); if (d.over) d.over.classList.remove('over');
+    d.card.__dragged = true; setTimeout(function () { d.card.__dragged = false; }, 0);
+    if (d.over) mPlace(d.card, d.over);
+  }
+  document.addEventListener('pointerup', mEnd); document.addEventListener('pointercancel', mEnd);
+  document.addEventListener('click', function (e) {
+    var t = e.target; if (!t.closest) return;
+    var card = t.closest('.mod-mcard'); if (card) { if (card.__dragged) return; mSelect(mSel === card ? null : card); return; }
+    var row = t.closest('.mod-mrow'); if (row && mSel && mBox(row) === mBox(mSel)) { mPlace(mSel, row); return; }
+    var rs = t.closest('[data-match-reset]'); if (rs) { mReset(mBox(rs)); return; }
+    var sh = t.closest('[data-match-show]'); if (sh) { mReset(mBox(sh), true); return; }
+  });
+  document.addEventListener('keydown', function (e) { var row = e.target.closest && e.target.closest('.mod-mrow'); if (row && (e.key === 'Enter' || e.key === ' ') && mSel && mBox(row) === mBox(mSel)) { e.preventDefault(); mPlace(mSel, row); } });
+
   /* 기능부 설명 말풍선 (사진 구역 · 이름 단추 공용) */
   var zb = null, zPinned = null, zCur = null, zEl = null, zZoomEl = null, zTimer = 0;
   /* 2026-11-04: 구역을 누르면 그 부분으로 확대(움직이며), 같은 구역을 한 번 더 누르면 원래 보기로 */
