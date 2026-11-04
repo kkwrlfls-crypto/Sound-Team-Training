@@ -262,3 +262,6 @@
 .mod-term__vis { margin: 0 14px 12px; max-width: 420px; }
 .mod-qvis { margin: 8px 0 10px; max-width: 560px; }
 .mod-dvis { margin: 8px 0; max-width: 620px; }
+/* 2026-11-04: 「그림으로 보기」의 작은 그림은 휴대폰에서 화면 폭에 맞춰 줄어들게(큰 이론 그림만 옆으로 밀어 보기) */
+.mod-pics .mod-svg, .mod-term__vis .mod-svg, .mod-qvis .mod-svg, .mod-dvis .mod-svg { min-width: 0; }
+.lsn-deep-item, .mod-pic, .mod-q { min-width: 0; }
