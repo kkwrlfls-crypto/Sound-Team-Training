@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="예배당 안에서 스피커 소리가 곧장, 그리고 벽과 천장에 튕겨 듣는 자리로 가는 모습">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="75%">
+      <stop offset="0" stop-color="#16304f"/>
+      <stop offset="1" stop-color="#0b1626"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#132a45"/>
+      <stop offset="1" stop-color="#0d1d33"/>
+    </linearGradient>
+    <linearGradient id="wallL" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0e1e33"/>
+      <stop offset="1" stop-color="#15304e"/>
+    </linearGradient>
+    <linearGradient id="wallR" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0" stop-color="#0e1e33"/>
+      <stop offset="1" stop-color="#15304e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowO" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#fb923c" stop-opacity=".6"/>
+      <stop offset="1" stop-color="#fb923c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <!-- 방 (원근) -->
+  <path d="M40 30 L260 190 L540 190 L760 30 Z" fill="#0c1a2d"/>
+  <path d="M40 30 L260 190 L260 370 L40 580 Z" fill="url(#wallL)"/>
+  <path d="M760 30 L540 190 L540 370 L760 580 Z" fill="url(#wallR)"/>
+  <path d="M40 580 L260 370 L540 370 L760 580 Z" fill="url(#floor)"/>
+  <rect x="260" y="190" width="280" height="180" fill="#17375a"/>
+  <g fill="none" stroke="#2b4a6e" stroke-width="2">
+    <path d="M40 30 L260 190 L540 190 L760 30"/>
+    <path d="M40 580 L260 370 L540 370 L760 580"/>
+    <path d="M260 190 V370 M540 190 V370"/>
+  </g>
+  <!-- 강단 -->
+  <path d="M260 370 L540 370 L566 392 L234 392 Z" fill="#7c5a1f" opacity=".55"/>
+  <!-- 왼쪽 벽 흡음판 -->
+  <g fill="#0f766e" opacity=".85">
+    <path d="M92 132 L140 167 L140 380 L92 425 Z"/>
+    <path d="M160 181 L196 207 L196 352 L160 386 Z"/>
+    <path d="M212 219 L238 238 L238 337 L212 360 Z"/>
+  </g>
+  <g stroke="#2dd4bf" stroke-width="1.5" opacity=".55">
+    <path d="M104 141 V414 M116 150 V403 M128 159 V391"/>
+    <path d="M170 188 V377 M182 197 V365"/>
+    <path d="M221 225 V352 M230 232 V345"/>
+  </g>
+  <!-- 오른쪽 벽 확산판 -->
+  <g fill="#5b3fa8" opacity=".75">
+    <path d="M708 132 L660 167 L660 380 L708 425 Z"/>
+  </g>
+  <g fill="#7c5cd6" opacity=".9">
+    <path d="M708 160 L660 191 L660 212 L708 186 Z"/>
+    <path d="M708 222 L660 245 L660 266 L708 248 Z"/>
+    <path d="M708 284 L660 299 L660 320 L708 310 Z"/>
+    <path d="M708 346 L660 353 L660 374 L708 372 Z"/>
+  </g>
+  <!-- 회중석 -->
+  <g stroke="#28496f" stroke-width="7" stroke-linecap="round">
+    <path d="M286 410 H362 M438 410 H514"/>
+    <path d="M270 432 H356 M444 432 H530"/>
+    <path d="M252 457 H350 M450 457 H548"/>
+    <path d="M232 485 H343 M457 485 H568"/>
+    <path d="M209 517 H335 M465 517 H591"/>
+    <path d="M184 552 H326 M474 552 H616"/>
+  </g>
+  <!-- 파면 -->
+  <g fill="none" stroke="#38bdf8" stroke-width="2">
+    <ellipse cx="400" cy="262" rx="46" ry="30" opacity=".55"/>
+    <ellipse cx="400" cy="262" rx="88" ry="58" opacity=".35"/>
+    <ellipse cx="400" cy="262" rx="136" ry="90" opacity=".2"/>
+    <ellipse cx="400" cy="262" rx="190" ry="126" opacity=".1"/>
+  </g>
+  <!-- 반사 경로 -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M400 262 L690 300 L512 488" stroke="#fb923c" stroke-width="5" opacity=".9"/>
+    <path d="M400 262 L455 92 L512 488" stroke="#fb923c" stroke-width="4" stroke-dasharray="12 9" opacity=".7"/>
+    <path d="M400 262 L150 300 L512 488" stroke="#fb923c" stroke-width="3" opacity=".3"/>
+    <path d="M400 262 L508 478" stroke="#22d3ee" stroke-width="7"/>
+  </g>
+  <circle cx="690" cy="300" r="22" fill="url(#glowO)"/>
+  <circle cx="455" cy="92" r="20" fill="url(#glowO)"/>
+  <circle cx="690" cy="300" r="6" fill="#fdba74"/>
+  <circle cx="455" cy="92" r="5" fill="#fdba74"/>
+  <!-- 스피커 -->
+  <circle cx="400" cy="262" r="44" fill="url(#glow)"/>
+  <rect x="384" y="236" width="32" height="50" rx="6" fill="#0b1626" stroke="#67e8f9" stroke-width="3"/>
+  <circle cx="400" cy="250" r="6" fill="#67e8f9"/>
+  <circle cx="400" cy="271" r="9" fill="none" stroke="#67e8f9" stroke-width="3"/>
+  <!-- 듣는 자리 -->
+  <circle cx="512" cy="488" r="30" fill="url(#glow)"/>
+  <circle cx="512" cy="488" r="15" fill="#2563eb" stroke="#e0f2fe" stroke-width="4"/>
+  <circle cx="512" cy="483" r="4.5" fill="#e0f2fe"/>
+  <path d="M504 496 q8 -10 16 0" fill="#e0f2fe"/>
+  <!-- 잔향 곡선 -->
+  <g transform="translate(588 446)">
+    <rect x="0" y="0" width="176" height="112" rx="14" fill="#0b1626" opacity=".72" stroke="#2b4a6e" stroke-width="2"/>
+    <g stroke="#475569" stroke-width="3" stroke-linecap="round">
+      <path d="M28 92 V86 M38 92 V80 M48 92 V83 M58 92 V75 M68 92 V79 M78 92 V73 M88 92 V78 M98 92 V74 M108 92 V80 M118 92 V77 M128 92 V83 M138 92 V82 M148 92 V87"/>
+    </g>
+    <path d="M18 92 V22" stroke="#22d3ee" stroke-width="6" stroke-linecap="round"/>
+    <path d="M28 92 V46 M36 92 V54 M44 92 V60" stroke="#fb923c" stroke-width="5" stroke-linecap="round"/>
+    <path d="M18 24 Q62 52 158 88" fill="none" stroke="#fb923c" stroke-width="2.5" stroke-dasharray="4 5" opacity=".8"/>
+  </g>
+</svg>

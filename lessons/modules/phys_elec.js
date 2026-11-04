@@ -71,13 +71,13 @@
     // 회로
     s += '<path d="M360 60H560V170H360Z" fill="none" stroke="' + C.ink + '" stroke-width="2.2"/>';
     s += '<path d="M560 88V142" stroke="#fff" stroke-width="6"/>' + zig(560, 88, 142, C.orange, 2.6);
-    s += '<path d="M346 104H374M352 126H368" stroke="#fff" stroke-width="8"/><path d="M346 104H374" stroke="' + C.ink + '" stroke-width="3"/><path d="M352 126H368" stroke="' + C.ink + '" stroke-width="5"/>';
+    s += '<rect x="352" y="100" width="16" height="30" fill="#fff"/><path d="M346 106H374" stroke="' + C.ink + '" stroke-width="3"/><path d="M352 124H368" stroke="' + C.ink + '" stroke-width="5"/>';
     s += t(340, 100, '+', { size: 12, weight: 800, anchor: 'end' }) + t(336, 131, '전원', { size: 10.5, fill: C.blue, weight: 700, anchor: 'end' });
     s += '<circle cx="460" cy="60" r="15" fill="#fff" stroke="' + C.ink + '" stroke-width="2"/>' + t(460, 65, 'A', { size: 13, weight: 900 });
     s += t(574, 112, 'R', { size: 13, weight: 900, fill: C.orange, anchor: 'start' });
     s += rect(372, 82, 170, 70, '#fff7ed', '#fdba74', 8) + t(457, 106, 'V = I × R', { size: 16, weight: 900, fill: C.orange }) + t(457, 124, '전류 I = V ÷ R', { size: 11, fill: C.ink }) + t(457, 141, '20 V ÷ 8 Ω = 2.5 A', { size: 11, weight: 700, fill: C.blue });
     s += t(460, 198, '단위: 전압 V(볼트) · 전류 A(암페어) · 저항 Ω(옴)', { size: 10.5, fill: C.sub });
-    s += t(300, 222, '물 비유는 이해를 돕는 그림이에요. 전선은 넓은 관이라 거의 막지 않고, 저항에서 압력(전압)이 주로 떨어져요', { size: 10, fill: C.sub });
+    s += t(300, 222, '물 비유는 이해를 돕는 그림이에요 · 전압은 주로 저항(좁은 관)에서 떨어져요', { size: 10, fill: C.sub });
     return svg(600, 232, s, '물 비유로 본 전압 전류 저항과 옴의 법칙');
   };
 
@@ -99,8 +99,8 @@
     // 병렬
     s += rect(306, 120, 286, 104, '#fff', C.line, 10) + t(318, 140, '병렬 — 나란히 이어요 (링크)', { size: 11.5, weight: 800, anchor: 'start' });
     s += rect(318, 158, 40, 50, '#1f2933', null, 6) + t(338, 187, '앰프', { size: 10, weight: 800, fill: '#fff' });
-    s += '<path d="M358 168H388M388 160V198M388 160H402M388 198H402M358 200H372V216H456V160H448M456 198H448" fill="none" stroke="' + C.red + '" stroke-width="2"/>';
-    s += spk(402, 146, '8 Ω') + spk(402, 184, '8 Ω');
+    s += '<path d="M358 170H372V150H495V162M425 150V162M358 198H372V214H495V196M425 214V196" fill="none" stroke="' + C.red + '" stroke-width="2"/>';
+    s += spk(402, 162, '8 Ω') + spk(472, 162, '8 Ω');
     s += t(574, 182, '4 Ω', { size: 15, weight: 900, fill: C.teal, anchor: 'end' }) + t(574, 200, '8 × 8 ÷ (8 + 8)', { size: 10.5, fill: C.sub, anchor: 'end' });
     return svg(600, 232, s, '전력 공식과 스피커 두 대의 직렬 병렬 임피던스');
   };
@@ -110,8 +110,8 @@
     var s = t(8, 16, '소리 → 전기 → 소리 : 오디오 신호는 0 을 중심으로 + · − 를 오가는 교류 전압이에요', { size: 10.5, fill: C.sub, anchor: 'start' });
     // 공기 압력
     s += rect(8, 26, 112, 92, '#fff', C.line) + t(64, 44, '공기 압력', { size: 11, weight: 800 });
-    for (var k = 0; k < 10; k++) { var dx = 18 + k * 9.5, dn = Math.sin(k / 9 * Math.PI * 3); s += '<path d="M' + dx.toFixed(1) + ' ' + (64 - 5 * dn).toFixed(1) + 'V' + (100 + 5 * dn).toFixed(1) + '" stroke="#94a3b8" stroke-width="' + (1.2 + 1.3 * (dn + 1)).toFixed(1) + '"/>'; }
-    s += t(64, 112, '빽빽 · 성김이 반복', { size: 9.5, fill: C.sub });
+    for (var k = 0; k < 10; k++) { var dx = 18 + k * 9.5, dn = Math.sin(k / 9 * Math.PI * 3); s += '<path d="M' + dx.toFixed(1) + ' ' + (60 - 4 * dn).toFixed(1) + 'V' + (92 + 4 * dn).toFixed(1) + '" stroke="#94a3b8" stroke-width="' + (1.2 + 1.3 * (dn + 1)).toFixed(1) + '"/>'; }
+    s += t(64, 111, '빽빽 · 성김이 반복', { size: 9.5, fill: C.sub });
     s += arrow(120, 72, 140, 72, '#94a3b8');
     s += rect(142, 26, 96, 92, '#ecfeff', '#67e8f9') + t(190, 46, '마이크', { size: 11.5, weight: 800, fill: C.teal }) + t(190, 64, '변환기', { size: 10, fill: C.ink }) + t(190, 82, '진동판 + 코일', { size: 9.5, fill: C.sub }) + t(190, 96, '+ 자석', { size: 9.5, fill: C.sub }) + t(190, 112, '움직임 → 전압', { size: 9.5, fill: C.teal, weight: 700 });
     s += arrow(238, 72, 258, 72, '#94a3b8');
@@ -123,8 +123,8 @@
     s += rect(8, 130, 388, 98, '#fff', C.line) + t(20, 148, '벽 콘센트 (한국): 220 V · 60 Hz', { size: 11.5, weight: 800, anchor: 'start' });
     s += '<path d="M60 186H384" stroke="' + C.line + '"/>' + wave(60, 300, 186, 28, sinF(2), C.orange, 2.4);
     s += '<path d="M56 158H64M56 214H64" stroke="' + C.ink + '"/>' + t(52, 162, '+311', { size: 9.5, anchor: 'end' }) + t(52, 190, '0', { size: 9.5, anchor: 'end' }) + t(52, 218, '−311 V', { size: 9.5, anchor: 'end' });
-    s += '<path d="M60 222V226H210V222" fill="none" stroke="' + C.orange + '" stroke-width="1.4"/>' + t(135, 224, '', {}) ;
-    s += t(270, 148, '한 번 왕복 = 1/60 초 ≈ 16.7 ms', { size: 10, fill: C.orange, weight: 700, anchor: 'start' });
+    s += '<path d="M60 222V226H210V222" fill="none" stroke="' + C.orange + '" stroke-width="1.4"/>';
+    s += t(232, 148, '한 번 왕복 = 1/60 초 ≈ 16.7 ms', { size: 10, fill: C.orange, weight: 700, anchor: 'start' });
     s += rect(406, 130, 186, 98, '#f8fafc', '#e2e8f0') + t(418, 150, '직류 (DC)', { size: 11.5, weight: 800, anchor: 'start' }) + t(418, 166, '건전지처럼 한 방향', { size: 10, fill: C.sub, anchor: 'start' });
     s += '<path d="M418 196H580" stroke="' + C.line + '"/><path d="M418 180H580" stroke="' + C.green + '" stroke-width="2.4"/>' + t(418, 216, '장비 안 전원부가 교류 → 직류로', { size: 9.5, fill: C.sub, anchor: 'start' });
     return svg(600, 236, s, '소리가 마이크에서 교류 전압이 되고 스피커에서 다시 소리가 되는 과정, 220 V 60 Hz 전원');
@@ -143,7 +143,7 @@
       s += '<path d="M' + x.toFixed(1) + ' ' + (up ? 112 : 124) + 'V' + (up ? 78 : 160) + '" stroke="' + m[3] + '" stroke-width="1.5" stroke-dasharray="3 2"/>';
       var bx = Math.max(8, Math.min(592 - 128, x - 64));
       s += rect(bx, up ? 34 : 162, 128, 42, '#fff', m[3], 7) + t(bx + 64, up ? 52 : 180, m[1], { size: 11.5, weight: 800, fill: m[3] }) + t(bx + 64, up ? 68 : 196, m[2], { size: 10, fill: C.ink }); });
-    s += rect(8, 210, 584, 24, '#f8fafc', '#e2e8f0', 6) + t(300, 226, '0 dBu = 0.775 V · 0 dBV = 1 V · dB = 20 × log(전압 ÷ 기준) · 마이크 → 스피커 전압 약 15,000배 (계산)', { size: 10.5, weight: 700 });
+    s += rect(8, 210, 584, 24, '#f8fafc', '#e2e8f0', 6) + t(300, 226, '0 dBu = 0.775 V · 0 dBV = 1 V · dB = 20 × log(전압 ÷ 기준)', { size: 10.5, weight: 700 });
     return svg(600, 240, s, '마이크 레벨 라인 레벨 스피커 레벨의 전압 비교');
   };
 
@@ -152,12 +152,12 @@
     var sig = sinF(1.5), s = '';
     function row(y, title, sub, col) { return rect(8, y, 584, 112, '#fff', col, 10) + t(20, y + 20, title, { size: 12, weight: 800, fill: col, anchor: 'start' }) + t(20, y + 36, sub, { size: 10, fill: C.sub, anchor: 'start' }); }
     s += row(8, '비평형 (TS 기타 케이블 등)', '신호선 1가닥 + 그라운드(실드)', C.red);
-    s += t(150, 62, '신호선', { size: 10, fill: C.sub, anchor: 'end' }) + wave(158, 170, 70, 18, function (u) { return sig(u) + 0.35 * buzzF(u); }, C.red, 2);
+    s += t(192, 74, '신호선', { size: 10, fill: C.sub, anchor: 'end' }) + wave(200, 140, 70, 18, function (u) { return sig(u) + 0.35 * buzzF(u); }, C.red, 2);
     s += '<path d="M340 52l12 10-8 2 10 10" fill="none" stroke="' + C.amber + '" stroke-width="2"/>' + t(366, 66, '잡음이 신호에 섞임', { size: 10, fill: C.amber, anchor: 'start', weight: 700 });
     s += arrow(476, 70, 494, 70, '#94a3b8') + wave(498, 84, 70, 18, function (u) { return sig(u) + 0.35 * buzzF(u); }, C.red, 2) + t(540, 106, '콘솔: 신호 + 잡음', { size: 10, weight: 800, fill: C.red });
-    s += row(128, '평형 (XLR · 평형 TRS)', '1번 그라운드(실드) · 2번 핫 · 3번 콜드', C.teal);
-    s += t(150, 178, '핫 (2번)', { size: 10, fill: C.sub, anchor: 'end' }) + wave(158, 170, 176, 14, function (u) { return sig(u) + 0.4 * buzzF(u); }, '#be123c', 2);
-    s += t(150, 216, '콜드 (3번)', { size: 10, fill: C.sub, anchor: 'end' }) + wave(158, 170, 214, 14, function (u) { return -sig(u) + 0.4 * buzzF(u); }, C.blue, 2);
+    s += row(128, '평형 (XLR · 평형 TRS)', '1번 실드 · 2번 핫 · 3번 콜드', C.teal);
+    s += t(192, 180, '핫 (2번)', { size: 10, fill: C.sub, anchor: 'end' }) + wave(200, 140, 176, 12, function (u) { return sig(u) + 0.4 * buzzF(u); }, '#be123c', 2);
+    s += t(192, 220, '콜드 (3번)', { size: 10, fill: C.sub, anchor: 'end' }) + wave(200, 140, 216, 12, function (u) { return -sig(u) + 0.4 * buzzF(u); }, C.blue, 2);
     s += t(400, 180, '잡음은 두 가닥에', { size: 10, fill: C.amber, weight: 700 }) + t(400, 194, '똑같이 들어와요', { size: 10, fill: C.amber, weight: 700 }) + t(400, 214, '받는 쪽: 핫 − 콜드', { size: 10.5, weight: 800, fill: C.teal });
     s += arrow(476, 196, 494, 196, '#94a3b8') + wave(498, 84, 194, 22, sig, C.teal, 2.4) + t(540, 230, '신호 × 2 · 잡음 0', { size: 10, weight: 800, fill: C.teal });
     return svg(600, 246, s, '비평형 연결은 잡음이 남고 평형 연결은 핫과 콜드의 차이로 잡음이 지워지는 원리');
@@ -169,20 +169,18 @@
     s += rect(20, 42, 84, 40, '#f1f5f9', '#94a3b8', 6) + t(62, 60, '무대 장비', { size: 10.5, weight: 800 }) + t(62, 74, '건반 · DI', { size: 9.5, fill: C.sub });
     s += rect(236, 42, 90, 40, '#f1f5f9', '#94a3b8', 6) + t(281, 60, '콘솔', { size: 10.5, weight: 800 }) + t(281, 74, '방송실', { size: 9.5, fill: C.sub });
     s += '<path d="M104 62H236" stroke="' + C.ink + '" stroke-width="2.4"/>' + t(170, 56, '신호 케이블 실드', { size: 9.5, fill: C.sub });
+    s += '<path d="M104 62H236M281 82V140M281 170V200H62V170M62 140V82" fill="none" stroke="' + C.red + '" stroke-width="9" stroke-linejoin="round" opacity=".18"/>';
     s += '<path d="M62 82V140M281 82V140" stroke="' + C.ink + '" stroke-width="2"/>';
-    s += rect(40, 140, 44, 30, '#fff', C.ink, 5) + t(62, 186, '콘센트 회로 2', { size: 9.5, fill: C.sub }) + rect(259, 140, 44, 30, '#fff', C.ink, 5) + t(281, 186, '콘센트 회로 1', { size: 9.5, fill: C.sub });
-    s += '<path d="M62 170V200H281V170" fill="none" stroke="#92400e" stroke-width="2" stroke-dasharray="5 3"/>' + t(170, 214, '건물 접지 — 회로마다 전압이 조금 달라요', { size: 9.5, fill: '#92400e' });
-    s += '<path d="M74 70H226V130H74Z" fill="none" stroke="' + C.red + '" stroke-width="2" stroke-dasharray="4 3" opacity=".8"/>' + t(150, 112, '고리 = 루프', { size: 10.5, weight: 800, fill: C.red });
+    s += rect(36, 140, 52, 30, '#fff', C.ink, 5) + t(62, 159, '회로 2', { size: 10, weight: 700 }) + rect(255, 140, 52, 30, '#fff', C.ink, 5) + t(281, 159, '회로 1', { size: 10, weight: 700 });
+    s += '<path d="M62 170V200H281V170" fill="none" stroke="#92400e" stroke-width="2" stroke-dasharray="5 3"/>' + t(170, 214, '건물 접지 — 콘센트 회로마다 전압이 조금 달라요', { size: 9.5, fill: '#92400e' });
+    s += t(170, 96, '빨간 고리 = 그라운드 루프', { size: 10.5, weight: 800, fill: C.red }) + t(170, 128, '험: 60 Hz 와 배음 (Hz)', { size: 9.5, fill: C.sub });
     // 험 스펙트럼
-    s += t(150, 232, '', {});
-    [[60, 1], [120, 0.55], [180, 0.4], [240, 0.25]].forEach(function (b, i) { var x = 128 + i * 26, h = 34 * b[1]; s += '<rect x="' + x + '" y="' + (168 - h).toFixed(1) + '" width="14" height="' + h.toFixed(1) + '" fill="' + C.red + '" opacity="' + (1 - i * 0.18) + '"/>' + t(x + 7, 180, b[0], { size: 8.5, fill: C.sub }); });
-    s += t(170, 128, '', {});
+    [[60, 1], [120, 0.55], [180, 0.4], [240, 0.25]].forEach(function (b, i) { var x = 128 + i * 26, h = 30 * b[1]; s += '<rect x="' + x + '" y="' + (168 - h).toFixed(1) + '" width="14" height="' + h.toFixed(1) + '" fill="' + C.red + '" opacity="' + (1 - i * 0.18) + '"/>' + t(x + 7, 180, b[0], { size: 8.5, fill: C.sub }); });
     // 오른쪽 상자
     [['전원 순서', ['켤 때: 콘솔 → 앰프 (마지막)', '끌 때: 앰프 먼저 → 콘솔'], C.blue], ['멀티탭 용량', ['220 V × 16 A = 3520 W', '여유 두기: 80 % ≈ 2800 W'], C.orange], ['팬텀 전원 +48 V', ['콘솔 → 콘덴서 마이크 · 액티브 DI', '꽂고 빼기 전 채널 뮤트'], C.purple]].forEach(function (b, i) {
       var y = 8 + i * 78;
       s += rect(348, y, 244, 70, '#fff', b[2], 8) + t(360, y + 22, b[0], { size: 12, weight: 800, fill: b[2], anchor: 'start' }) + t(360, y + 42, b[1][0], { size: 10.5, anchor: 'start' }) + t(360, y + 59, b[1][1], { size: 10.5, anchor: 'start' });
     });
-    s += t(170, 250, '', {});
     return svg(600, 246, s, '그라운드 루프 험과 전원 순서 멀티탭 용량 팬텀 전원');
   };
 
@@ -197,11 +195,11 @@
   var JACKS = [
     { id: 'mic', x: 64, name: '마이크 출력', sub: 'SM58 · 94 dB SPL', v: 0.00185, kind: '마이크 레벨', col: '#0e7490' },
     { id: 'home', x: 184, name: '가정용 기기', sub: '−10 dBV 기준', v: 0.3162, kind: '라인 레벨 (가정용)', col: '#059669' },
-    { id: 'pro', x: 304, name: '콘솔 라인 출력', sub: '+4 dBu 기준', v: 1.2277, kind: '라인 레벨 (업무용)', col: '#2563eb' },
+    { id: 'pro', x: 304, name: '콘솔 출력', sub: '+4 dBu 기준', v: 1.2277, kind: '라인 레벨 (업무용)', col: '#2563eb' },
     { id: 'spk', x: 424, name: '앰프 출력', sub: '100 W · 8 Ω', v: Math.sqrt(800), kind: '스피커 레벨', col: '#ea580c' }
   ];
   var CABLE_Y = 85;
-  var OUTLETS = { B: [70, 238, '무대 콘센트', '회로 2'], A2: [214, 238, '음향 전용 콘센트', '회로 1'] };
+  var OUTLETS = { B: [70, 238, '무대 콘센트', '회로 2'], A2: [190, 238, '음향 전용 콘센트', '회로 1'] };
   var DEVS = [
     { id: 'con', x: 66, name: '콘솔', w: 150 },
     { id: 'a1', x: 182, name: '파워앰프 1', w: 900 },
@@ -303,7 +301,7 @@
       wires: [[{ t: 'P+' }, { t: 'A+' }], [{ t: 'P-' }, { t: 'A-' }], [{ t: null, x: 46, y: 302 }, { t: null, x: 126, y: 302 }], [{ t: null, x: 176, y: 302 }, { t: null, x: 256, y: 302 }]],
       probe: { x: 240, y: 140, at: null }, measured: {}, fixedScale: false,
       bal: { mode: 'unbal', nx: 240, ny: 262 },
-      gnd: { plug: { x: 70, y: 238, at: 'B' }, lift: false, adp: { x: 360, y: 262, on: false }, warned: false },
+      gnd: { plug: { x: 70, y: 238, at: 'B' }, lift: false, adp: { x: 300, y: 196, on: false }, warned: false },
       tap: { dev: {}, tripped: false, order: { a1: false, a2: false }, msg: '', cls: '' },
       msg: {}
     };
@@ -357,17 +355,17 @@
       s += T(cx - 50, cy + 60, '0', { size: 12, fill: '#cbd5e1' }) + T(cx + 50, cy + 60, '48 V', { size: 12, fill: '#cbd5e1' });
       s += '<g data-drag="knob"><circle cx="' + cx + '" cy="' + cy + '" r="46" fill="transparent"/><circle cx="' + cx + '" cy="' + cy + '" r="40" fill="#e5e7eb" stroke="#4b5563" stroke-width="3"/><circle cx="' + cx + '" cy="' + cy + '" r="31" fill="#cbd5e1"/>' +
         '<path d="M' + cx + ' ' + cy + 'L' + (cx + 34 * Math.sin(a)).toFixed(1) + ' ' + (cy - 34 * Math.cos(a)).toFixed(1) + '" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/></g>';
-      s += T(cx, 270, '노브를 돌려요', { size: 11, fill: '#94a3b8' });
+      s += T(cx, 271, '노브를 돌려요', { size: 12.5, fill: '#94a3b8' });
       // 회로
       var hot = clamp(k.p / 150, 0, 1), rc = 'rgb(' + Math.round(148 + 92 * hot) + ',' + Math.round(163 - 100 * hot) + ',' + Math.round(184 - 150 * hot) + ')';
       var loop = 'M170 92H296M324 92H420V128M420 212V246H170';
       s += '<path d="' + loop + '" fill="none" stroke="#334155" stroke-width="3"/>';
       if (k.i > 0.01) s += '<path d="M170 92H420V246H170" fill="none" stroke="#fbbf24" stroke-width="3" class="sim-pe-flow" style="animation-duration:' + clamp(3 / k.i, 0.25, 6).toFixed(2) + 's"/>';
       s += '<circle cx="170" cy="92" r="7" fill="#dc2626"/><circle cx="170" cy="246" r="7" fill="#111827"/>' + T(160, 84, '+', { size: 14, weight: 900, fill: '#fff', anchor: 'end' });
-      s += '<circle cx="310" cy="92" r="20" fill="#fff" stroke="#0f172a" stroke-width="2.4"/>' + T(310, 98, 'A', { size: 16, weight: 900 }) + T(310, 134, f2(k.i) + ' A', { size: 16, weight: 900, fill: '#ea580c' }) + T(310, 152, '전류계', { size: 11, fill: C.sub });
+      s += '<circle cx="310" cy="92" r="20" fill="#fff" stroke="#0f172a" stroke-width="2.4"/>' + T(310, 98, 'A', { size: 16, weight: 900 }) + T(310, 134, f2(k.i) + ' A', { size: 16, weight: 900, fill: '#ea580c' }) + T(310, 154, '전류계', { size: 12.5, fill: C.sub });
       if (hot > 0.05) s += '<rect x="404" y="124" width="32" height="92" rx="10" fill="#f97316" opacity="' + (0.12 + 0.35 * hot).toFixed(2) + '"/>';
       s += '<g data-act="rcycle">' + '<rect x="398" y="124" width="44" height="92" fill="transparent"/>' + zig(420, 128, 212, rc, 3.2) + '</g>';
-      s += T(448, 166, k.r + ' Ω', { size: 16, weight: 900, fill: '#0e7490', anchor: 'start' }) + T(448, 184, '저항', { size: 11, fill: C.sub, anchor: 'start' });
+      s += T(440, 166, k.r + ' Ω', { size: 15, weight: 900, fill: '#0e7490', anchor: 'start' }) + T(440, 186, '저항', { size: 12.5, fill: C.sub, anchor: 'start' });
       s += '<path d="M420 140H378M420 200H378" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="3 3"/><circle cx="360" cy="170" r="18" fill="#fff" stroke="#7c3aed" stroke-width="2"/>' + T(360, 176, 'V', { size: 15, weight: 900, fill: '#7c3aed' }) + T(352, 214, f1(k.v) + ' V', { size: 13, weight: 800, fill: '#7c3aed', anchor: 'end' });
       s += rect(194, 256, 270, 34, '#fff', '#c4b5fd', 8) + T(329, 279, '전력 P = V × I = ' + f1(k.p) + ' W', { size: 14, weight: 900, fill: '#7c3aed' });
       layer.innerHTML = s;
@@ -389,18 +387,18 @@
     function drawWire() {
       var k = wireCalc(), kind = wireKind(k); setView(480, 330);
       q('[data-role=title]').innerHTML = '② 스피커 배선 <small>선 끝을 끌어다 단자에 놓아요</small>';
-      var s = rect(14, 60, 112, 180, '#1f2933', '#0b0f14', 10) + T(70, 86, '파워앰프', { size: 14, weight: 800, fill: '#fff' }) + T(70, 104, '출력 20 V', { size: 11, fill: '#cbd5e1' }) + T(70, 118, '(교육용)', { size: 10, fill: '#94a3b8' });
+      var s = rect(14, 60, 112, 180, '#1f2933', '#0b0f14', 10) + T(70, 86, '파워앰프', { size: 14, weight: 800, fill: '#fff' }) + T(70, 105, '출력 20 V', { size: 12.5, fill: '#cbd5e1' }) + T(70, 121, '(교육용)', { size: 11.5, fill: '#94a3b8' });
       s += T(108, 135, '+', { size: 15, weight: 900, fill: '#fca5a5', anchor: 'end' }) + T(108, 205, '−', { size: 17, weight: 900, fill: '#e5e7eb', anchor: 'end' });
       s += T(70, 160, kind === '단락' ? '보호 동작!' : isFinite(k.z) ? f1(k.i) + ' A' : '— A', { size: 14, weight: 900, fill: kind === '단락' ? '#fca5a5' : '#fde68a' });
-      s += T(70, 226, kind === '단락' ? '' : '부하 ' + zt(k.z), { size: 10.5, fill: '#cbd5e1' });
+      s += T(70, 228, kind === '단락' ? '' : '부하 ' + zt(k.z), { size: 12, fill: '#cbd5e1' });
       [['A', 20, k.iA, k.pA], ['B', 173, k.iB, k.pB]].forEach(function (sp) { var y = sp[1], live = Math.abs(sp[2]) > 1e-6, rev = sp[2] < -1e-6;
         s += rect(330, y, 136, 110, '#fff', live ? (rev ? '#dc2626' : '#0e7490') : C.line, 10);
         s += '<circle cx="420" cy="' + (y + 52) + '" r="34" fill="#e2e8f0" stroke="#475569" stroke-width="2"/><circle cx="420" cy="' + (y + 52) + '" r="16" fill="#334155"' + (live ? ' class="sim-pe-cone"' : '') + '/>';
-        s += T(398, y + 102, '스피커 ' + sp[0] + ' · 8 Ω', { size: 11, weight: 800 });
+        s += T(398, y + 102, '스피커 ' + sp[0] + ' · 8 Ω', { size: 13, weight: 800 });
         s += T(352, y + 38, '+', { size: 14, weight: 900, fill: '#dc2626' }) + T(352, y + 84, '−', { size: 16, weight: 900 });
-        if (live) s += T(462, y + 18, (rev ? '극성 반대 · ' : '') + f1(sp[3]) + ' W', { size: 10.5, weight: 800, fill: rev ? '#dc2626' : '#0e7490', anchor: 'end' });
+        if (live) s += T(462, y + 14, (rev ? '극성 반대 · ' : '') + f1(sp[3]) + ' W', { size: 12, weight: 800, fill: rev ? '#dc2626' : '#0e7490', anchor: 'end' });
       });
-      s += rect(14, 270, 300, 54, '#fff', '#94a3b8', 8).replace('/>', ' stroke-dasharray="5 4"/>') + T(24, 286, '선 보관함', { size: 10.5, fill: C.sub, anchor: 'start' });
+      s += rect(14, 270, 300, 54, '#fff', '#94a3b8', 8).replace('/>', ' stroke-dasharray="5 4"/>') + T(24, 287, '선 보관함', { size: 12, fill: C.sub, anchor: 'start' });
       Object.keys(TERMS).forEach(function (id) { var p = TERMS[id]; s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="9" fill="#fde68a" stroke="' + (id.charAt(1) === '+' ? '#dc2626' : '#111827') + '" stroke-width="3"/>'; });
       S.wires.forEach(function (w, i) { var a = endPos(w[0]), b = endPos(w[1]); s += '<path d="' + wirePath(a, b) + '" fill="none" stroke="' + WIRE_COL[i] + '" stroke-width="4" stroke-linecap="round" opacity=".92"/>'; });
       S.wires.forEach(function (w, i) { [0, 1].forEach(function (e) { var p = endPos(w[e]); s += '<g data-drag="wend" data-w="' + i + '" data-e="' + e + '"><circle cx="' + p[0] + '" cy="' + p[1] + '" r="16" fill="transparent"/><circle cx="' + p[0] + '" cy="' + p[1] + '" r="6.5" fill="' + WIRE_COL[i] + '" stroke="#fff" stroke-width="2"/></g>'; }); });
@@ -433,9 +431,9 @@
       q('[data-role=title]').innerHTML = '③ 신호 레벨 <small>프로브를 끌어서 단자에 대 봐요</small>';
       var s = '';
       JACKS.forEach(function (J) { var on = S.probe.at === J.id;
-        s += rect(J.x - 56, 12, 112, 88, '#fff', on ? J.col : (S.measured[J.id] ? '#94a3b8' : C.line), 10) + T(J.x, 32, J.name, { size: 12.5, weight: 800, fill: J.col }) + T(J.x, 48, J.sub, { size: 10, fill: C.sub });
+        s += rect(J.x - 54, 12, 108, 88, '#fff', on ? J.col : (S.measured[J.id] ? '#94a3b8' : C.line), 10) + T(J.x, 33, J.name, { size: 14, weight: 800, fill: J.col }) + T(J.x, 51, J.sub, { size: 11.5, fill: C.sub });
         s += '<circle cx="' + J.x + '" cy="78" r="12" fill="#1f2933" stroke="' + J.col + '" stroke-width="3"/><circle cx="' + J.x + '" cy="78" r="4" fill="#fde68a"/>';
-        if (S.measured[J.id]) s += T(J.x + 44, 30, '✓', { size: 13, weight: 900, fill: '#059669' });
+        if (S.measured[J.id]) s += T(J.x + 36, 84, '✓', { size: 13, weight: 900, fill: '#059669' });
       });
       // 오실로스코프
       s += rect(14, 196, 300, 136, '#0b1626', '#1e293b', 8);
@@ -444,17 +442,17 @@
       var div = 1, amp = 0;
       if (j) { var pk = j.v * Math.SQRT2; if (S.fixedScale) div = 10; else { div = DIVS[DIVS.length - 1]; for (var di = 0; di < DIVS.length; di++) if (pk / DIVS[di] <= 3.2) { div = DIVS[di]; break; } } amp = clamp(pk / div, 0, 3.9) * 17; }
       s += wave(18, 292, 264, amp, sinF(3), j ? j.col === '#0e7490' ? '#5eead4' : j.col === '#059669' ? '#6ee7b7' : j.col === '#2563eb' ? '#93c5fd' : '#fdba74' : '#5eead4', 2.2, 200);
-      s += T(22, 212, '오실로스코프', { size: 10.5, weight: 700, fill: '#94a3b8', anchor: 'start' }) + T(308, 212, '세로 한 칸 = ' + divTxt(div), { size: 10.5, weight: 700, fill: '#fde68a', anchor: 'end' });
-      s += T(22, 326, '0 V 를 가운데로 + · − 를 오가요 (교류)', { size: 9.5, fill: '#64748b', anchor: 'start' });
+      s += T(22, 214, '오실로스코프', { size: 12, weight: 700, fill: '#94a3b8', anchor: 'start' }) + T(308, 214, '한 칸 = ' + divTxt(div), { size: 12.5, weight: 700, fill: '#fde68a', anchor: 'end' });
+      s += T(22, 327, '0 V 를 가운데로 + · − 를 오가요 (교류)', { size: 11, fill: '#64748b', anchor: 'start' });
       // 디지털 표시
-      s += rect(326, 196, 140, 136, '#1f2933', '#0b0f14', 8) + T(396, 216, '레벨 미터', { size: 11, weight: 700, fill: '#cbd5e1' });
-      if (j) s += T(396, 248, vtxt(j.v), { size: 20, weight: 900, fill: '#fff' }) + T(396, 264, '실효값 (RMS)', { size: 9.5, fill: '#94a3b8' }) + T(396, 290, sg(dbu(j.v)) + ' dBu', { size: 15, weight: 800, fill: '#fde68a' }) + T(396, 312, sg(dbv(j.v)) + ' dBV', { size: 13, weight: 700, fill: '#93c5fd' });
-      else s += T(396, 270, '신호 없음', { size: 14, weight: 800, fill: '#64748b' }) + T(396, 290, '프로브를 단자에', { size: 10, fill: '#94a3b8' });
+      s += rect(326, 196, 140, 136, '#1f2933', '#0b0f14', 8) + T(396, 217, '레벨 미터', { size: 12.5, weight: 700, fill: '#cbd5e1' });
+      if (j) s += T(396, 248, vtxt(j.v), { size: 20, weight: 900, fill: '#fff' }) + T(396, 266, '실효값 (RMS)', { size: 11, fill: '#94a3b8' }) + T(396, 290, sg(dbu(j.v)) + ' dBu', { size: 15, weight: 800, fill: '#fde68a' }) + T(396, 312, sg(dbv(j.v)) + ' dBV', { size: 13, weight: 700, fill: '#93c5fd' });
+      else s += T(396, 270, '신호 없음', { size: 14, weight: 800, fill: '#64748b' }) + T(396, 292, '프로브를 단자에', { size: 11.5, fill: '#94a3b8' });
       // 프로브 선 + 프로브
       var px = S.probe.x, py = S.probe.y;
       s += '<path d="M164 196C164 170 ' + px + ' ' + (py + 60) + ' ' + px + ' ' + (py + 22) + '" fill="none" stroke="#475569" stroke-width="4" stroke-linecap="round"/>';
       s += '<g data-drag="probe"><circle cx="' + px + '" cy="' + py + '" r="22" fill="transparent"/><rect x="' + (px - 7) + '" y="' + (py + 4) + '" width="14" height="22" rx="4" fill="#dc2626"/><path d="M' + px + ' ' + (py - 10) + 'V' + (py + 6) + '" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/><circle cx="' + px + '" cy="' + py + '" r="5" fill="#fde68a" stroke="#0f172a" stroke-width="1.5"/></g>';
-      if (!S.probe.at) s += T(px + 16, py + 22, '프로브', { size: 10.5, weight: 700, fill: '#dc2626', anchor: 'start' });
+      if (!S.probe.at) s += T(px + 16, py + 24, '프로브', { size: 12, weight: 700, fill: '#dc2626', anchor: 'start' });
       layer.innerHTML = s;
       q('[data-role=hint]').textContent = '빨간 프로브를 끌어서 위 단자 네 곳에 차례로 대요. 놓는 순간 미터가 읽어요. 「같은 눈금」으로 바꾸면 크기 차이가 한눈에 보여요.';
       var X = function (d) { return clamp((d + 60) / 100 * 100, 0, 100); };
@@ -473,16 +471,16 @@
     function drawBal() {
       var k = balCalc(), bal = S.bal.mode === 'bal'; setView(480, 300);
       q('[data-role=title]').innerHTML = '④ 평형 · 비평형 연결 <small>잡음원을 끌어 케이블 가까이 놓아 봐요</small>';
-      var s = rect(10, 50, 80, 70, '#1f2933', null, 8) + T(50, 80, '건반', { size: 12.5, weight: 800, fill: '#fff' }) + T(50, 98, '무대', { size: 10, fill: '#cbd5e1' });
-      s += rect(390, 50, 80, 70, '#1f2933', null, 8) + T(430, 80, '콘솔 입력', { size: 12, weight: 800, fill: '#fff' }) + T(430, 98, '방송실', { size: 10, fill: '#cbd5e1' });
-      s += T(240, 34, (bal ? '평형 XLR 케이블 · 30 m (교육용)' : '비평형 TS 케이블 · 30 m (교육용)'), { size: 12, weight: 800, fill: bal ? '#0e7490' : '#dc2626' });
+      var s = rect(10, 50, 80, 70, '#1f2933', null, 8) + T(50, 80, '건반', { size: 12.5, weight: 800, fill: '#fff' }) + T(50, 100, '무대', { size: 11.5, fill: '#cbd5e1' });
+      s += rect(390, 50, 80, 70, '#1f2933', null, 8) + T(430, 80, '콘솔 입력', { size: 12, weight: 800, fill: '#fff' }) + T(430, 100, '방송실', { size: 11.5, fill: '#cbd5e1' });
+      s += T(240, 30, (bal ? '평형 XLR 케이블 · 30 m (교육용)' : '비평형 TS 케이블 · 30 m (교육용)'), { size: 12, weight: 800, fill: bal ? '#0e7490' : '#dc2626' });
       if (bal) { s += wave(90, 300, CABLE_Y - 3, 6, sinF(7), '#be123c', 2.4, 160) + wave(90, 300, CABLE_Y - 3, -6, sinF(7), '#2563eb', 2.4, 160) + '<path d="M90 ' + (CABLE_Y + 11) + 'H390" stroke="#64748b" stroke-width="2.4"/>';
-        s += T(398, CABLE_Y - 18, '', {}) + T(96, CABLE_Y + 28, '핫 · 콜드 (꼬임) + 실드', { size: 10, fill: C.sub, anchor: 'start' }); }
-      else { s += '<path d="M90 ' + (CABLE_Y - 4) + 'H390" stroke="#be123c" stroke-width="2.4"/><path d="M90 ' + (CABLE_Y + 8) + 'H390" stroke="#64748b" stroke-width="2.4"/>' + T(96, CABLE_Y + 28, '신호선 + 실드(그라운드)', { size: 10, fill: C.sub, anchor: 'start' }); }
+        s += T(240, CABLE_Y - 22, '핫 · 콜드 (꼬임) + 실드', { size: 12, fill: C.sub }); }
+      else { s += '<path d="M90 ' + (CABLE_Y - 4) + 'H390" stroke="#be123c" stroke-width="2.4"/><path d="M90 ' + (CABLE_Y + 8) + 'H390" stroke="#64748b" stroke-width="2.4"/>' + T(240, CABLE_Y - 18, '신호선 + 실드(그라운드)', { size: 12, fill: C.sub }); }
       if (k.c > 0.02) for (var i = 0; i < 5; i++) { var x = S.bal.nx - 48 + i * 24, y0 = S.bal.ny - 22, y1 = CABLE_Y + 16; s += '<path d="M' + x + ' ' + y0 + 'Q' + (x + 8) + ' ' + ((y0 + y1) / 2) + ' ' + x + ' ' + y1 + '" fill="none" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="3 3" opacity="' + (0.25 + 0.7 * k.c).toFixed(2) + '"/>'; }
       var nx = S.bal.nx, ny = S.bal.ny;
-      s += '<g data-drag="noise"><rect x="' + (nx - 70) + '" y="' + (ny - 20) + '" width="140" height="40" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><path d="M' + (nx - 54) + ' ' + (ny - 12) + 'l-8 13h7l-5 12 13-16h-7l5-9z" fill="#d97706"/>' +
-        '<text x="' + (nx + 8) + '" y="' + (ny - 2) + '" font-size="11.5" font-weight="800" fill="#92400e" text-anchor="middle">조명 디머 전원선</text><text x="' + (nx + 8) + '" y="' + (ny + 13) + '" font-size="10" fill="#92400e" text-anchor="middle">잡음원 · 끌어서 옮겨요</text></g>';
+      s += '<g data-drag="noise"><rect x="' + (nx - 74) + '" y="' + (ny - 22) + '" width="148" height="44" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><path d="M' + (nx - 54) + ' ' + (ny - 12) + 'l-8 13h7l-5 12 13-16h-7l5-9z" fill="#d97706"/>' +
+        '<text x="' + (nx + 8) + '" y="' + (ny - 2) + '" font-size="13" font-weight="800" fill="#92400e" text-anchor="middle">조명 디머 전원선</text><text x="' + (nx + 8) + '" y="' + (ny + 15) + '" font-size="11.5" fill="#92400e" text-anchor="middle">잡음원 · 끌어요</text></g>';
       layer.innerHTML = s;
       q('[data-role=hint]').textContent = '노란 잡음원을 끌어서 케이블 가까이 놓으면 잡음이 케이블에 들어와요. 오른쪽에서 연결 방식을 바꿔 콘솔에 들어가는 소리를 비교해요.';
       var sig = sinF(1.5), buzz = function (u) { return buzzF(u); }, H = 40;
@@ -507,23 +505,23 @@
       q('[data-role=title]').innerHTML = '⑤ 그라운드 루프 찾기 <small>험의 원인을 찾아 안전하게 없애요</small>';
       var s = '';
       if (k.loop) s += '<path d="M66 82V52H150M234 52H352M407 82V178M407 212V304H70V250M70 228C70 160 66 130 66 82" fill="none" stroke="#ef4444" stroke-width="10" stroke-linejoin="round" opacity="' + (k.hum ? 0.22 : 0.1) + '"/>';
-      s += rect(16, 24, 100, 58, '#1f2933', null, 8) + T(66, 48, '건반', { size: 12.5, weight: 800, fill: '#fff' }) + T(66, 66, '접지 플러그', { size: 10, fill: '#cbd5e1' });
-      s += '<path d="M116 52H150" stroke="#334155" stroke-width="3"/>' + rect(150, 30, 84, 46, '#334155', null, 8) + T(192, 52, 'DI 박스', { size: 12, weight: 800, fill: '#fff' }) + T(192, 68, G.lift ? 'GND LIFT 켬' : 'GND 연결', { size: 9.5, fill: G.lift ? '#fde68a' : '#cbd5e1' });
-      s += '<g data-act="lift"><rect x="156" y="84" width="72" height="26" rx="13" fill="' + (G.lift ? '#f59e0b' : '#cbd5e1') + '" stroke="#475569" stroke-width="1.5"/><circle cx="' + (G.lift ? 215 : 169) + '" cy="97" r="10" fill="#fff" stroke="#475569"/><text x="192" y="126" font-size="10" font-weight="800" fill="#475569" text-anchor="middle">GND LIFT 스위치</text></g>';
-      s += '<path d="M234 52H352" stroke="#334155" stroke-width="3"' + (G.lift ? ' stroke-dasharray="2 0"' : '') + '/>' + T(293, 44, 'XLR 30 m · 실드 = 1번 핀', { size: 10, fill: C.sub });
+      s += rect(16, 24, 100, 58, '#1f2933', null, 8) + T(66, 49, '건반', { size: 14, weight: 800, fill: '#fff' }) + T(66, 69, '접지 플러그', { size: 11.5, fill: '#cbd5e1' });
+      s += '<path d="M116 52H150" stroke="#334155" stroke-width="3"/>' + rect(150, 28, 84, 50, '#334155', null, 8) + T(192, 50, 'DI 박스', { size: 13, weight: 800, fill: '#fff' }) + T(192, 68, G.lift ? 'LIFT 켬' : 'GND 연결', { size: 11, fill: G.lift ? '#fde68a' : '#cbd5e1' });
+      s += '<g data-act="lift"><rect x="152" y="84" width="80" height="28" rx="14" fill="' + (G.lift ? '#f59e0b' : '#cbd5e1') + '" stroke="#475569" stroke-width="1.5"/><circle cx="' + (G.lift ? 217 : 167) + '" cy="98" r="11" fill="#fff" stroke="#475569"/><text x="192" y="130" font-size="12" font-weight="800" fill="#475569" text-anchor="middle">GND LIFT 스위치</text></g>';
+      s += '<path d="M234 52H352" stroke="#334155" stroke-width="3"/>' + T(293, 43, 'XLR · 실드 = 1번 핀', { size: 11, fill: C.sub });
       if (G.lift) s += '<path d="M240 46l8 12M248 46l-8 12" stroke="#f59e0b" stroke-width="2.4"/>';
-      s += rect(352, 24, 112, 58, '#1f2933', null, 8) + T(408, 48, '콘솔', { size: 12.5, weight: 800, fill: '#fff' }) + T(408, 66, '방송실', { size: 10, fill: '#cbd5e1' });
-      s += '<path d="M407 82V178" stroke="#334155" stroke-width="3"/>' + rect(380, 178, 54, 36, '#fff', '#0f172a', 6) + '<circle cx="397" cy="196" r="3.5" fill="#0f172a"/><circle cx="417" cy="196" r="3.5" fill="#0f172a"/>' + T(407, 230, '방송실 콘센트', { size: 10, weight: 700 }) + T(407, 244, '회로 1', { size: 9.5, fill: C.sub });
-      s += '<path d="M70 258V304H407V214M214 258V304" fill="none" stroke="#92400e" stroke-width="2" stroke-dasharray="6 4"/>' + T(240, 322, '건물 접지선 — 회로 1 과 2 는 접지 전압이 조금 달라요', { size: 10, fill: '#92400e' });
-      Object.keys(OUTLETS).forEach(function (id) { var o = OUTLETS[id]; s += rect(o[0] - 27, o[1] - 18, 54, 36, '#fff', '#0f172a', 6) + '<circle cx="' + (o[0] - 10) + '" cy="' + o[1] + '" r="3.5" fill="#0f172a"/><circle cx="' + (o[0] + 10) + '" cy="' + o[1] + '" r="3.5" fill="#0f172a"/>' + T(o[0], o[1] - 26, o[2], { size: 10, weight: 700 }) + T(o[0] + (id === 'B' ? 0 : 0), o[1] + 32, o[3], { size: 9.5, fill: C.sub }); });
+      s += rect(352, 24, 112, 58, '#1f2933', null, 8) + T(408, 49, '콘솔', { size: 14, weight: 800, fill: '#fff' }) + T(408, 69, '방송실', { size: 11.5, fill: '#cbd5e1' });
+      s += '<path d="M407 82V178" stroke="#334155" stroke-width="3"/>' + rect(380, 178, 54, 36, '#fff', '#0f172a', 6) + '<circle cx="397" cy="196" r="3.5" fill="#0f172a"/><circle cx="417" cy="196" r="3.5" fill="#0f172a"/>' + T(407, 232, '방송실 콘센트', { size: 12, weight: 700 }) + T(407, 248, '회로 1', { size: 11, fill: C.sub });
+      s += '<path d="M70 258V304H407V214M190 258V304" fill="none" stroke="#92400e" stroke-width="2" stroke-dasharray="6 4"/>' + T(240, 324, '건물 접지선 — 회로 1 과 2 는 접지 전압이 조금 달라요', { size: 11.5, fill: '#92400e' });
+      Object.keys(OUTLETS).forEach(function (id) { var o = OUTLETS[id]; s += rect(o[0] - 27, o[1] - 18, 54, 36, '#fff', '#0f172a', 6) + '<circle cx="' + (o[0] - 10) + '" cy="' + o[1] + '" r="3.5" fill="#0f172a"/><circle cx="' + (o[0] + 10) + '" cy="' + o[1] + '" r="3.5" fill="#0f172a"/>' + T(o[0] + 32, o[1] - 2, o[2], { size: 12, weight: 700, anchor: 'start' }) + T(o[0] + 32, o[1] + 14, o[3], { size: 11, fill: C.sub, anchor: 'start' }); });
       var px = G.plug.x, py = G.plug.y;
       s += '<path d="M66 82C66 140 ' + px + ' ' + (py - 70) + ' ' + px + ' ' + (py - 14) + '" fill="none" stroke="#111827" stroke-width="3.5"/>';
       s += '<g data-drag="plug"><circle cx="' + px + '" cy="' + py + '" r="22" fill="transparent"/><rect x="' + (px - 15) + '" y="' + (py - 14) + '" width="30" height="28" rx="6" fill="#111827"/><circle cx="' + (px - 6) + '" cy="' + py + '" r="2.5" fill="#e5e7eb"/><circle cx="' + (px + 6) + '" cy="' + py + '" r="2.5" fill="#e5e7eb"/>' +
         (G.adp.on ? '<rect x="' + (px - 18) + '" y="' + (py + 8) + '" width="36" height="12" rx="3" fill="#dc2626"/>' : '') + '</g>';
-      if (!G.plug.at) s += T(px + 24, py + 4, '전원 빠짐', { size: 10, weight: 800, fill: '#b91c1c', anchor: 'start' });
-      if (!G.adp.on) { var ax = G.adp.x, ay = G.adp.y; s += '<g data-drag="adp"><rect x="' + (ax - 50) + '" y="' + (ay - 16) + '" width="100" height="32" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="1.8"/><text x="' + ax + '" y="' + (ay - 1) + '" font-size="10.5" font-weight="800" fill="#b91c1c" text-anchor="middle">접지 끊는 어댑터</text><text x="' + ax + '" y="' + (ay + 11) + '" font-size="9" fill="#b91c1c" text-anchor="middle">(위험 · 시험용)</text></g>'; }
-      else s += '<g data-act="adpoff"><rect x="310" y="246" width="100" height="32" rx="8" fill="#dc2626"/><text x="360" y="266" font-size="10.5" font-weight="800" fill="#fff" text-anchor="middle">어댑터 빼기</text></g>';
-      if (k.hum) s += T(240, 156, '「웅-」 험이 나요', { size: 15, weight: 900, fill: '#dc2626' }) + T(240, 174, '빨간 고리 = 그라운드 루프', { size: 10.5, fill: '#dc2626' });
+      if (!G.plug.at) s += T(px + 24, py + 4, '전원 빠짐', { size: 12, weight: 800, fill: '#b91c1c', anchor: 'start' });
+      if (!G.adp.on) { var ax = G.adp.x, ay = G.adp.y; s += '<g data-drag="adp"><rect x="' + (ax - 62) + '" y="' + (ay - 19) + '" width="124" height="38" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="1.8"/><text x="' + ax + '" y="' + (ay - 2) + '" font-size="12" font-weight="800" fill="#b91c1c" text-anchor="middle">접지 끊는 어댑터</text><text x="' + ax + '" y="' + (ay + 13) + '" font-size="10.5" fill="#b91c1c" text-anchor="middle">(위험 · 시험용)</text></g>'; }
+      else s += '<g data-act="adpoff"><rect x="238" y="177" width="124" height="38" rx="8" fill="#dc2626"/><text x="300" y="201" font-size="12.5" font-weight="800" fill="#fff" text-anchor="middle">어댑터 빼기</text></g>';
+      if (k.hum) s += T(300, 150, '「웅-」 험이 나요', { size: 17, weight: 900, fill: '#dc2626' }) + T(300, 168, '빨간 고리 = 그라운드 루프', { size: 12, fill: '#dc2626' });
       layer.innerHTML = s;
       q('[data-role=hint]').textContent = '건반 전원 플러그를 끌어 다른 콘센트에 꽂거나, DI 의 GND LIFT 스위치를 눌러 봐요. 빨간 어댑터는 무엇이 위험한지 보여 주는 시험용이에요.';
       var bars = [[60, 1], [120, 0.55], [180, 0.42], [240, 0.3], [300, 0.22]];
@@ -556,13 +554,13 @@
       });
       s += '<path d="M40 236H16V322" fill="none" stroke="#111827" stroke-width="4"/>' + rect(40, 210, 400, 52, T2.tripped ? '#fee2e2' : '#e2e8f0', T2.tripped ? '#dc2626' : '#94a3b8', 12);
       SOCKS.forEach(function (x) { s += '<circle cx="' + x + '" cy="' + SOCK_Y + '" r="16" fill="#fff" stroke="#64748b" stroke-width="2"/><circle cx="' + (x - 6) + '" cy="' + SOCK_Y + '" r="2.6" fill="#334155"/><circle cx="' + (x + 6) + '" cy="' + SOCK_Y + '" r="2.6" fill="#334155"/>'; });
-      s += '<g data-act="reset"><rect x="398" y="222" width="36" height="28" rx="6" fill="' + (T2.tripped ? '#dc2626' : '#94a3b8') + '"/><text x="416" y="241" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">리셋</text></g>';
-      s += T(240, 280, '멀티탭 정격 16 A · 우리 전압 220 V', { size: 11.5, weight: 800, fill: '#334155' }) + T(240, 298, '최대 220 × 16 = 3520 W · 여유 80 % = 2816 W', { size: 10.5, fill: C.sub });
+      s += '<g data-act="reset"><rect x="398" y="222" width="36" height="28" rx="6" fill="' + (T2.tripped ? '#dc2626' : '#94a3b8') + '"/><text x="416" y="241" font-size="11" font-weight="800" fill="#fff" text-anchor="middle">리셋</text></g>';
+      s += T(240, 281, '멀티탭 정격 16 A · 우리 전압 220 V', { size: 12.5, weight: 800, fill: '#334155' }) + T(240, 299, '최대 220 × 16 = 3520 W · 여유 80 % = 2816 W', { size: 11.5, fill: C.sub });
       var pct = clamp(k.a / TAP_A, 0, 1.2);
       s += rect(150, 306, 260, 12, '#e2e8f0', null, 6) + '<rect x="150" y="306" width="' + (260 * Math.min(1, pct)).toFixed(1) + '" height="12" rx="6" fill="' + (k.w > TAP_SAFE ? '#dc2626' : k.w > TAP_SAFE * 0.85 ? '#f59e0b' : '#10b981') + '"/>' + '<path d="M' + (150 + 260 * 0.8) + ' 302V322" stroke="#0f172a" stroke-width="1.5" stroke-dasharray="2 2"/>';
-      s += T(140, 317, f1(k.a) + ' A', { size: 11, weight: 800, anchor: 'end' });
+      s += T(142, 318, f1(k.a) + ' A', { size: 12.5, weight: 800, anchor: 'end' });
       DEVS.forEach(function (d) { var st = T2.dev[d.id], p = st.sock != null ? [SOCKS[st.sock], SOCK_Y] : [st.x, st.y];
-        s += '<g data-drag="tplug" data-v="' + d.id + '"><circle cx="' + p[0] + '" cy="' + p[1] + '" r="22" fill="transparent"/><rect x="' + (p[0] - 13) + '" y="' + (p[1] - 14) + '" width="26" height="28" rx="6" fill="' + (d.id === 'pot' ? '#c2410c' : '#111827') + '"/><text x="' + p[0] + '" y="' + (p[1] + 4) + '" font-size="9" font-weight="800" fill="#fff" text-anchor="middle">' + (d.id === 'con' ? '콘솔' : d.id === 'pot' ? '포트' : '앰프') + '</text></g>'; });
+        s += '<g data-drag="tplug" data-v="' + d.id + '"><circle cx="' + p[0] + '" cy="' + p[1] + '" r="22" fill="transparent"/><rect x="' + (p[0] - 13) + '" y="' + (p[1] - 14) + '" width="26" height="28" rx="6" fill="' + (d.id === 'pot' ? '#c2410c' : '#111827') + '"/><text x="' + p[0] + '" y="' + (p[1] + 4) + '" font-size="10.5" font-weight="800" fill="#fff" text-anchor="middle">' + (d.id === 'con' ? '콘솔' : d.id === 'pot' ? '포트' : '앰프') + '</text></g>'; });
       if (T2.tripped) s += T(240, 196, '과부하! 멀티탭 차단기가 내려갔어요', { size: 13, weight: 900, fill: '#dc2626' });
       layer.innerHTML = s;
       q('[data-role=hint]').textContent = '각 장비의 플러그를 끌어 멀티탭 구멍에 꽂아요. 그다음 장비의 「전원」 버튼을 눌러 켜요. 켜는 순서와 전체 전력을 함께 봐요.';
@@ -605,7 +603,7 @@
       var g = e.target.closest && e.target.closest('[data-drag]'); if (!g || !svgEl.contains(g)) return;
       e.preventDefault(); drag = { kind: g.getAttribute('data-drag'), w: +g.getAttribute('data-w'), e: +g.getAttribute('data-e'), v: g.getAttribute('data-v'), id: e.pointerId, moved: false };
       try { svgEl.setPointerCapture(e.pointerId); } catch (er) { /* noop */ }
-      svgEl.classList.add('dragging'); onMove(e);
+      svgEl.classList.add('dragging'); if (drag.kind === 'knob') onMove(e);
     }
     function onMove(e) {
       if (!drag || e.pointerId !== drag.id) return; var p = svgPt(e), sz = vb(), x = clamp(p.x, 6, sz[0] - 6), y = clamp(p.y, 6, sz[1] - 6); drag.moved = true;
@@ -641,7 +639,7 @@
       else if (act === 'scale') S.fixedScale = b.textContent.indexOf('같은') >= 0;
       else if (act === 'bal') S.bal.mode = v === 'bal' ? 'bal' : 'unbal';
       else if (act === 'lift') S.gnd.lift = !S.gnd.lift;
-      else if (act === 'adpoff') { S.gnd.adp.on = false; S.gnd.adp.x = 360; S.gnd.adp.y = 262; }
+      else if (act === 'adpoff') { S.gnd.adp.on = false; S.gnd.adp.x = 300; S.gnd.adp.y = 196; }
       else if (act === 'pw') tapPower(v);
       else if (act === 'reset') { if (S.tap.tripped) { var k = 0; DEVS.forEach(function (x) { if (S.tap.dev[x.id].sock != null) k += x.w; }); S.tap.tripped = false; tapMsg('차단기를 올렸어요. 장비는 모두 꺼진 상태예요. 콘솔부터 다시 켜요.' + (k > TAP_W ? ' 꽂힌 장비를 모두 켜면 또 넘쳐요.' : ''), ''); } }
       else return;

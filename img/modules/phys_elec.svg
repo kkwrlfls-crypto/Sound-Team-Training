@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f1f36"/>
+      <stop offset="1" stop-color="#0b1626"/>
+    </linearGradient>
+    <radialGradient id="glowT" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowO" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#fb923c" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#fb923c" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#cbd5e1"/>
+      <stop offset="1" stop-color="#64748b"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <!-- 격자 -->
+  <g stroke="#16304f" stroke-width="1">
+    <path d="M0 100H800M0 200H800M0 300H800M0 400H800M0 500H800"/>
+    <path d="M100 0V600M200 0V600M300 0V600M400 0V600M500 0V600M600 0V600M700 0V600"/>
+  </g>
+  <!-- 큰 교류 파형 (빛 번짐 + 선) -->
+  <circle cx="400" cy="300" r="260" fill="url(#glowT)"/>
+  <path d="M40 300 C 95 120, 150 120, 205 300 S 315 480, 370 300 S 480 120, 535 300 S 645 480, 700 300 S 790 160, 800 200" fill="none" stroke="#22d3ee" stroke-width="16" opacity=".25" filter="url(#soft)"/>
+  <path d="M40 300 C 95 120, 150 120, 205 300 S 315 480, 370 300 S 480 120, 535 300 S 645 480, 700 300 S 790 160, 800 200" fill="none" stroke="#5eead4" stroke-width="5" stroke-linecap="round"/>
+  <path d="M40 300H760" stroke="#2c4a6e" stroke-width="2" stroke-dasharray="6 8"/>
+  <!-- 회로: 왼쪽 위 전원 → 저항 → 오른쪽 -->
+  <g fill="none" stroke="#93c5fd" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M80 110H250"/>
+    <path d="M250 110l14 -22 28 44 28 -44 28 44 28 -44 28 44 14 -22"/>
+    <path d="M418 110H560"/>
+  </g>
+  <!-- 전류 점 -->
+  <g fill="#fbbf24">
+    <circle cx="120" cy="110" r="7"/><circle cx="175" cy="110" r="7"/><circle cx="225" cy="110" r="7"/>
+    <circle cx="455" cy="110" r="7"/><circle cx="510" cy="110" r="7"/>
+  </g>
+  <!-- 전류계 -->
+  <circle cx="600" cy="110" r="48" fill="#0b1626" stroke="#93c5fd" stroke-width="5"/>
+  <path d="M570 128 A 36 36 0 0 1 630 128" fill="none" stroke="#335a85" stroke-width="4"/>
+  <path d="M600 128 L 622 92" stroke="#fb923c" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="600" cy="128" r="6" fill="#fb923c"/>
+  <path d="M648 110H740" stroke="#93c5fd" stroke-width="5" stroke-linecap="round"/>
+  <!-- XLR 단면 (왼쪽 아래) -->
+  <circle cx="170" cy="460" r="92" fill="url(#metal)"/>
+  <circle cx="170" cy="460" r="78" fill="#1e293b" stroke="#0b1626" stroke-width="4"/>
+  <circle cx="132" cy="440" r="15" fill="#e2e8f0"/>
+  <circle cx="208" cy="440" r="15" fill="#e2e8f0"/>
+  <circle cx="170" cy="505" r="15" fill="#e2e8f0"/>
+  <rect x="160" y="370" width="20" height="18" rx="4" fill="#0b1626"/>
+  <!-- 평형: 핫 · 콜드 꼬임 선 (XLR 에서 오른쪽으로) -->
+  <path d="M262 470 C 300 440, 330 500, 370 470 S 440 440, 480 470 S 550 500, 590 470" fill="none" stroke="#f43f5e" stroke-width="6" stroke-linecap="round"/>
+  <path d="M262 470 C 300 500, 330 440, 370 470 S 440 500, 480 470 S 550 440, 590 470" fill="none" stroke="#60a5fa" stroke-width="6" stroke-linecap="round"/>
+  <!-- 스피커 (오른쪽 아래) -->
+  <circle cx="660" cy="470" r="120" fill="url(#glowO)"/>
+  <rect x="592" y="388" width="136" height="164" rx="18" fill="#111c2e" stroke="#334155" stroke-width="4"/>
+  <circle cx="660" cy="470" r="54" fill="#1e293b" stroke="#fb923c" stroke-width="6"/>
+  <circle cx="660" cy="470" r="30" fill="#0f172a" stroke="#475569" stroke-width="3"/>
+  <circle cx="660" cy="470" r="12" fill="#fb923c"/>
+  <path d="M742 430 a 46 46 0 0 1 0 80" fill="none" stroke="#fb923c" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+  <path d="M760 412 a 70 70 0 0 1 0 116" fill="none" stroke="#fb923c" stroke-width="4" stroke-linecap="round" opacity=".45"/>
+  <!-- 기호 -->
+  <g font-family="Pretendard, system-ui, sans-serif" font-weight="800" fill="#cbd5e1" opacity=".85">
+    <text x="334" y="70" font-size="34" text-anchor="middle">Ω</text>
+    <text x="600" y="198" font-size="30" text-anchor="middle" fill="#fb923c">A</text>
+    <text x="80" y="88" font-size="30" text-anchor="middle" fill="#5eead4">V</text>
+  </g>
+</svg>

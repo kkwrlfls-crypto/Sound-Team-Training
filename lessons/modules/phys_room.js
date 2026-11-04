@@ -27,6 +27,7 @@
   function f(v) { return (Math.round(v * 10) / 10).toString(); }
   function poly(pts, col, w, extra) { return '<path d="' + pts.map(function (p, i) { return (i ? 'L' : 'M') + f(p[0]) + ' ' + f(p[1]); }).join('') + '" stroke="' + col + '" stroke-width="' + (w || 2) + '" fill="none" stroke-linejoin="round" stroke-linecap="round"' + (extra || '') + '/>'; }
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function num(x, y, n, col) { return '<circle cx="' + f(x) + '" cy="' + f(y) + '" r="7.5" fill="' + col + '"/>' + t(x, y + 3.6, n, { size: 10, weight: 900, fill: '#fff' }); }
   function f1(v) { return (Math.round(v * 10) / 10).toFixed(1); }
   function f2(v) { return (Math.round(v * 100) / 100).toFixed(2); }
   function db(v) { return (v > 0.05 ? '+' : v < -0.05 ? '−' : '') + f1(Math.abs(v)) + ' dB'; }
@@ -45,7 +46,7 @@
   var FLOOR = { vinyl: { n: '타일', a: 0.03 }, carpet: { n: '카펫', a: 0.15 } };
   var SEAT = { wood: { n: '나무 의자', e: 0.03, f: 0.7 }, cloth: { n: '천 씌운 의자', e: 0.6, f: 0.8 } };
   var DF = { omni: { n: '무지향', k: 1 }, card: { n: '카디오이드', k: 1.7 }, sup: { n: '슈퍼카디오이드', k: 1.9 } };
-  var WALL_N = { front: '앞벽 (강단)', back: '뒷벽', s1: '옆벽 (그림 위)', s2: '옆벽 (그림 아래)' };
+  var WALL_N = { front: '앞벽 (강단)', back: '뒷벽', s1: '위쪽 옆벽', s2: '아래쪽 옆벽' };
   function hard(m) { return m.a < 0.3 && !m.s; }
   function seatArea(L, W) { return Math.max(0, L - 5.5) * Math.max(0, W - 3.9); }
   function surfaces(r) {   // r: {L,W,H,walls,ceil,floor,seat}, people: bool
@@ -91,11 +92,11 @@
     // 잔향 곡선
     var gx = 412, gy = 40, gw = 176, gh = 150;
     s += rect(gx - 8, gy - 8, gw + 16, gh + 70, '#fff', C.line, 10) + t(gx + gw / 2, gy + 8, '소리를 멈춘 뒤 줄어드는 모습', { size: 10.5, weight: 800 });
-    var top = gy + 22, bot = gy + gh - 4, tx = function (sec) { return gx + 6 + sec / 6 * (gw - 12); }, ty = function (d) { return top + (-d) / 60 * (bot - top); };
+    var top = gy + 22, bot = gy + gh - 4, tx = function (sec) { return gx + 6 + sec / 8 * (gw - 12); }, ty = function (d) { return top + (-d) / 60 * (bot - top); };
     s += line(gx + 6, bot, gx + gw - 6, bot, C.line, 1.5) + line(gx + 6, top, gx + 6, bot, C.line, 1.5);
     s += line(tx(0), ty(0), tx(DEF_E), ty(-60), C.gray, 2.4) + line(tx(0), ty(0), tx(DEF_F), ty(-60), C.blue, 3);
-    s += t(tx(DEF_E) - 2, ty(-60) - 8, '빈 본당 ' + f1(DEF_E) + ' s', { size: 10, weight: 800, fill: C.gray, anchor: 'end' }) + t(tx(DEF_F) + 4, ty(-44), '회중 ' + f1(DEF_F) + ' s', { size: 10, weight: 800, fill: C.blue, anchor: 'start' });
-    s += t(gx + 6, bot + 16, '0', { size: 9.5, fill: C.sub }) + t(gx + gw - 6, bot + 16, '6 s', { size: 9.5, fill: C.sub }) + t(gx + 2, top + 4, '0 dB', { size: 9, fill: C.sub, anchor: 'end' });
+    s += t(tx(DEF_E * 0.5) + 6, ty(-30) - 8, '빈 본당 ' + f1(DEF_E) + ' s', { size: 10, weight: 800, fill: C.gray, anchor: 'start', halo: '#fff' }) + t(tx(DEF_F) + 5, ty(-60) - 2, '회중 가득 ' + f1(DEF_F) + ' s', { size: 10, weight: 800, fill: C.blue, anchor: 'start', halo: '#fff' });
+    s += t(gx + 6, bot + 16, '0', { size: 9.5, fill: C.sub }) + t(tx(4), bot + 16, '4', { size: 9.5, fill: C.sub }) + t(gx + gw - 6, bot + 16, '8 s', { size: 9.5, fill: C.sub }) + t(gx + 2, top + 4, '0 dB', { size: 9, fill: C.sub, anchor: 'end' });
     s += t(gx + gw / 2, bot + 34, 'RT60 = 60 dB 줄어드는 시간', { size: 10.5, weight: 700, fill: C.ink }) + t(gx + gw / 2, bot + 50, '(실습 예시 방 · 세이빈 교육용 계산)', { size: 9.5, fill: C.sub });
     s += t(300, 290, '같은 본당도 사람이 차면 소리를 더 흡수해서 잔향이 짧아져요', { size: 11, weight: 700, fill: C.ink });
     return svg(600, 300, s, '예배당 평면에서 직접음 · 반사음 경로와 빈 본당 · 회중이 찬 본당의 잔향');
@@ -139,21 +140,21 @@
     s += poly([[Sx, Sy], [x0 + w, (Sy + Py) / 2 + 10], [Px, Py]], C.red, 2.2, ' stroke-dasharray="6 4"');
     s += arrow(Sx, Sy, Px - 5, Py - 4, C.teal, 3);
     s += rect(Sx - 6, Sy - 9, 12, 18, '#0f2747', null, 3) + '<circle cx="' + Px + '" cy="' + Py + '" r="8" fill="' + C.blue + '" stroke="#fff" stroke-width="2"/>';
-    s += t(x0 + 60, y0 + 96, '① 직접음', { size: 10.5, weight: 800, fill: C.teal, halo: '#fff' }) + t(x0 + 80, y0 + 18, '② 초기 반사', { size: 10.5, weight: 800, fill: C.orange, halo: '#fff' }) + t(x0 + 166, y0 + 132, '③ 뒷벽 반사', { size: 10.5, weight: 800, fill: C.red, halo: '#fff' });
+    s += num(x0 + 34, y0 + 120, 1, C.teal) + t(x0 + 44, y0 + 124, '직접음', { size: 10.5, weight: 800, fill: C.teal, anchor: 'start', halo: '#fff' }) + num(x0 + 96, y0 + 18, 2, C.orange) + t(x0 + 106, y0 + 22, '초기 반사', { size: 10.5, weight: 800, fill: C.orange, anchor: 'start', halo: '#fff' }) + num(x0 + 140, y0 + 134, 3, C.red) + t(x0 + 150, y0 + 138, '뒷벽 반사', { size: 10.5, weight: 800, fill: C.red, anchor: 'start', halo: '#fff' });
     s += t(x0, y0 + h + 18, '길이 1 m 더 돌아오면 약 2.9 ms 늦어요', { size: 10, fill: C.ink, anchor: 'start', weight: 700 }) + t(x0, y0 + h + 34, '(소리 빠르기 343 m/s, 20 °C)', { size: 9.5, fill: C.sub, anchor: 'start' });
     // 에코그램
-    var gx = 262, gy = 40, gw = 326, gh = 130, T = 160, X = function (ms) { return gx + ms / T * gw; }, Y = function (d) { return gy + gh - (d + 36) / 36 * gh; };
-    s += t(gx, 24, '도착 시간과 크기 (에코그램)', { size: 11, weight: 800, anchor: 'start' });
+    var gx = 262, gy = 50, gw = 326, gh = 122, T = 160, X = function (ms) { return gx + ms / T * gw; }, Y = function (d) { return gy + gh - (d + 36) / 36 * gh; };
+    s += t(gx, 18, '도착 시간과 크기 (에코그램)', { size: 11, weight: 800, anchor: 'start' });
     s += '<rect x="' + gx + '" y="' + gy + '" width="' + f(X(40) - gx) + '" height="' + gh + '" fill="#ecfdf5"/>' + '<rect x="' + f(X(50)) + '" y="' + gy + '" width="' + f(gx + gw - X(50)) + '" height="' + gh + '" fill="#fef2f2"/>';
-    s += t(X(20), gy + 14, '하나로 들려요', { size: 9.5, weight: 800, fill: C.green }) + t(X(105), gy + 14, '말은 50 ms 넘으면 메아리로', { size: 9.5, weight: 800, fill: C.red });
+    s += t(X(20), gy - 6, '하나로 들려요', { size: 9.5, weight: 800, fill: C.green }) + t(X(105), gy - 6, '말은 50 ms 넘으면 메아리로', { size: 9.5, weight: 800, fill: C.red });
     s += line(gx, gy + gh, gx + gw, gy + gh, C.ink, 1.4);
     [0, 40, 50, 100, 150].forEach(function (ms) { s += line(X(ms), gy + gh, X(ms), gy + gh + 4, C.ink, 1) + t(X(ms), gy + gh + 16, ms + (ms === 150 ? ' ms' : ''), { size: 9.5, fill: C.sub }); });
     var tail = ''; for (var ms = 24; ms <= 158; ms += 2.2) { var d = -9 - (ms - 24) / 1000 * 60 / 1.6 - ((ms * 7) % 5); tail += line(X(ms), gy + gh, X(ms), Y(d), '#cbd5e1', 1.4); }
     s += tail + line(X(0.6), gy + gh, X(0.6), Y(0), C.teal, 5) + [[7, -5], [12, -7], [17, -8], [26, -10]].map(function (r) { return line(X(r[0]), gy + gh, X(r[0]), Y(r[1]), C.orange, 3.4); }).join('') + line(X(118), gy + gh, X(118), Y(-8), C.red, 4);
-    s += t(X(2), Y(0) - 4, '①', { size: 10, weight: 800, fill: C.teal, anchor: 'start' }) + t(X(15), Y(-5) - 6, '②', { size: 10, weight: 800, fill: C.orange }) + t(X(118), Y(-8) - 6, '③', { size: 10, weight: 800, fill: C.red });
+    s += num(X(0.6) + 12, Y(0) + 10, 1, C.teal) + num(X(16), Y(-5) - 10, 2, C.orange) + num(X(118) + 12, Y(-8) + 10, 3, C.red);
     s += t(X(70), Y(-24), '잔향 — 촘촘히 이어지며 줄어요', { size: 9.5, fill: C.sub, halo: '#fff' });
-    s += t(gx, gy + gh + 36, '①과 ②는 하나로 들리고 방향은 ①쪽 (선행음 효과)', { size: 10, fill: C.ink, anchor: 'start', weight: 700 }) + t(gx, gy + gh + 52, '③처럼 늦고 큰 반사는 따로 떨어진 메아리로 들려요', { size: 10, fill: C.ink, anchor: 'start', weight: 700 });
-    return svg(600, 232, s, '직접음 · 초기 반사 · 잔향 · 메아리의 도착 시간');
+    s += t(gx, gy + gh + 34, '1 과 2 는 하나로 들리고, 방향은 1 쪽으로 느껴요 (선행음 효과)', { size: 10, fill: C.ink, anchor: 'start', weight: 700 }) + t(gx, gy + gh + 50, '3 처럼 늦고 큰 반사는 따로 떨어진 메아리로 들려요', { size: 10, fill: C.ink, anchor: 'start', weight: 700 });
+    return svg(600, 236, s, '직접음 · 초기 반사 · 잔향 · 메아리의 도착 시간');
   };
 
   /* ---------------------------------------------------------------- 그림 3: RT60 · 세이빈 · 권장 범위 */
@@ -170,10 +171,10 @@
     s += t(X(1.0) + 3, Y(-50), '1.0 s', { size: 10, weight: 800, fill: C.teal, anchor: 'start', halo: '#fff' }) + t(X(2.2) + 3, Y(-36), '2.2 s', { size: 10, weight: 800, fill: C.purple, anchor: 'start', halo: '#fff' });
     s += rect(8, 186, 282, 48, '#eff6ff', '#93c5fd', 8) + t(149, 206, 'RT60 ≈ 0.161 × V ÷ A', { size: 13, weight: 900, fill: C.blue }) + t(149, 224, 'V 부피 (m³) · A 흡음력 = Σ 넓이 × α (m²)', { size: 10, fill: C.ink });
     // 권장 범위
-    var bx = 330, bw = 250, BX = function (sec) { return bx + sec / 3 * bw; };
+    var bx = 336, bw = 196, BX = function (sec) { return bx + sec / 3 * bw; };
     s += t(bx - 18, 30, '예배 공간 권장 범위 (Acoustical Surfaces)', { size: 11, weight: 800, anchor: 'start' });
-    [['설교 · 강의', 0.8, 1.2, C.teal], ['현대 예배', 1.0, 1.5, C.blue], ['전통 성가대 예배', 1.5, 2.5, C.purple], ['오르간 음악', 2.0, 3.0, '#9333ea']].forEach(function (r, i) { var y = 44 + i * 30;
-      s += t(bx - 18, y + 9, r[0], { size: 10, anchor: 'start', weight: 700 }) + rect(BX(r[1]), y + 13, BX(r[2]) - BX(r[1]), 11, r[3], null, 4) + t(BX(r[2]) + 5, y + 22, r[1] + '–' + r[2] + ' s', { size: 9.5, weight: 800, fill: r[3], anchor: 'start' }); });
+    [['설교 · 강의', 0.8, 1.2, C.teal, '0.8–1.2 s'], ['현대 예배', 1.0, 1.5, C.blue, '1.0–1.5 s'], ['전통 성가대 예배', 1.5, 2.5, C.purple, '1.5–2.5 s'], ['오르간 음악', 2.0, 3.0, '#9333ea', '2.0–3.0 s']].forEach(function (r, i) { var y = 44 + i * 30;
+      s += t(bx - 18, y + 9, r[0], { size: 10, anchor: 'start', weight: 700 }) + rect(BX(r[1]), y + 13, BX(r[2]) - BX(r[1]), 11, r[3], null, 4) + t(BX(r[2]) + 5, y + 22, r[4], { size: 9.5, weight: 800, fill: r[3], anchor: 'start' }); });
     s += line(bx, 166, bx + bw, 166, C.line, 1.2); [0, 1, 2, 3].forEach(function (sec) { s += t(BX(sec), 180, sec + ' s', { size: 9.5, fill: C.sub }); });
     s += t(bx - 18, 204, '자료마다 조금 달라요 (Riedel: 현대 1.4–1.8 s)', { size: 9.5, fill: C.sub, anchor: 'start' });
     s += t(bx - 18, 222, '실습 예시 방: 빈 ' + f1(DEF_E) + ' s → 회중 찬 ' + f1(DEF_F) + ' s (교육용 계산)', { size: 10, fill: C.ink, anchor: 'start', weight: 700 });
@@ -209,7 +210,7 @@
     s += '<path d="' + env(1, 1).concat(env(1, -1).reverse()).map(function (p, i) { return (i ? 'L' : 'M') + f(p[0]) + ' ' + f(p[1]); }).join('') + 'Z" fill="' + C.blue + '" opacity=".14"/>';
     s += poly(env(1, 1), C.blue, 2.6) + poly(env(1, -1), C.blue, 2.6) + poly(env(2, 1), C.orange, 1.8, ' stroke-dasharray="5 4"');
     s += t(x0 + 30, 40, '1차: L = 반 파장', { size: 10, weight: 800, fill: C.blue, anchor: 'start' }) + t(x1 - 6, 40, '2차 (2배 주파수)', { size: 10, weight: 800, fill: C.orange, anchor: 'end' });
-    s += '<circle cx="' + (x0 + 16) + '" cy="' + (ym) + '" r="7" fill="' + C.blue + '"/>' + t(x0 + 16, ym + 66, '벽 가까이: 크게', { size: 10, weight: 800, fill: C.blue });
+    s += '<circle cx="' + (x0 + 16) + '" cy="' + (ym) + '" r="7" fill="' + C.blue + '"/>' + t(x0 + 4, ym + 66, '벽 가까이: 크게', { size: 10, weight: 800, fill: C.blue, anchor: 'start' });
     s += '<circle cx="' + ((x0 + x1) / 2) + '" cy="' + ym + '" r="7" fill="#fff" stroke="' + C.blue + '" stroke-width="2.4"/>' + t((x0 + x1) / 2, ym + 66, '가운데(마디): 작게', { size: 10, weight: 800, fill: C.blue });
     s += line(x0, 176, x1, 176, C.ink, 1.2) + t((x0 + x1) / 2, 172, 'L', { size: 11, weight: 800 });
     s += rect(20, 190, 296, 44, '#eff6ff', '#93c5fd', 8) + t(168, 208, 'f = n × c ÷ 2L', { size: 13, weight: 900, fill: C.blue }) + t(168, 226, 'L = 8 m → 약 21 · 43 · 64 Hz (c = 343 m/s)', { size: 10, fill: C.ink });
@@ -243,8 +244,8 @@
       } else {
         r += '<path d="M' + sx + ' ' + sy + 'L' + (x + w - 8) + ' ' + (y + 6) + 'L' + (x + w - 8) + ' ' + (y + 96) + 'Z" fill="' + C.red + '" opacity=".12"/>';
         r += arrow(sx, sy, x + w - 10, y + 40, C.red, 2.6) + arrow(x + w - 10, y + 44, x + 56, y + h - 64, C.orange, 2) + arrow(sx + 30, sy - 6, x + 150, y + 2, C.red, 2);
-        r += t(x + 150, y + 84, '벽 · 천장을 때리면', { size: 10.5, weight: 800, fill: C.red, halo: '#fff' }) + t(x + 150, y + 100, '메아리 · 잔향 · 하울링 ↑', { size: 10.5, weight: 800, fill: C.red, halo: '#fff' });
-        r += t(x + 86, y + h - 70, '마이크로', { size: 9.5, weight: 700, fill: C.orange, anchor: 'start', halo: '#fff' });
+        r += t(x + 186, y + 100, '벽 · 천장을 때리면', { size: 10.5, weight: 800, fill: C.red, halo: '#fff' }) + t(x + 186, y + 116, '메아리 · 잔향 · 하울링 ↑', { size: 10.5, weight: 800, fill: C.red, halo: '#fff' });
+        r += t(x + 58, y + 74, '마이크로', { size: 9.5, weight: 700, fill: C.orange, anchor: 'start', halo: '#fff' });
       }
       r += rect(sx - 8, sy - 12, 16, 24, '#0f2747', null, 3);
       r += t(x + w / 2, y + h + 18, good ? '좋은 예 — 필요한 곳(회중)에만' : '피할 예 — 벽 · 천장으로 새는 소리', { size: 11, weight: 800, fill: good ? C.green : C.red });
@@ -256,9 +257,9 @@
   };
 
   /* =========================================================================== 실습: 예배당 평면 (STASims.roomLab) */
-  var VBW = 600, VBH = 446, OX = 34, OY = 24, KP = 13.5;        // 평면: 길이 L → 오른쪽(최대 40 m), 폭 W → 아래(최대 30 m)
+  var VBW = 614, VBH = 470, OX = 34, OY = 32, KP = 13.5;        // 평면: 길이 L → 오른쪽(최대 40 m), 폭 W → 아래(최대 30 m)
   var LMIN = 8, LMAX = 40, WMIN = 6, WMAX = 30, HMIN = 5, HMAX = 12;
-  var MS = { w: 600, h: 150, x0: 92, x1: 580, dmin: 0.03, dmax: 10 };   // 마이크 거리 띠(로그 눈금)
+  var MS = { w: 600, h: 170, x0: 92, x1: 580, dmin: 0.03, dmax: 10, top: 30, bot: 116 };   // 마이크 거리 띠(로그 눈금)
   var ECHO_MS = 50, ECHO_DB = -15;
 
   function injectCss() {
@@ -298,7 +299,7 @@
     opts = opts || {}; injectCss();
     var S = { room: copyRoom(DEF), people: false, peopleToggled: false, paint: 'absorber', mode: 'off', lx: 24, ly: 13, mic: { d: 3, pat: 'omni' },
       msg: '재질을 고른 뒤 그림의 벽을 누르면 그 벽이 바뀌어요. 파란 동그라미(듣는 자리)와 오른쪽 아래 네모(방 크기)는 끌 수 있어요.', msgCls: '', done: {} };
-    var drag = null, justDragged = false;
+    var drag = null, justDragged = false, planZ = 1;
 
     function chip(act, v, label, on, sw, small) { return '<button type="button" class="sim-pr-chip" data-act="' + act + '" data-v="' + v + '" aria-pressed="' + !!on + '">' + (sw ? '<i style="background:' + sw + '"></i>' : '') + label + (small ? ' <small>' + small + '</small>' : '') + '</button>'; }
     el.innerHTML = '<div class="sim-pr">' +
@@ -372,8 +373,9 @@
         '<button type="button" class="sim-btn" data-act="reset" style="margin-left:auto">처음 상태로</button></div>';
       q('[data-role=tools]').innerHTML = h;
     }
+    function zoom(svgEl) { var w = svgEl.getBoundingClientRect().width; return w && w < 520 ? 1.6 : 1; }   // 좁은 화면: 글자 · 손잡이를 크게
     function drawPlan(g) {
-      var r = S.room, L = r.L, W = r.W, s = '<rect width="' + VBW + '" height="' + VBH + '" fill="#eef3f8"/>';
+      var Z = zoom(plan), r = S.room, L = r.L, W = r.W, s = '<rect width="' + VBW + '" height="' + VBH + '" fill="#eef3f8"/>';
       for (var gx = 0; gx <= LMAX; gx += 5) s += line(X(gx), Y(0), X(gx), Y(WMAX), '#dde5ee', 1);
       for (var gy = 0; gy <= WMAX; gy += 5) s += line(X(0), Y(gy), X(LMAX), Y(gy), '#dde5ee', 1);
       s += '<rect x="' + X(0) + '" y="' + Y(0) + '" width="' + f(L * KP) + '" height="' + f(W * KP) + '" fill="#fff"/>';
@@ -396,44 +398,47 @@
       var walls = { front: [0, 0, 0, W], back: [L, 0, L, W], s1: [0, 0, L, 0], s2: [0, W, L, W] };
       Object.keys(walls).forEach(function (k) { var w = walls[k], m = MAT[r.walls[k]];
         s += '<path d="M' + f(X(w[0])) + ' ' + f(Y(w[1])) + 'L' + f(X(w[2])) + ' ' + f(Y(w[3])) + '" stroke="' + m.col + '" stroke-width="7" stroke-linecap="square"' + (k === 'front' ? '' : '') + (r.walls[k] === 'diffuser' ? ' stroke-dasharray="7 3"' : r.walls[k] === 'curtain' ? ' stroke-dasharray="3 2"' : '') + '/>'; });
-      // 플러터
-      if (flutter()) { var fx0 = L * 0.5, zig = [], n = Math.max(3, Math.round(W / 2.2)); for (var zi = 0; zi <= n; zi++) zig.push([X(fx0 + zi * Math.min(3.2, L * 0.25) / n), Y(zi % 2 ? W - 0.25 : 0.25)]);
-        s += poly(zig, C.orange, 2, ' opacity=".8"') + t(X(fx0 + Math.min(3.2, L * 0.25) / 2), Y(W / 2) - 4, '플러터', { size: 13, weight: 800, fill: C.orange, halo: '#fff' }); }
-      // 글자
-      var lb = function (x, y, k, a) { return t(x, y, (k === 'front' ? '앞벽 · ' : k === 'back' ? '뒷벽 · ' : '옆벽 · ') + MAT[r.walls[k]].n, { size: 13, weight: 800, fill: MAT[r.walls[k]].col, anchor: a || 'middle', halo: '#fff' }); };
-      s += lb(X(L * 0.62), Y(0) + 19, 's1') + lb(X(L * 0.62), Y(W) - 9, 's2') + lb(X(L) - 10, Y(W / 2) - 22, 'back', 'end');
-      s += t(X(0) + 6, Y(Math.min(W - 1, W / 2 + 3.2)) + 4, '앞벽 · ' + MAT[r.walls.front].n, { size: 12, weight: 800, fill: MAT[r.walls.front].col, anchor: 'start', halo: '#fef3c7' });
+      // 플러터: 두 옆벽 사이를 오가는 소리
+      if (flutter()) { var span = Math.min(9, L * 0.4), fx0 = L * 0.55 - span / 2, zig = [], n = 6; for (var zi = 0; zi <= n; zi++) zig.push([X(fx0 + zi * span / n), Y(zi % 2 ? W - 0.3 : 0.3)]);
+        s += poly(zig, '#f59e0b', 2.2, ' stroke-dasharray="6 4" opacity=".9"') + t(X(fx0 + span / 2), Y(W / 2) + 4 * Z, '플러터', { size: 13 * Z, weight: 800, fill: '#b45309', halo: '#fff' }); }
+      // 벽 이름 · 재질 (벽 바깥쪽)
+      var wl = function (k) { return (k === 'front' ? '앞벽 · ' : k === 'back' ? '뒷벽 · ' : '옆벽 · ') + MAT[r.walls[k]].n; }, fz = 12.5 * Z;
+      s += t(X(L / 2), Y(0) - 7, wl('s1'), { size: fz, weight: 800, fill: MAT[r.walls.s1].col, halo: '#eef3f8' }) + t(X(L / 2), Y(W) + 6 + fz, wl('s2'), { size: fz, weight: 800, fill: MAT[r.walls.s2].col, halo: '#eef3f8' });
+      s += t(X(0) - 7, Y(W / 2), wl('front'), { size: fz, weight: 800, fill: MAT[r.walls.front].col, halo: '#eef3f8', extra: ' transform="rotate(-90 ' + f(X(0) - 7) + ' ' + f(Y(W / 2)) + ')"' });
+      s += t(X(L) + 7, Y(W / 2), wl('back'), { size: fz, weight: 800, fill: MAT[r.walls.back].col, halo: '#eef3f8', extra: ' transform="rotate(90 ' + f(X(L) + 7) + ' ' + f(Y(W / 2)) + ')"' });
       // 스피커
       s += '<path d="M' + f(X(g.sx)) + ' ' + f(Y(g.sy)) + 'L' + f(X(g.sx + 5)) + ' ' + f(Y(g.sy - 2.6)) + 'L' + f(X(g.sx + 5)) + ' ' + f(Y(g.sy + 2.6)) + 'Z" fill="' + C.teal + '" opacity=".12"/>' +
-        '<rect x="' + f(X(g.sx) - 7) + '" y="' + f(Y(g.sy) - 10) + '" width="14" height="20" rx="3" fill="#0f2747"/>' + t(X(g.sx) + 2, Y(g.sy) - 16, '스피커', { size: 12, weight: 800, halo: '#fef3c7' });
+        '<rect x="' + f(X(g.sx) - 7) + '" y="' + f(Y(g.sy) - 10) + '" width="14" height="20" rx="3" fill="#0f2747"/>' + t(X(g.sx) + 2, Y(g.sy) - 14, '스피커', { size: 12 * Z, weight: 800, halo: '#fef3c7', anchor: 'start' });
       // 듣는 자리
       var on = drag && drag.type === 'lis';
-      s += '<g data-h="listener"><circle cx="' + f(X(S.lx)) + '" cy="' + f(Y(S.ly)) + '" r="' + (on ? 14 : 12) + '" fill="' + C.blue + '" stroke="#fff" stroke-width="3"/><circle cx="' + f(X(S.lx)) + '" cy="' + f(Y(S.ly) - 2.5) + '" r="3.6" fill="#fff"/><path d="M' + f(X(S.lx) - 6) + ' ' + f(Y(S.ly) + 7) + 'q6 -8 12 0" fill="#fff"/></g>';
-      s += t(X(S.lx), Y(S.ly) + 28, '듣는 자리', { size: 12, weight: 800, fill: C.blue, halo: '#fff' });
+      var lx = X(S.lx), ly = Y(S.ly), lr = (on ? 14 : 12) * Z;
+      s += '<g data-h="listener"><circle cx="' + f(lx) + '" cy="' + f(ly) + '" r="' + f(lr) + '" fill="' + C.blue + '" stroke="#fff" stroke-width="3"/><circle cx="' + f(lx) + '" cy="' + f(ly - lr * 0.2) + '" r="' + f(lr * 0.3) + '" fill="#fff"/><path d="M' + f(lx - lr * 0.5) + ' ' + f(ly + lr * 0.58) + 'q' + f(lr * 0.5) + ' ' + f(-lr * 0.66) + ' ' + f(lr) + ' 0" fill="#fff"/></g>';
+      s += t(lx, ly + lr + 4 + 12 * Z, '듣는 자리', { size: 12 * Z, weight: 800, fill: C.blue, halo: '#fff' });
       // 방 크기 손잡이
       var cx = X(L), cy = Y(W), co = drag && drag.type === 'size';
-      s += '<g data-h="size"><rect x="' + f(cx - 10) + '" y="' + f(cy - 10) + '" width="20" height="20" rx="4" fill="' + (co ? C.orange : '#0f2747') + '" stroke="#fff" stroke-width="2"/><path d="M' + f(cx - 4) + ' ' + f(cy - 4) + 'L' + f(cx + 4) + ' ' + f(cy + 4) + 'M' + f(cx + 4) + ' ' + f(cy - 1) + 'V' + f(cy + 4) + 'H' + f(cx - 1) + '" stroke="#fff" stroke-width="2" fill="none"/></g>';
-      s += t(Math.min(cx + 14, VBW - 4), Math.min(cy + 4, VBH - 6) + (cy > VBH - 30 ? -18 : 18), f1(L) + ' × ' + f1(W) + ' m', { size: 12, weight: 800, fill: '#0f2747', anchor: cx > VBW - 110 ? 'end' : 'start', halo: '#eef3f8' });
+      var hz = 10 * Z, hi = 4 * Z;
+      s += '<g data-h="size"><rect x="' + f(cx - hz) + '" y="' + f(cy - hz) + '" width="' + f(2 * hz) + '" height="' + f(2 * hz) + '" rx="4" fill="' + (co ? C.orange : '#0f2747') + '" stroke="#fff" stroke-width="2"/><path d="M' + f(cx - hi) + ' ' + f(cy - hi) + 'L' + f(cx + hi) + ' ' + f(cy + hi) + 'M' + f(cx + hi) + ' ' + f(cy - hi * 0.25) + 'V' + f(cy + hi) + 'H' + f(cx - hi * 0.25) + '" stroke="#fff" stroke-width="2" fill="none"/></g>';
       // 벽 누르는 칸 (맨 위)
-      Object.keys(walls).forEach(function (k) { var w = walls[k]; s += '<path data-wall="' + k + '" d="M' + f(X(w[0])) + ' ' + f(Y(w[1])) + 'L' + f(X(w[2])) + ' ' + f(Y(w[3])) + '" stroke="transparent" stroke-width="24" fill="none"><title>' + WALL_N[k] + ' — 눌러서 재질 바꾸기</title></path>'; });
-      plan.innerHTML = s; plan.classList.toggle('dragging', !!drag);
+      Object.keys(walls).forEach(function (k) { var w = walls[k]; s += '<path data-wall="' + k + '" d="M' + f(X(w[0])) + ' ' + f(Y(w[1])) + 'L' + f(X(w[2])) + ' ' + f(Y(w[3])) + '" stroke="transparent" stroke-width="' + f(24 * Z) + '" fill="none"><title>' + WALL_N[k] + ' — 눌러서 재질 바꾸기</title></path>'; });
+      plan.innerHTML = s; plan.classList.toggle('dragging', !!drag); planZ = Z;
     }
     function MX(d) { return MS.x0 + Math.log(d / MS.dmin) / Math.log(MS.dmax / MS.dmin) * (MS.x1 - MS.x0); }
     function drawMic(mc) {
-      var top = 18, bot = 104, Yd = function (v) { return top + (30 - clamp(v, -20, 30)) / 50 * (bot - top); }, s = '<rect width="' + MS.w + '" height="' + MS.h + '" fill="#fff"/>';
+      var Z = zoom(micSvg), top = MS.top, bot = MS.bot, Yd = function (v) { return top + (30 - clamp(v, -20, 30)) / 50 * (bot - top); }, s = '<rect width="' + MS.w + '" height="' + MS.h + '" fill="#fff"/>', fs = function (v) { return v * Z; };
       var g10 = mc.dc / Math.pow(10, 0.5);
       s += '<rect x="' + MS.x0 + '" y="' + top + '" width="' + f(clamp(MX(g10), MS.x0, MS.x1) - MS.x0) + '" height="' + (bot - top) + '" fill="#ecfdf5"/>';
-      [-20, -10, 0, 10, 20, 30].forEach(function (v) { s += line(MS.x0, Yd(v), MS.x1, Yd(v), '#eef2f7', 1) + t(MS.x0 - 6, Yd(v) + 4, (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v), { size: 11, fill: C.sub, anchor: 'end' }); });
-      [0.03, 0.1, 0.3, 1, 3, 10].forEach(function (d) { s += line(MX(d), bot, MX(d), bot + 4, C.ink, 1) + t(MX(d), bot + 18, (d < 1 ? (d * 100) + ' cm' : d + ' m'), { size: 12, fill: C.sub }); });
-      s += line(MS.x0, Yd(0), MS.x1, Yd(0), C.purple, 2.4, '7 4') + t(MS.x1 - 4, Yd(0) - 6, '잔향 (기준 0 dB)', { size: 11.5, weight: 800, fill: C.purple, anchor: 'end', halo: '#fff' });
+      (Z > 1 ? [-20, 0, 20] : [-20, -10, 0, 10, 20, 30]).forEach(function (v) { s += line(MS.x0, Yd(v), MS.x1, Yd(v), '#eef2f7', 1) + t(MS.x0 - 6, Yd(v) + fs(4), (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v), { size: fs(11), fill: C.sub, anchor: 'end' }); });
+      (Z > 1 ? [0.03, 0.3, 3] : [0.03, 0.1, 0.3, 1, 3, 10]).forEach(function (d) { s += line(MX(d), bot, MX(d), bot + 4, C.ink, 1) + t(MX(d), bot + 4 + fs(13), (d < 1 ? Math.round(d * 100) + ' cm' : d + ' m'), { size: fs(12), fill: C.sub, anchor: d === 0.03 ? 'start' : 'middle' }); });
+      s += line(MS.x0, Yd(0), MS.x1, Yd(0), C.purple, 2.4, '7 4') + t(MS.x0 + 6, Yd(0) - 6, '잔향 (0 dB)', { size: fs(11.5), weight: 800, fill: C.purple, anchor: 'start', halo: '#fff' });
       var dA = MS.dmin, dB = MS.dmax; s += line(MX(dA), Yd(20 * Math.log10(mc.dc / dA)), MX(dB), Yd(20 * Math.log10(mc.dc / dB)), C.teal, 3);
-      if (mc.dc > MS.dmin && mc.dc < MS.dmax) s += line(MX(mc.dc), top, MX(mc.dc), bot, C.red, 1.6, '3 3') + t(MX(mc.dc), top - 4, '임계 거리 ' + f2(mc.dc) + ' m', { size: 11.5, weight: 800, fill: C.red, anchor: MX(mc.dc) > MS.x1 - 60 ? 'end' : 'middle' });
-      s += t(MS.x0 + 6, bot - 6, '직접음 +10 dB 이상', { size: 11, weight: 800, fill: C.green, anchor: 'start', halo: '#ecfdf5' });
-      s += '<circle cx="30" cy="54" r="15" fill="#fde68a" stroke="#d97706" stroke-width="2"/><circle cx="35" cy="50" r="2" fill="#0f2747"/><path d="M40 58q3 2 5 0" stroke="#0f2747" stroke-width="2" fill="none"/>' + t(30, 88, '설교자', { size: 12, weight: 800 });
-      var mx = MX(S.mic.d), my = Yd(mc.dr), on = drag && drag.type === 'mic';
-      s += '<g data-h="mic"><circle cx="' + f(mx) + '" cy="' + f(my) + '" r="' + (on ? 14 : 12) + '" fill="#0f2747" stroke="#fff" stroke-width="3"/><rect x="' + f(mx - 3.5) + '" y="' + f(my - 7) + '" width="7" height="10" rx="3.5" fill="#fff"/><path d="M' + f(mx) + ' ' + f(my + 3) + 'V' + f(my + 7) + '" stroke="#fff" stroke-width="2"/></g>';
-      s += t(mx, my + (my > 70 ? -20 : 30), (S.mic.d < 1 ? Math.round(S.mic.d * 100) + ' cm' : f2(S.mic.d) + ' m'), { size: 12, weight: 800, fill: '#0f2747', halo: '#fff' });
-      s += t(MS.x0, MS.h - 4, '세로: 직접음 − 잔향 (dB) · 가로: 입에서 마이크까지 (칸마다 약 3배)', { size: 11, fill: C.sub, anchor: 'start' });
+      if (mc.dc > MS.dmin && mc.dc < MS.dmax) { var ax = MX(mc.dc); s += line(ax, top, ax, bot, C.red, 1.6, '3 3') + t(ax, top - 6, '임계 거리 ' + f2(mc.dc) + ' m', { size: fs(11.5), weight: 800, fill: C.red, anchor: ax > MS.x1 - 70 * Z ? 'end' : ax < MS.x0 + 70 * Z ? 'start' : 'middle' }); }
+      s += t(MS.x0 + 6, bot - 6, Z > 1 ? '+10 dB 이상' : '직접음 +10 dB 이상', { size: fs(11), weight: 800, fill: C.green, anchor: 'start', halo: '#ecfdf5' });
+      s += '<circle cx="34" cy="62" r="' + f(15 * Math.min(Z, 1.3)) + '" fill="#fde68a" stroke="#d97706" stroke-width="2"/><circle cx="' + f(34 + 5 * Math.min(Z, 1.3)) + '" cy="' + f(62 - 4 * Math.min(Z, 1.3)) + '" r="2.4" fill="#0f2747"/>' + t(34, 92 + 10 * Z, '설교자', { size: fs(12), weight: 800 });
+      var mx = MX(S.mic.d), my = Yd(mc.dr), on = drag && drag.type === 'mic', mr = (on ? 14 : 12) * Z;
+      s += '<g data-h="mic"><circle cx="' + f(mx) + '" cy="' + f(my) + '" r="' + f(mr) + '" fill="#0f2747" stroke="#fff" stroke-width="3"/><rect x="' + f(mx - mr * 0.3) + '" y="' + f(my - mr * 0.6) + '" width="' + f(mr * 0.6) + '" height="' + f(mr * 0.85) + '" rx="' + f(mr * 0.3) + '" fill="#fff"/><path d="M' + f(mx) + ' ' + f(my + mr * 0.25) + 'V' + f(my + mr * 0.6) + '" stroke="#fff" stroke-width="2"/></g>';
+      var up = my > top + mr + fs(16);
+      s += t(clamp(mx, MS.x0 + 30 * Z, MS.x1 - 30 * Z), up ? my - mr - 5 : my + mr + fs(13), (S.mic.d < 1 ? Math.round(S.mic.d * 100) + ' cm' : f2(S.mic.d) + ' m'), { size: fs(12), weight: 800, fill: '#0f2747', halo: '#fff' });
+      s += t(MS.x0, MS.h - 4, Z > 1 ? '세로: 직접음 − 잔향 (dB)' : '세로: 직접음 − 잔향 (dB) · 가로: 입에서 마이크까지 (칸마다 약 3배)', { size: fs(11), fill: C.sub, anchor: 'start' });
       micSvg.innerHTML = s; micSvg.classList.toggle('dragging', on);
     }
     function row(k, v, cls) { return '<div class="sim-row"><span>' + k + '</span><b class="' + (cls || '') + '">' + v + '</b></div>'; }
@@ -442,7 +447,7 @@
       var h = '<h4>잔향 시간 RT60 <small>500 Hz · 세이빈 공식 · 교육용 계산</small></h4>';
       h += '<div class="sim-pr-big"><b>' + f2(cur.rt) + ' s</b><span>지금 (' + (S.people ? '회중 가득' : '빈 예배당') + ')</span></div>';
       h += row('빈 예배당', f2(R.e.rt) + ' s', band(R.e.rt)) + row('회중 가득', f2(R.f.rt) + ' s', band(R.f.rt)) + row('차이', f2(Math.abs(R.e.rt - R.f.rt)) + ' s');
-      h += row('부피 V', Math.round(cur.V).toLocaleString() + ' m³') + row('흡음력 A', f1(cur.A) + ' m²') + row('0.161 × V ÷ A', f2(cur.rt) + ' s');
+      h += row('방 크기', f1(r.L) + ' × ' + f1(r.W) + ' × ' + f1(r.H) + ' m') + row('부피 V', Math.round(cur.V).toLocaleString() + ' m³') + row('흡음력 A', f1(cur.A) + ' m²') + row('0.161 × V ÷ A', f2(cur.rt) + ' s');
       h += '<p class="sim-note">권장(Acoustical Surfaces): 설교 0.8–1.2 s · 현대 예배 1.0–1.5 s · 성가대 1.5–2.5 s</p>';
       h += '<details><summary>면마다 흡음력 보기</summary><table class="sim-pr-tbl"><tr><th>면</th><th>넓이 m²</th><th>α</th><th>A m²</th></tr>' +
         cur.list.map(function (sf) { return '<tr><td>' + sf.n + ' · ' + sf.m + '</td><td>' + Math.round(sf.S) + '</td><td>' + f2(sf.aa) + '</td><td>' + f1(sf.A) + '</td></tr>'; }).join('') +
@@ -498,8 +503,9 @@
     function clampLis() { S.lx = clamp(S.lx, 0.6, S.room.L - 0.6); S.ly = clamp(S.ly, 0.6, S.room.W - 0.6); }
     function onPlanDown(e) {
       if (e.button != null && e.button !== 0) return; var p = pt(plan, e);
-      if (Math.hypot(p.x - X(S.room.L), p.y - Y(S.room.W)) < 22) drag = { type: 'size' };
-      else if (Math.hypot(p.x - X(S.lx), p.y - Y(S.ly)) < 24) drag = { type: 'lis', ox: p.x - X(S.lx), oy: p.y - Y(S.ly) };
+      var dS = Math.hypot(p.x - X(S.room.L), p.y - Y(S.room.W)), dL = Math.hypot(p.x - X(S.lx), p.y - Y(S.ly));   // 둘이 가까우면 더 가까운 쪽
+      if (dL < 24 * planZ && dL <= dS) drag = { type: 'lis', ox: p.x - X(S.lx), oy: p.y - Y(S.ly) };
+      else if (dS < 22 * planZ) drag = { type: 'size' };
       if (!drag) return;
       e.preventDefault(); try { plan.setPointerCapture(e.pointerId); } catch (er) { /* noop */ }
       render(false);
