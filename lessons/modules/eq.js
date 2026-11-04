@@ -127,6 +127,76 @@
       t(gx, 172, '31밴드 GEQ 로 피드백 주파수만 좁게 깎은 「예시」 (250 Hz −5 dB · 2.5 kHz −6 dB)', { size: 11, fill: C.red, weight: 700, anchor: 'start' }), '채널 EQ와 출력 EQ의 위치, GEQ로 피드백 줄이기 예시');
   };
 
+  /* ----------------------------------------------------------------- 2026-11-04 「그림으로 보기」: 용어 미니 그림 · 비유 · 단계 그림 */
+  // 작은 그림: 휴대폰에서도 가로로 밀리지 않게 min-width 를 풀어 줌(글자 13 이상)
+  function svgM(w, h, body, label) { return svg(w, h, body, label).replace('<svg class="mod-svg"', '<svg class="mod-svg" style="min-width:0"'); }
+  function bell(x0, w, yb, hgt, sig, cx) { var d = ''; for (var i = 0; i <= 60; i++) { var x = x0 + w * i / 60, u = (x - cx) / sig; d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + (yb - hgt * Math.exp(-u * u / 2)).toFixed(1); } return d; }
+  function sine(x0, w, yc, amp, cyc) { var d = ''; for (var i = 0; i <= 160; i++) { var x = x0 + w * i / 160; d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + (yc - amp * Math.sin(2 * Math.PI * cyc * i / 160)).toFixed(1); } return d; }
+  V.eqTermFreq = function () {
+    return svgM(360, 128, t(10, 30, '낮은 소리', { size: 16, weight: 800, fill: C.blue, anchor: 'start' }) + t(10, 50, '느리게 떨려요', { size: 14, fill: C.sub, anchor: 'start' }) +
+      '<path d="' + sine(128, 222, 38, 18, 2) + '" fill="none" stroke="' + C.blue + '" stroke-width="3"/>' +
+      t(10, 94, '높은 소리', { size: 16, weight: 800, fill: C.red, anchor: 'start' }) + t(10, 114, '빠르게 떨려요', { size: 14, fill: C.sub, anchor: 'start' }) +
+      '<path d="' + sine(128, 222, 100, 18, 10) + '" fill="none" stroke="' + C.red + '" stroke-width="2.4"/>' + '<path d="M124 69H352" stroke="' + C.line + '" stroke-dasharray="3 3"/>', '낮은 소리는 느리게, 높은 소리는 빠르게 떨려요');
+  };
+  V.eqTermHpf = function () {
+    var big = [30, 60, 90, 120].map(function (x) { return '<circle cx="' + x + '" cy="48" r="12" fill="' + C.blue + '" fill-opacity=".85"/>'; }).join('');
+    var small = [[44, 26], [76, 22], [106, 28], [40, 88], [72, 104], [112, 92], [58, 118], [96, 120]].map(function (p) { return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="4.5" fill="' + C.red + '"/>'; }).join('');
+    var mesh = '<path d="M12 66H140" stroke="' + C.ink + '" stroke-width="3" stroke-dasharray="7 5"/>';
+    return svgM(360, 130, big + small + mesh +
+      t(156, 26, 'HPF = 거름망', { size: 16, weight: 800, anchor: 'start' }) + t(156, 54, '큰 공(낮은 소리)', { size: 14, fill: C.blue, weight: 800, anchor: 'start' }) + t(156, 72, '→ 걸러져요', { size: 14, fill: C.blue, weight: 700, anchor: 'start' }) +
+      t(156, 100, '작은 공(높은 소리)', { size: 14, fill: C.red, weight: 800, anchor: 'start' }) + t(156, 118, '→ 그대로 지나가요', { size: 14, fill: C.red, weight: 700, anchor: 'start' }), 'HPF 를 거름망에 비유한 그림');
+  };
+  V.eqTermQ = function () {
+    function panel(x0, sig, col, a, b) { return '<path d="M' + x0 + ' 82H' + (x0 + 160) + '" stroke="' + C.line + '"/><path d="' + bell(x0, 160, 82, 60, sig, x0 + 80) + '" fill="' + col + '" fill-opacity=".14" stroke="' + col + '" stroke-width="3"/>' + t(x0 + 80, 104, a, { size: 16, weight: 800, fill: col }) + t(x0 + 80, 124, b, { size: 14, fill: C.sub }); }
+    return svgM(360, 130, panel(8, 9, C.red, 'Q 숫자 큼', '좁게 바뀌어요') + panel(192, 30, C.blue, 'Q 숫자 작음', '넓게 바뀌어요'), 'Q 가 클 때와 작을 때의 폭 비교');
+  };
+  V.eqTermShelf = function () {
+    var shelf = ''; for (var i = 0; i <= 60; i++) { var x = 196 + 156 * i / 60, y = 82 - 48 / (1 + Math.exp(-(x - 290) / 9)); shelf += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }
+    return svgM(360, 130, '<path d="M8 82H168" stroke="' + C.line + '"/><path d="' + bell(8, 160, 82, 54, 16, 88) + '" fill="' + C.green + '" fill-opacity=".14" stroke="' + C.green + '" stroke-width="3"/>' + t(88, 104, '피킹 = 산 모양', { size: 16, weight: 800, fill: C.green }) + t(88, 124, '한 높이 주변만', { size: 14, fill: C.sub }) +
+      '<path d="M196 82H352" stroke="' + C.line + '"/><path d="' + shelf + '" fill="none" stroke="' + C.violet + '" stroke-width="3"/>' + t(274, 104, '쉘빙 = 선반 모양', { size: 16, weight: 800, fill: C.violet }) + t(274, 124, '어느 높이부터 위 전체', { size: 14, fill: C.sub }), '피킹과 쉘빙 모양 비교');
+  };
+  V.eqPicLoud = function () {   // A·C 가중치 곡선(등청감 곡선 40 phon·약 100 phon 을 바탕으로 만든 표준 곡선) 공식으로 그림
+    function ra(f) { var f2 = f * f, k = 12194 * 12194; return 20 * Math.log10(k * f2 * f2 / ((f2 + 20.6 * 20.6) * Math.sqrt((f2 + 107.7 * 107.7) * (f2 + 737.9 * 737.9)) * (f2 + k))) + 2.0; }
+    function rc(f) { var f2 = f * f, k = 12194 * 12194; return 20 * Math.log10(k * f2 / ((f2 + 20.6 * 20.6) * (f2 + k))) + 0.06; }
+    var o = axes({ x0: 46, x1: 584, y0: 30, y1: 166, f0: 20, f1: 20000, dbMin: -52, dbMax: 6, ticks: [0, -20, -40] });
+    var band = '<rect x="' + o.fx(1000).toFixed(1) + '" y="' + o.y0 + '" width="' + (o.fx(5000) - o.fx(1000)).toFixed(1) + '" height="' + (o.y1 - o.y0) + '" fill="' + C.green + '" fill-opacity=".12"/>' + t(o.fx(2236), o.fy(-26), '가장 잘 들려요', { size: 12, fill: C.green, weight: 800 }) + t(o.fx(2236), o.fy(-26) + 16, '약 1–5 kHz', { size: 11.5, fill: C.green, weight: 700 });
+    return svg(600, 218, o.grid.replace(/>dB</, '><') + band + curve(o, rc, C.blue, 2.6, '7 4') + curve(o, ra, C.red, 3.2) +
+      t(o.fx(70), o.fy(ra(70)) + 4, '← 저음: 덜 들려요', { size: 11.5, fill: C.red, weight: 800, anchor: 'start' }) + t(o.fx(16000) - 4, o.fy(-14), '고음 끝도 덜 들려요 →', { size: 11.5, fill: C.red, weight: 800, anchor: 'end' }) +
+      '<path d="M60 204h22" stroke="' + C.red + '" stroke-width="3"/>' + t(88, 208, '작은 음량일 때 귀', { size: 11.5, anchor: 'start', weight: 700, fill: C.red }) +
+      '<path d="M230 204h22" stroke="' + C.blue + '" stroke-width="2.6" stroke-dasharray="7 4"/>' + t(258, 208, '큰 음량일 때 귀(더 평평)', { size: 11.5, anchor: 'start', weight: 700, fill: C.blue }) +
+      t(584, 16, '귀가 느끼는 크기 — A·C 가중치 곡선(등청감 곡선을 바탕으로 만든 표준 곡선)', { size: 10.5, fill: C.sub, anchor: 'end' }), '음량에 따라 귀가 높이별로 다르게 느끼는 모습');
+  };
+  V.eqPicMasking = function () {
+    var F = [60, 120, 250, 500, 1000, 2000, 4000, 8000];
+    function panel(ox, title, low, maskTop, ok) {
+      var x0 = ox + 14, bw = 28, base = 168, h = '<rect x="' + ox + '" y="6" width="288" height="200" rx="12" fill="' + C.bg + '" stroke="' + (ok ? C.green : C.red) + '" stroke-width="1.6"/>' + t(ox + 144, 28, title, { size: 13, weight: 800, fill: ok ? C.green : C.red });
+      var voice = [0, 0, 70, 82, 74, 62, 52, 40], mask = '';
+      F.forEach(function (f, i) { var x = x0 + i * 34, lv = i < 2 ? low[i] : voice[i], m = maskTop - i * (ok ? 6 : 9), hid = !ok && i >= 4 && lv < m;
+        h += '<rect x="' + x + '" y="' + (base - lv) + '" width="' + bw + '" height="' + lv + '" rx="3" fill="' + (i < 2 ? '#94a3b8' : C.teal) + '" fill-opacity="' + (hid ? 0.28 : 0.9) + '"/>' + t(x + bw / 2, base + 15, f >= 1000 ? f / 1000 + 'k' : f, { size: 11, fill: C.sub });
+        mask += (i ? 'L' : 'M') + (x + bw / 2) + ' ' + (base - m); });
+      h += '<path d="M' + x0 + ' ' + base + 'H' + (x0 + 7 * 34 + bw) + '" stroke="' + C.ink + '"/>' + '<path d="' + mask + '" fill="none" stroke="' + C.red + '" stroke-width="2" stroke-dasharray="6 4"/>';
+      h += t(x0 + 31, base - 10, '저음', { size: 12, weight: 800, fill: '#fff' }) + t(x0 + 4 * 34 + 60, 56, ok ? '목소리가 다 보여요' : '목소리 윗부분이 가려져요', { size: 12, weight: 800, fill: ok ? C.green : C.red });
+      return h + t(ox + 144, 200, 'Hz (막대 = 소리 크기 · 점선 = 가려지는 선)', { size: 10.5, fill: C.sub });
+    }
+    return svg(600, 212, panel(4, 'HPF 끄기: 필요 없는 저음이 큼', [130, 118], 140, false) + panel(308, 'HPF 켜기: 저음을 걸러 냄', [26, 40], 62, true), '큰 저음이 목소리를 가리는 마스킹과 HPF 로 걸러 낸 뒤 비교');
+  };
+  V.eqPicSweep = function () {
+    function frame(ox, n, title, sub, body) { return '<rect x="' + ox + '" y="6" width="188" height="186" rx="12" fill="' + C.bg + '" stroke="' + C.line + '"/><circle cx="' + (ox + 22) + '" cy="28" r="12" fill="' + C.teal + '"/>' + t(ox + 22, 33, n, { size: 13, weight: 800, fill: '#fff' }) +
+      t(ox + 40, 33, title, { size: 13, weight: 800, anchor: 'start' }) + '<path d="M' + (ox + 12) + ' 120H' + (ox + 176) + '" stroke="#94a3b8"/>' + body + t(ox + 94, 172, sub, { size: 11.5, fill: C.sub }); }
+    var a = frame(6, '1', '좁고 크게 올리기', 'Q 4–8 · +8 ~ +10 dB', '<path d="' + bell(18, 156, 120, 64, 8, 70) + '" fill="' + C.amber + '" fill-opacity=".18" stroke="' + C.amber + '" stroke-width="3"/>' + '<path d="M70 108V64" stroke="' + C.ink + '" stroke-width="2"/><path d="M65 70L70 62L75 70" fill="none" stroke="' + C.ink + '" stroke-width="2"/>');
+    var b = frame(206, '2', '천천히 움직이기', '거슬리는 소리가 확 커지는 곳', '<path d="' + bell(218, 156, 120, 64, 8, 318) + '" fill="' + C.amber + '" fill-opacity=".18" stroke="' + C.amber + '" stroke-width="3"/>' +
+      '<path d="M236 142H340" stroke="' + C.ink + '" stroke-width="2"/><path d="M243 137L235 142L243 147M333 137L341 142L333 147" fill="none" stroke="' + C.ink + '" stroke-width="2"/>' + '<circle cx="318" cy="52" r="10" fill="none" stroke="' + C.red + '" stroke-width="2.5"/>' + t(332, 50, '여기!', { size: 12, weight: 800, fill: C.red, anchor: 'start' }));
+    var dip = ''; for (var i = 0; i <= 60; i++) { var x = 418 + 156 * i / 60, u = (x - 518) / 8; dip += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + (92 + 30 * Math.exp(-u * u / 2)).toFixed(1); }
+    var c = frame(406, '3', '그 자리 깎기', '게인을 −3 ~ −6 dB 로', '<path d="M418 92H574" stroke="' + C.line + '" stroke-dasharray="3 3"/><path d="' + dip + '" fill="none" stroke="' + C.teal + '" stroke-width="3"/>' + t(530, 136, '좁게 깎음', { size: 12, weight: 800, fill: C.teal, anchor: 'start' }));
+    return svg(600, 198, a + b + c, '문제 주파수를 스윕으로 찾아 깎는 3단계');
+  };
+  V.eqQuizQ = function () {
+    var o = axes({ x0: 40, x1: 580, y0: 26, y1: 160, f0: 20, f1: 20000, dbMin: -3, dbMax: 12, ticks: [0, 6, 12] });
+    return svg(600, 186, o.grid + curve(o, function (f) { return bandDb('peaking', 1000, 9, 0.7, f); }, C.blue, 3) + curve(o, function (f) { return bandDb('peaking', 1000, 9, 4, f); }, C.red, 3) +
+      t(o.fx(1000), o.fy(9) - 8, '(가)', { size: 14, weight: 800, fill: C.red }) + t(o.fx(240), o.fy(5) - 6, '(나)', { size: 14, weight: 800, fill: C.blue }) +
+      t(580, 14, '둘 다 1 kHz · +9 dB — Q 만 달라요 (공식으로 계산)', { size: 11, fill: C.sub, anchor: 'end' }), '같은 주파수와 게인에서 Q 가 다른 두 곡선');
+  };
+
   /* ======================================================================= 녹음 불러오기(공용 캐시) */
   var CACHE = window.__staStemCache = window.__staStemCache || {};
   function b64ToBuf(uri) { var b = atob(uri.slice(uri.indexOf(',') + 1)), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u.buffer; }
@@ -519,13 +589,13 @@
     overview: {
       lead: 'EQ(이퀄라이저)는 소리를 <b>높낮이(주파수)별로 나눠 크기를 바꾸는</b> 도구예요. 필요 없는 낮은 소리는 <b>HPF</b>로 걸러 내요. 거슬리는 부분(대역)은 <b>좁게 깎아요</b>. 모자란 부분은 <b>넓게 조금</b> 올려요. 먼저 주파수·파장·위상을 알면 EQ 가 왜 그렇게 움직이는지 쉽게 이해돼요.',
       terms: [
-        ['주파수 (Hz)', '소리가 1초에 몇 번 떨리는지예요. 숫자가 작으면 낮은 소리, 크면 높은 소리예요. 사람은 대략 20 Hz–20 kHz(1초에 20번 ~ 2만 번 떨림)를 들어요.'],
+        ['주파수 (Hz)', '소리가 1초에 몇 번 떨리는지예요. 숫자가 작으면 낮은 소리, 크면 높은 소리예요. 사람은 대략 20 Hz–20 kHz(1초에 20번 ~ 2만 번 떨림)를 들어요.', 'eqTermFreq'],
         ['파장', '소리가 한 번 떨리는 동안 나아가는 거리예요. 파장 = 343 m/s ÷ 주파수예요. 100 Hz 는 약 3.4 m, 1 kHz 는 약 34 cm 예요.'],
         ['위상과 극성', '위상은 소리 파도가 한 바퀴(360°) 중 어디쯤에 있는지예요. 극성은 파도의 위(+)와 아래(−)를 통째로 뒤집는 것이에요. 콘솔의 Ø(PHASE) 버튼은 사실 극성을 뒤집는 버튼이에요.'],
-        ['HPF (로우컷)', '정한 높이보다 낮은 소리를 점점 줄이는 필터(거름망)예요. MG12XU 는 80 Hz, 12 dB/oct 로 정해져 있어요(제조사 자료).'],
+        ['HPF (로우컷)', '정한 높이보다 낮은 소리를 점점 줄이는 필터(거름망)예요. MG12XU 는 80 Hz, 12 dB/oct 로 정해져 있어요(제조사 자료).', 'eqTermHpf'],
         ['부스트 / 컷', '부스트는 그 부분을 올리는 것, 컷은 깎는 것이에요. 라이브에서는 먼저 깎는 것이 기본이에요. 올리면 피드백 여유가 줄기 때문이에요.'],
-        ['Q (폭)', '한 밴드가 바꾸는 범위가 얼마나 넓은지예요. Q 숫자가 크면 좁고, 작으면 넓어요. Q 1.4 가 약 1옥타브(도에서 다음 도까지)예요.'],
-        ['피킹 / 쉘빙', '피킹(벨)은 한 높이 주변만 산 모양으로 바꿔요. 쉘빙은 어느 높이부터 위(또는 아래) 전체를 선반처럼 한꺼번에 올리고 내려요.'],
+        ['Q (폭)', '한 밴드가 바꾸는 범위가 얼마나 넓은지예요. Q 숫자가 크면 좁고, 작으면 넓어요. Q 1.4 가 약 1옥타브(도에서 다음 도까지)예요. 폭을 옥타브 수(대역폭)로 적는 EQ 도 있어요. 이때는 거꾸로 숫자가 클수록 넓어요.', 'eqTermQ'],
+        ['피킹 / 쉘빙', '피킹(벨)은 한 높이 주변만 산 모양으로 바꿔요. 쉘빙은 어느 높이부터 위(또는 아래) 전체를 선반처럼 한꺼번에 올리고 내려요.', 'eqTermShelf'],
         ['링잉 아웃', '피드백이 잘 나는 주파수를 찾아 출력 EQ 에서 좁게 깎는 작업이에요. 그러면 피드백이 나기 전까지 소리를 더 키울 수 있어요.']
       ],
       points: [
@@ -550,8 +620,10 @@
         body: '목소리는 한 가지 높이가 아니라 여러 높이의 소리가 섞여 있어요. 그래서 부분(대역)마다 느낌이 달라요. 너무 많으면 문제가 되는 부분을 이름으로 기억해 두면 EQ 가 쉬워져요. <b>웅웅·답답(머디)</b>, <b>통 울림(박시)</b>, <b>코맹맹이(나잘)</b>가 있어요. <b>귀를 찌름(하시)</b>, <b>ㅅ·ㅊ 소리(치찰음)</b>도 있어요. 그림의 범위는 <b>대략적인 범위</b>예요. 목소리·마이크·방에 따라 달라요. 그래서 마지막에는 귀로 찾아야 해요.',
         more: '<ul><li><b>대략적인 범위</b> (목소리 기준)<ul><li>80 Hz 아래 — 바닥 진동·손으로 쥐는 소리·바람(목소리에는 거의 없음)</li> <li>100–250 Hz — 두께·따뜻함</li> <li>200–500 Hz — 많으면 웅웅·답답</li> <li>400–900 Hz — 많으면 통 속에서 말하는 듯</li> <li>800 Hz–1.5 kHz — 많으면 코맹맹이</li> <li>2–5 kHz — 또렷함, 너무 많으면 귀를 찌름</li> <li>5–9 kHz — ㅅ·ㅆ·ㅊ 소리(치찰음)</li> <li>10 kHz 이상 — 공기감·숨결</li></ul></li> ' +
           '<li>말소리에서 가장 낮은 떨림을 기본음이라고 해요. 남성은 대략 85–180 Hz, 여성은 대략 165–255 Hz 예요. 그 위에 겹친 높은 떨림(배음)이 목소리 색깔(음색)과 발음을 만들어요.</li> ' +
-          '<li>사람 귀는 2–5 kHz 근처에 특히 예민해요. 그래서 이 부분은 조금만 바꿔도 크게 느껴져요.</li> ' +
+          '<li>사람 귀는 대략 1–5 kHz 의 가운데 소리에 가장 예민해요(등청감 곡선). 그래서 이 부분은 조금만 바꿔도 크게 느껴져요.</li> ' +
+          '<li><b>작게 들으면 저음·고음이 덜 들려요.</b> 귀는 소리가 작을수록 아주 낮은 소리와 아주 높은 소리를 더 작게 느껴요. 그래서 리허설을 작게 하고 예배를 크게 하면 EQ 느낌이 달라져요. EQ 는 예배 때와 비슷한 크기에서 맞춰요.</li> ' +
           '<li>같은 사람이라도 마이크 거리·방 울림에 따라 문제 부분이 달라져요. 마이크에 바짝 대면 저음이 커지기도 해요(근접 효과).</li></ul>',
+        pics: [{ v: 'eqPicLoud', cap: '귀는 가운데 높이(약 1–5 kHz)를 가장 잘 들어요. 아주 낮은 소리와 아주 높은 소리는 같은 크기여도 작게 들려요. 음량이 작을수록 이 차이가 더 커져요.' }],
         check: { q: '보컬이 「통 속에서 말하는 것처럼」 답답하게 들려요. 먼저 살펴볼 부분(대역)은?', options: [
           { t: '약 400–900 Hz (박시)', ok: true, why: '맞아요. 이 근처가 많으면 통 울림처럼 들리기 때문이에요. 정확한 곳은 귀로 찾아요.' },
           { t: '약 10 kHz 이상 (공기감)', why: '아니에요. 공기감·숨결 부분이에요. 답답함의 원인과는 거리가 멀어요.' },
@@ -562,7 +634,10 @@
           '<li><b>CL5 (제조사 자료)</b>: HPF 주파수를 20 Hz–600 Hz 에서 골라요. 기울기는 −6 또는 −12 dB/oct 중에서 골라요.</li> ' +
           '<li><b>12 dB/oct</b> 는 한 옥타브(주파수 절반) 내려갈 때마다 약 12 dB 씩 더 줄어든다는 뜻이에요. 80 Hz · 12 dB/oct 라면 80 Hz 에서 −3 dB(살짝 작아진 정도) 줄어요. 40 Hz 에서는 약 −12 dB, 20 Hz 에서는 약 −24 dB(아주 많이 작아진 정도)예요. 그림의 값은 계산값이에요.</li> ' +
           '<li>너무 높이 올리면 목소리가 얇아져요. 남성 목소리는 80–120 Hz 에서 시작해 봐요. 여성 목소리는 조금 더 높게(100–150 Hz) 시작해 봐요. 그다음 귀로 확인해요. (출발점 예시)</li> ' +
-          '<li>마이크에 바짝 대고 노래하면 저음이 커져요(근접 효과). 이때도 HPF 가 도움이 돼요.</li></ul>',
+          '<li>마이크에 바짝 대고 노래하면 저음이 커져요(근접 효과). 이때도 HPF 가 도움이 돼요.</li> ' +
+          '<li><b>큰 저음은 다른 소리를 가려요(마스킹).</b> 낮은 소리는 높은 소리를 잘 가려요. 하지만 높은 소리는 낮은 소리를 잘 못 가려요. 그래서 필요 없는 저음을 걸러 내면 목소리가 또렷하게 드러나요.</li> ' +
+          '<li>악기마다 가장 낮은 음(기본음)이 달라요. 그 음을 미리 알아 두면 HPF 를 어디까지 올릴지 정하기 쉬워요.</li></ul>',
+        pics: [{ v: 'eqPicMasking', cap: '왼쪽: 필요 없는 저음이 크면 목소리의 윗부분이 가려져요(마스킹). 오른쪽: HPF 로 저음을 걸러 내면 같은 목소리가 또렷하게 드러나요. (막대 높이는 교육용 그림이에요)' }],
         check: { q: 'MG12XU 의 HPF 버튼을 켜면 어떻게 될까요?', options: [
           { t: '80 Hz 아래 저음이 점점 줄어요 (12 dB/oct)', ok: true, why: '맞아요. 80 Hz 에서 −3 dB 줄고, 그 아래로 갈수록 더 많이 줄기 때문이에요.' },
           { t: '80 Hz 위 고음이 줄어요', why: '반대예요. HPF 는 높은 소리를 통과(Pass)시키고 낮은 소리를 줄여요.' },
@@ -584,7 +659,9 @@
           '<li><b>설교(말)</b>: 또렷함이 먼저예요. HPF 를 조금 높게(100–150 Hz) 써 보세요.</li> ' +
           '<li><b>찬양 보컬</b>: 몸통(150–300 Hz)을 너무 깎지 않아요. 필요하면 10 kHz 이상 공기감을 살짝 더해요.</li> ' +
           '<li><b>MG12XU 로 해 본다면</b>: ① HPF 를 켜요. ② 귀를 찌르면 MID(2.5 kHz)를 조금 내려요. ③ 웅웅거리면 LOW(100 Hz)를 조금 내려요. 주파수가 고정이라 정확한 곳을 고를 수는 없어요.</li> ' +
-          '<li>ㅅ·ㅊ 소리만 따가우면 EQ 대신 디에서(쉿 소리만 줄이는 도구)를 쓰기도 해요. CL5 는 입력 채널의 Dynamics 2 에서 De-esser 를 고를 수 있어요(제조사 자료).</li></ul>',
+          '<li>ㅅ·ㅊ 소리만 따가우면 EQ 대신 디에서(쉿 소리만 줄이는 도구)를 쓰기도 해요. CL5 는 입력 채널의 Dynamics 2 에서 De-esser 를 고를 수 있어요(제조사 자료).</li> ' +
+          '<li><b>다이내믹 EQ</b>: 소리가 정한 크기를 넘을 때만 그 부분을 깎는 EQ 예요. 평소에는 그대로 두고, 튈 때만 줄여요.</li></ul>',
+        pics: [{ v: 'eqPicSweep', cap: '문제 주파수 찾기(스윕) 3단계예요. ① 한 밴드를 좁고 크게 올려요. ② 주파수를 천천히 움직여 거슬리는 소리가 확 커지는 곳을 찾아요. ③ 찾은 자리를 3–6 dB 깎아요.' }],
         check: { q: '보컬에서 거슬리는 울림 주파수를 찾았어요. 알맞은 처리는?', options: [
           { t: '그 주파수를 좁은 Q 로 3–6 dB 깎아요', ok: true, why: '맞아요. 문제만 골라 줄이고 나머지 소리는 지킬 수 있기 때문이에요.' },
           { t: '다른 부분을 넓게 크게 올려 가려요', why: '아니에요. 여유(헤드룸)와 피드백 여유만 줄고, 문제는 그대로 남아요.' },
@@ -594,7 +671,9 @@
         more: '<ul><li><b>링잉 아웃(피드백 잡기) 순서</b><ul><li>① 스피커·모니터·마이크를 예배 때 자리에 둬요.</li> <li>② 낮은 음량에서 시작해 마이크 하나씩 천천히 올려요.</li> <li>③ 「우웅」「삐-」 하고 울리기 시작하면 바로 조금 내려요.</li> <li>④ 그 주파수를 찾아요(RTA 화면이나 귀로). 그 출력의 EQ 에서 좁게 3–6 dB 만 깎아요.</li> <li>⑤ 다시 조금 올려 다음 울림을 찾아요.</li></ul>보통 2–3곳이면 충분해요. 너무 많이 깎으면 소리가 얇아져요.</li> ' +
           '<li><b>순서가 중요해요</b>: 마이크 위치·거리와 스피커 방향(「마이크」 모듈)을 먼저 바로잡아요. EQ 는 마지막에 몇 dB 의 여유를 더 얻는 도구예요.</li> ' +
           '<li><b>안전</b>: 큰 피드백은 귀와 스피커(특히 고음을 내는 부품)를 상하게 할 수 있어요. 낮은 음량에서 짧게만 해요. 울리면 바로 내려요.</li> ' +
-          '<li><b>CL5 (제조사 자료)</b>: MIX(모니터)·STEREO 같은 출력 채널에도 4밴드 PEQ 가 있어요. GEQ 랙에 31밴드 GEQ 나 Flex15GEQ 를 넣어 출력에 걸 수도 있어요. GEQ 는 막대 여러 개로 높이별 크기를 정하는 EQ 예요.</li></ul>',
+          '<li><b>CL5 (제조사 자료)</b>: MIX(모니터)·STEREO 같은 출력 채널에도 4밴드 PEQ 가 있어요. GEQ 랙에 31밴드 GEQ 나 Flex15GEQ 를 넣어 출력에 걸 수도 있어요. GEQ 는 막대 여러 개로 높이별 크기를 정하는 EQ 예요.</li> ' +
+          '<li><b>31밴드 GEQ</b> 는 들리는 범위를 1/3옥타브 간격으로 31칸 나눈 거예요. 15밴드는 2/3옥타브 간격이에요. 전체 모양이 한눈에 보여서 메인·모니터 출력을 다듬을 때 많이 써요.</li> ' +
+          '<li>한 높이만 아주 좁게 깎는 필터를 <b>노치 필터</b>라고 해요. 다른 소리는 거의 건드리지 않고 피드백·울림만 줄일 때 써요.</li></ul>',
         check: { q: '한 모니터 스피커에서만 2.5 kHz 근처 피드백이 계속 나요. 어디를 깎을까요?', options: [
           { t: '그 모니터로 가는 출력(MIX) EQ 에서 2.5 kHz 를 좁게', ok: true, why: '맞아요. 문제가 생긴 출력에서만 고치면 메인 소리는 그대로이기 때문이에요.' },
           { t: '모든 채널 EQ 에서 2.5 kHz 를 크게', why: '아니에요. 메인 소리까지 모두 바뀌고, 채널마다 하나씩 고쳐야 해요.' },
@@ -624,9 +703,9 @@
         { t: 'HPF 를 켜고, 200–500 Hz 근처를 찾아 조금 깎아요', ok: true, why: '맞아요. 필요 없는 저음과 웅웅거리는 부분을 먼저 줄여야 하기 때문이에요.' },
         { t: '10 kHz 를 크게 올려요', why: '아니에요. 밝아지기는 해도 웅웅거림은 그대로예요. 쉿 소리(치찰음)·피드백 위험만 커져요.' },
         { t: '페이더를 올려요', why: '아니에요. 음량만 커지고 답답한 소리는 그대로예요.' }] },
-      { q: 'Q 에 대한 설명으로 맞는 것은?', options: [
-        { t: 'Q 숫자가 클수록 좁은 범위만 바뀌어요', ok: true, why: '맞아요. Q 4.3 은 약 1/3옥타브, Q 1.4 는 약 1옥타브이기 때문이에요.' },
-        { t: 'Q 숫자가 클수록 넓은 범위가 바뀌어요', why: '반대예요. Q 숫자가 클수록 좁아요.' },
+      { q: '그림의 두 곡선은 주파수·게인이 같고 Q 만 달라요. Q 에 대한 설명으로 맞는 것은?', visual: 'eqQuizQ', options: [
+        { t: 'Q 숫자가 클수록 좁은 범위만 바뀌어요(가)', ok: true, why: '맞아요. Q 4.3 은 약 1/3옥타브, Q 1.4 는 약 1옥타브이기 때문이에요.' },
+        { t: 'Q 숫자가 클수록 넓은 범위가 바뀌어요(나)', why: '반대예요. Q 숫자가 클수록 좁아요. 넓은 (나)가 Q 숫자가 작은 쪽이에요.' },
         { t: 'Q 는 올리고 내리는 양(dB)이에요', why: '아니에요. 올리고 내리는 양은 게인이에요.' }] },
       { q: 'MG12XU 채널 EQ 의 MID 노브로 맞는 것은? (제조사 자료)', options: [
         { t: '2.5 kHz 피킹, ±15 dB, 주파수는 고정', ok: true, why: '맞아요. MG12XU 는 주파수가 정해진 3밴드 EQ 이기 때문이에요.' },
@@ -656,7 +735,10 @@
       { t: 'Yamaha CL Series Specs (HPF·PEQ·Dynamics·GEQ, 제조사)', url: 'https://usa.yamaha.com/products/proaudio/mixers/cl_series/specs.html' },
       { t: 'Yamaha CL5/CL3/CL1 Reference Manual (제조사)', url: 'https://data.yamaha.com/files/download/other_assets/1/392941/cl5_3_1_en_rm_d1.pdf' },
       { t: 'CL5 레퍼런스 매뉴얼 · Mixer Basic Parameters (EQ 게인·Q 범위)', url: 'https://manualslib.mx/manual/582/Yamaha-Cl5.html?page=334' },
-      { t: 'W3C Web Audio API — BiquadFilterNode 공식', url: 'https://www.w3.org/TR/webaudio/#BiquadFilterNode' }
+      { t: 'W3C Web Audio API — BiquadFilterNode 공식', url: 'https://www.w3.org/TR/webaudio/#BiquadFilterNode' },
+      { t: '무대예술전문인 자격검정 표준교재 「무대음향」(국립극장 · 교보문고, 2023) — 8장 음색 제어계(필터 · 그래픽/파라메트릭 EQ · Q · 다이내믹 EQ) p.249–255', url: '' },
+      { t: '무대예술전문인 자격검정 표준교재 「무대음향」(국립극장 · 교보문고, 2023) — 4장 HPF · 이퀄라이저의 운영 p.139–140', url: '' },
+      { t: '무대예술전문인 자격검정 표준교재 「무대음향」(국립극장 · 교보문고, 2023) — 1장 심리 음향(등청감 곡선 · 마스킹) p.26–29', url: '' }
     ]
   };
 })();

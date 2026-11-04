@@ -108,6 +108,99 @@
     return svg(600, 198, s, '씬과 패치');
   };
 
+  /* ---------------------------------------------------------------- 「그림으로 보기」 (2026-11-04)
+     - 용어 · 확인 문제 · 심화에 붙이는 작은 그림. viewBox 400 안팎, 글자 13 이상
+     - class 는 mod-pic-svg (이론 본문 그림 mod-svg 의 최소 폭 460px 을 쓰지 않음) */
+  function psvg(w, h, body, label) { return '<svg class="mod-pic-svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" font-family="Pretendard, system-ui, sans-serif" style="display:block;width:100%;max-width:' + w + 'px;height:auto;margin:0 auto">' + body + '</svg>'; }
+  function num(x, y, n, col) { return '<circle cx="' + x + '" cy="' + y + '" r="11" fill="' + col + '"/>' + t(x, y + 5, n, { size: 13, weight: 800, fill: '#fff' }); }
+  function fd(x, y, h, pos, col) { return '<path d="M' + x + ' ' + y + 'V' + (y + h) + '" stroke="#475569" stroke-width="3"/>' + rect(x - 8, y + pos - 5, 16, 10, col || '#e5e7eb', null, 2); }
+  function knob(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="11" fill="#e5e7eb" stroke="#94a3b8" stroke-width="1.5"/><path d="M' + x + ' ' + y + 'L' + x + ' ' + (y - 9) + '" stroke="' + C.ink + '" stroke-width="2.5"/>'; }
+
+  // 용어 SELECT — 고른 채널 하나를 노브 한 벌로
+  V.x32SelectMini = function () {
+    var s = rect(4, 4, 178, 128, '#1f2933', null, 10);
+    for (var i = 0; i < 5; i++) { var x = 26 + i * 34, on = i === 2; s += fd(x, 14, 56, 30) + rect(x - 13, 80, 26, 16, on ? '#fbbf24' : '#64748b', null, 4) + t(x, 120, String(i + 1), { size: 13, weight: 800, fill: on ? '#fde68a' : '#cbd5e1' }); }
+    s += t(93, 109, 'SELECT', { size: 13, fill: '#94a3b8', weight: 700 });
+    s += arrow(186, 88, 214, 88, C.orange) + rect(216, 14, 140, 118, '#fff7ed', C.orange, 10) + t(286, 36, '노브 한 벌', { size: 14, weight: 800, fill: C.orange });
+    [0, 1, 2, 3].forEach(function (i) { s += knob(240 + i * 31, 66); });
+    s += t(286, 104, '지금은 CH3 만', { size: 13, weight: 800 }) + t(286, 122, '조절해요', { size: 13, fill: C.sub });
+    return psvg(360, 136, s, 'SELECT 를 누른 채널 하나를 노브 한 벌로 조절해요');
+  };
+
+  // 용어 레이어 — 같은 페이더에 다른 채널 묶음을 불러오기
+  V.x32LayerMini = function () {
+    var s = '', tabs = [['1–16', false], ['17–32', true], ['AUX·FX', false], ['BUS', false]];
+    tabs.forEach(function (b, i) { var x = 10 + i * 60; s += rect(x, 6, 56, 24, b[1] ? '#fbbf24' : '#e2e8f0', b[1] ? '#b45309' : '#94a3b8', 6) + t(x + 28, 23, b[0], { size: 13, weight: 800, fill: b[1] ? '#111827' : C.sub }); });
+    s += rect(10, 34, 236, 98, '#1f2933', null, 8);
+    for (var i = 0; i < 7; i++) { var x = 30 + i * 32; s += t(x, 54, String(17 + i), { size: 13, weight: 800, fill: '#fde68a' }) + fd(x, 62, 58, 14 + (i * 13) % 34); }
+    s += t(306, 52, '책장을', { size: 14, weight: 800, fill: C.ink }) + t(306, 72, '넘기듯', { size: 14, weight: 800, fill: C.ink }) + t(306, 98, '같은 페이더에', { size: 13, fill: C.sub }) + t(306, 116, '다른 채널이 와요', { size: 13, fill: C.sub });
+    return psvg(360, 136, s, '레이어 버튼으로 같은 페이더에 다른 채널 묶음을 불러와요');
+  };
+
+  // 용어 Sends on Fader — 페이더가 맡는 일이 바뀌어요
+  V.x32SofMini = function () {
+    function desk(x, title, col, pos, out, outCol) { var h = t(x + 70, 18, title, { size: 13, weight: 800, fill: outCol }) + rect(x, 26, 140, 70, '#1f2933', null, 8); pos.forEach(function (p, i) { h += fd(x + 22 + i * 32, 36, 50, p, col); }); return h + t(x + 70, 116, out, { size: 13, weight: 800, fill: outCol }); }
+    var s = desk(6, '평소', '#e5e7eb', [14, 22, 10, 30], '= 메인으로 섞는 양', C.teal) + desk(214, '버튼 켜고 BUS 1 고름', '#fbbf24', [8, 38, 40, 34], '= BUS 1 로 보내는 양', C.orange);
+    s += arrow(150, 61, 210, 61, C.orange) + rect(156, 70, 50, 22, C.orange, null, 5) + t(181, 86, 'SoF', { size: 13, weight: 800, fill: '#fff' });
+    return psvg(360, 126, s, 'Sends on Fader 를 켜면 페이더가 BUS 로 보내는 양이 돼요');
+  };
+
+  // 용어 DCA — 여러 채널 페이더의 리모컨
+  V.x32DcaMini = function () {
+    var s = rect(8, 20, 64, 104, C.purple, null, 10) + t(40, 40, 'DCA 1', { size: 13, weight: 800, fill: '#fff' }) + '<path d="M40 50V114" stroke="#ddd6fe" stroke-width="3"/>' + rect(30, 90, 20, 10, '#fff', null, 2) + arrow(58, 62, 58, 94, '#fde68a');
+    s += '<path d="M72 36 H88 V9 H308" fill="none" stroke="' + C.purple + '" stroke-width="2" stroke-dasharray="4 3"/>' ;
+    ['기타', '건반', '베이스', '드럼'].forEach(function (n, i) { var x = 128 + i * 60;
+      s += '<path d="M' + x + ' 9V22" stroke="' + C.purple + '" stroke-width="2" stroke-dasharray="4 3"/>' + rect(x - 24, 22, 48, 80, '#f5f3ff', '#c4b5fd', 6) + t(x, 40, n, { size: 13, weight: 800 }) + fd(x, 48, 46, 18) + t(x, 120, '−6 dB', { size: 13, weight: 800, fill: C.purple });
+    });
+    s += t(220, 140, '페이더는 제자리 · 나가는 크기만 함께', { size: 13, fill: C.sub });
+    return psvg(360, 148, s, 'DCA 는 여러 채널의 크기를 한 번에 바꾸는 리모컨이에요');
+  };
+
+  // 용어 씬 — 게임 저장처럼 SAVE · GO
+  V.x32SceneMini = function () {
+    var s = '', st = [['1', '리허설 끝', '설정 완성', C.teal], ['2', 'SAVE', '「01 주일 1부」', C.blue], ['3', '다음 주 GO', '그대로 돌아와요', C.green]];
+    st.forEach(function (r, i) { var x = 4 + i * 120; s += rect(x, 8, 108, 108, '#fff', r[3], 10) + num(x + 54, 32, r[0], r[3]) + t(x + 54, 70, r[1], { size: 14, weight: 800, fill: r[3] }) + t(x + 54, 94, r[2], { size: 13, fill: C.sub }); if (i < 2) s += arrow(x + 108, 62, x + 120, 62, C.ink); });
+    return psvg(360, 122, s, '씬은 설정 전체를 저장했다가 한 번에 불러와요');
+  };
+
+  // 확인 문제 1 — 레이어가 바뀐 줄 모르고 페이더를 내림
+  V.x32QuizLayer = function () {
+    var s = t(44, 18, '레이어', { size: 13, weight: 800 }), lay = [['1–16', false], ['17–32', true], ['AUX', false], ['BUS', false]];
+    lay.forEach(function (b, i) { var y = 28 + i * 32; s += rect(8, y, 72, 24, b[1] ? '#fbbf24' : '#e2e8f0', b[1] ? '#b45309' : '#94a3b8', 6) + t(44, y + 17, b[0], { size: 13, weight: 800, fill: b[1] ? '#111827' : C.sub }); });
+    s += rect(96, 8, 300, 150, '#1f2933', null, 10);
+    for (var i = 0; i < 8; i++) { var x = 118 + i * 36, hot = i === 2; s += rect(x - 15, 16, 30, 20, hot ? '#fde68a' : '#334155', null, 3) + t(x, 31, String(17 + i), { size: 13, weight: 800, fill: hot ? '#111827' : '#e2e8f0' }) + fd(x, 46, 84, hot ? 70 : 24 + (i * 11) % 20, hot ? '#f87171' : '#e5e7eb'); }
+    s += arrow(190, 62, 190, 104, '#f87171') + t(246, 150, '왼쪽 세 번째 페이더를 내렸어요', { size: 13, fill: '#e2e8f0', weight: 700 });
+    return psvg(400, 164, s, '레이어 17–32 에서 왼쪽 세 번째 페이더를 내린 모습');
+  };
+
+  // 확인 문제 3 — DCA 를 내리면 무엇이 바뀔까?
+  V.x32QuizDca = function () {
+    var s = rect(6, 8, 88, 150, C.purple, null, 10) + t(50, 30, 'DCA 1', { size: 13, weight: 800, fill: '#fff' }) + t(50, 48, '악기', { size: 13, fill: '#ede9fe' }) + '<path d="M50 58V146" stroke="#ddd6fe" stroke-width="3"/>' + rect(38, 112, 24, 12, '#fff', null, 2) + arrow(76, 70, 76, 116, '#fde68a') + t(76, 66, '−6', { size: 13, weight: 800, fill: '#fde68a' });
+    s += rect(110, 8, 180, 150, '#f5f3ff', '#c4b5fd', 10) + t(200, 28, '악기 채널 페이더', { size: 13, weight: 800 });
+    for (var i = 0; i < 8; i++) { var x = 127 + i * 21; s += '<path d="M' + x + ' 44V128" stroke="#94a3b8" stroke-width="3"/>' + t(x, 148, '?', { size: 15, weight: 800, fill: C.purple }); }
+    s += rect(304, 8, 90, 150, '#fff7ed', '#fdba74', 10) + t(349, 32, '무대 모니터', { size: 13, weight: 800, fill: C.orange }) + t(349, 50, '(PRE)', { size: 13, fill: C.orange }) + '<circle cx="349" cy="96" r="22" fill="none" stroke="' + C.orange + '" stroke-width="2.5"/>' + t(349, 103, '?', { size: 20, weight: 800, fill: C.orange });
+    return psvg(400, 164, s, 'DCA 1 을 6 dB 내렸을 때 채널 페이더와 무대 모니터는?');
+  };
+
+  // 심화 — 아날로그 멀티 케이블과 AES50 랜선 비교
+  V.x32StageboxMini = function () {
+    function row(y, title, sub, many, col) {
+      var h = t(8, y, title, { size: 13, weight: 800, anchor: 'start', fill: col }) + rect(8, y + 10, 88, 46, '#fff', C.line, 8) + t(52, y + 38, many ? '무대' : '스테이지박스', { size: 13, weight: 800 }) + rect(304, y + 10, 88, 46, '#fff', C.line, 8) + t(348, y + 38, '콘솔', { size: 13, weight: 800 });
+      if (many) { for (var k = 0; k < 9; k++) h += '<path d="M96 ' + (y + 18 + k * 4) + ' H304" stroke="' + col + '" stroke-width="2.4"/>'; } else h += '<path d="M96 ' + (y + 33) + ' H304" stroke="' + col + '" stroke-width="3"/>';
+      return h + t(200, y + 76, sub, { size: 13, fill: C.sub });
+    }
+    var s = row(18, '아날로그 멀티 케이블', '채널마다 선이 따로 · 굵고 무거워요', true, C.sub) + row(118, 'AES50: 랜선 한 가닥', '한 가닥으로 48채널씩 오가요 · 최대 100 m', false, C.teal);
+    return psvg(400, 204, s, '아날로그 멀티 케이블과 AES50 랜선 한 가닥 비교');
+  };
+
+  // 심화 — 가상 사운드체크 순서
+  V.x32VirtualSc = function () {
+    var s = '', st = [['1', '주일 예배', '채널마다 따로 녹음', 8, 8], ['2', '평일', '녹음을 채널로 틀기', 212, 8], ['3', '연습', 'EQ·컴프·밸런스', 212, 92], ['4', '예배 전', '입력을 마이크로 되돌리기', 8, 92]];
+    st.forEach(function (r, i) { var x = r[3], y = r[4], col = i === 3 ? C.red : C.teal; s += rect(x, y, 180, 64, '#fff', col, 10) + num(x + 22, y + 22, r[0], col) + t(x + 40, y + 27, r[1], { size: 14, weight: 800, anchor: 'start', fill: col }) + t(x + 14, y + 52, r[2], { size: 13, anchor: 'start', fill: C.sub }); });
+    s += arrow(188, 40, 210, 40, C.ink) + arrow(302, 72, 302, 90, C.ink) + arrow(212, 124, 190, 124, C.ink);
+    return psvg(400, 162, s, '가상 사운드체크 순서');
+  };
+
   /* 실습(X32 사진 위에서 마우스로 조작)은 lessons/modules/x32_photo_sim.js — 2026-11-04 */
 })();
 
@@ -122,14 +215,14 @@
     overview: {
       lead: '디지털 콘솔은 들어온 소리를 숫자(디지털)로 바꿔서 콘솔 안에서 다듬는 콘솔이에요. 이 과정은 교회와 공연장에서 많이 쓰는 <b>Behringer X32</b> 로 배워요. 소리가 지나가는 순서(GAIN → 다듬기 → 페이더 → 버스)는 03-1 아날로그 콘솔과 똑같아요. 달라지는 것은 다루는 방법이에요. 디지털 콘솔은 채널마다 노브가 따로 있지 않아요. 먼저 <b>SELECT</b> 버튼으로 채널을 골라요. 그다음 <b>화면과 함께 쓰는 노브</b>(공용 노브)로 조절해요. 같은 페이더에 <b>레이어</b>(페이더 줄 바꾸기)로 다른 채널을 불러와 많은 채널을 다뤄요. 설정 전체는 <b>씬</b>으로 저장했다가 한 번에 불러와요.',
       terms: [
-        ['SELECT', '채널마다 있는 「고르기」 버튼이에요. 누른 채널 하나의 설정이 화면과 채널 스트립 노브에 나타나요. 한 번에 한 채널만 고를 수 있어요.'],
+        ['SELECT', '채널마다 있는 「고르기」 버튼이에요. 누른 채널 하나의 설정이 화면과 채널 스트립 노브에 나타나요. 한 번에 한 채널만 고를 수 있어요.', 'x32SelectMini'],
         ['채널 스트립', '화면 옆에 모인, 여러 채널이 함께 쓰는 노브들(공용 노브)이에요. SELECT 로 고른 채널을 조절해요. GAIN·+48V·LOW CUT, GATE, COMP, EQ, 버스 보내기가 있어요.'],
-        ['레이어', '같은 페이더 16개에 다른 채널 묶음을 불러오는 기능이에요. 책장을 넘기듯 CH 1–16, CH 17–32 로 바꿔요. AUX IN·USB·FX RTN, BUS MASTER 도 불러와요. 오른쪽 8개 페이더에도 DCA · BUS · MATRIX 레이어가 있어요.'],
+        ['레이어', '같은 페이더 16개에 다른 채널 묶음을 불러오는 기능이에요. 책장을 넘기듯 CH 1–16, CH 17–32 로 바꿔요. AUX IN·USB·FX RTN, BUS MASTER 도 불러와요. 오른쪽 8개 페이더에도 DCA · BUS · MATRIX 레이어가 있어요.', 'x32LayerMini'],
         ['믹스 버스 (BUS 1–16)', '모니터·이펙트·녹음용 소리를 따로 섞는 길이에요. 아날로그 콘솔의 AUX 와 같은 역할이에요. X32 에는 16개 있어요.'],
-        ['Sends on Fader', '페이더가 맡는 일을 바꾸는 버튼이에요. 「메인으로 섞는 양」 대신 「고른 BUS 로 보내는 양」이 돼요. 모니터 소리를 페이더로 만들 때 써요.'],
-        ['DCA', '여러 채널 페이더를 한 번에 움직이는 리모컨 페이더예요. 소리를 한 버스로 모으지는 않아요. X32 에는 8개 있어요.'],
+        ['Sends on Fader', '페이더가 맡는 일을 바꾸는 버튼이에요. 「메인으로 섞는 양」 대신 「고른 BUS 로 보내는 양」이 돼요. 모니터 소리를 페이더로 만들 때 써요.', 'x32SofMini'],
+        ['DCA', '여러 채널 페이더를 한 번에 움직이는 리모컨 페이더예요. 소리를 한 버스로 모으지는 않아요. X32 에는 8개 있어요.', 'x32DcaMini'],
         ['뮤트 그룹', '여러 채널을 버튼 하나로 한꺼번에 끄고 켜는 기능이에요. X32 에는 6개 있어요.'],
-        ['씬 (Scene)', '콘솔 설정 전체를 사진 찍듯 저장해 두는 것이에요. 페이더·MUTE·EQ·라우팅(소리 길)까지 들어가요. 나중에 한 번에 불러와요. X32 는 씬을 100개 저장할 수 있어요.']
+        ['씬 (Scene)', '콘솔 설정 전체를 사진 찍듯 저장해 두는 것이에요. 페이더·MUTE·EQ·라우팅(소리 길)까지 들어가요. 나중에 한 번에 불러와요. 콘솔에 따라 스냅숏 · 큐라고도 불러요. X32 는 씬을 100개 저장할 수 있어요.', 'x32SceneMini']
       ],
       points: [
         '조절하기 전에 <b>화면의 채널 이름과 레이어</b>를 먼저 봐요. 디지털 콘솔 실수는 대부분 「다른 채널을 만지고 있었다」예요.',
@@ -141,7 +234,7 @@
     theory: [
       { title: '아날로그와 무엇이 다를까 — 화면 · SELECT · 함께 쓰는 노브', visual: 'x32Surface',
         body: '아날로그 콘솔은 채널마다 GAIN·EQ·AUX 노브가 세로로 한 줄씩 달려 있어요. 디지털 콘솔 X32 는 채널마다 <b>페이더 · SELECT · MUTE · SOLO</b> 만 있어요. 나머지 노브는 화면 옆 <b>채널 스트립</b>에 한 벌만 있어요. 채널의 <b>SELECT</b> 를 누르면 그 채널의 설정이 화면과 채널 스트립에 나타나요. 그때부터 노브는 그 채널만 조절해요. 노브 한 벌을 여러 채널이 돌려 쓰는 셈이에요. 소리 순서는 아날로그와 같아요. 그래서 03-1 에서 배운 원리를 그대로 쓰면 돼요.',
-        more: '<ul><li><b>X32 (제조사 자료)</b>: 모터로 저절로 움직이는 페이더가 25개 있어요. 입력 쪽 16개, 버스·DCA 쪽 8개, MAIN LR 1개예요.</li> <li>7인치 컬러 화면이 있어요. 채널마다 이름을 보여 주는 작은 컬러 화면(스크리블 스트립 LCD)도 있어요.</li> <li>채널 스트립은 다섯 구역으로 나뉘어요. CONFIG/PREAMP · GATE/DYNAMICS · EQ · BUS SENDS · MAIN BUS 예요. 구역마다 VIEW 버튼을 누르면 화면에 자세한 설정이 열려요.</li> <li>SELECT 는 한 번에 한 채널만 켜져요. 노브를 돌리기 전에 <b>지금 어느 채널을 골랐는지</b> 화면 위쪽 이름을 꼭 봐요.</li> <li>입력은 마이크 프리앰프 32개(뒷면 XLR)가 있어요. 그 밖에 AUX IN 6개, 스테이지박스(무대에 두는 입력 상자)용 AES50 단자 2개도 있어요.</li></ul>',
+        more: '<ul><li><b>X32 (제조사 자료)</b>: 모터로 저절로 움직이는 페이더가 25개 있어요. 입력 쪽 16개, 버스·DCA 쪽 8개, MAIN LR 1개예요.</li> <li>7인치 컬러 화면이 있어요. 채널마다 이름을 보여 주는 작은 컬러 화면(스크리블 스트립 LCD)도 있어요.</li> <li>채널 스트립은 다섯 구역으로 나뉘어요. CONFIG/PREAMP · GATE/DYNAMICS · EQ · BUS SENDS · MAIN BUS 예요. 구역마다 VIEW 버튼을 누르면 화면에 자세한 설정이 열려요.</li> <li>SELECT 는 한 번에 한 채널만 켜져요. 노브를 돌리기 전에 <b>지금 어느 채널을 골랐는지</b> 화면 위쪽 이름을 꼭 봐요.</li> <li>입력은 마이크 프리앰프 32개(뒷면 XLR)가 있어요. 그 밖에 AUX IN 6개, 스테이지박스(무대에 두는 입력 상자)용 AES50 단자 2개도 있어요.</li> <li>프리앰프를 지난 소리는 <b>AD 변환기</b>에서 숫자로 바뀌어요. X32 는 1초에 48,000번(48 kHz) 소리 크기를 재고, 한 번 잴 때 24비트로 아주 잘게 적어요(제조사 자료).</li> <li>숫자로 바꾸고 계산하느라 아주 짧은 지연(<b>레이턴시</b>)이 생겨요. X32 는 입력에서 출력까지 약 0.8 ms(1000분의 1초보다 짧음)라서 귀로는 거의 느끼지 못해요(제조사 자료).</li></ul>',
         check: { q: 'X32 에서 CH5 의 EQ 를 바꾸려고 해요. 가장 먼저 할 일은?', options: [
           { t: 'CH5 의 SELECT 를 누르고, 화면에 CH5 가 나왔는지 본다', ok: true, why: '맞아요. 채널 스트립 노브는 SELECT 로 고른 채널만 조절하기 때문이에요.' },
           { t: 'CH5 위에 있는 EQ 노브를 바로 돌린다', why: '아니에요. 그건 아날로그 콘솔이에요. X32 는 채널마다 EQ 노브가 따로 없어요.' },
@@ -154,8 +247,8 @@
           { t: 'CH 1', why: '아니에요. CH 1 은 「CH 1–16」 레이어일 때 첫 번째 페이더예요.' },
           { t: 'MAIN LR', why: '아니에요. MAIN LR 은 오른쪽 끝에 따로 있는 페이더예요.' }] } },
       { title: '채널 다듬기 — 프리앰프 · LOW CUT · GATE · EQ · COMP', visual: 'x32Chain',
-        body: '모든 입력 채널에 같은 다듬기 도구가 들어 있어요. 하나씩 볼게요. <b>프리앰프</b>는 소리를 키워요. GAIN · +48V · 위상 뒤집기 버튼이 여기 있어요. <b>LOW CUT</b> 은 낮은 저음을 걸러요. 아날로그의 HPF 와 같고, 거르는 높이(주파수)를 바꿀 수 있어요. <b>GATE</b> 는 작은 잡음이 들어오지 못하게 문을 닫아요. <b>4밴드 EQ</b> 는 네 칸으로 음색을 다듬어요. <b>COMP</b> 는 큰 소리를 눌러 크기를 고르게 해요. MG12XU 는 팬텀 스위치가 하나예요. 하지만 X32 는 <b>+48V 를 채널마다 따로</b> 켜고 꺼요.',
-        more: '<ul><li><b>X32 (제조사 자료)</b>: 입력 채널 EQ 는 4칸(4밴드)이에요. BUS·MAIN·MATRIX 의 EQ 는 6칸(6밴드)이에요.</li> <li>컴프레서는 EQ 앞이나 뒤로 순서를 바꿀 수 있어요.</li> <li>GATE·EQ·COMP 는 채널 스트립 버튼으로 켜고 꺼요. VIEW 를 누르면 화면에서 자세히 조절해요. 자세한 사용법은 「믹싱 스킬」의 EQ · Gate · Compressor 과정에서 연습해요.</li> <li>X32 안에는 이펙트 자리(FX 슬롯)가 8개 있어요. 1–4번은 보내기용과 삽입용(인서트) 모두로 써요. 5–8번은 삽입용으로만 써요. 삽입은 채널 중간에 이펙트를 끼워 넣는 방식이에요.</li> <li>디지털 콘솔은 할 수 있는 게 많아요. 그래도 <b>처음에는 GAIN · LOW CUT · MUTE · 페이더</b>만으로도 예배를 충분히 운영할 수 있어요.</li></ul>',
+        body: '모든 입력 채널에 같은 다듬기 도구가 들어 있어요. 하나씩 볼게요. <b>프리앰프</b>는 소리를 키워요. GAIN · +48V · 극성 뒤집기(Ø) 버튼이 여기 있어요. <b>LOW CUT</b> 은 낮은 저음을 걸러요. 아날로그의 HPF 와 같고, 거르는 높이(주파수)를 바꿀 수 있어요. <b>GATE</b> 는 작은 잡음이 들어오지 못하게 문을 닫아요. <b>4밴드 EQ</b> 는 네 칸으로 음색을 다듬어요. <b>COMP</b> 는 큰 소리를 눌러 크기를 고르게 해요. MG12XU 는 팬텀 스위치가 하나예요. 하지만 X32 는 <b>+48V 를 채널마다 따로</b> 켜고 꺼요.',
+        more: '<ul><li><b>극성 뒤집기(Ø)</b>는 XLR 의 2번·3번 핀 신호를 맞바꿔 파형을 위아래로 뒤집어요. 스네어 드럼 위·아래 마이크처럼, 두 마이크 소리가 서로 깎아 먹을 때 한쪽에 켜요(위상 반전이라고도 불러요).</li> <li><b>X32 (제조사 자료)</b>: 입력 채널 EQ 는 4칸(4밴드)이에요. BUS·MAIN·MATRIX 의 EQ 는 6칸(6밴드)이에요.</li> <li>컴프레서는 EQ 앞이나 뒤로 순서를 바꿀 수 있어요.</li> <li>GATE·EQ·COMP 는 채널 스트립 버튼으로 켜고 꺼요. VIEW 를 누르면 화면에서 자세히 조절해요. 자세한 사용법은 「믹싱 스킬」의 EQ · Gate · Compressor 과정에서 연습해요.</li> <li>X32 안에는 이펙트 자리(FX 슬롯)가 8개 있어요. 1–4번은 보내기용과 삽입용(인서트) 모두로 써요. 5–8번은 삽입용으로만 써요. 삽입은 채널 중간에 이펙트를 끼워 넣는 방식이에요.</li> <li>디지털 미터의 <b>0 dBFS</b> 는 더 커질 수 없는 맨 꼭대기예요. 평소 소리(표준 운용 레벨)는 보통 −18 ~ −20 dBFS 쯤에 둬요. 미터 색이 초록에서 노랑으로 바뀌는 곳 근처예요. 그래야 갑자기 큰 소리가 와도 여유가 있어요.</li> <li>디지털 콘솔은 할 수 있는 게 많아요. 그래도 <b>처음에는 GAIN · LOW CUT · MUTE · 페이더</b>만으로도 예배를 충분히 운영할 수 있어요.</li></ul>',
         check: { q: '설교 구즈넥 마이크(목이 길게 휘는 콘덴서 마이크) 채널에서 소리가 전혀 안 나요. X32 에서 가장 먼저 볼 것은?', options: [
           { t: '그 채널을 SELECT 하고 +48V 가 켜져 있는지 본다', ok: true, why: '맞아요. 콘덴서 마이크는 팬텀 전원이 있어야 동작해요. X32 는 채널마다 따로 켜요.' },
           { t: '모든 채널의 +48V 를 한꺼번에 켠다', why: '아니에요. 필요 없는 장비에까지 전기가 갈 수 있어요. 필요한 채널만 켜요.' },
@@ -200,7 +293,7 @@
       ]
     },
     quiz: [
-      { q: '예배 중 CH 3 보컬을 줄이려고 왼쪽 세 번째 페이더를 내렸어요. 그런데 엉뚱한 채널이 줄었어요. 가장 그럴듯한 이유는?', options: [
+      { q: '예배 중 CH 3 보컬을 줄이려고 왼쪽 세 번째 페이더를 내렸어요. 그런데 엉뚱한 채널이 줄었어요. 그림을 보고 이유를 골라 보세요.', visual: 'x32QuizLayer', options: [
         { t: '레이어가 CH 1–16 이 아니었다', ok: true, why: '맞아요. 같은 페이더가 다른 레이어의 채널을 맡고 있었을 거예요. 이름표를 먼저 확인해요.' },
         { t: 'SELECT 가 켜져 있지 않아서', why: '아니에요. 페이더는 SELECT 와 상관없이 움직여요.' },
         { t: '씬이 저장되지 않아서', why: '아니에요. 씬 저장은 지금 페이더가 어느 채널인지와 상관없어요.' }] },
@@ -208,7 +301,7 @@
         { t: '메인 대신 고른 BUS(모니터)로 보내는 양이 바뀐다', ok: true, why: '맞아요. 그래서 다 쓰면 Sends on Fader 를 꼭 꺼요.' },
         { t: '메인과 모니터가 함께 바뀐다', why: '아니에요. Sends on Fader 가 켜져 있으면 페이더는 BUS 로 보내는 양만 바꿔요.' },
         { t: '아무것도 바뀌지 않는다', why: '아니에요. 고른 BUS 로 보내는 양이 바뀌어요.' }] },
-      { q: '찬양팀 악기 8채널을 DCA 1 로 −6 dB 줄였어요. 악기 채널 페이더와 PRE 로 보내는 무대 모니터는 어떻게 될까요?', options: [
+      { q: '그림처럼 찬양팀 악기 8채널이 든 DCA 1 을 6 dB 내렸어요. 악기 채널 페이더와 PRE 로 보내는 무대 모니터는 어떻게 될까요?', visual: 'x32QuizDca', options: [
         { t: '채널 페이더는 제자리, PRE 모니터도 그대로다', ok: true, why: '맞아요. DCA 는 실제로 나가는 크기만 바꿔요. 페이더 앞(PRE)에서 보내는 모니터에는 영향이 없어요.' },
         { t: '채널 페이더가 모두 6 dB 만큼 내려간다', why: '아니에요. DCA 는 채널 페이더를 움직이지 않아요. 나가는 크기만 바꿔요.' },
         { t: '모니터도 모두 6 dB 줄어든다', why: '아니에요. PRE 로 보내는 모니터는 페이더·DCA 보다 앞이라 그대로예요.' }] },
@@ -226,8 +319,8 @@
       { title: '음향 트러블슈팅 · 미션 A', text: '입력은 있는데 소리가 안 날 때를 연습해요. 레이어·MUTE·뮤트 그룹·페이더 순서로 막힌 곳을 찾아요.', go: { tab: 'tab7', ts: 'A' } }
     ],
     deeper: [
-      { title: '스테이지박스와 AES50', text: 'X32 뒷면에는 <b>AES50</b> 단자가 2개 있어요. 무대에 둔 스테이지박스(마이크를 꽂는 입력 상자)와 랜선 한 가닥으로 이어요. 이 선으로 마이크 소리를 디지털로 주고받아요.', more: '<ul><li><b>X32 (제조사 자료)</b>: AES50 단자 하나로 48채널을 받고 48채널을 보내요. Cat-5e 케이블(랜선의 한 종류)로 최대 100 m 까지 이어요.</li> <li>굵은 아날로그 멀티 케이블 대신 랜선 한 가닥이라 설치가 쉬워요. 대신 그 선이 빠지면 무대 쪽 채널이 한꺼번에 끊겨요. 그래서 케이블 보호와 예비선이 중요해요.</li> <li>어떤 스테이지박스 입력을 몇 번 채널로 받을지는 화면의 ROUTING(패치)에서 정해요.</li></ul>' },
-      { title: '멀티트랙 녹음과 가상 사운드체크', text: 'X32 에는 <b>X-USB 카드</b>가 기본으로 들어 있어요. 이 카드로 컴퓨터에 32채널을 따로따로 녹음할 수 있어요. 녹음한 소리를 다시 콘솔 채널로 틀 수도 있어요.', more: '<ul><li><b>X32 (제조사 자료)</b>: X-USB 카드는 USB 2.0 으로 32채널을 받고 32채널을 보내요. 따로 사는 카드인 X-LIVE 는 SD 카드에 32채널을 바로 녹음해요.</li> <li><b>가상 사운드체크</b>: 주일 예배를 채널별로 녹음해 둬요. 평일에 그 소리를 콘솔 채널로 다시 틀어요. 그러면 찬양팀 없이도 EQ·컴프·밸런스를 연습할 수 있어요. 봉사자 훈련에 아주 좋아요.</li> <li>틀 때는 채널 입력을 「녹음 재생」으로 바꿔요. 예배 전에는 꼭 원래(마이크 입력)로 돌려놔요.</li></ul>' },
+      { title: '스테이지박스와 AES50', text: 'X32 뒷면에는 <b>AES50</b> 단자가 2개 있어요. 무대에 둔 스테이지박스(마이크를 꽂는 입력 상자)와 랜선 한 가닥으로 이어요. 이 선으로 마이크 소리를 디지털로 주고받아요.', visual: 'x32StageboxMini', more: '<ul><li><b>X32 (제조사 자료)</b>: AES50 단자 하나로 48채널을 받고 48채널을 보내요. Cat-5e 케이블(랜선의 한 종류)로 최대 100 m 까지 이어요.</li> <li>굵은 아날로그 멀티 케이블 대신 랜선 한 가닥이라 설치가 쉬워요. 대신 그 선이 빠지면 무대 쪽 채널이 한꺼번에 끊겨요. 그래서 케이블 보호와 예비선이 중요해요.</li> <li>어떤 스테이지박스 입력을 몇 번 채널로 받을지는 화면의 ROUTING(패치)에서 정해요.</li> <li>디지털 콘솔은 세 부분으로 나눠 생각할 수 있어요. 손으로 만지는 <b>조작면</b>, 소리가 들고 나는 <b>입출력 상자</b>(스테이지박스 · I/O 랙), 계산을 맡는 <b>DSP 엔진</b>이에요. X32 는 조작면 안에 셋이 다 들어 있고, 스테이지박스를 더 붙일 수 있어요.</li></ul>' },
+      { title: '멀티트랙 녹음과 가상 사운드체크', text: 'X32 에는 <b>X-USB 카드</b>가 기본으로 들어 있어요. 이 카드로 컴퓨터에 32채널을 따로따로 녹음할 수 있어요. 녹음한 소리를 다시 콘솔 채널로 틀 수도 있어요.', visual: 'x32VirtualSc', more: '<ul><li><b>X32 (제조사 자료)</b>: X-USB 카드는 USB 2.0 으로 32채널을 받고 32채널을 보내요. 따로 사는 카드인 X-LIVE 는 SD 카드에 32채널을 바로 녹음해요.</li> <li><b>가상 사운드체크</b>: 주일 예배를 채널별로 녹음해 둬요. 평일에 그 소리를 콘솔 채널로 다시 틀어요. 그러면 찬양팀 없이도 EQ·컴프·밸런스를 연습할 수 있어요. 봉사자 훈련에 아주 좋아요.</li> <li>틀 때는 채널 입력을 「녹음 재생」으로 바꿔요. 예배 전에는 꼭 원래(마이크 입력)로 돌려놔요.</li></ul>' },
       { title: '원격 조작 앱', text: '태블릿이나 노트북으로 X32 를 조절할 수 있어요. 회중석에서 소리를 들으며 조절할 때 써요. 연주자가 자기 모니터를 직접 맞출 때도 써요.', more: '<ul><li><b>X32-Edit</b>: PC·Mac·Linux 용 제조사 프로그램이에요. 콘솔 없이 미리 씬을 만들어 볼 수도 있어요(오프라인).</li> <li><b>MX-Mix · MX-Q</b>: 지금 제조사가 안내하는 태블릿·휴대폰 앱이에요. 예전 앱 X32-Mix · X32-Q 는 오래 업데이트되지 않았어요. Mixing Station 같은 다른 회사 앱도 있어요.</li> <li>여러 사람이 동시에 만지면 서로 설정을 바꿔 버릴 수 있어요. 누가 무엇을 조절할지 정해요. 연주자 앱은 자기 모니터만 바꾸게 설정해요.</li></ul>' }
     ],
     sources: [
@@ -237,7 +330,10 @@
       { t: 'Behringer X32 User Manual — Scenes 화면 · Safes (ManualsLib)', url: 'https://manualslib.com/manual/453343/Behringer-X32-Digital-Mixer.html?page=63' },
       { t: 'Behringer X-LIVE 확장 카드', url: 'https://www.behringer.com/en/products/0606-ABU' },
       { t: 'Behringer MX-Mix · MX-Q 앱 안내 — Sweetwater', url: 'https://www.sweetwater.com/sweetcare/articles/behringer-mx-mix-and-mx-q-mobile-apps-quickstart-guide/' },
-      { t: '사진: Behringer X32 공식 제품 사진 (윗면 · 뒷면 · 옆면) — 3D 모델 배치도 이 사진들을 기준으로 맞춤', url: 'https://www.behringer.com/en/products/0603-ace' }
+      { t: '사진: Behringer X32 공식 제품 사진 (윗면 · 뒷면 · 옆면) — 3D 모델 배치도 이 사진들을 기준으로 맞춤', url: 'https://www.behringer.com/en/products/0603-ace' },
+      { t: 'Behringer X32 User Manual 사양 — AD/DA 24비트 44.1/48 kHz · 로컬 입출력 지연 0.8 ms (ManualsLib)', url: 'https://www.manualslib.com/manual/1126904/Behringer-X32.html?page=24' },
+      { t: '무대예술전문인 자격검정 표준교재 「무대음향」(국립극장 · 교보문고, 2023) — 4장 3절 디지털 믹싱 콘솔: 아날로그와 비교 · 구성(조작면 · I/O 랙 · DSP 엔진) · 라우팅 · 레이어 · 씬(스냅숏 · 큐) · 원격 제어 · 가상 사운드 체크 · 센드 온 페이더 p.131–136', url: '' },
+      { t: '무대예술전문인 자격검정 표준교재 「무대음향」(국립극장 · 교보문고, 2023) — 4장 극성 반전 p.125 · 표준 운용 레벨 p.137–138, 2장 디지털 변환 · 레이턴시 p.43–50, 10장 EBU · SMPTE 표준 레벨 p.314–315', url: '' }
     ]
   };
 })();

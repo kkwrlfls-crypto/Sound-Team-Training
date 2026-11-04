@@ -169,6 +169,111 @@
     return svg(600, 214, b, '딜레이 스피커 시간 맞추기와 콤 필터, 극성');
   };
 
+  /* ------------------------------------------------------------------ 2026-11-04 「그림으로 보기」 (교재 6장 · 15장 · 16장 대조 뒤 추가)
+     - 작은 칸(용어 · 2단 그림)에서도 글자가 읽히게 viewBox 를 좁게(360 · 480) 그리고, 폭 줄임을 허용(min-width:0) */
+  function pic(w, h, body, label) { return '<svg class="mod-svg" style="min-width:0" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + label + '" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, system-ui, sans-serif">' + body + '</svg>'; }
+  function cone(x, y, s) { s = s || 1; return '<rect x="' + (x - 12 * s) + '" y="' + (y - 9 * s) + '" width="' + (12 * s) + '" height="' + (18 * s) + '" fill="#475569"/><path d="M' + x + ' ' + (y - 7 * s) + 'L' + (x + 14 * s) + ' ' + (y - 26 * s) + 'L' + (x + 14 * s) + ' ' + (y + 26 * s) + 'L' + x + ' ' + (y + 7 * s) + 'Z" fill="#1f2937"/>'; }
+
+  /* 그림 7: 인클로저 — 통이 없을 때 · 밀폐형 · 저음반사형 (교재 6장) */
+  V.spkEnclosure = function () {
+    var b = '';
+    [[6, '통이 없으면', C.red], [166, '밀폐형', C.teal], [326, '저음반사형', C.violet]].forEach(function (p) { b += box(p[0], 6, 148, 216, C.bg, C.line) + t(p[0] + 74, 30, p[1], { size: 14, weight: 800, fill: p[2] }); });
+    // 1) 통 없음: 뒤 소리가 돌아와 앞소리를 지움
+    b += cone(62, 104) + arrow(80, 104, 136, 104, C.blue, 2.6) + t(110, 96, '앞 소리', { size: 12.5, weight: 700, fill: C.blue });
+    b += '<path d="M48 104C22 104 24 58 62 56S110 58 118 78" fill="none" stroke="' + C.red + '" stroke-width="2.4" stroke-dasharray="5 3"/>' + arrow(114, 72, 120, 84, C.red, 2.4) + t(40, 52, '뒤 소리', { size: 12.5, weight: 700, fill: C.red });
+    b += t(80, 184, '뒤 소리가 돌아와', { size: 13 }) + t(80, 204, '저음을 지워요', { size: 13, weight: 800, fill: C.red });
+    // 2) 밀폐형
+    b += box(196, 66, 72, 76, '#e5e7eb', C.sub, 4) + cone(254, 104, 0.95) + arrow(272, 104, 306, 104, C.blue, 2.6) + t(222, 132, '갇힘', { size: 12.5, weight: 700, fill: C.sub });
+    b += t(240, 184, '뒤 소리를 가둬요', { size: 13 }) + t(240, 204, '저음이 덜 내려가요', { size: 13, weight: 800, fill: C.teal });
+    // 3) 저음반사형(포트)
+    b += box(352, 62, 76, 84, '#e5e7eb', C.sub, 4) + cone(414, 90, 0.85) + '<rect x="398" y="124" width="30" height="10" fill="#334155"/>' + arrow(432, 90, 466, 90, C.blue, 2.6) + arrow(432, 129, 466, 129, C.violet, 2.6) + t(390, 162, '포트(구멍)', { size: 12.5, weight: 700, fill: C.violet });
+    b += t(400, 184, '뒤 소리를 구멍으로', { size: 13 }) + t(400, 204, '내보내 저음을 더해요', { size: 13, weight: 800, fill: C.violet });
+    return pic(480, 228, b, '스피커 통이 없을 때, 밀폐형, 저음반사형');
+  };
+
+  /* 그림 8: 「풀레인지」의 두 뜻 (교재 6장) */
+  V.spkFullRange = function () {
+    function cab(x, y, w, h, drv) { var s2 = box(x, y, w, h, '#374151', null, 6); drv.forEach(function (d) { s2 += '<circle cx="' + (x + w / 2) + '" cy="' + (y + d[0]) + '" r="' + d[1] + '" fill="#111827" stroke="' + d[2] + '" stroke-width="2.5"/>'; }); return s2; }
+    var b = box(6, 6, 200, 196, C.bg, C.line) + t(106, 30, '옛 뜻', { size: 14, weight: 800, fill: C.sub }) + t(106, 48, '드라이버 1개', { size: 13 });
+    b += cab(78, 62, 56, 80, [[40, 20, C.blue]]) + t(106, 168, '드라이버 하나로', { size: 13 }) + t(106, 186, '모든 소리를 내요', { size: 13 });
+    b += box(216, 6, 258, 196, '#ecfeff', C.teal) + t(345, 30, '요즘 현장', { size: 14, weight: 800, fill: C.teal }) + t(345, 48, '서브 없이 한 통으로 전부', { size: 13 });
+    b += cab(246, 62, 60, 84, [[22, 9, C.amber], [56, 20, C.teal]]) + t(276, 166, '풀레인지', { size: 13, weight: 800, fill: C.teal }) + t(276, 184, '(2웨이 · 3웨이)', { size: 12.5, fill: C.sub });
+    b += cab(352, 86, 92, 60, [[30, 22, C.violet]]) + t(398, 166, '서브우퍼', { size: 13, weight: 800, fill: C.violet }) + t(398, 184, '(따로 둬요)', { size: 12.5, fill: C.sub });
+    b += t(240, 222, '그래서 3웨이인 Vi10P 도 「풀레인지」라고 불러요', { size: 13, weight: 700, fill: C.ink });
+    return pic(480, 232, b, '풀레인지라는 말의 옛 뜻과 요즘 뜻');
+  };
+
+  /* 그림 9 (용어 아이콘): 드라이버 종류 — 우퍼 · 돔 트위터 · 컴프레션 + 혼 */
+  V.spkTermHorn = function () {
+    var b = '<circle cx="60" cy="44" r="30" fill="#1f2937"/><circle cx="60" cy="44" r="11" fill="#4b5563"/>' + t(60, 96, '우퍼', { size: 13.5, weight: 800, fill: C.teal }) + t(60, 114, '큰 콘 · 저음', { size: 13 });
+    b += box(160, 24, 40, 40, '#1f2937', null, 6) + '<circle cx="180" cy="44" r="11" fill="#9ca3af"/><circle cx="177" cy="41" r="3.5" fill="#e5e7eb"/>' + t(180, 96, '돔 트위터', { size: 13.5, weight: 800, fill: C.blue }) + t(180, 114, '집 · 스튜디오', { size: 13 });
+    b += box(258, 34, 20, 22, '#475569', null, 3) + '<path d="M278 38L330 16V72L278 52Z" fill="#1f2937"/>' + t(300, 96, '컴프레션 + 혼', { size: 13.5, weight: 800, fill: C.amber }) + t(300, 114, '공연용 고음', { size: 13 });
+    return pic(360, 120, b, '스피커 드라이버 종류: 우퍼, 돔 트위터, 컴프레션 드라이버와 혼');
+  };
+
+  /* 그림 10 (용어 아이콘): 커버리지 각도 = 손전등 빛 */
+  V.spkTermFlash = function () {
+    var b = '<path d="M58 60L250 6V114Z" fill="#fde68a" fill-opacity=".55"/><path d="M58 60L250 6M58 60L250 114" stroke="' + C.amber + '" stroke-width="2" stroke-dasharray="6 4"/>';
+    b += box(10, 48, 36, 24, '#374151', null, 4) + '<path d="M46 44H58V76H46Z" fill="#1f2937"/>';
+    b += '<path d="M90 51A34 34 0 0 1 90 69" fill="none" stroke="' + C.ink + '" stroke-width="2"/>' + t(108, 65, '90°', { size: 13.5, weight: 800 });
+    b += t(196, 65, '정면 0 dB', { size: 13, weight: 700 }) + t(232, 28, '−6 dB', { size: 13, weight: 800, fill: C.red }) + t(232, 104, '−6 dB', { size: 13, weight: 800, fill: C.red });
+    b += t(262, 46, '가장자리는', { size: 13, anchor: 'start' }) + t(262, 64, '정면보다', { size: 13, anchor: 'start' }) + t(262, 82, '6 dB 작아요', { size: 13, weight: 800, anchor: 'start', fill: C.red });
+    return pic(360, 120, b, '손전등 비유로 본 커버리지 각도');
+  };
+
+  /* 그림 11 (심화): 포인트 소스와 라인 어레이의 거리 감쇠 (교재 6장) */
+  V.spkPointLine = function () {
+    var b = box(6, 6, 228, 216, C.bg, C.line) + t(120, 30, '포인트 소스', { size: 14, weight: 800, fill: C.teal });
+    b += '<circle cx="34" cy="116" r="7" fill="' + C.ink + '"/>';
+    [[34, '1 m', '0'], [74, '2 m', '−6'], [150, '4 m', '−12']].forEach(function (a) { var r = a[0], an = 40 * Math.PI / 180;
+      b += '<path d="M' + (34 + r * Math.cos(-an)).toFixed(1) + ' ' + (116 + r * Math.sin(-an)).toFixed(1) + 'A' + r + ' ' + r + ' 0 0 1 ' + (34 + r * Math.cos(an)).toFixed(1) + ' ' + (116 + r * Math.sin(an)).toFixed(1) + '" fill="none" stroke="' + C.teal + '" stroke-width="2"/>' + t(34 + r + 4, 120, a[2], { size: 13, weight: 800, fill: C.teal, anchor: 'start' }) + t(34 + r * 0.77, 170, a[1], { size: 12.5, fill: C.sub }); });
+    b += t(120, 196, '거리 2배 → 6 dB 작아져요', { size: 13, weight: 800, fill: C.teal });
+    b += box(246, 6, 228, 216, '#f5f3ff', '#c4b5fd') + t(360, 30, '라인 어레이', { size: 14, weight: 800, fill: C.violet });
+    for (var i = 0; i < 6; i++) b += box(262, 46 + i * 21, 22, 18, '#374151', null, 3);
+    [[300, '1 m', '0'], [336, '2 m', '−3'], [408, '4 m', '−6']].forEach(function (a) { b += '<path d="M' + a[0] + ' 48V170" stroke="' + C.violet + '" stroke-width="2"/>' + t(a[0] + 4, 64, a[2], { size: 13, weight: 800, fill: C.violet, anchor: 'start' }) + t(a[0], 186, a[1], { size: 12.5, fill: C.sub }); });
+    b += t(360, 206, '가까이에선 약 3 dB 씩 (이론)', { size: 13, weight: 800, fill: C.violet });
+    return pic(480, 228, b, '포인트 소스와 라인 어레이의 거리에 따른 감쇠');
+  };
+
+  /* 그림 12: 서브우퍼 한 대 ↔ 카디오이드 서브 (교재 6장 · 15장) */
+  V.spkCardioSub = function () {
+    function room(x) { return box(x, 6, 228, 216, C.bg, C.line) + box(x + 8, 14, 212, 26, '#ede9fe', null, 6) + t(x + 114, 32, '무대 (마이크 · 모니터)', { size: 13, weight: 700, fill: C.violet }) + t(x + 114, 212, '↓ 회중석', { size: 13, fill: C.sub }); }
+    var b = room(6) + '<circle cx="120" cy="110" r="66" fill="' + C.violet + '" fill-opacity=".14" stroke="' + C.violet + '" stroke-width="2"/>' + box(102, 98, 36, 26, '#4c1d95', null, 4) + t(120, 158, '서브 한 대', { size: 13, weight: 800 }) + t(120, 190, '사방으로 퍼져요', { size: 13, weight: 800, fill: C.red });
+    var d = '', cx = 360, cy = 112;
+    for (var a = 0; a <= 360; a += 4) { var th = a * Math.PI / 180, r = 72 * (0.5 + 0.5 * Math.cos(th)); d += (a ? 'L' : 'M') + (cx + r * Math.sin(th)).toFixed(1) + ' ' + (cy + r * Math.cos(th)).toFixed(1); }
+    b += room(246) + '<path d="' + d + 'Z" fill="' + C.violet + '" fill-opacity=".14" stroke="' + C.violet + '" stroke-width="2"/>';
+    b += box(342, 90, 36, 22, '#4c1d95', null, 4) + box(342, 116, 36, 22, '#4c1d95', null, 4) + t(388, 106, '뒤 서브: 조금 늦추고', { size: 12.5, weight: 700, anchor: 'start', fill: C.violet });
+    b += t(388, 122, '극성 뒤집기', { size: 12.5, weight: 700, anchor: 'start', fill: C.violet }) + t(360, 190, '무대 쪽 저음이 줄어요', { size: 13, weight: 800, fill: C.green });
+    return pic(480, 228, b, '서브우퍼 한 대와 카디오이드로 배열한 서브우퍼의 저음 퍼짐');
+  };
+
+  /* 그림 13: 딜레이 스피커 소리가 도착하는 때 ○ / × */
+  V.spkPrecedence = function () {
+    var x = function (ms) { return 40 + (ms + 30) * 4.2; };
+    var b = t(240, 18, '딜레이 스피커 소리는 언제 도착해야 할까요?', { size: 14.5, weight: 800 });
+    [['○ 메인보다 0–10 ms 늦게 → 무대에서 들려요', 6, C.green], ['× 메인보다 먼저 → 천장 · 기둥에서 들려요', -20, C.red], ['× 30–50 ms 넘게 늦게 → 메아리처럼 들려요', 58, C.red]].forEach(function (r, i) { var y = 44 + i * 52;
+      b += t(10, y, r[0], { size: 13, weight: 800, anchor: 'start', fill: r[2] }) + '<path d="M' + x(-30) + ' ' + (y + 22) + 'H' + x(70) + '" stroke="' + C.line + '" stroke-width="1.5"/>' + box(x(0) - 3, y + 11, 6, 22, C.ink, null, 1) + box(x(r[1]) - 3, y + 11, 6, 22, C.teal, null, 1); });
+    [-20, 0, 20, 40, 60].forEach(function (ms) { b += '<path d="M' + x(ms) + ' 196V202" stroke="' + C.sub + '"/>' + t(x(ms), 216, (ms > 0 ? '+' : ms < 0 ? '−' : '') + Math.abs(ms) + ' ms', { size: 12.5, fill: C.sub }); });
+    b += '<path d="M' + x(-30) + ' 196H' + x(70) + '" stroke="' + C.sub + '" stroke-width="1.5"/>';
+    b += box(300, 4, 0, 0, 'none') + '<rect x="10" y="226" width="12" height="12" fill="' + C.ink + '"/>' + t(28, 237, '메인 소리', { size: 12.5, anchor: 'start' }) + '<rect x="110" y="226" width="12" height="12" fill="' + C.teal + '"/>' + t(128, 237, '딜레이 스피커 소리 (듣는 자리 도착)', { size: 12.5, anchor: 'start' });
+    return pic(480, 246, b, '딜레이 스피커 소리가 메인보다 늦게, 먼저, 너무 늦게 도착할 때');
+  };
+
+  /* 그림 14: 스피커 배치 방식 — 집중 · 분산 · 집중 분산 (교재 15장) */
+  V.spkLayouts = function () {
+    function room(x, title, col) { return box(x, 6, 148, 206, C.bg, C.line) + t(x + 74, 28, title, { size: 13.5, weight: 800, fill: col }) + box(x + 14, 40, 120, 106, '#fff', C.line, 4) + box(x + 14, 40, 120, 18, '#e2e8f0', null, 4) + t(x + 74, 54, '무대', { size: 12.5, fill: C.sub }); }
+    function fan(cx, cy, len, half, col) { var a0 = (90 - half) * Math.PI / 180, a1 = (90 + half) * Math.PI / 180; return '<path d="M' + cx + ' ' + cy + 'L' + (cx + len * Math.cos(a0)).toFixed(1) + ' ' + (cy + len * Math.sin(a0)).toFixed(1) + 'L' + (cx + len * Math.cos(a1)).toFixed(1) + ' ' + (cy + len * Math.sin(a1)).toFixed(1) + 'Z" fill="' + col + '" fill-opacity=".18"/>'; }
+    function spk(cx, cy, col) { return box(cx - 5, cy - 5, 10, 10, col, null, 2); }
+    var b = room(6, '집중', C.teal) + fan(40, 64, 82, 30, C.teal) + fan(108, 64, 82, 30, C.teal) + spk(40, 64, C.teal) + spk(108, 64, C.teal);
+    b += t(80, 172, '메인이 다 맡아요', { size: 13 }) + t(80, 192, '무대에서 들려요', { size: 13, weight: 800, fill: C.teal });
+    b += room(166, '분산', C.blue);
+    [0, 1, 2].forEach(function (r) { [0, 1, 2].forEach(function (c) { var cx = 196 + c * 30, cy = 76 + r * 26; b += fan(cx, cy, 18, 45, C.blue) + spk(cx, cy, C.blue); }); });
+    b += t(240, 172, '작은 스피커를 고루', { size: 13 }) + t(240, 192, '천장 낮은 곳 · 안내 방송', { size: 12.5, weight: 800, fill: C.blue });
+    b += room(326, '집중 분산 (혼합)', C.violet) + fan(360, 64, 70, 30, C.violet) + fan(428, 64, 70, 30, C.violet) + spk(360, 64, C.violet) + spk(428, 64, C.violet) + fan(380, 112, 26, 40, C.amber) + fan(410, 112, 26, 40, C.amber) + spk(380, 112, C.amber) + spk(410, 112, C.amber);
+    b += t(400, 172, '메인 + 보조(딜레이)', { size: 13 }) + t(400, 192, '3층 본당과 비슷해요', { size: 13, weight: 800, fill: C.violet });
+    return pic(480, 218, b, '스피커 배치 방식: 집중, 분산, 집중 분산');
+  };
+
   /* ------------------------------------------------------------------ 실습 */
   var MODELS = {
     zxa1: { name: 'EV ZXA1-90 · ZX1-90', h: 90, v: 50 },

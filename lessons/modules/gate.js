@@ -156,6 +156,78 @@
       t(300, 200, 'CL5 입력 채널 게이트의 값 범위 (제조사 자료 · 화면은 간단히 그린 그림)', { size: 11, fill: C.sub }), 'CL5 입력 채널 게이트 파라미터 범위');
   };
 
+  /* ----------------------------------------------------------------- 2026-11-04 「그림으로 보기」: 문지기 비유 · 단계 · 비교 그림 */
+  function svgM(w, h, body, label) { return svg(w, h, body, label).replace('<svg class="mod-svg"', '<svg class="mod-svg" style="min-width:0"'); }
+  // 문: (x,y) 문틀 왼쪽 위, open 0(닫힘) ~ 1(활짝)
+  function door(x, y, w, h, open, col) {
+    var lw = w * (1 - open * 0.78), sk = h * 0.08 * open;
+    return '<rect x="' + (x - 4) + '" y="' + (y - 4) + '" width="' + (w + 8) + '" height="' + (h + 4) + '" rx="3" fill="none" stroke="' + C.ink + '" stroke-width="3"/>' +
+      (open > 0 ? '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="#fef3c7"/>' : '') +
+      '<path d="M' + x + ' ' + y + 'L' + (x + lw).toFixed(1) + ' ' + (y - sk).toFixed(1) + 'L' + (x + lw).toFixed(1) + ' ' + (y + h + sk).toFixed(1) + 'L' + x + ' ' + (y + h) + 'Z" fill="' + (col || '#b45309') + '" stroke="#78350f" stroke-width="1.5"/>' +
+      '<circle cx="' + (x + lw - 6).toFixed(1) + '" cy="' + (y + h / 2) + '" r="2.6" fill="#fde68a"/>';
+  }
+  function person(x, y, col) { return '<circle cx="' + x + '" cy="' + (y - 30) + '" r="8" fill="' + col + '"/><path d="M' + (x - 10) + ' ' + y + 'Q' + x + ' ' + (y - 34) + ' ' + (x + 10) + ' ' + y + 'Z" fill="' + col + '"/>'; }
+  function arrowR(x1, y, x2, col, w) { return '<path d="M' + x1 + ' ' + y + 'H' + x2 + '" stroke="' + col + '" stroke-width="' + (w || 3) + '"/><path d="M' + (x2 - 8) + ' ' + (y - 6) + 'L' + x2 + ' ' + y + 'L' + (x2 - 8) + ' ' + (y + 6) + '" fill="none" stroke="' + col + '" stroke-width="' + (w || 3) + '"/>'; }
+  V.gateTermDoor = function () {
+    return svgM(360, 130, door(70, 26, 34, 62, 1) + arrowR(14, 58, 150, C.teal, 4) + t(86, 112, '큰 소리 → 열려요', { size: 15, weight: 800, fill: C.teal }) +
+      '<path d="M180 8V122" stroke="' + C.line + '"/>' + door(262, 26, 34, 62, 0) + '<path d="M206 58q6 -6 12 0t12 0t12 0" fill="none" stroke="#94a3b8" stroke-width="2.4"/>' + t(270, 112, '작은 잡음 → 닫혀요', { size: 15, weight: 800, fill: C.ink }), '게이트를 문지기에 비유한 그림');
+  };
+  V.gateTermBar = function () {
+    var H = [[30, 78, 1], [74, 30, 0], [118, 92, 1], [162, 24, 0], [206, 70, 1], [250, 34, 0]], base = 108, thrY = 62;
+    var bars = H.map(function (b) { var ok = b[2]; return '<rect x="' + b[0] + '" y="' + (base - b[1]) + '" width="28" height="' + b[1] + '" rx="5" fill="' + (ok ? C.teal : '#94a3b8') + '"/>' +
+      (ok ? '<path d="M' + (b[0] + 7) + ' ' + (base - b[1] - 14) + 'l6 6 10 -12" fill="none" stroke="' + C.green + '" stroke-width="3"/>' : '<path d="M' + (b[0] + 8) + ' ' + (base - b[1] - 18) + 'l12 12M' + (b[0] + 20) + ' ' + (base - b[1] - 18) + 'l-12 12" stroke="' + C.red + '" stroke-width="3"/>'); }).join('');
+    return svgM(360, 130, '<path d="M20 ' + base + 'H292" stroke="' + C.ink + '"/>' + bars + '<path d="M20 ' + thrY + 'H300" stroke="' + C.red + '" stroke-width="2.5" stroke-dasharray="8 5"/>' +
+      t(304, thrY - 4, '기준', { size: 14, weight: 800, fill: C.red, anchor: 'start' }) + t(304, thrY + 13, '선', { size: 14, weight: 800, fill: C.red, anchor: 'start' }) +
+      t(14, 126, '놀이기구 키 재기처럼, 선을 넘는 소리만 통과', { size: 14, weight: 700, anchor: 'start' }), 'Threshold 를 키 재기 선에 비유한 그림');
+  };
+  V.gateTermRange = function () {
+    return svgM(360, 130, door(66, 22, 34, 60, 0) + t(83, 104, 'Range −∞', { size: 15, weight: 800, fill: C.ink }) + t(83, 123, '꽉 닫아요(완전히 끔)', { size: 13.5, fill: C.sub }) +
+      '<path d="M180 8V124" stroke="' + C.line + '"/>' + door(250, 22, 34, 60, 0.35) + '<path d="M286 52q8 -5 16 0t16 0" fill="none" stroke="' + C.teal + '" stroke-width="2.4"/>' + t(270, 104, 'Range −20 dB', { size: 15, weight: 800, fill: C.teal }) + t(270, 123, '살짝 열어 둬요(조금 줄임)', { size: 13.5, fill: C.sub }), 'Range 를 문을 닫는 정도에 비유한 그림');
+  };
+  V.gateTermBleed = function () {
+    function drum(cx, cy, r, lab) { return '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + r + '" ry="' + (r * 0.42) + '" fill="#e2e8f0" stroke="' + C.ink + '" stroke-width="2.4"/><path d="M' + (cx - r) + ' ' + cy + 'V' + (cy + r * 0.7) + 'A' + r + ' ' + (r * 0.42) + ' 0 0 0 ' + (cx + r) + ' ' + (cy + r * 0.7) + 'V' + cy + '" fill="#cbd5e1" stroke="' + C.ink + '" stroke-width="2.4"/>' + t(cx, cy + r * 0.7 + 26, lab, { size: 14, weight: 800 }); }
+    var mic = '<path d="M84 30L108 50" stroke="' + C.ink + '" stroke-width="4"/><rect x="72" y="18" width="20" height="13" rx="6" transform="rotate(40 82 24)" fill="' + C.ink + '"/>';
+    return svgM(360, 130, drum(110, 66, 40, '탐') + mic + t(56, 16, '탐 마이크', { size: 13.5, weight: 700, fill: C.teal, anchor: 'start' }) + drum(276, 70, 34, '스네어') +
+      '<path d="M238 58C200 40 140 26 98 28" fill="none" stroke="' + C.red + '" stroke-width="2.6" stroke-dasharray="7 5"/><path d="M106 22L96 28L106 34" fill="none" stroke="' + C.red + '" stroke-width="2.6"/>' + t(206, 28, '새어 들어옴', { size: 14, weight: 800, fill: C.red }), '탐 마이크에 스네어 소리가 새어 드는 블리드');
+  };
+  V.gatePicDoorStory = function () {
+    function frame(ox, n, name, line1, line2, op, who, extra) {
+      return '<rect x="' + ox + '" y="6" width="188" height="200" rx="12" fill="' + C.bg + '" stroke="' + C.line + '"/><circle cx="' + (ox + 22) + '" cy="28" r="12" fill="' + C.teal + '"/>' + t(ox + 22, 33, n, { size: 13, weight: 800, fill: '#fff' }) + t(ox + 40, 33, name, { size: 14, weight: 800, fill: C.teal, anchor: 'start' }) +
+        door(ox + 76, 54, 36, 76, op) + '<path d="M' + (ox + 14) + ' 134H' + (ox + 174) + '" stroke="#94a3b8"/>' + (who || '') + (extra || '') + t(ox + 94, 162, line1, { size: 12.5, weight: 700 }) + t(ox + 94, 182, line2, { size: 12, fill: C.sub });
+    }
+    var a = frame(6, '1', 'Attack', '소리가 오면 문을 열어요', '짧을수록 빨리 열려요', 1, person(46, 134, C.blue) + arrowR(58, 112, 76, C.blue, 2.4));
+    var b = frame(206, '2', 'Hold', '지나가도 잠깐 열어 둬요', '말 사이에 덜덜 닫히지 않게', 1, person(352, 134, '#94a3b8'), '<circle cx="250" cy="74" r="13" fill="#fff" stroke="' + C.amber + '" stroke-width="2.5"/><path d="M250 66V74L256 78" fill="none" stroke="' + C.amber + '" stroke-width="2.5"/>');
+    var c = frame(406, '3', 'Release', '천천히 문을 닫아요', '짧으면 말끝이 「뚝」 잘려요', 0.4, '', '<path d="M540 66A24 24 0 0 0 516 90" fill="none" stroke="' + C.violet + '" stroke-width="2.5"/><path d="M510 84L516 92L522 84" fill="none" stroke="' + C.violet + '" stroke-width="2.5"/>');
+    return svg(600, 212, a + b + c, '게이트의 Attack Hold Release 를 문지기에 비유한 그림');
+  };
+  V.gateCheckMics = function () {
+    var r = rnd(21), dt = 0.02, T = 4;
+    function lane(y0, name, fn) { var d = 'M' + 150 + ' ' + (y0 + 46); for (var i = 0; i * dt <= T; i++) { var v = clamp(fn(i * dt) + (r() - 0.5) * 3, -60, 0); d += 'L' + (150 + i * dt / T * 430).toFixed(1) + ' ' + (y0 + 46 - (v + 60) / 60 * 44).toFixed(1); } d += 'L580 ' + (y0 + 46) + 'Z';
+      return '<rect x="150" y="' + y0 + '" width="430" height="48" fill="' + C.bg + '" stroke="' + C.line + '"/><path d="' + d + '" fill="' + C.teal + '" fill-opacity=".35" stroke="' + C.teal + '" stroke-width="1.3"/>' + t(140, y0 + 30, name, { size: 13, weight: 800, anchor: 'end' }); }
+    var tom = function (s) { var v = -52; [0.5, 1.9, 2.3, 3.4].forEach(function (h) { if (s >= h) v = Math.max(v, -4 - (s - h) * 60); }); return v; };
+    var talk = function (s) { var w = (s % 1.1) / 1.1; return w < 0.8 ? -14 - 16 * Math.abs(Math.sin(s * 9)) - (w > 0.65 ? (w - 0.65) * 120 : 0) : -40; };
+    var choir = function (s) { return -16 - 8 * Math.abs(Math.sin(s * 2.2)) - 4 * Math.abs(Math.sin(s * 7)); };
+    return svg(600, 200, lane(8, '드럼 탐 마이크', tom) + lane(68, '설교 마이크', talk) + lane(128, '성가대 마이크', choir) + t(580, 194, '4초 동안의 소리 크기 (교육용 어림 그림)', { size: 11, fill: C.sub, anchor: 'end' }), '세 마이크에 들어오는 소리 크기 비교');
+  };
+  V.gatePicSteps = function () {
+    var S = [['1', 'Threshold 가장 낮게', '게이트를 켜고', '기준을 맨 아래로'], ['2', '잡음이 닫힐 때까지', '소리가 없을 때', '천천히 올려요'], ['3', '말로 확인', '첫소리·끝소리가', '잘리지 않나요?'], ['4', '다듬고 비교', 'HOLD·DECAY·RANGE', '껐다 켜며 비교']];
+    return svg(600, 168, S.map(function (s, i) { var x = 6 + i * 150;
+      return '<rect x="' + x + '" y="8" width="134" height="150" rx="12" fill="' + (i === 1 ? '#ecfeff' : C.bg) + '" stroke="' + (i === 1 ? C.teal : C.line) + '" stroke-width="1.6"/><circle cx="' + (x + 67) + '" cy="34" r="15" fill="' + C.teal + '"/>' + t(x + 67, 40, s[0], { size: 15, weight: 800, fill: '#fff' }) +
+        t(x + 67, 76, s[1], { size: 13, weight: 800 }) + t(x + 67, 106, s[2], { size: 12, fill: C.sub }) + t(x + 67, 126, s[3], { size: 12, fill: C.sub }) + (i < 3 ? arrowR(x + 136, 84, x + 148, C.ink, 2) : ''); }).join(''), '게이트를 맞추는 순서 네 단계');
+  };
+  V.gateDeepExp = function () {
+    var x0 = 60, x1 = 330, y0 = 20, y1 = 210, mn = -72, thr = -36;
+    function X(d) { return x0 + (d - mn) / (0 - mn) * (x1 - x0); } function Y(d) { return y1 - (clamp(d, mn, 0) - mn) / (0 - mn) * (y1 - y0); }
+    var grid = [-72, -48, -24, 0].map(function (d) { return '<path d="M' + X(d) + ' ' + y0 + 'V' + y1 + 'M' + x0 + ' ' + Y(d) + 'H' + x1 + '" stroke="' + C.line + '" stroke-dasharray="3 3"/>' + t(X(d), y1 + 15, d, { size: 10.5, fill: C.sub }) + t(x0 - 6, Y(d) + 4, d, { size: 10.5, fill: C.sub, anchor: 'end' }); }).join('');
+    var exp = '<path d="M' + X(thr - 18) + ' ' + Y(mn) + 'L' + X(thr) + ' ' + Y(thr) + 'L' + X(0) + ' ' + Y(0) + '" stroke="' + C.violet + '" stroke-width="3" fill="none"/>';
+    var gate = '<path d="M' + X(thr) + ' ' + y1 + 'L' + X(thr) + ' ' + Y(thr) + '" stroke="' + C.teal + '" stroke-width="3.4" stroke-dasharray="8 4"/>';
+    return svg(600, 240, grid + '<path d="M' + X(mn) + ' ' + Y(mn) + 'L' + X(0) + ' ' + Y(0) + '" stroke="#94a3b8" stroke-dasharray="5 4"/>' + exp + gate + t(X(thr) + 4, y0 + 14, '기준 −36 dB', { size: 11.5, fill: C.red, weight: 800, anchor: 'start' }) + '<path d="M' + X(thr) + ' ' + y0 + 'V' + Y(thr) + '" stroke="' + C.red + '" stroke-dasharray="3 3"/>' +
+      t((x0 + x1) / 2, 236, '들어온 소리 (dB)', { size: 11, fill: C.sub }) +
+      '<path d="M356 60h26" stroke="' + C.violet + '" stroke-width="3"/>' + t(390, 64, '익스팬더 1:2', { size: 13, weight: 800, fill: C.violet, anchor: 'start' }) + t(390, 82, '기준 아래를 천천히 줄여요', { size: 12, fill: C.sub, anchor: 'start' }) +
+      '<path d="M356 116h26" stroke="' + C.teal + '" stroke-width="3.4" stroke-dasharray="8 4"/>' + t(390, 120, '게이트', { size: 13, weight: 800, fill: C.teal, anchor: 'start' }) + t(390, 138, '기준 아래는 뚝 닫아요', { size: 12, fill: C.sub, anchor: 'start' }) + t(390, 156, '(비율이 아주 큰 익스팬더)', { size: 12, fill: C.sub, anchor: 'start' }) +
+      '<path d="M356 186h26" stroke="#94a3b8" stroke-dasharray="5 4"/>' + t(390, 190, '아무것도 안 걸었을 때', { size: 12, fill: C.sub, anchor: 'start' }), '익스팬더와 게이트의 입력 출력 비교');
+  };
+
   /* ======================================================================= 게이트 계산 (실습용 · 교육용 근사) */
   // 검출: 피크 엔벨로프(놓아 주는 시간 10 ms) / 열기: Attack 동안 게인을 선형으로 올림 / Hold / 닫기: Release 동안 dB 로 일정하게 Range 까지 내림
   function mkGate(sr, onBlock, Pext) {
@@ -471,13 +543,13 @@
     overview: {
       lead: '게이트(Gate)는 문지기 같은 도구예요. <b>소리가 정한 크기(Threshold)보다 작으면 채널을 닫아</b> 잡음을 줄여요. 말이나 연주가 없는 사이의 「쉬—」 잡음을 줄여요. 다른 악기에서 새어 들어온 소리(블리드)도 줄여요. 하지만 잘못 쓰면 <b>말의 시작과 끝이 잘려</b> 어색해져요. 그래서 어디에 쓰고 어디에 쓰지 않을지 아는 것이 중요해요.',
       terms: [
-        ['게이트 (Gate)', '들어온 소리가 Threshold 보다 작으면 소리를 줄이고(닫힘), 크면 그대로 보내는(열림) 도구예요. 소리 크기를 다루는 도구(다이내믹 도구)예요.'],
-        ['Threshold', '문이 열리고 닫히는 기준 크기(dB)예요. 잡음보다 높고, 지키고 싶은 소리보다 낮게 맞춰요.'],
+        ['게이트 (Gate)', '들어온 소리가 Threshold 보다 작으면 소리를 줄이고(닫힘), 크면 그대로 보내는(열림) 도구예요. 소리 크기를 다루는 도구(다이내믹 도구)예요.', 'gateTermDoor'],
+        ['Threshold', '문이 열리고 닫히는 기준 크기(dB)예요. 잡음보다 높고, 지키고 싶은 소리보다 낮게 맞춰요.', 'gateTermBar'],
         ['Attack', '기준을 넘었을 때 게이트가 얼마나 빨리 열리는지예요. 너무 길면 소리의 첫머리가 뭉개져요.'],
         ['Hold', '소리가 기준 아래로 내려가도 바로 닫지 않고 열어 두는 시간이에요.'],
         ['Release (Decay)', 'Hold 가 끝난 뒤 얼마나 천천히 닫히는지예요. CL5 에서는 DECAY 라고 불러요.'],
-        ['Range', '닫혔을 때 소리를 얼마나 줄일지예요. −∞ 면 완전히 꺼요. −10 dB 면 조금만 줄여요.'],
-        ['블리드 (bleed)', '한 마이크에 다른 악기·스피커 소리가 새어 들어오는 것이에요. 탐 마이크에 들어온 스네어 소리처럼요.'],
+        ['Range', '닫혔을 때 소리를 얼마나 줄일지예요. −∞ 면 완전히 꺼요. −10 dB 면 조금만 줄여요.', 'gateTermRange'],
+        ['블리드 (bleed)', '한 마이크에 다른 악기·스피커 소리가 새어 들어오는 것이에요. 탐 마이크에 들어온 스네어 소리처럼요.', 'gateTermBleed'],
         ['채터링', 'Threshold 근처에서 게이트가 빠르게 열렸다 닫혔다 하는 현상이에요. 소리가 덜덜 끊겨 들려요.']
       ],
       points: [
@@ -505,6 +577,7 @@
           '<li><b>Release</b>: 말끝·울림이 자연스럽게 사라지게 해요. 보통 Attack 보다 훨씬 길게(수십–수백 ms) 둬요. 너무 짧으면 말끝이 「뚝」 잘려요. 너무 길면 다음 소리 전까지 닫히지 않아요.</li> ' +
           '<li><b>Range</b>: −∞ 는 완전히 꺼요. −10 ~ −20 dB 는 잡음을 줄이면서도 「뚝 끊기는」 느낌을 덜어 줘요.</li> ' +
           '<li>그림은 네 값의 역할을 보여 주는 교육용 그림이에요. 게이트마다 Release 를 재는 방식은 조금씩 달라요.</li></ul>',
+        pics: [{ v: 'gatePicDoorStory', cap: '가게 문지기로 생각해 봐요. 손님(소리)이 오면 문을 열어요(Attack). 손님이 지나가도 잠깐 열어 둬요(Hold). 그다음 천천히 닫아요(Release). 닫을 때 꽉 닫을지, 살짝 열어 둘지가 Range 예요.' }],
         check: { q: '말끝이 「뚝」 잘리는 느낌이 나요. 먼저 늘려 볼 값은?', options: [
           { t: 'Hold 나 Release', ok: true, why: '맞아요. 기준 아래로 내려간 뒤에도 조금 더 열어 두고, 천천히 닫아야 하기 때문이에요.' },
           { t: 'Attack', why: '아니에요. Attack 은 열릴 때(시작 부분)의 빠르기예요. 끝부분과는 관계가 적어요.' },
@@ -534,9 +607,11 @@
         more: '<ul><li><b>게이트를 피하거나 약하게 쓸 곳</b>: 설교·기도·낭독 마이크, 리드 보컬, 성가대 마이크예요. 피아노·어쿠스틱 기타처럼 여리게 연주하는 악기도 그래요. 꼭 쓰려면 Range 를 얕게(−10 dB 정도) 해요.</li> ' +
           '<li><b>왜 위험할까요?</b> 말을 시작하는 순간이 잘릴 수 있어요. 작게 기도하는 부분이 통째로 닫혀 「마이크가 꺼졌다」고 느낄 수도 있어요. 디지털 콘솔에서 소리가 갑자기 안 나면 게이트 Threshold 도 확인해 봐요.</li> ' +
           '<li><b>드럼 탐</b>: Attack 은 짧게 둬요. Threshold 는 스네어 블리드보다 높게 둬요. Release 는 탐 울림이 자연스럽게 끝날 만큼(보통 수백 ms) 둬요. 세게 치는 연주자와 여리게 치는 연주자는 값이 달라요.</li> ' +
+          '<li>북의 울림 꼬리를 일부러 짧게 줄여 리듬을 또렷하게 할 때도 게이트를 써요.</li> ' +
           '<li><b>킥(베이스 드럼)</b>에도 게이트를 자주 써요. 하지만 오버헤드(심벌 위 마이크)처럼 늘 소리가 있는 마이크에는 쓰지 않아요.</li> ' +
-          '<li>무대 모니터가 크면 그 소리도 블리드가 돼요. 그러면 게이트가 엉뚱하게 열려요. 모니터 음량을 알맞게 하는 것이 먼저예요.</li></ul>',
-        check: { q: '게이트가 가장 잘 맞는 마이크는?', options: [
+          '<li>무대 모니터가 크면 그 소리도 블리드가 돼요. 그러면 게이트가 엉뚱하게 열려요. 모니터 음량을 알맞게 하는 것이 먼저예요.</li> ' +
+          '<li><b>말 마이크가 여러 개일 때</b>(대담·토론·여러 사람이 돌아가며 말하기)는 게이트 대신 <b>오토믹서</b>를 쓰기도 해요. 말하는 사람의 마이크는 자동으로 살리고, 쉬는 마이크는 줄여 줘요.</li></ul>',
+        check: { q: '그림은 세 마이크에 들어오는 소리 크기예요. 게이트가 가장 잘 맞는 마이크는?', visual: 'gateCheckMics', options: [
           { t: '드럼 탐 마이크', ok: true, why: '맞아요. 탐을 칠 때와 안 칠 때의 크기 차이가 분명하고, 그 사이에는 블리드만 있기 때문이에요.' },
           { t: '설교 마이크', why: '아니에요. 작은 목소리·말끝이 잘리기 쉬워 보통 쓰지 않거나 아주 약하게 써요.' },
           { t: '성가대 마이크', why: '아니에요. 여러 사람의 작은 소리까지 받아야 해서 게이트가 어색하게 끊어요.' }] } },
@@ -547,6 +622,7 @@
           '<li>Dynamics 1 은 GATE 말고도 DUCKING · COMPRESSOR · EXPANDER 로 바꿀 수 있어요. Dynamics 2 는 COMPRESSOR · COMPANDER-H · COMPANDER-S · DE-ESSER 예요(제조사 자료).</li> ' +
           '<li><b>맞추는 순서 예시</b><ul><li>① 게이트를 켜고 Threshold 를 가장 낮게 둬요.</li> <li>② 소리가 없을 때 잡음이 닫힐 때까지 Threshold 를 천천히 올려요.</li> <li>③ 말·연주를 해 보며 첫소리·끝소리가 잘리지 않는지 확인해요.</li> <li>④ HOLD·DECAY·RANGE 로 자연스럽게 다듬어요.</li> <li>⑤ 게이트를 껐다 켜며 비교해요.</li></ul></li> ' +
           '<li>MG12XU 사양에는 게이트가 없어요. 소리 크기를 다루는 기능은 1–4번 채널의 원 노브 컴프레서뿐이에요(제조사 자료).</li></ul>',
+        pics: [{ v: 'gatePicSteps', cap: '게이트 맞추는 순서예요. Threshold 를 아래에서부터 천천히 올려요. 잡음이 닫히는 곳에서 멈추고, 말소리로 확인한 뒤 다듬어요.' }],
         check: { q: 'CL5 게이트에서 「Hold 가 끝난 뒤 닫히는 속도」를 정하는 값은?', options: [
           { t: 'DECAY', ok: true, why: '맞아요. 이 모듈의 Release 와 같은 역할이기 때문이에요.' },
           { t: 'ATTACK', why: '아니에요. ATTACK 은 열리는 속도예요.' },
@@ -595,7 +671,7 @@
       { title: 'CL5 콘솔 트레이닝', text: '예배 순서에 맞춰 채널을 켜고 끄는 연습을 해요. 쓰지 않는 마이크는 게이트보다 채널 ON/OFF 로 정리하는 것이 기본이에요.', go: { tab: 'tab5' } }
     ],
     deeper: [
-      { title: '익스팬더 (Expander)', text: '게이트처럼 기준 아래 소리를 줄여요. 하지만 한 번에 닫지 않고, 정한 비율(Ratio)만큼 천천히 줄여요. 그래서 게이트가 어색한 보컬에 더 자연스러워요. CL5 Dynamics 1 에서 고를 수 있어요(제조사 자료).', more: '예를 들어 Ratio 1:2 라면, 기준보다 10 dB 작은 소리는 기준보다 20 dB 작게 나와요. 작은 소리를 「끄는」 게 아니라 「더 작게」 해요.' },
+      { title: '익스팬더 (Expander)', text: '게이트처럼 기준 아래 소리를 줄여요. 하지만 한 번에 닫지 않고, 정한 비율(Ratio)만큼 천천히 줄여요. 그래서 게이트가 어색한 보컬에 더 자연스러워요. CL5 Dynamics 1 에서 고를 수 있어요(제조사 자료).', visual: 'gateDeepExp', more: '예를 들어 Ratio 1:2 라면, 기준보다 10 dB 작은 소리는 기준보다 20 dB 작게 나와요. 1:4 라면 기준보다 1 dB 작아질 때마다 4 dB 씩 작아져요. 작은 소리를 「끄는」 게 아니라 「더 작게」 해요. 이 비율을 아주 크게 하면 뚝 닫히는 게이트가 돼요. 그래서 게이트는 비율이 아주 큰 익스팬더라고 볼 수 있어요.' },
       { title: '키 인 (사이드체인)', text: '게이트가 다른 신호(다른 채널의 소리 등)를 듣고 열리게 할 수 있어요. 예를 들어 킥 드럼을 칠 때만 다른 채널의 게이트를 여는 식이에요. CL5 는 다이내믹의 키 인 소스(무엇을 듣고 열지)를 고를 수 있어요(제조사 자료).', more: '' },
       { title: '게이트와 컴프레서의 순서', text: '보통 게이트를 컴프레서 앞에 둬요. 컴프레서가 먼저 큰 소리를 누르고, 메이크업 게인으로 전체를 키운다고 해 봐요. 그러면 작은 잡음도 함께 커져요. 그래서 게이트가 소리와 잡음을 구분하기 어려워져요.', more: '다음 모듈 「Compressor」에서 Threshold·Ratio·Makeup Gain 을 자세히 배워요.' }
     ],
@@ -604,7 +680,8 @@
       { t: 'CL5 레퍼런스 매뉴얼 · Dynamics Parameters (GATE 표)', url: 'https://www.manualslib.com/manual/907139/Yamaha-Cl5.html?page=214' },
       { t: 'CL5 레퍼런스 매뉴얼 · Mixer Basic Parameters (Dynamics 1 범위)', url: 'https://manualslib.mx/manual/582/Yamaha-Cl5.html?page=334' },
       { t: 'Yamaha CL Series Specs (Dynamics 1/2 종류, 제조사)', url: 'https://usa.yamaha.com/products/proaudio/mixers/cl_series/specs.html' },
-      { t: 'Yamaha MG12XU/MG12 Technical Specifications (입력 채널 기능, 제조사)', url: 'https://c3.zzounds.com/media/mg12xu_mg12_en_ts_a0-e2c63cdc55417602e98f65e82fc3b6fa.pdf' }
+      { t: 'Yamaha MG12XU/MG12 Technical Specifications (입력 채널 기능, 제조사)', url: 'https://c3.zzounds.com/media/mg12xu_mg12_en_ts_a0-e2c63cdc55417602e98f65e82fc3b6fa.pdf' },
+      { t: '무대예술전문인 자격검정 표준교재 「무대음향」(국립극장 · 교보문고, 2023) — 8장 음량 제어계(익스팬더 · 노이즈 게이트 · 오토믹서) p.258–260', url: '' }
     ]
   };
 })();
