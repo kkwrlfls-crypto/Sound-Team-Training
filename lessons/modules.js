@@ -12,7 +12,7 @@
   var PATHS = window.STA_PATHS || [], MODS = window.STA_MODULES || {}, VIS = window.STAVisuals || {}, SIMS = window.STASims || {};
   var GL = window.STA_GLANCE || {};   // 2026-10-23: 「한눈에 보기」 + 장비 사진 설명 (lessons/modules_glance.js)
   var KEY = 'soundTrainerModules_v1';
-  var TABS = [['overview', '핵심 개념'], ['theory', '이론 학습'], ['practice', '실습하기'], ['quiz', '확인 문제'], ['missions', '관련 미션'], ['deeper', '심화 학습']];
+  var TABS = [['overview', '핵심 개념'], ['theory', '이론 학습'], ['practice', '실습하기'], ['quiz', '확인 문제'], ['deeper', '심화 학습']];   // 2026-11-05: 「관련 미션」 탭은 모든 과정에서 뺌
   var PRACTICE_INFO = {
     tab1: ['확성 시스템의 기본', '마이크·믹서·앰프·스피커를 3D 로 직접 연결하고 조작해 봅니다.', 'vi10p.jpg'],
     tab6: ['MG12XU 실습', '실제 콘솔 사진 위에서 연결하고, 소리를 들으며 조작합니다.', 'console_strip.jpg'],
@@ -250,7 +250,7 @@
     return '<div class="mod-progline">' + (c.quizDone ? '<span class="mod-okline">🎉 확인 문제를 모두 맞혔어요. <b>이해도 확인</b> 완료!</span>' : c.quizN + '문제를 모두 맞히면 이해도 확인이 완료돼요. (지금 ' + c.quiz + '/' + c.quizN + ')') +
       (!c.pracDone ? '<br><small>실습을 먼저 해 보면 더 쉽게 풀 수 있어요.</small>' : '') + '</div>' +
       m.quiz.map(function (q, i) { return qHtml(q, i, s.quiz[i], 'mquiz'); }).join('') +
-      '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="missions">관련 미션 보기 →</button></div>';
+      '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="deeper">심화 학습 →</button></div>';
   }
   function tabMissions(m) {
     return '<p class="mod-lead">배운 원리를 실제 문제 상황에 적용해 보세요.</p><div class="mod-links">' + m.missions.map(function (x, i) { return '<button type="button" class="mod-link mission" data-mgo="missions:' + i + '"><b>🎯 ' + esc(x.title) + '</b><span>' + esc(x.text) + '</span><em>미션 열기 →</em></button>'; }).join('') + '</div>' +
