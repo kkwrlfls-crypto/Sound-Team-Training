@@ -1334,7 +1334,7 @@
     /* ---------- 크게 보기 판 */
     function bigHost() {
       if (opts.bigHost) return { parent: opts.bigHost, before: null };
-      var px = el.closest && el.closest('.x32p'); if (px) { var sc = px.querySelector('.x32p-scroll') || px.querySelector('[data-role=scroll]'); if (sc && sc.parentNode) return { parent: sc.parentNode, before: sc };   // 2026-11-08: 크게 보기 판은 사진 콘솔 위쪽에 return { parent: px, before: null }; }
+      var px = el.closest && el.closest('.x32p'); if (px) { var sc = px.querySelector('.x32p-scroll') || px.querySelector('[data-role=scroll]'); if (sc && sc.parentNode) return { parent: sc.parentNode, before: sc }; /* 2026-11-08: 크게 보기 판은 사진 콘솔 위쪽에 */ return { parent: px, before: null }; }
       return { parent: el.parentNode && el.parentNode.parentNode ? el.parentNode.parentNode : document.body, before: null };
     }
     var PGB = [['home', 'HOME'], ['meters', 'METERS'], ['routing', 'ROUTING'], ['setup', 'SETUP'], ['library', 'LIBRARY'], ['effects', 'EFFECTS'], ['mutegrp', 'MUTE GRP'], ['utility', 'UTILITY'], ['scenes', 'SCENES'], ['monitor', 'MONITOR']];
