@@ -139,6 +139,7 @@
       }
       var S = []; for (var i = 0; i < NS; i++) { S.push(newStrip()); for (var b = 0; b < NB; b++) S[i].send.push(new Ramp(0)); }
       function newOut() { return { buf: new Float32Array(BL), out: new Float32Array(BL), eq: [], dyn: new Dyn(), fg: new Ramp(0), mL: new Ramp(0), mR: new Ramp(0), mM: new Ramp(0), mtx: [], used: false, tail: 0 }; }
+      var OSC = { buf: new Float32Array(BL * 8), ph: 0, k: [0, 0, 0, 0, 0, 0, 0] };
       var B = [], X = []; for (i = 0; i < NB; i++) { B.push(newOut()); for (b = 0; b < NX; b++) B[i].mtx.push(new Ramp(0)); } for (i = 0; i < NX; i++) X.push(newOut());
       var MN = { L: new Float32Array(BL), R: new Float32Array(BL), oL: new Float32Array(BL), oR: new Float32Array(BL), eq: [], dyn: new Dyn(), fgL: new Ramp(0), fgR: new Ramp(0), mtxL: [], mtxR: [] };
       var MM = newOut(); for (i = 0; i < NX; i++) { MN.mtxL.push(new Ramp(0)); MN.mtxR.push(new Ramp(0)); MM.mtx.push(new Ramp(0)); }
@@ -239,6 +240,16 @@
           }
         }
 
+        /* ---- 오실레이터(MONITOR › OSCILLATOR, 2026-11-08): 고른 목적지의 소리를 오실레이터 소리로 바꿈(X32 FW4 「Oscillator replaces destination signal」) ---- */
+        var OS = P.osc;
+        if (OS) {
+          var og = OS.g, ob = OSC.buf;
+          if (OS.t === 0) { var ph = OSC.ph, dph = 2 * Math.PI * OS.f / fs; for (i = 0; i < n; i++) { ob[i] = Math.sin(ph) * og; ph += dph; } OSC.ph = ph % (2 * Math.PI); }
+          else if (OS.t === 1) { var k0 = OSC.k; for (i = 0; i < n; i++) { var wn = Math.random() * 2 - 1; k0[0] = 0.99886 * k0[0] + wn * 0.0555179; k0[1] = 0.99332 * k0[1] + wn * 0.0750759; k0[2] = 0.969 * k0[2] + wn * 0.153852; k0[3] = 0.8665 * k0[3] + wn * 0.3104856; k0[4] = 0.55 * k0[4] + wn * 0.5329522; k0[5] = -0.7616 * k0[5] - wn * 0.016898; ob[i] = (k0[0] + k0[1] + k0[2] + k0[3] + k0[4] + k0[5] + k0[6] + wn * 0.5362) * 0.11 * og; k0[6] = wn * 0.115926; } }
+          else for (i = 0; i < n; i++) ob[i] = (Math.random() * 2 - 1) * og;
+          for (b = 0; b < NB; b++) if (OS.bus[b]) { for (i = 0; i < n; i++) B[b].buf[i] = ob[i]; B[b].used = true; }
+        }
+
         /* ---- 믹스 버스 16 ---- */
         for (b = 0; b < NB; b++) {
           var pb = P.buses[b], bo = B[b]; if (!pb) { bo.out.fill(0); continue; }
@@ -261,6 +272,7 @@
           if (bo.dyn.max > meters[M_BGR + b]) meters[M_BGR + b] = bo.dyn.max; bo.dyn.max = 0;
         }
 
+        if (OS) { if (OS.L) for (i = 0; i < n; i++) MN.L[i] = OSC.buf[i]; if (OS.R) for (i = 0; i < n; i++) MN.R[i] = OSC.buf[i]; if (OS.M) for (i = 0; i < n; i++) MM.buf[i] = OSC.buf[i]; }
         /* ---- MAIN LR · M/C ---- */
         var pm = P.main;
         if (pm.dy && pm.dy[13]) dynStereo(MN, pm.dy, n);
@@ -284,6 +296,7 @@
         for (j = 0; j < NX; j++) { var gm = pmm.mtx[j] || 0, rq = MM.mtx[j]; if (gm === 0 && rq.c === 0) continue; var q0 = rq.c, qi = (gm - q0) / n, xb3 = X[j].buf; rq.c = gm; X[j].used = true; for (i = 0; i < n; i++) xb3[i] += om[i] * (q0 + qi * i); }
         if (pmm.solo) for (i = 0; i < n; i++) { SO.L[i] += om[i]; SO.R[i] += om[i]; }
 
+        if (OS) for (j = 0; j < NX; j++) if (OS.mtx[j]) { for (i = 0; i < n; i++) X[j].buf[i] = OSC.buf[i]; X[j].used = true; }
         /* ---- MATRIX 6 ---- */
         for (j = 0; j < NX; j++) {
           var px = P.mtx[j], xo = X[j]; if (!px || (!xo.used && xo.fg.c === 0)) { xo.out.fill(0); continue; }
@@ -605,6 +618,7 @@
       P.mono = { eq: eqP(mm.eq), dy: dynP(mm.dyn, -1), fg: (mm.mute || mgMute(mm)) ? 0 : dbv(mm.fader), mtx: [], solo: !!mm.solo };
       (mm.mtxSends || []).forEach(function (m, k) { P.mono.mtx[k] = m && m.on !== false ? dbv(m.level) : 0; });
       for (var k = 0; k < 4; k++) { var f = S.fx && S.fx[k], src = f && f.source; P.fxs.push(src ? fxSrcCode(src.l) : -1, src ? fxSrcCode(src.r) : -1); }
+      P.osc = oscP(S.config && S.config.osc);
       P.pfl = !(S.config && S.config.solo && S.config.solo.mode === 'AFL');
       P.anySolo = typeof model.anySolo === 'function' ? model.anySolo() : false;
       var mon = (S.config && S.config.monitor) || {}, monG = dbv((mon.level == null ? -20 : mon.level) + 20) * (mon.dim ? dbv(mon.dimAtt == null ? -20 : mon.dimAtt) : 1);
@@ -615,6 +629,15 @@
       if (kind === 3) li = L.index;
       P.listen = { k: kind, i: li, i2: li2, auto: auto, mon: monG * volume, main: (listenT.type === 'monitor' ? monG : 1) * volume, mono: monoL };
       return P;
+    }
+    function oscP(o) {   // 오실레이터: 켜짐(GENERATE) · 종류 · F1/F2 · 레벨 · 목적지(버스 1-16 · L · R · M/C · 매트릭스 1-6, 여러 개 가능)
+      if (!o || !o.on) return null;
+      var to = o.to || {}, any = false, r = { t: o.type === 'PINK' ? 1 : o.type === 'WHITE' ? 2 : 0, f: +((o.fsel === 2 ? o.f2 : o.f1) || o.freq || 1000), g: dbv(o.level == null ? -20 : o.level), bus: [], mtx: [], L: !!to.L, R: !!to.R, M: !!to.M };
+      for (var b = 0; b < 16; b++) { r.bus[b] = !!to['b' + (b + 1)]; if (r.bus[b]) any = true; }
+      for (b = 0; b < 6; b++) { r.mtx[b] = !!to['x' + (b + 1)]; if (r.mtx[b]) any = true; }
+      if (r.L || r.R || r.M) any = true;
+      if (!any && o.dest) { var d = String(o.dest), mb = /MixBus\s*0?(\d+)/i.exec(d); if (mb) r.bus[+mb[1] - 1] = true; else if (/^M\/C/.test(d)) r.M = true; else if (/Main/.test(d)) { r.L = r.R = true; } any = true; }
+      return any ? r : null;
     }
     var dirty = false;
     function push() {
