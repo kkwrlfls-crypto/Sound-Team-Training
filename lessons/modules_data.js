@@ -24,7 +24,7 @@ window.STA_PATHS = [
     tip: '먼저 아래 「신호 흐름」 레슨으로 소리가 지나가는 길을 익혀요. 그다음 마이크부터 스피커까지, 소리가 가는 순서대로 배워요. 직접 이어 보는 연습은 메뉴의 「실습」에 있어요.',
     prereq: ['signal-flow'],
     modules: ['mic', 'mic-wireless', 'cable', 'cable-digital', 'console', 'console-digital', 'amp', 'amp-digital', 'speaker-passive', 'speaker'],   /* 2026-11-04: 마이크 · 케이블 · 콘솔 · 앰프 · 스피커를 -1 / -2 로 나눔 */
-    practice: ['tab1', 'tab6', 'tab2'], practiceTitle: '장비 연결 실습' },   /* 2026-10-23: 장비 브랜드 알아보기는 실습에서 빼고 따로 있는 메뉴로 */
+    practice: ['tab1', 'tab6'], practiceTitle: '장비 연결 실습' },   /* 2026-11-08: 「3층 음향 시스템」 실습은 음향 장비 학습에서 뺌(교회 시스템 실습 경로에는 그대로) */   /* 2026-10-23: 장비 브랜드 알아보기는 실습에서 빼고 따로 있는 메뉴로 */
   { id: 'mixing', title: '믹싱 스킬', icon: 'fader', img: 'img/modules/mix2_path.jpg',
     sum: '소리 크기를 맞추고, 소리 빛깔 · 크고 작음 · 울림을 다듬어요.',
     lead: '먼저 소리 크기를 알맞게 맞추는 법(Gain Structure)부터 배워요. 그다음 소리 빛깔을 다듬는 EQ 를 배워요. 크고 작음을 다루는 Gate · Compressor 도 배워요. 마지막으로 울림을 더하는 이펙트를 익혀요.',
