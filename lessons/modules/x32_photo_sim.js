@@ -10,8 +10,7 @@
    ============================================================================= */
 (function () {
   'use strict';
-  var IMG = 'https://cdn-media.empowertribe.com/cdn-cgi/image/width=2000,quality=85,format=auto/e5ba63fb0e6f4e69a1626c5811115e16/Image_BE_0603-ACE_X32_Top_XL.png';
-  var PW = 2000, PH = 1200, NINF = -Infinity, OFF = -90;
+  var NINF = -Infinity, OFF = -90;
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
@@ -22,22 +21,51 @@
   function f2db(f) { if (f <= 0) return NINF; if (f >= 0.5) return f * 40 - 30; if (f >= 0.25) return f * 80 - 50; if (f >= 0.0625) return f * 160 - 70; return f * 480 - 90; }
   function db2f(d) { if (d == null || !isFinite(d) || d <= OFF) return 0; if (d < -60) return (d + 90) / 480; if (d < -30) return (d + 70) / 160; if (d < -10) return (d + 50) / 80; return Math.min(1, (d + 30) / 40); }
 
-  /* ---------------- 사진 위 위치 (px, 2026-11-08 실측) ---------------- */
-  var SCREEN_RECT = { x: 1088, y: 101, w: 317, h: 190 };          // 가운데 컬러 화면(800×480 비율)
-  var STRIP_IN = [213, 266, 318, 371, 424, 476, 530, 582, 634, 686, 738, 790, 844, 895, 948, 1000];
-  var STRIP_R = [1115, 1167, 1220, 1272, 1325, 1377, 1430, 1481], STRIP_MAIN = 1552;
-  var ROW = { select: 485, solo: 609, lcd: 653, mute: 706, fTop: 777, fBot: 999, led: [518, 530, 536.5, 543, 550.5, 557.5, 564.5, 576] };
-  var BW = 28, BH = 22;
-  var KN = { // 노브: [x, y, 지름, 이름]
-    gain: [204, 207, 32, 'GAIN'], lcf: [345, 207, 32, 'LOW CUT FREQUENCY'], gthr: [204, 349, 32, 'GATE THRESHOLD'], dthr: [345, 349, 32, 'DYNAMICS THRESHOLD'],
-    eqq: [551, 200, 32, 'EQ Q'], eqf: [610, 288, 32, 'EQ FREQ'], eqg: [517, 350, 32, 'EQ GAIN'],
-    s1: [776, 200, 30, 'BUS SENDS 노브 1'], s2: [776, 267, 30, 'BUS SENDS 노브 2'], s3: [776, 333, 30, 'BUS SENDS 노브 3'], s4: [776, 397, 30, 'BUS SENDS 노브 4'],
-    mlev: [954, 200, 30, 'MAIN BUS LEVEL (MONO/CENTER 로 보내는 양)'], mpan: [954, 334, 30, 'PAN / BAL'],
-    mon: [1716, 182, 28, 'MONITOR LEVEL (모니터 스피커 크기)'], phn: [1716, 270, 28, 'PHONES LEVEL (헤드폰 크기)'], talk: [1826, 270, 28, 'TALK LEVEL (토크백 마이크 크기)'],
-    as1: [1629, 591, 30, 'ASSIGN 노브 1'], as2: [1698, 591, 30, 'ASSIGN 노브 2'], as3: [1768, 591, 30, 'ASSIGN 노브 3'], as4: [1837, 591, 30, 'ASSIGN 노브 4']
+  /* ---------------- 사진 위 위치 (px) — 콘솔마다 「배치(layout)」 하나. X32 = 2026-11-08 실측, M32 = 아래 M32L ---------------- */
+  var X32L = {
+    key: 'x32', name: 'X32', brand: 'Behringer', alt: 'Behringer X32 윗면 (공식 제품 사진)',
+    IMG: 'https://cdn-media.empowertribe.com/cdn-cgi/image/width=2000,quality=85,format=auto/e5ba63fb0e6f4e69a1626c5811115e16/Image_BE_0603-ACE_X32_Top_XL.png',
+    PW: 2000, PH: 1200,
+    SCREEN_RECT: { x: 1088, y: 101, w: 317, h: 190 },          // 가운데 컬러 화면(800×480 비율)
+    STRIP_IN: [213, 266, 318, 371, 424, 476, 530, 582, 634, 686, 738, 790, 844, 895, 948, 1000],
+    STRIP_R: [1115, 1167, 1220, 1272, 1325, 1377, 1430, 1481], STRIP_MAIN: 1552,
+    ROW: { select: 485, solo: 609, lcd: 653, mute: 706, fTop: 777, fBot: 999, led: [518, 530, 536.5, 543, 550.5, 557.5, 564.5, 576] },
+    BW: 28, BH: 22, KNOB_BOX: 64, ENC_BOX: 40, LCD: [45, 34], SLOT_W: 40,
+    KN: { // 노브: [x, y, 지름, 이름]
+      gain: [204, 207, 32, 'GAIN'], lcf: [345, 207, 32, 'LOW CUT FREQUENCY'], gthr: [204, 349, 32, 'GATE THRESHOLD'], dthr: [345, 349, 32, 'DYNAMICS THRESHOLD'],
+      eqq: [551, 200, 32, 'EQ Q'], eqf: [610, 288, 32, 'EQ FREQ'], eqg: [517, 350, 32, 'EQ GAIN'],
+      s1: [776, 200, 30, 'BUS SENDS 노브 1'], s2: [776, 267, 30, 'BUS SENDS 노브 2'], s3: [776, 333, 30, 'BUS SENDS 노브 3'], s4: [776, 397, 30, 'BUS SENDS 노브 4'],
+      mlev: [954, 200, 30, 'MAIN BUS LEVEL (MONO/CENTER 로 보내는 양)'], mpan: [954, 334, 30, 'PAN / BAL'],
+      mon: [1716, 182, 28, 'MONITOR LEVEL (모니터 스피커 크기)'], phn: [1716, 270, 28, 'PHONES LEVEL (헤드폰 크기)'], talk: [1826, 270, 28, 'TALK LEVEL (토크백 마이크 크기)'],
+      as1: [1629, 591, 30, 'ASSIGN 노브 1'], as2: [1698, 591, 30, 'ASSIGN 노브 2'], as3: [1768, 591, 30, 'ASSIGN 노브 3'], as4: [1837, 591, 30, 'ASSIGN 노브 4']
+    },
+    ENC: [1114, 1170, 1226, 1283, 1339, 1397], ENC_Y: 364,
+    MENU: [['home', 'HOME', 101], ['meters', 'METERS', 131], ['routing', 'ROUTING', 160], ['setup', 'SETUP', 189], ['library', 'LIBRARY', 218], ['effects', 'EFFECTS', 247], ['mutegrp', 'MUTE GRP', 276], ['utility', 'UTILITY', 305]],
+    MENU_X: 1576, MENU_W: 54, MENU_H: 21,
+    LAYER_L: [['ch1-16', 719, 'CH 1-16'], ['ch17-32', 776, 'CH 17-32'], ['aux-fx', 832, 'AUX IN / USB · FX RETURNS'], ['bus1-8', 889, 'BUS MASTER']],
+    LAYER_R: [['dca', 718, 'GROUP DCA 1-8'], ['bus1-8', 775, 'BUS 1-8'], ['bus9-16', 832, 'BUS 9-16'], ['mtx-main', 889, 'MATRIX 1-6 / MAIN C']],
+    LAYER_LX: 162, LAYER_RX: 1063, LAYER_W: 28, LAYER_H: 23, SOF: [1063, 499, 28, 23], DAW: [160, 497, 28, 23],
+    EQ_TYPE_LED: [['HCut', 220], ['HShv', 232], ['VEQ', 260], ['PEQ', 270], ['LShv', 296], ['LCut', 307]], EQ_LED_X: 453, EQ_LED: [10, 6],
+    BTNS: [['p48', 178, 264, '+48V (팬텀 전원 — 콘덴서 마이크 전기)'], ['phase', 232, 264, 'Ø (극성 뒤집기: 소리 물결을 위아래로 뒤집기)'], ['lc', 346, 264, 'LOW CUT (낮은 소리 걸러 내기) 켜기'], ['v.config', 396, 276, 'VIEW — 화면에 CONFIG/PREAMP 페이지', 'y', 18, 14],
+     ['gate', 204, 412, 'GATE 켜기 (작은 소리 막기)'], ['v.gate', 254, 420, 'VIEW — 화면에 GATE 페이지', 'y', 18, 14], ['dyn', 346, 412, 'DYNAMICS 켜기 (컴프: 큰 소리 누르기)'], ['v.dyn', 396, 420, 'VIEW — 화면에 DYNAMICS 페이지', 'y', 18, 14],
+     ['eqmode', 492, 264, 'EQ MODE (고른 밴드의 모양 바꾸기)'], ['band3', 685, 227, 'EQ HIGH 밴드 고르기'], ['band2', 685, 274, 'EQ HIGH MID 밴드 고르기'], ['band1', 685, 326, 'EQ LOW MID 밴드 고르기'], ['band0', 685, 375, 'EQ LOW 밴드 고르기'],
+     ['eq', 517, 410, 'EQUALIZER 켜기'], ['v.eq', 713, 419, 'VIEW — 화면에 EQ 페이지', 'y', 18, 14],
+     ['sb0', 844, 227, 'BUS SENDS 1-4 (노브 4개가 BUS 1-4)'], ['sb1', 844, 277, 'BUS SENDS 5-8'], ['sb2', 844, 326, 'BUS SENDS 9-12'], ['sb3', 844, 376, 'BUS SENDS 13-16'], ['v.sends', 872, 422, 'VIEW — 화면에 SENDS 페이지', 'y', 18, 14],
+     ['mono', 954, 263, 'MONO BUS 로 보내기 (LEVEL 노브로 양 정하기)'], ['lr', 954, 396, 'STEREO BUS (메인 LR) 로 보내기'], ['v.main', 995, 422, 'VIEW — 화면에 MAIN 페이지', 'y', 18, 14],
+     ['v.usb', 995, 127, 'USB RECORDER VIEW — 화면에 녹음기 페이지', 'y', 18, 14],
+     ['monmono', 1715, 348, '모니터 MONO (헤드폰 · 모니터를 모노로)'], ['dim', 1715, 397, '모니터 DIM (모니터 소리를 잠깐 줄이기)'], ['v.mon', 1748, 422, 'MONITOR VIEW — 화면에 모니터 페이지', 'y', 18, 14],
+     ['talka', 1826, 348, 'TALK A (토크백 마이크를 A 로)'], ['talkb', 1826, 397, 'TALK B (토크백 마이크를 B 로)'], ['v.talk', 1859, 422, 'TALKBACK VIEW — 화면에 토크백 설정', 'y', 18, 14],
+     ['sc.prev', 1629, 502, 'SCENES: PREV (앞 씬 고르기)'], ['sc.next', 1678, 502, 'SCENES: NEXT (다음 씬 고르기)'], ['sc.undo', 1733, 502, 'SCENES: UNDO (불러오기 되돌리기)', 'y', 27, 21], ['sc.go', 1802, 502, 'SCENES: GO (고른 씬 불러오기)', 'g', 27, 21], ['sc.view', 1859, 522, 'SCENES VIEW — 화면에 씬 목록', 'y', 18, 14],
+     ['as.setA', 1663, 810, 'ASSIGN SET A', 'r', 18, 14], ['as.setB', 1732, 810, 'ASSIGN SET B', 'r', 18, 14], ['as.setC', 1802, 810, 'ASSIGN SET C', 'r', 18, 14], ['v.assign', 1858, 841, 'ASSIGN VIEW — 화면에 ASSIGN 설정', 'y', 18, 14]],
+    ASSIGN_B: [[1628, 705], [1698, 705], [1767, 705], [1836, 705], [1628, 755], [1698, 755], [1767, 755], [1836, 755]], ASSIGN_BS: [27, 21],
+    MG_B: [[1623, 907], [1674, 907], [1623, 952], [1674, 952], [1623, 997], [1674, 997]], MG_BS: [27, 21],
+    NAV: [['up', 1500, 342, 'LAYER ▲ (화면 안에서 위 줄로)'], ['down', 1500, 378, 'LAYER ▼ (화면 안에서 아래 줄로)'], ['pgl', 1557, 360, 'PAGE SELECT ◀ (앞 탭)'], ['pgr', 1593, 360, 'PAGE SELECT ▶ (다음 탭)']], NAV_S: 20,
+    PRE_M: { box: [276, 202, 10, 68], x: 276, ys: [172, 184, 190, 198, 205, 212, 219, 231], s: [7, 4] },
+    GR_M: { box: [276, 349, 10, 58], x: 276, ys: [331, 338, 346, 353, 360, 367], gate: 378, s: [7, 4] },
+    USB_LED: [960, 133, 7, 5],
+    MAIN_M: { xs: [1445, 1478, 1497], y0: 145, y1: 274, s: [7, 3.6] },
+    ALCD: { xs: [1629, 1698, 1768, 1837], y: 655, w: 45, h: 31 }
   };
-  var ENC = [1114, 1170, 1226, 1283, 1339, 1397], ENC_Y = 364;
-  var MENU = [['home', 'HOME', 101], ['meters', 'METERS', 131], ['routing', 'ROUTING', 160], ['setup', 'SETUP', 189], ['library', 'LIBRARY', 218], ['effects', 'EFFECTS', 247], ['mutegrp', 'MUTE GRP', 276], ['utility', 'UTILITY', 305]];
   var HOME_TABS = ['home', 'config', 'gate', 'dyn', 'eq', 'sends', 'main'];
   var LAYER_L = [['ch1-16', 719, 'CH 1-16'], ['ch17-32', 776, 'CH 17-32'], ['aux-fx', 832, 'AUX IN / USB · FX RETURNS'], ['bus1-8', 889, 'BUS MASTER']];
   var LAYER_R = [['dca', 718, 'GROUP DCA 1-8'], ['bus1-8', 775, 'BUS 1-8'], ['bus9-16', 832, 'BUS 9-16'], ['mtx-main', 889, 'MATRIX 1-6 / MAIN C']];
@@ -122,6 +150,8 @@
       '.x32p-read>span{padding:4px 9px;border-radius:7px;background:var(--sta-surface-2,#f1f5f9);border:1px solid var(--sta-line,#e2e8f0);color:var(--sta-ink-2,#475569)}',
       '.x32p-read>span b{margin-left:4px;color:var(--sta-ink,#0f172a);font-variant-numeric:tabular-nums}.x32p-read>span b.bad{color:#dc2626}',
       '.x32p-msg{font-size:.76rem;color:var(--sta-ink,#0f172a);background:#fef9c3;border:1px solid #fde68a;border-radius:8px;padding:5px 9px;display:none}',
+      /* M32: 사진이 비스듬하고 조금 작아서 페이더 손잡이 · 글자를 줄임 */
+      '.x32p-stage.x32p-m32{overflow:hidden}.x32p-m32 .x32p-cap i{top:-.82cqw;height:1.64cqw}.x32p-m32 .x32p-lcd span{font-size:.4cqw}.x32p-m32 .x32p-lcd b{font-size:.42cqw}.x32p-m32 .x32p-bl{font-size:.42cqw}.x32p-m32 .x32p-val{font-size:.56cqw}.x32p-m32 .x32p-alcd{font-size:.34cqw}',
       '.x32p-note{margin:0;font-size:.72rem;color:var(--sta-ink-2,#64748b)}'
     ].join('\n');
     document.head.appendChild(st);
@@ -139,7 +169,7 @@
     opts = opts || {}; injectCss();
     if (window.X32Model) return build(el, opts);
     var real = null, dead = false;
-    el.innerHTML = '<p class="x32p-note">X32 실습을 준비하고 있어요…</p>';
+    el.innerHTML = '<p class="x32p-note">콘솔 실습을 준비하고 있어요…</p>';
     needModel(function () { if (dead) return; if (!window.X32Model) { el.innerHTML = '<p class="x32p-note">X32 실습 파일(x32_model.js)을 불러오지 못했어요. 페이지를 새로 고쳐 봐요.</p>'; return; } real = build(el, opts); });
     return {
       get model() { return real ? real.model : null; },
@@ -153,6 +183,8 @@
     var X = window.X32Model, m = X.create(opts.model || {}), S = m.state;
     var U = { done: {}, sawSof: false, alive: true, raf: 0, frame: 0, dirtyR: false, tapT: 0, msgT: 0, screen: null, audio: null, audioOn: false, seq: 0, fbScreen: false };
     var COLORS = X.COLORS;
+    var LY = opts.layout || X32L, IMG = LY.IMG, PW = LY.PW, PH = LY.PH, SCREEN_RECT = LY.SCREEN_RECT, STRIP_IN = LY.STRIP_IN, STRIP_R = LY.STRIP_R, STRIP_MAIN = LY.STRIP_MAIN, ROW = LY.ROW, BW = LY.BW, BH = LY.BH,
+      KN = LY.KN, ENC = LY.ENC, ENC_Y = LY.ENC_Y, MENU = LY.MENU, LAYER_L = LY.LAYER_L, LAYER_R = LY.LAYER_R, EQ_TYPE_LED = LY.EQ_TYPE_LED, NM = LY.name;
 
     /* ---------- 교육용 추정(소리 파일 없이 과제 판정 · 아래 읽기 줄에 씀) ---------- */
     function chIn(ci) { return m.estInput(ci); }
@@ -209,9 +241,9 @@
         '<span class="sp">페이더 · 노브는 끌어요(노브는 휠 · 화살표 키도 돼요). 단추는 눌러요. 이름이 궁금하면 마우스를 올려 봐요.</span>' +
         '<span class="grp" role="group" aria-label="크게 보기"><button type="button" data-zoom="1" aria-pressed="true">전체</button><button type="button" data-zoom="1.6" aria-pressed="false">크게</button><button type="button" data-zoom="2.3" aria-pressed="false">더 크게</button></span></div>' +
       '<div class="x32p-msg" data-role="msg" role="status"></div>' +
-      '<div class="x32p-scroll" data-role="scroll"><div class="x32p-stage" data-role="stage" role="application" aria-label="X32 콘솔 사진 위에서 조작하는 실습"><img src="' + IMG + '" alt="Behringer X32 윗면 (공식 제품 사진)" draggable="false" onerror="this.style.visibility=\'hidden\'"></div></div>' +
+      '<div class="x32p-scroll" data-role="scroll"><div class="x32p-stage x32p-' + LY.key + '" data-role="stage" role="application" aria-label="' + NM + ' 콘솔 사진 위에서 조작하는 실습" style="aspect-ratio:' + PW + '/' + PH + '"><img src="' + IMG + '" alt="' + esc(LY.alt) + '" draggable="false" onerror="this.style.visibility=\'hidden\'"></div></div>' +
       '<div class="x32p-read" data-role="read" aria-live="polite"></div>' +
-      '<p class="x32p-note">사진: Behringer 공식 제품 사진. 단추 · 페이더 · 노브 · 이름표(LCD) · 미터는 사진 위에 겹쳐 그렸어요. 미터는 「소리 켜기」를 눌러야 움직여요. 아래 「지금 상태」의 dB 는 공부용으로 어림한 값(교육용 근사)이에요.</p></div>';
+      '<p class="x32p-note">사진: ' + LY.brand + ' 공식 제품 사진' + (LY.photoNote || '') + '. 단추 · 페이더 · 노브 · 이름표(LCD) · 미터는 사진 위에 겹쳐 그렸어요. 미터는 「소리 켜기」를 눌러야 움직여요. 아래 「지금 상태」의 dB 는 공부용으로 어림한 값(교육용 근사)이에요.</p></div>';
     scroll = el.querySelector('[data-role=scroll]'); stage = el.querySelector('[data-role=stage]'); read = el.querySelector('[data-role=read]'); msg = el.querySelector('[data-role=msg]');
     function P(x, y, w, h, node, centered) { var s = node.style; if (centered !== false) { x -= w / 2; y -= h / 2; } s.left = (x / PW * 100).toFixed(3) + '%'; s.top = (y / PH * 100).toFixed(3) + '%'; s.width = (w / PW * 100).toFixed(3) + '%'; s.height = (h / PH * 100).toFixed(3) + '%'; return node; }
     function mk(tag, cls, attrs, parent) { var n = document.createElement(tag); if (cls) n.className = cls; if (attrs) Object.keys(attrs).forEach(function (k) { n.setAttribute(k, attrs[k]); }); (parent || stage).appendChild(n); return n; }
@@ -219,64 +251,65 @@
     function button(id, x, y, w, h, title, color, small) { var b = mk('button', 'x32p-btn ' + (color || 'y') + (small ? ' sm' : ''), { type: 'button', 'data-b': id, 'data-tip': title, 'aria-label': title, 'aria-pressed': 'false' }); P(x, y, w || BW, h || BH, b); btns[id] = b; return b; }
     function led(id, x, y, w, h) { var d = mk('div', 'x32p-led'); P(x, y, w, h, d); leds[id] = d; return d; }
 
-    // 채널 스트립 25개
+    // 채널 스트립 25개 — 칸마다 위치(geo): X32 는 세로 줄 그대로, M32 처럼 비스듬히 찍은 사진은 LY.geo 가 줄마다 x 를 옮겨 줌
+    function geoOf(cx, side) {
+      if (LY.geo) return LY.geo(cx, side);
+      var g = { sel: [cx, ROW.select], ledX: cx - 5, ledYs: ROW.led, solo: [cx, ROW.solo], lcd: [cx, ROW.lcd], mute: [cx, ROW.mute], fTop: [cx, ROW.fTop], fBot: [cx, ROW.fBot], val: [cx, ROW.fBot + 24] };
+      if (side === 'main') { g.comp = [cx - 5, 518]; g.clr = [cx, 563]; g.solo = [cx, 609]; }
+      return g;
+    }
     function addStrip(id, cx, side, i) {
-      var o = { id: id, cx: cx, side: side, i: i, leds: [] };
-      o.sel = button(id + '.sel', cx, ROW.select, BW, BH, 'SELECT (이 채널을 채널 섹션 · 화면에서 고르기)', 'g');
+      var o = { id: id, cx: cx, side: side, i: i, leds: [] }, g = geoOf(cx, side), LW = (LY.LCD || [45, 34]);
+      o.sel = button(id + '.sel', g.sel[0], g.sel[1], BW, BH, 'SELECT (이 채널을 채널 섹션 · 화면에서 고르기)', 'g');
       if (side !== 'main') {
-        o.mtr = mk('div', 'x32p-mtr'); P(cx - 5, (ROW.led[0] + ROW.led[7]) / 2, 9, ROW.led[7] - ROW.led[0] + 8, o.mtr);
-        ROW.led.forEach(function (y, k) { o.leds.push(led(id + '.led' + k, cx - 5, y, 6, 3.6)); });
-        o.solo = button(id + '.solo', cx, ROW.solo, BW, BH, 'SOLO (헤드폰 · 모니터로 이것만 듣기)', 'y');
+        var ly = g.ledYs, lw = LY.LED_W || 6, lh = LY.LED_H || 3.6;
+        o.mtr = mk('div', 'x32p-mtr'); P(g.ledX, (ly[0] + ly[ly.length - 1]) / 2, lw + 3, ly[ly.length - 1] - ly[0] + lh * 2 + 1, o.mtr);
+        ly.forEach(function (y, k) { o.leds.push(led(id + '.led' + k, g.ledX, y, lw, lh)); });
+        o.solo = button(id + '.solo', g.solo[0], g.solo[1], BW, BH, 'SOLO (헤드폰 · 모니터로 이것만 듣기)', 'y');
       } else {
-        o.leds.push(led('main.comp', cx - 5, 518, 6, 3.6));
-        button('main.clearsolo', cx, 563, BW, BH, 'CLEAR SOLO (켜진 SOLO 를 모두 끄기)', 'y');
-        o.solo = button('MAIN.solo', cx, 609, BW, BH, 'SOLO (메인)', 'y');
+        o.leds.push(led('main.comp', g.comp[0], g.comp[1], LY.LED_W || 6, LY.LED_H || 3.6));
+        button('main.clearsolo', g.clr[0], g.clr[1], BW, BH, 'CLEAR SOLO (켜진 SOLO 를 모두 끄기)', 'y');
+        o.solo = button('MAIN.solo', g.solo[0], g.solo[1], BW, BH, 'SOLO (메인)', 'y');
       }
-      o.lcd = mk('div', 'x32p-lcd', { 'data-lcd': id, 'data-tip': '스크리블 LCD (이름 · 색) — 두 번 누르면 이름 바꾸기' }); P(cx, ROW.lcd, 45, 34, o.lcd);
-      o.mute = button(id + '.mute', cx, ROW.mute, BW, BH, 'MUTE (소리 끄기)', 'r');
-      o.slot = mk('div', 'x32p-slot', { 'data-slot': id }); P(cx, (ROW.fTop + ROW.fBot) / 2, 40, ROW.fBot - ROW.fTop + 24, o.slot);
+      o.lcd = mk('div', 'x32p-lcd', { 'data-lcd': id, 'data-tip': '스크리블 LCD (이름 · 색) — 두 번 누르면 이름 바꾸기' }); P(g.lcd[0], g.lcd[1], LW[0], LW[1], o.lcd);
+      o.mute = button(id + '.mute', g.mute[0], g.mute[1], BW, BH, 'MUTE (소리 끄기)', 'r');
+      // 페이더 홈: 위(+10) · 아래(−∞) 두 점 사이. 비스듬하면 그만큼 돌려 놓음
+      var dx = g.fBot[0] - g.fTop[0], dy = g.fBot[1] - g.fTop[1], len = Math.sqrt(dx * dx + dy * dy), pad = LY.SLOT_PAD || 12;
+      o.span = len; o.pad = pad;
+      o.slot = mk('div', 'x32p-slot', { 'data-slot': id }); P((g.fTop[0] + g.fBot[0]) / 2, (g.fTop[1] + g.fBot[1]) / 2, LY.SLOT_W || 40, len + pad * 2, o.slot);
+      if (Math.abs(dx) > 0.5) o.slot.style.transform = 'rotate(' + (-Math.atan2(dx, dy) * 180 / Math.PI).toFixed(2) + 'deg)';
       o.cap = document.createElement('div'); o.cap.className = 'x32p-cap' + (side === 'main' ? ' main' : ''); o.cap.setAttribute('tabindex', '0'); o.cap.setAttribute('role', 'slider'); o.cap.setAttribute('data-f', id); o.slot.appendChild(o.cap); o.cap.innerHTML = '<i></i>';
       o.cap.style.transform = 'translateX(-50%)';
-      o.val = mk('div', 'x32p-val'); P(cx, ROW.fBot + 24, 50, 16, o.val);
+      o.val = mk('div', 'x32p-val'); P(g.val[0], g.val[1], 50, 16, o.val);
       strips.push(o); return o;
     }
     STRIP_IN.forEach(function (x, i) { addStrip('L' + i, x, 'L', i); });
     STRIP_R.forEach(function (x, i) { addStrip('R' + i, x, 'R', i); });
     addStrip('MAIN', STRIP_MAIN, 'main', 0);
     // 레이어 · SOF · DAW
-    LAYER_L.forEach(function (b) { button('layer.' + b[0], 162, b[1], 28, 23, '입력 쪽 레이어: ' + b[2], 'g'); });
-    LAYER_R.forEach(function (b) { button('layerR.' + b[0], 1063, b[1], 28, 23, '출력 쪽 레이어: ' + b[2], 'g'); });
-    button('sof', 1063, 499, 28, 23, 'SENDS ON FADER (페이더로 BUS 에 보내는 양 조절)', 'o'); button('daw', 160, 497, 28, 23, 'DAW REMOTE (컴퓨터 녹음 프로그램 조종)', 'y');
-    // 채널 섹션
-    [['p48', 178, 264, '+48V (팬텀 전원 — 콘덴서 마이크 전기)'], ['phase', 232, 264, 'Ø (극성 뒤집기: 소리 물결을 위아래로 뒤집기)'], ['lc', 346, 264, 'LOW CUT (낮은 소리 걸러 내기) 켜기'], ['v.config', 396, 276, 'VIEW — 화면에 CONFIG/PREAMP 페이지', 'y', 18, 14],
-     ['gate', 204, 412, 'GATE 켜기 (작은 소리 막기)'], ['v.gate', 254, 420, 'VIEW — 화면에 GATE 페이지', 'y', 18, 14], ['dyn', 346, 412, 'DYNAMICS 켜기 (컴프: 큰 소리 누르기)'], ['v.dyn', 396, 420, 'VIEW — 화면에 DYNAMICS 페이지', 'y', 18, 14],
-     ['eqmode', 492, 264, 'EQ MODE (고른 밴드의 모양 바꾸기)'], ['band3', 685, 227, 'EQ HIGH 밴드 고르기'], ['band2', 685, 274, 'EQ HIGH MID 밴드 고르기'], ['band1', 685, 326, 'EQ LOW MID 밴드 고르기'], ['band0', 685, 375, 'EQ LOW 밴드 고르기'],
-     ['eq', 517, 410, 'EQUALIZER 켜기'], ['v.eq', 713, 419, 'VIEW — 화면에 EQ 페이지', 'y', 18, 14],
-     ['sb0', 844, 227, 'BUS SENDS 1-4 (노브 4개가 BUS 1-4)'], ['sb1', 844, 277, 'BUS SENDS 5-8'], ['sb2', 844, 326, 'BUS SENDS 9-12'], ['sb3', 844, 376, 'BUS SENDS 13-16'], ['v.sends', 872, 422, 'VIEW — 화면에 SENDS 페이지', 'y', 18, 14],
-     ['mono', 954, 263, 'MONO BUS 로 보내기 (LEVEL 노브로 양 정하기)'], ['lr', 954, 396, 'STEREO BUS (메인 LR) 로 보내기'], ['v.main', 995, 422, 'VIEW — 화면에 MAIN 페이지', 'y', 18, 14],
-     ['v.usb', 995, 127, 'USB RECORDER VIEW — 화면에 녹음기 페이지', 'y', 18, 14],
-     ['monmono', 1715, 348, '모니터 MONO (헤드폰 · 모니터를 모노로)'], ['dim', 1715, 397, '모니터 DIM (모니터 소리를 잠깐 줄이기)'], ['v.mon', 1748, 422, 'MONITOR VIEW — 화면에 모니터 페이지', 'y', 18, 14],
-     ['talka', 1826, 348, 'TALK A (토크백 마이크를 A 로)'], ['talkb', 1826, 397, 'TALK B (토크백 마이크를 B 로)'], ['v.talk', 1859, 422, 'TALKBACK VIEW — 화면에 토크백 설정', 'y', 18, 14],
-     ['sc.prev', 1629, 502, 'SCENES: PREV (앞 씬 고르기)'], ['sc.next', 1678, 502, 'SCENES: NEXT (다음 씬 고르기)'], ['sc.undo', 1733, 502, 'SCENES: UNDO (불러오기 되돌리기)', 'y', 27, 21], ['sc.go', 1802, 502, 'SCENES: GO (고른 씬 불러오기)', 'g', 27, 21], ['sc.view', 1859, 522, 'SCENES VIEW — 화면에 씬 목록', 'y', 18, 14],
-     ['as.setA', 1663, 810, 'ASSIGN SET A', 'r', 18, 14], ['as.setB', 1732, 810, 'ASSIGN SET B', 'r', 18, 14], ['as.setC', 1802, 810, 'ASSIGN SET C', 'r', 18, 14], ['v.assign', 1858, 841, 'ASSIGN VIEW — 화면에 ASSIGN 설정', 'y', 18, 14]
-    ].forEach(function (b) { button(b[0], b[1], b[2], b[5] || BW, b[6] || BH, b[3], b[4] || 'y', !!b[5] && b[5] < 20); });
-    [[1628, 705], [1698, 705], [1767, 705], [1836, 705], [1628, 755], [1698, 755], [1767, 755], [1836, 755]].forEach(function (p, k) { button('as.b' + k, p[0], p[1], 27, 21, 'ASSIGN 단추 ' + (k + 5), 'y'); });
-    [[1623, 907], [1674, 907], [1623, 952], [1674, 952], [1623, 997], [1674, 997]].forEach(function (p, k) { button('mg' + k, p[0], p[1], 27, 21, 'MUTE GROUP ' + (k + 1), 'r'); });
-    MENU.forEach(function (mm) { var b = button('menu.' + mm[0], 1576, mm[2], 54, 21, '화면 메뉴: ' + mm[1], 'g'); b.innerHTML = '<span class="x32p-bl">' + mm[1] + '</span>'; });
-    [['up', 1500, 342, 'LAYER ▲ (화면 안에서 위 줄로)'], ['down', 1500, 378, 'LAYER ▼ (화면 안에서 아래 줄로)'], ['pgl', 1557, 360, 'PAGE SELECT ◀ (앞 탭)'], ['pgr', 1593, 360, 'PAGE SELECT ▶ (다음 탭)']].forEach(function (b) { button('nav.' + b[0], b[1], b[2], 20, 20, b[3], 'y'); });
+    LAYER_L.forEach(function (b) { button('layer.' + b[0], b[3] != null ? b[3] : LY.LAYER_LX, b[1], LY.LAYER_W, LY.LAYER_H, '입력 쪽 레이어: ' + b[2], 'g'); });
+    LAYER_R.forEach(function (b) { button('layerR.' + b[0], b[3] != null ? b[3] : LY.LAYER_RX, b[1], LY.LAYER_W, LY.LAYER_H, '출력 쪽 레이어: ' + b[2], 'g'); });
+    button('sof', LY.SOF[0], LY.SOF[1], LY.SOF[2], LY.SOF[3], LY.SOF_TIP || 'SENDS ON FADER (페이더로 BUS 에 보내는 양 조절)', 'o'); button('daw', LY.DAW[0], LY.DAW[1], LY.DAW[2], LY.DAW[3], 'DAW REMOTE (컴퓨터 녹음 프로그램 조종)', 'y');
+    // 채널 섹션 · 모니터 · 토크백 · 씬 · ASSIGN 단추
+    LY.BTNS.forEach(function (b) { button(b[0], b[1], b[2], b[5] || BW, b[6] || BH, b[3], b[4] || 'y', !!b[5] && b[5] < 20); });
+    LY.ASSIGN_B.forEach(function (p, k) { button('as.b' + k, p[0], p[1], LY.ASSIGN_BS[0], LY.ASSIGN_BS[1], 'ASSIGN 단추 ' + (k + 5), 'y'); });
+    LY.MG_B.forEach(function (p, k) { button('mg' + k, p[0], p[1], LY.MG_BS[0], LY.MG_BS[1], 'MUTE GROUP ' + (k + 1), 'r'); });
+    MENU.forEach(function (mm) { var b = button('menu.' + mm[0], LY.MENU_X, mm[2], LY.MENU_W, LY.MENU_H, '화면 메뉴: ' + mm[1], 'g'); b.innerHTML = '<span class="x32p-bl">' + mm[1] + '</span>'; });
+    LY.NAV.forEach(function (b) { button('nav.' + b[0], b[1], b[2], LY.NAV_S, LY.NAV_S, b[3], 'y'); });
     // 표시등: EQ 모양 · 입력 미터 · GR 미터 · USB ACCESS · ASSIGN LCD · 메인 미터
-    EQ_TYPE_LED.forEach(function (t) { led('eqt.' + t[0], 453, t[1], 10, 6); });
-    var pmBox = mk('div', 'x32p-mtr'); P(276, 202, 10, 68, pmBox); var pmL = [172, 184, 190, 198, 205, 212, 219, 231].map(function (y, k) { return led('pre' + k, 276, y, 7, 4); });
-    var grBox = mk('div', 'x32p-mtr'); P(276, 349, 10, 58, grBox); var grL = [331, 338, 346, 353, 360, 367].map(function (y, k) { return led('gr' + k, 276, y, 7, 4); }); var gateL = led('gr.gate', 276, 378, 7, 4);
-    led('usb.access', 960, 133, 7, 5);
-    var mainL = [1445, 1478, 1497].map(function (x, c) { var col = []; for (var k = 0; k < 24; k++) col.push(led('mm' + c + '.' + k, x, 145 + k * (274 - 145) / 23, 7, 3.6)); return col; });
-    [1629, 1698, 1768, 1837].forEach(function (x, k) { var d = mk('div', 'x32p-alcd'); P(x, 655, 45, 31, d); alcds.push(d); });
+    EQ_TYPE_LED.forEach(function (t) { led('eqt.' + t[0], LY.EQ_LED_X, t[1], LY.EQ_LED[0], LY.EQ_LED[1]); });
+    var PM = LY.PRE_M, GM = LY.GR_M, MM = LY.MAIN_M, AL = LY.ALCD;
+    var pmBox = mk('div', 'x32p-mtr'); P(PM.box[0], PM.box[1], PM.box[2], PM.box[3], pmBox); var pmL = PM.ys.map(function (y, k) { return led('pre' + k, PM.x, y, PM.s[0], PM.s[1]); });
+    var grBox = mk('div', 'x32p-mtr'); P(GM.box[0], GM.box[1], GM.box[2], GM.box[3], grBox); var grL = GM.ys.map(function (y, k) { return led('gr' + k, GM.x, y, GM.s[0], GM.s[1]); }); var gateL = led('gr.gate', GM.x, GM.gate, GM.s[0], GM.s[1]);
+    led('usb.access', LY.USB_LED[0], LY.USB_LED[1], LY.USB_LED[2], LY.USB_LED[3]);
+    var mainL = MM.xs.map(function (x, c) { var col = []; for (var k = 0; k < 24; k++) col.push(led('mm' + c + '.' + k, x, MM.y0 + k * (MM.y1 - MM.y0) / 23, MM.s[0], MM.s[1])); return col; });
+    AL.xs.forEach(function (x, k) { var d = mk('div', 'x32p-alcd'); P(x, AL.y, AL.w, AL.h, d); alcds.push(d); });
     // 화면 자리
     scr = mk('div', 'x32p-scr', { 'data-role': 'screen' }); P(SCREEN_RECT.x, SCREEN_RECT.y, SCREEN_RECT.w, SCREEN_RECT.h, scr, false);
     // 노브
     var defs = mk('div', ''); defs.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden'; defs.innerHTML = '<svg width="0" height="0"><defs><radialGradient id="x32pKnob" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#4a4d53"/><stop offset=".6" stop-color="#232427"/><stop offset="1" stop-color="#121214"/></radialGradient></defs></svg>';
     function knob(id, d, title, map, enc) {
-      var k = mk('div', 'x32p-knob' + (enc ? ' enc' : ''), { tabindex: '0', role: 'slider', 'aria-label': title, 'data-tip': title, 'data-k': id }); var R = enc ? 40 : 64; P(d[0], d[1], R, R, k);
+      var k = mk('div', 'x32p-knob' + (enc ? ' enc' : ''), { tabindex: '0', role: 'slider', 'aria-label': title, 'data-tip': title, 'data-k': id }); var R = enc ? (LY.ENC_BOX || 40) : (LY.KNOB_BOX || 64); P(d[0], d[1], R, R, k);
       var dots = ''; if (!enc) for (var i = 0; i < 13; i++) { var a = (-135 + i * 22.5) * Math.PI / 180; dots += '<circle cx="' + (50 + Math.sin(a) * 36).toFixed(2) + '" cy="' + (50 - Math.cos(a) * 36).toFixed(2) + '" r="4.2"/>'; }
       k.innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true">' + (enc ? '' : '<circle cx="50" cy="50" r="44" fill="#141518"/>') + '<circle cx="50" cy="50" r="' + (enc ? 40 : d[2] * 0.82) + '" fill="url(#x32pKnob)" stroke="#0a0a0b" stroke-width="2"/><line class="ptr" x1="50" y1="50" x2="50" y2="' + (enc ? 14 : 30) + '" stroke="#d1d5db" stroke-width="' + (enc ? 4 : 3) + '" stroke-linecap="round"/><g class="dots">' + dots + '</g></svg>';
       knobs[id] = { el: k, map: map, enc: !!enc, bip: map && map.bip }; return k;
@@ -313,7 +346,7 @@
     };
     [0, 1, 2, 3].forEach(function (k) { var f = fad(sendPath(k)); KMAP['s' + (k + 1)] = { get: f.get, set: function (u) { f.set(u); var b = (S.config.view.sendBank || 0) * 4 + k; if (S.config.sendsOnFader && S.config.sofTarget === b && selCh() === 0 && b === 0) U.sawSof = true; } }; KMAP['as' + (k + 1)] = assignMap(k); });
     Object.keys(KN).forEach(function (id) { knob(id, KN[id], KN[id][3], KMAP[id]); });
-    ENC.forEach(function (x, i) { knob('enc' + i, [x, ENC_Y, 30], '화면 노브 ' + (i + 1) + ' (돌리기 · 누르기)', null, true); });
+    ENC.forEach(function (x, i) { knob('enc' + i, [x, ENC_Y, LY.ENC_D || 30], '화면 노브 ' + (i + 1) + ' (돌리기 · 누르기)', null, true); });
 
     /* ---------- 그리기 ---------- */
     function lit(b, on) { if (!b) return; b.classList.toggle('on', !!on); b.setAttribute('aria-pressed', String(!!on)); }
@@ -322,7 +355,7 @@
       var dots = k.el.querySelectorAll('.dots circle'); dots.forEach(function (c, i) { var p = i / 12, on = !none && (k.map.bip ? (v >= 0.5 ? p >= 0.5 - 1e-6 && p <= v + 1e-6 : p <= 0.5 + 1e-6 && p >= v - 1e-6) : p <= v + 1e-6); c.setAttribute('fill', on ? '#ff8a1f' : '#3a2412'); });
       k.el.querySelector('.ptr').setAttribute('transform', 'rotate(' + (-135 + v * 270) + ' 50 50)'); k.el.setAttribute('aria-valuenow', Math.round(v * 100)); k.el.classList.toggle('dim', none);
     }
-    function capPos(o, p) { var span = ROW.fBot - ROW.fTop, tot = span + 24; o.cap.style.top = ((12 + (1 - p) * span) / tot * 100).toFixed(3) + '%'; }
+    function capPos(o, p) { var span = o.span, tot = span + o.pad * 2; o.cap.style.top = ((o.pad + (1 - p) * span) / tot * 100).toFixed(3) + '%'; }
     function colorOf(n) { return COLORS[clamp(n | 0, 0, 15)] || COLORS[0]; }
     function stripDraw(o, it) {
       var inf = o.side === 'main' ? info({ type: 'main', index: 0 }, 'M') : info(it, o.side); o.inf = inf;
@@ -441,7 +474,7 @@
     /* ---------- 조작 ---------- */
     function stripByEl(n) { return strips.filter(function (o) { return o.cap === n || o.slot === n || o.lcd === n; })[0]; }
     var drag = null;
-    function faderFromY(o, clientY) { var r = o.slot.getBoundingClientRect(), tot = ROW.fBot - ROW.fTop + 24, pad = r.height * 12 / tot; return clamp(1 - (clientY - r.top - pad) / (r.height - 2 * pad), 0, 1); }
+    function faderFromY(o, clientY) { var r = o.slot.getBoundingClientRect(), tot = o.span + o.pad * 2, pad = r.height * o.pad / tot; return clamp(1 - (clientY - r.top - pad) / (r.height - 2 * pad), 0, 1); }
     function setFader(o, p) {
       if (!o.inf || o.inf.none) return; var d = f2db(p); m.set(o.inf.fpath, isFinite(d) ? d : OFF, { from: 'surface' }); capPos(o, p);
       if (o.inf.sof && S.config.sofTarget === 0 && o.inf.type === 'ch' && o.inf.index === 0) U.sawSof = true;
@@ -457,7 +490,7 @@
     function encInput(i, o) { o.kind = 'enc'; o.index = i; sendInput(o); }
     function onMove(e) {
       if (!drag) return; e.preventDefault();
-      if (drag.type === 'f') { var o = drag.o, r = o.slot.getBoundingClientRect(), span = r.height * (ROW.fBot - ROW.fTop) / (ROW.fBot - ROW.fTop + 24); var p = drag.dy != null ? clamp(drag.p0 - (e.clientY - drag.dy) / span, 0, 1) : faderFromY(o, e.clientY); setFader(o, p); return; }
+      if (drag.type === 'f') { var o = drag.o, r = o.slot.getBoundingClientRect(), span = r.height * o.span / (o.span + o.pad * 2); var p = drag.dy != null ? clamp(drag.p0 - (e.clientY - drag.dy) / span, 0, 1) : faderFromY(o, e.clientY); setFader(o, p); return; }
       if (drag.type === 'e') { var d = (e.clientX - drag.x) - (e.clientY - drag.y), st = Math.trunc((d - drag.acc) / 8); if (Math.abs(d) > 3) drag.moved = true; if (st) { drag.acc += st * 8; encInput(+drag.id.slice(3), { delta: st > 0 ? 1 : -1, steps: Math.abs(st) }); } return; }
       var k = knobs[drag.id]; if (!k.map.get || k.map.get() == null) return; k.map.set(clamp(drag.v0 - (e.clientY - drag.y) / 160, 0, 1));
     }
@@ -629,11 +662,15 @@
         render(); return this.state();
       },
       knobValue: function (id) { return knobs[id] && !knobs[id].enc ? knobs[id].map.get() : null; },
-      SCREEN_RECT: SCREEN_RECT
+      SCREEN_RECT: SCREEN_RECT, layout: LY.key
     };
     return api;
   }
   window.STASims = window.STASims || {};
   window.STASims.x32Photo = x32Photo;
-  window.STASims.x32PhotoScreenRect = SCREEN_RECT;
+  window.STASims.x32PhotoScreenRect = X32L.SCREEN_RECT;
+  window.STASims.x32Layouts = { x32: X32L };
+  /* M32: 같은 X32Model · X32Screen · X32Audio(같은 펌웨어 4) 위에 Midas M32 LIVE 사진 배치만 바꿔요 — lessons/modules/m32_layout.js 가 STASims.x32Layouts.m32 를 넣어요 */
+  window.STASims.m32Photo = function (el, opts) { opts = opts || {}; var L = window.STASims.x32Layouts.m32; if (!L) { el.innerHTML = '<p class="x32p-note">M32 배치 파일(m32_layout.js)을 불러오지 못했어요.</p>'; return { destroy: function () { el.innerHTML = ''; }, state: function () { return { ready: false }; }, set: function () { return { ready: false }; }, knobValue: function () { return null; } }; }
+    var o2 = {}; Object.keys(opts).forEach(function (k) { o2[k] = opts[k]; }); o2.layout = L; return x32Photo(el, o2); };
 })();
