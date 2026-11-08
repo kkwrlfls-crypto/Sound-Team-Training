@@ -464,11 +464,11 @@
       variants: [['40D', '40D', '4채널 · 터치스크린 · 메인 · 서브 · 천장 가운데'], ['10D', '10D', '4채널 · LED 표시 · 천장 좌우 · 기둥 · 모니터'], ['40D', '40D 뒷면', '입력 · 출력 · 네트워크 · 전원 단자', [-0.45, 0.32, -1]], ['10D', '10D 뒷면', '전원 스위치 · 단자', [-0.45, 0.32, -1]]],
       toggleTxt: '전원 끄기', toggleLabel: function (on) { return on ? '전원 끄기' : '전원 켜기'; },
       make: function (v) { return DbAmps.create({ variant: v }); }, toggle: function (m, on) { DbAmps.api(m).setPower(on); } },
-    /* 2026-11-04: 3층 d&b 패시브 스피커(절차적 모델) — 「속 보기」로 그릴 뒤 드라이버 */
-    dbspk: { label: '3D 모델(d&b 패시브 스피커)', need: 'DbSpeakers', dir: [0.6, 0.3, 1],
-      variants: [['Vi10P', 'Vi10P · 메인', '무대 메인 L · R — 3웨이 패시브', [0.55, 0.28, 1], 2.3], ['Yi10P', 'Yi10P · 천장 가운데', '2웨이 · 110° × 40°', null, 2.3], ['Yi7P', 'Yi7P · 천장 좌우', '2웨이 · 75° × 40°', null, 2.3], ['E8', 'E8 · 기둥', '8″/1″ 동축 · 90° × 50°', [0.6, 0.32, 1], 2.2], ['V-SUB', 'V-SUB · 서브우퍼', '18″ + 12″ 저음', [0.7, 0.45, 1], 1.8]],
+    /* 2026-11-08: 05-1 패시브 스피커 — 3층 장비 대신 일반 패시브 스피커(로고 · 모델명 없는 절차적 모델), 「속 보기」로 그릴 뒤 드라이버 */
+    dbspk: { label: '3D 모델(일반 패시브 스피커)', need: 'GenericPassiveSpk', dir: [0.55, 0.3, 1], dist: 1.75,
+      variants: [['12-2way', '12인치 2웨이', '우퍼 12인치 + 혼', [0.55, 0.3, 1], 1.75], ['8-2way', '8인치 2웨이', '작은 2웨이', [0.55, 0.32, 1], 1.75], ['15-2way', '15인치 2웨이', '우퍼 15인치 + 혼', [0.55, 0.3, 1], 1.75], ['sub18', '18인치 서브우퍼', '아주 낮은 소리 담당', [0.7, 0.5, 1], 1.8], ['column', '컬럼 스피커', '가늘고 긴 스피커', [0.5, 0.22, 1], 2.2]],
       toggleTxt: '속 보기(드라이버) 켜기', toggleLabel: function (on) { return on ? '속 보기(드라이버) 켜기' : '속 보기 끄기'; },
-      make: function (v) { return DbSpeakers.create({ variant: v, color: 0xcfd3d8 }); }   /* 2026-11-04: 3층 실제 색은 흰색 — 밝은 화면에서도 구분되게 채도 · 밝기를 조금 낮춘 흰색 */, toggle: function (m, on) { DbSpeakers.api(m).setXray(!on); } },
+      make: function (v) { return GenericPassiveSpk.create({ variant: v }); }, toggle: function (m, on) { GenericPassiveSpk.api(m).setXray(!on); } },
     zxa1: { label: '3D 모델(EV ZXA1)', need: 'EvZXA1', dir: [0.5, 0.2, 1], make: function () { return EvZXA1.create(); } }
   };
   function mountViewer(def) {
