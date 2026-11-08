@@ -23,7 +23,7 @@ window.STA_PATHS = [
     route: ['마이크', '케이블', '콘솔', '앰프', '스피커'],   // 2026-11-04: 각 장비를 -1 / -2 (유선·무선, 아날로그·디지털, 패시브·액티브) 로 나눔
     tip: '먼저 아래 「신호 흐름」 레슨으로 소리가 지나가는 길을 익혀요. 그다음 마이크부터 스피커까지, 소리가 가는 순서대로 배워요. 직접 이어 보는 연습은 메뉴의 「실습」에 있어요.',
     prereq: ['signal-flow'],
-    modules: ['mic', 'mic-wireless', 'cable', 'cable-digital', 'console', 'console-digital', 'amp', 'amp-digital', 'speaker-passive', 'speaker'],   /* 2026-11-04: 마이크 · 케이블 · 콘솔 · 앰프 · 스피커를 -1 / -2 로 나눔 */
+    modules: ['mic', 'mic-wireless', 'cable', 'cable-digital', 'console', 'console-digital', 'console-m32', 'amp', 'amp-digital', 'speaker-passive', 'speaker'],   /* 2026-11-04: 마이크 · 케이블 · 콘솔 · 앰프 · 스피커를 -1 / -2 로 나눔 */
     /* 2026-11-08: 과정 안의 「실습하기」 단계는 모두 빼고, 메뉴의 「실습」으로 모음 (번호 순서: 마이크 → 케이블 → 콘솔 → 스피커 → 음향 시스템 설계 실습) */
     practiceOut: true,
     practice: ['tabPracMic', 'tabPracCable', 'tab6', 'tabPracSpk', 'tab1'], practiceTitle: '장비 실습' },   /* 2026-11-08: 「3층 음향 시스템」 실습은 음향 장비 학습에서 뺌(교회 시스템 실습 경로에는 그대로) */   /* 2026-10-23: 장비 브랜드 알아보기는 실습에서 빼고 따로 있는 메뉴로 */
@@ -51,7 +51,7 @@ window.STA_PRAC_PAGES = {
   tabPracCable: { no: '02', title: '케이블 실습', desc: '케이블을 알맞은 단자에 꽂고, 잘못 꽂으면 소리가 어떻게 되는지 확인해요.',
     parts: [['cable', '아날로그 케이블']] },
   tab6: { no: '03', title: '콘솔 실습', desc: '아날로그 콘솔(MG12XU)과 디지털 콘솔(X32)을 실제 사진 위에서 다뤄 봐요.', staticHead: true,
-    parts: [['#mg12xu', '아날로그 콘솔 · MG12XU'], ['console-digital', '디지털 콘솔 · X32']] },
+    parts: [['#mg12xu', '아날로그 콘솔 · MG12XU'], ['console-digital', '디지털 콘솔 · X32'], ['console-m32', '디지털 콘솔 · M32']] },
   tabPracSpk: { no: '04', title: '스피커 실습', desc: '액티브 스피커를 켜고, 소리 크기와 놓는 자리를 바꿔 가며 들어 봐요.',
     parts: [['speaker', '액티브 스피커']] },
   tab1: { no: '05', title: '음향 시스템 설계 실습', staticHead: true }

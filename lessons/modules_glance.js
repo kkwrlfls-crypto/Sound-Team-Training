@@ -225,6 +225,16 @@ window.STA_GLANCE = {
     ] }
   },
 
+  /* 2026-11-08: 03-3 디지털 콘솔 · M32 (Midas M32 LIVE — X32 와 같은 운영 소프트웨어) */
+  'console-m32': {
+    glance: [
+      ['FADER FLIP', 'X32 의 Sends on Fader — 페이더가 「버스로 보내는 양」'],
+      ['SHOW CONTROL', 'LAST · NEXT · UNDO · GO 로 씬 · 큐를 순서대로'],
+      ['Midas PRO 프리앰프', '마이크 소리를 처음 키우는 부분 (32개)'],
+      ['VIEW', '그 구역의 자세한 설정을 화면에 크게']
+    ]
+  },
+
   /* 2026-11-03: 03-2 디지털 콘솔 (Behringer X32 — 사진: Behringer 공식 제품 사진, 구역에 마우스를 올리면 설명) */
   'console-digital': {
     glance: [
