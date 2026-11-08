@@ -107,8 +107,8 @@
     { id: 'physics', path: 'physics', img: 'img/modules/phys_wave.svg' },   // 2026-11-04 물리음향
     { id: 'hardware', path: 'hardware', img: 'img/modules/hw_mic.jpg' },
     { id: 'mixing', path: 'mixing', img: 'img/modules/mix2_path.jpg', imgPos: '50% 50%' },
-    { id: 'church', title: '교회 시스템 실습', sum: '본당에 있는 실제 장비를 놓고(배치) 선을 이어 봐요(배선). 콘솔도 직접 만져 봐요.', tabs: ['tab2', 'tab5', 'tab6', 'tab1'], img: 'cl5_top.jpg', imgPos: '50% 70%' },
-    { id: 'trouble', title: '트러블슈팅', sum: '소리가 안 나거나 하울링(삐— 하는 소리)이 날 때, 원인을 찾아 고치는 연습을 해요.', tabs: ['tab7', 'tabFeedback', 'tabCheck', 'tabTips'], img: 'jack_strip.jpg', imgPos: '30% 50%' }
+    { id: 'church', title: '교회 시스템 실습', sum: '우리 교회 본당 장비를 화면에 놓고 선으로 이어 봐요. 콘솔도 직접 만져 봐요.', tabs: ['tab2', 'tab5', 'tab6', 'tab1'], img: 'cl5_top.jpg', imgPos: '50% 70%' },
+    { id: 'trouble', title: '트러블슈팅', sum: '소리가 안 나거나 삐— 소리(하울링)가 날 때가 있어요. 그 원인을 찾아 고치는 연습을 해요.', tabs: ['tab7', 'tabFeedback', 'tabCheck', 'tabTips'], img: 'jack_strip.jpg', imgPos: '30% 50%' }
   ];
   function tabName(tab) { var b = document.querySelector('.tab-btn[data-tab="' + tab + '"] span'); return b ? b.textContent.trim() : tab; }
   function modList() { var M = window.STA_MODULES || {}; return Object.keys(M).map(function (k) { return M[k]; }).filter(function (m) { return m.status === 'ready'; }); }
@@ -160,7 +160,7 @@
     if (mic && mic.status === 'ready') rec.push({ attr: 'data-module="mic"', img: mic.img, kicker: pathTitle(mic) + ' · ' + (window.STA_NO_TXT ? STA_NO_TXT(mic) : '01'), title: mic.title });
     rec.push({ attr: 'data-mgo-tab="tab1"', img: 'vi10p.jpg', kicker: '실습', title: tabName('tab1') });
     rec.push({ attr: 'data-mgo-tab="tab6"', img: 'console_strip.jpg', kicker: '실습', title: tabName('tab6') });
-    return '<section class="hm-sec" id="homeNext"><div class="hm-sec__head"><h2>처음이라면 이 순서로 시작해요</h2><p>신호 흐름 → 장비 → 실습 순서로 배우면 더 쉽게 이해돼요.</p></div><div class="hm-next">' +
+    return '<section class="hm-sec" id="homeNext"><div class="hm-sec__head"><h2>처음이라면 이 순서로 시작해요</h2><p>소리가 가는 길(신호 흐름) → 장비 → 실습 순서로 배우면 쉬워요.</p></div><div class="hm-next">' +
       rec.map(function (o, i) { o.step = i + 1; return itemCard(o); }).join('') + '</div></section>';
   }
   function renderHome() {
@@ -181,15 +181,15 @@
       '<h1 id="homeTitle">교회 음향팀을 위한<br>실습 중심 교육 플랫폼</h1>' +
       '<p class="hm-hero__lead">장비를 배우고, 직접 조작하고, 소리를 들으며 실제 예배 현장에서 바로 쓸 수 있는 음향 운영을 익힙니다.</p>' +
       '<div class="hm-hero__cta">' + cta + '<button type="button" class="ui-btn ui-btn--on-dark" data-mgo-tab="tabIntro">음향의 중요성 읽기</button></div></div>' +
-      '<aside class="hm-me" aria-label="나의 학습 현황"><div class="hm-me__head"><div class="ui-ring" style="--p:' + pct + '"><span>' + pct + '%</span></div><div><h2>나의 학습 현황</h2><p>' + (started ? '끝낸 레슨 · 과정으로 셌어요' : '아직 시작 전이에요') + '</p></div></div>' +
+      '<aside class="hm-me" aria-label="나의 학습 현황"><div class="hm-me__head"><div class="ui-ring" style="--p:' + pct + '"><span>' + pct + '%</span></div><div><h2>나의 학습 현황</h2><p>' + (started ? '끝낸 레슨과 과정을 셌어요' : '아직 시작 전이에요') + '</p></div></div>' +
       '<div class="hm-me__rows"><div class="hm-me__row"><span>신호 흐름 레슨</span><b>' + doneN + ' / ' + ready.length + '</b>' + bar(ready.length ? doneN / ready.length * 100 : 0) + '</div>' +
       '<div class="hm-me__row"><span>학습 과정</span><b>' + modDone + ' / ' + mods.length + '</b>' + bar(mods.length ? modDone / mods.length * 100 : 0) + '</div>' +
       '<div class="hm-me__row"><span>진행 중</span><b>' + (doing.length + doingL.length) + '개</b></div></div>' +
       '<p class="hm-me__note">기록은 이 브라우저에만 저장돼요.</p></aside></section>' +
       nextSection(doing, doingL) +
-      '<section class="hm-sec" id="modHome"><div class="hm-sec__head"><h2>전체 학습 과정</h2><p>분야를 골라 시작해요. 과정마다 이론 → 실습 → 확인 문제 순서로 배워요.</p></div><div class="hm-cats">' + HOME_CATS.map(catCard).join('') + '</div></section>' +
+      '<section class="hm-sec" id="modHome"><div class="hm-sec__head"><h2>전체 학습 과정</h2><p>배우고 싶은 분야를 골라요. 과정마다 이론 학습 → 실습 → 확인 문제 순서로 배워요.</p></div><div class="hm-cats">' + HOME_CATS.map(catCard).join('') + '</div></section>' +
       /* 2026-10-25: 「기초 이론」 칸 삭제 — 남은 레슨(신호 흐름)은 위 「처음이라면」 1번과 음향 장비 학습 경로에서 열어요 */
-      '<section class="hm-sec home-sec" id="homeAdv"><div class="hm-sec__head"><h2>심화 주제</h2><p>더 깊이 알고 싶은 주제를 골라요. 그 내용을 배우는 과정이 바로 열려요.</p></div><div class="home-cards">' + ADV.map(cardAdvOpen).join('') + '</div></section>';
+      '<section class="hm-sec home-sec" id="homeAdv"><div class="hm-sec__head"><h2>심화 주제</h2><p>더 깊이 알고 싶은 주제를 골라요. 누르면 그 내용을 배우는 과정이 바로 열려요.</p></div><div class="home-cards">' + ADV.map(cardAdvOpen).join('') + '</div></section>';
   }
 
   /* ------------------------------------------------------------- 레슨 화면 */
