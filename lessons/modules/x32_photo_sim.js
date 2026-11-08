@@ -153,12 +153,13 @@
       /* M32: 사진이 비스듬하고 조금 작아서 페이더 손잡이 · 글자를 줄임 */
       /* M32 (위에서 찍은 Sweetwater 사진, 3000 px 폭 → 1cqw = 30 px): 페이더 홈 = 사진의 판 색 + 검은 홈 + 사진과 같은 자리 눈금(+10 · +5 · 0 · −5 · −10 · −20 · −30 · −40 · −50 · −60 · −∞) */
       '.x32p-stage.x32p-m32{overflow:hidden}',
-      '.x32p-m32 .x32p-slot{border-radius:.1cqw;background:linear-gradient(90deg,transparent 0 42%,#060707 42% 58%,transparent 58%),#2f3237}',
+      '.x32p-m32 .x32p-slot{border-radius:0;background:linear-gradient(90deg,transparent 0 42%,#060707 42% 58%,transparent 58%),linear-gradient(90deg,rgba(47,50,55,0) 0,#2f3237 9%,#2f3237 91%,rgba(47,50,55,0) 100%)}',
       '.x32p-m32 .x32p-slot .tk{position:absolute;left:3%;right:12%;height:.13cqw;margin-top:-.065cqw;background:linear-gradient(90deg,#e9eaee 0 40%,transparent 40% 57%,#e9eaee 57% 100%);pointer-events:none}',
       '.x32p-m32 .x32p-slot .tk.z{left:0;right:6%}',
       '.x32p-m32 .x32p-cap{width:74%;z-index:1}',
       '.x32p-m32 .x32p-cap i{top:-.62cqw;height:1.24cqw;border-radius:.16cqw;background:linear-gradient(180deg,#fbfbfc 0,#e3e5e9 30%,#b9bdc4 48%,#7d828b 52%,#c7cad0 70%,#9da1a9 100%);box-shadow:0 .2cqw .35cqw rgba(0,0,0,.7),inset 0 0 0 .04cqw rgba(0,0,0,.35)}',
       '.x32p-m32 .x32p-cap i::after{left:6%;right:6%;top:48%;height:.07cqw;background:#1f2125}',
+      '.x32p-m32 .x32p-cap.sof i{background:linear-gradient(180deg,#fff1e0 0,#ffc285 30%,#f08a2a 48%,#c25a00 52%,#ffb066 70%,#e07a1c 100%)}.x32p-m32 .x32p-cap.main i{background:linear-gradient(180deg,#ffe3e3 0,#f99 30%,#e04848 48%,#a51616 52%,#f27b7b 70%,#c92a2a 100%)}',
       '.x32p-m32 .x32p-lcd span{font-size:.36cqw}.x32p-m32 .x32p-lcd b{font-size:.4cqw}.x32p-m32 .x32p-bl{font-size:.36cqw}.x32p-m32 .x32p-val{font-size:.5cqw}.x32p-m32 .x32p-alcd{font-size:.3cqw}',
       '.x32p-note{margin:0;font-size:.72rem;color:var(--sta-ink-2,#64748b)}'
     ].join('\n');
