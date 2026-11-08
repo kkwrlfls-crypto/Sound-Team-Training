@@ -31,7 +31,6 @@
     'img/modules/hw_mic.jpg': { t: '사진: cogdogblog, 「2011-365-63 On The Air」, CC BY 2.0 (Wikimedia Commons, 잘라서 사용)', url: 'https://commons.wikimedia.org/wiki/File:2011-365-63_On_The_Air_(5497700337).jpg' },
     'img/modules/hw_cable.jpg': { t: '사진: Jud McCranie, 「XLR connectors, male and female」, CC BY-SA 4.0 (Wikimedia Commons, 잘라서 사용)', url: 'https://commons.wikimedia.org/wiki/File:XLR_connectors,_male_and_female.jpg' },
     'img/modules/hw_console.jpg': { t: '사진: 3층에 설치된 Yamaha CL5 (제조사 제품 사진)' },
-    'img/modules/hw_amp.jpg': { t: '사진: 3층에 설치된 d&b 40D · 10D 앰프 (제조사 제품 사진)' },
     'img/modules/hw_speaker.jpg': { t: '사진: 3층에 설치된 d&b 서브우퍼 · E8 · Vi10P (제조사 제품 사진)' },
     'img/modules/mg12xu_full.jpg': { t: '사진: 「MG12XU 실습」 화면의 콘솔 (Yamaha 제품 사진 + 실습용 페이더)' },
     'https://products.shureweb.eu/cdn-cgi/image/width=900,height=900,format=auto/shure_product_db/product_main_images/files/67c/0a4/37-/original/a63ca7f1e7b45a53c3f11898a7c6280a.webp': { t: '사진: Shure SLX-D+ 무선 마이크 시스템 공식 제품 사진 (shure.com)', url: 'https://www.shure.com/en-ASIA/products/wireless-systems/slxd-plus' },   /* 2026-11-04: 01-2 무선 마이크 카드 */
@@ -459,11 +458,11 @@
     dconn: { label: '3D 모델(디지털 오디오 커넥터)', need: 'DigitalConnectors', dir: [0.6, 0.42, 1],
       variants: [['set', '한눈에 비교', '실제 크기 비율로 나란히', [0.1, 0.8, 1], 1.2], ['etherCON', 'etherCON', 'Dante · AES50 랜선의 잠금 커넥터'], ['RJ45', 'RJ45', '일반 랜선 플러그'], ['AES-XLR', 'AES/EBU', '110 Ω 디지털 XLR'], ['BNC', 'BNC', '75 Ω 동축 · 워드클럭 · MADI'], ['TOSLINK', '광(TOSLINK)', 'ADAT · S/PDIF 광'], ['USB-C', 'USB-C', '양면 · 둥근 타원'], ['USB-AB', 'USB A-B', 'A(컴퓨터) ↔ B(오디오 장비)', [0.25, 0.85, 1], 1.9]],
       make: function (v) { return DigitalConnectors.create({ variant: v }); } },
-    /* 2026-11-04: 3층 랙 d&b 40D · 10D (절차적 모델) — 앞면 화면 · LED, 돌려 보면 뒷면 Phoenix 단자 · RJ45 */
-    dbamp: { label: '3D 모델(d&b 40D · 10D)', need: 'DbAmps', dir: [0.35, 0.28, 1], dist: 1.25,
-      variants: [['40D', '40D', '4채널 · 터치스크린 · 메인 · 서브 · 천장 가운데'], ['10D', '10D', '4채널 · LED 표시 · 천장 좌우 · 기둥 · 모니터'], ['40D', '40D 뒷면', '입력 · 출력 · 네트워크 · 전원 단자', [-0.45, 0.32, -1]], ['10D', '10D 뒷면', '전원 스위치 · 단자', [-0.45, 0.32, -1]]],
+    /* 2026-11-08: 04-2 디지털 앰프 — 3층 장비 대신 일반 4채널 DSP 앰프(로고 · 모델명 없는 절차적 모델) */
+    dbamp: { label: '3D 모델(일반 4채널 디지털 앰프)', need: 'GenericDspAmp', dir: [0.35, 0.28, 1], dist: 1.25,
+      variants: [['screen', '화면형', '4채널 · 컬러 화면 · 다이얼'], ['led', 'LED형', '4채널 · 채널별 불빛 · 전원 버튼'], ['screen', '뒷면', '입력 · 출력 · 네트워크 · 전원 단자', [-0.45, 0.32, -1]]],
       toggleTxt: '전원 끄기', toggleLabel: function (on) { return on ? '전원 끄기' : '전원 켜기'; },
-      make: function (v) { return DbAmps.create({ variant: v }); }, toggle: function (m, on) { DbAmps.api(m).setPower(on); } },
+      make: function (v) { return GenericDspAmp.create({ variant: v }); }, toggle: function (m, on) { GenericDspAmp.api(m).setPower(on); } },
     /* 2026-11-08: 05-1 패시브 스피커 — 3층 장비 대신 일반 패시브 스피커(로고 · 모델명 없는 절차적 모델), 「속 보기」로 그릴 뒤 드라이버 */
     dbspk: { label: '3D 모델(일반 패시브 스피커)', need: 'GenericPassiveSpk', dir: [0.55, 0.3, 1], dist: 1.75,
       variants: [['12-2way', '12인치 2웨이', '우퍼 12인치 + 혼', [0.55, 0.3, 1], 1.75], ['8-2way', '8인치 2웨이', '작은 2웨이', [0.55, 0.32, 1], 1.75], ['15-2way', '15인치 2웨이', '우퍼 15인치 + 혼', [0.55, 0.3, 1], 1.75], ['sub18', '18인치 서브우퍼', '아주 낮은 소리 담당', [0.7, 0.5, 1], 1.8], ['column', '컬럼 스피커', '가늘고 긴 스피커', [0.5, 0.22, 1], 2.2]],
