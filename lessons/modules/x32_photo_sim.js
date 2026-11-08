@@ -572,7 +572,7 @@
     function applyListen() { if (!U.audio || !U.audio.listen) return; var v = el.querySelector('[data-act=listen]').value; try { U.audio.listen(/^bus/.test(v) ? { type: 'bus', index: +v.slice(3) } : v); } catch (x) { /* noop */ } }
     function onChange(e) {
       var t = e.target;
-      if (t.matches('[data-act=src]')) { if (U.audio && U.audio.setSources) try { var sl = audioSources(); U.audio.setSources(sl || STEMS.map(function (x) { return { name: x.name, url: x.url, target: x.input }; })); } catch (x) { /* noop */ } return; }
+      if (t.matches('[data-act=src]')) { if (U.audio && U.audio.setSources) try { var sl = audioSources(); U.audio.setSources(sl || (window.X32Audio && X32Audio.DEFAULT_STEMS) || STEMS.map(function (x) { return { name: x.name, url: x.url, target: x.input }; })); } catch (x) { /* noop */ } return; }
       if (t.matches('[data-act=listen]')) { applyListen(); return; }
       if (t.matches('[data-act=files]') && t.files && t.files.length) {
         if (!window.X32Audio) { say('소리 파일(x32_audio.js)이 아직 준비되지 않았어요.'); return; }
