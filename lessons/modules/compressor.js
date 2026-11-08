@@ -470,7 +470,7 @@
       '.sim-cmp-meter span.on.g{background:#22c55e}.sim-cmp-meter span.on.y{background:#eab308}.sim-cmp-meter span.on.r{background:#ef4444}.sim-cmp-meter span.on.o{background:#f97316}' +
       '.sim-cmp-cbox{flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:4px}' +
       '.sim-cmp-cbox canvas,.sim-cmp-pbox canvas{display:block;border:1px solid var(--sta-line,#d6dee8);border-radius:10px;background:#fff;max-width:100%}' +
-      '.sim-cmp-cbox small,.sim-cmp-pbox small{font-size:.72rem;color:#64748b;line-height:1.4}' +
+      '.sim-cmp-cbox small,.sim-cmp-pbox small{font-size:.72rem;color:#4b5c74;line-height:1.4}' +
       '.sim-cmp-plots{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}' +
       '.sim-cmp-pbox{display:flex;flex-direction:column;gap:4px;min-width:0}' +
       '.sim-cmp-rng{margin-bottom:6px}.sim-cmp-rng b{font-variant-numeric:tabular-nums;color:#0e7490}' +

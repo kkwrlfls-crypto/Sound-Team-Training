@@ -251,7 +251,7 @@
     s.textContent = [
       '.sim-da{display:flex;flex-direction:column;gap:10px;min-width:0}',
       '.sim-da-seq{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:10px 12px;border:1px solid var(--sta-line,#cbd5e1);border-radius:10px;background:#fff}',
-      '.sim-da-seq h4{margin:0;font-size:.86rem;color:var(--sta-navy,#0f2747);width:100%}.sim-da-seq h4 small{font-weight:500;color:#94a3b8;font-size:.7rem}',
+      '.sim-da-seq h4{margin:0;font-size:.86rem;color:var(--sta-navy,#0f2747);width:100%}.sim-da-seq h4 small{font-weight:500;color:#5b6b81;font-size:.72rem}',
       '.sim-da-step{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px;border:1px solid #94a3b8;background:#f8fafc;font:inherit;font-size:.78rem;font-weight:700;cursor:pointer;color:#0f2747}',
       '.sim-da-step i{width:10px;height:10px;border-radius:50%;background:#cbd5e1;flex:none}',
       '.sim-da-step.on i{background:#22c55e;box-shadow:0 0 6px #22c55e}.sim-da-step.boot i{background:#f59e0b;animation:simDaBlink .6s infinite}',

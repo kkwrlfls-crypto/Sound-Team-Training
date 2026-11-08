@@ -392,7 +392,7 @@
     '.fbt-check summary{cursor:pointer;font-weight:800;font-size:.9rem;color:var(--sta-navy);display:flex;gap:8px;align-items:center;list-style:none}',
     '.fbt-check summary::-webkit-details-marker{display:none}',
     '.fbt-check summary::after{content:"⌄";margin-left:auto;color:#94a3b8}.fbt-check[open] summary::after{content:"⌃"}',
-    '.fbt-check summary small{font-weight:700;color:#7a8aa0;font-variant-numeric:tabular-nums}',
+    '.fbt-check summary small{font-weight:700;color:#5b6b81;font-variant-numeric:tabular-nums}',
     '.fbt-check ol{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}',
     '.fbt-check li{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border-radius:8px;background:#f8fafc;border:1px solid transparent}',
     '.fbt-check li.cur{border-color:#bfe3ea}',
@@ -465,7 +465,7 @@
     '.fbt-how ol{margin:8px 0 0;padding-left:20px;font-size:.84rem;line-height:1.7;display:grid;gap:2px;word-break:keep-all}',
     /* 돌발 대응 */
     '.fbt-em__st{border:1px solid var(--sta-line);border-radius:var(--sta-r,12px);background:#fff;padding:12px 14px;display:grid;gap:6px}',
-    '.fbt-em__top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:.8rem;font-weight:800;color:#7a8aa0}',
+    '.fbt-em__top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:.8rem;font-weight:800;color:#5b6b81}',
     '.fbt-em__ann{font-size:.95rem;font-weight:800;color:var(--sta-navy);margin:0;word-break:keep-all}',
     '.fbt-em__hint{font-size:.88rem;font-weight:700;margin:0;padding:8px 10px;border-radius:8px;word-break:keep-all}',
     '.fbt-em__hint.howl{background:var(--fbt-red-bg);color:#991b1b}',

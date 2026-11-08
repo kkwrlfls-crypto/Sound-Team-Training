@@ -337,7 +337,7 @@
       '.sim-cable-slots{display:grid;gap:10px;margin-top:8px}',
       '.sim-cable-slot{border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;margin:0;min-width:0}',
       '.sim-cable-slot legend{font-size:.82rem;font-weight:800;color:var(--sta-ink,#0f1f33);padding:0 4px}',
-      '.sim-cable-slot small{display:block;font-size:.72rem;color:#7a8aa0;margin:0 0 6px}',
+      '.sim-cable-slot small{display:block;font-size:.72rem;color:#5b6b81;margin:0 0 6px}',
       '.sim-cable-chips{display:flex;flex-wrap:wrap;gap:6px}',
       '.sim-cable-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border:1px solid var(--sta-line,#d6dee8);border-radius:999px;font-size:.76rem;font-weight:700;cursor:pointer;background:#f8fafc}',
       '.sim-cable-chip input{margin:0;accent-color:#0e7490}',

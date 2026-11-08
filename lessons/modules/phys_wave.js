@@ -350,7 +350,7 @@
       '.sim-pw-rows .sim-row{min-width:0}.sim-pw-rows .sim-row b{white-space:nowrap}',
       '.sim-pw-msg{grid-column:1/-1;margin:0;padding:8px 12px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0;font-size:.8rem;line-height:1.55;color:#334155}',
       '.sim-pw-msg.ok{background:#ecfdf5;border-color:#a7f3d0;color:#065f46;font-weight:700}',
-      '.sim-pw-cap{font-size:.7rem;color:#7a8aa0;margin:4px 0 0;line-height:1.45}',
+      '.sim-pw-cap{font-size:.7rem;color:#5b6b81;margin:4px 0 0;line-height:1.45}',
       '@media (max-width:980px){.sim-pw{grid-template-columns:minmax(0,1fr)}}',
       '@media (max-width:520px){.sim-pw-read{grid-template-columns:repeat(2,minmax(0,1fr))}.sim-pw-rows{grid-template-columns:minmax(0,1fr)}}'
     ].join('\n');

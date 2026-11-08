@@ -356,7 +356,7 @@
       gap: 10px;
       text-align: center;
     }
-    .cl5-order-idle { color: #64748b; font-size: 0.95rem; font-weight: 700; }
+    .cl5-order-idle { color: #a8b4c6; font-size: 0.95rem; font-weight: 700; }   /* 2026-11-09: 어두운 판 위 대비 (전 #64748b 3.8:1) */
     .cl5-order-live-text {
       font-size: 2.1rem;
       font-weight: 900;
@@ -412,8 +412,8 @@
     }
     .cl5-order-controls .cl5-step-btn:hover { background: #334155; }
     .cl5-order-controls .cl5-step-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .cl5-order-controls .cl5-start-btn { background: var(--accent-green, #16a34a); color: #fff; }
-    .cl5-order-controls .cl5-start-btn:hover { background: #15803d; }
+    .cl5-order-controls .cl5-start-btn { background: #047857; color: #fff; }   /* 2026-11-09: 흰 글자 대비 5.5:1 (전 #10b981 2.5:1) */
+    .cl5-order-controls .cl5-start-btn:hover { background: #065f46; }
 
     /* CL5 탭이 열려 있는 동안엔 전체 패널 폭을 넓혀서 콘솔 사진이 더 크게 보이게 합니다.
        (다른 탭들은 기존 960px 폭을 그대로 유지) */
@@ -1934,6 +1934,11 @@
     /* 2026-10-08 추가: 패치베이(jack_strip.jpg)는 콘솔 전면 사진과 가로세로 비율이 전혀 달라서,
        같은 % 크기를 그대로 쓰면 글자가 안 맞게 작거나 커 보입니다. 이 레이어 전용으로 폰트만 살짝 조정합니다. */
     .mg12xu-jack-padhpf-btn { font-size: 0.42rem; border-radius: 3px; }
+    /* 2026-11-09 (디자인 검사 Hallmark 49a · 26a): 좁은 화면에서 PAD · HPF · PRE 글자가 2~3줄로 깨지지 않게 한 줄로,
+       키보드로 고를 때 사진 위 단추의 초점 테두리가 어떤 바탕에서도 보이게(노랑 + 어두운 테) */
+    .mg12xu-pad-btn, .mg12xu-hpf-btn, .mg12xu-pre-btn { white-space: nowrap; overflow: hidden; }
+    .mg12xu-hotspot:focus-visible, .mg12xu-pfl-hotspot:focus-visible, .mg12xu-pre-btn:focus-visible, .mg12xu-pad-btn:focus-visible, .mg12xu-hpf-btn:focus-visible,
+    .mg12xu-route-btn:focus-visible, .mg12xu-source-sw-btn:focus-visible, .cl5-on-hotspot:focus-visible { outline: 3px solid #fde047; outline-offset: 2px; box-shadow: 0 0 0 5px rgba(15, 23, 42, 0.85); }
     .mg12xu-source-sw-btn {
       position: absolute;
       transform: translate(-50%, -50%);
@@ -3236,7 +3241,7 @@
       <div class="voice-training-section">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div style="font-size: 0.95rem; font-weight: 800; color: var(--accent-cyan);">🗣 높낮이(대역)별 소리 비교해 듣기</div>
-          <button style="padding:6px 12px; font-size:0.75rem; background:var(--accent-red); color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="stopAllAudioFiles()">전체 정지</button>
+          <button style="padding:6px 12px; font-size:0.75rem; background:#dc2626; color:#fff; border:none; border-radius:6px; cursor:pointer;" onclick="stopAllAudioFiles()">전체 정지</button>
         </div>
         <div style="font-size: 0.8rem; color: var(--text-sub); margin-top: 4px;">1~7번을 하나씩 눌러 들어 보세요. 1번(원본)과 비교하면 낮은 · 가운데 · 높은 소리가 어떻게 달라지는지 알 수 있어요.</div>
 

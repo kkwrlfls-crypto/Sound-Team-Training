@@ -317,7 +317,7 @@
     '.sim-gate-track.gr b{left:auto;right:0;background:#f59e0b}' +
     '.sim-gate-ctl{border:1px solid var(--sta-line);border-radius:10px;background:#fff;padding:10px 12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px 16px}' +
     '.sim-gate-ctl .sim-range b{font-variant-numeric:tabular-nums}.sim-gate-ctl .sim-range input{accent-color:#0e7490}' +
-    '.sim-gate-ctl .sim-range small{color:#7a8aa0;font-size:.7rem}.sim-gate-lb{font-style:normal}' +
+    '.sim-gate-ctl .sim-range small{color:#5b6b81;font-size:.7rem}.sim-gate-lb{font-style:normal}' +
     '.sim-gate-src{display:flex;gap:6px;flex-wrap:wrap}.sim-gate-src label{flex:1 1 110px;display:flex;gap:6px;align-items:center;padding:6px 8px;border:1px solid var(--sta-line);border-radius:8px;font-size:.78rem;cursor:pointer}' +
     '.sim-gate-src label:has(input:checked){border-color:var(--sta-cyan);background:var(--sta-cyan-soft)}' +
     '@media (max-width:860px){.sim-gate{grid-template-columns:minmax(0,1fr)}}';

@@ -62,7 +62,7 @@
 .home-card__body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
 .home-card__title { font-size: 0.96rem; font-weight: 800; color: var(--sta-ink); }
 .home-card__sum { font-size: 0.8rem; line-height: 1.55; color: var(--sta-ink-2); flex: 1; }
-.home-card__meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; font-size: 0.74rem; color: #7a8aa0; }
+.home-card__meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; font-size: 0.74rem; color: #5b6b81; }
 .home-tag { display: inline-block; padding: 3px 9px; border-radius: 6px; font-size: 0.72rem; font-weight: 800; background: var(--lsn-blue); color: #fff; }
 .home-tag.practice { background: var(--sta-cyan); }
 .home-tag.adv { background: #6d4fc2; }
@@ -88,7 +88,7 @@
 .home-phase > div { flex: 1; min-width: 0; }
 
 /* ---------- 레슨 ---------- */
-.lsn-crumb { font-size: 0.78rem; color: #7a8aa0; margin-bottom: 10px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.lsn-crumb { font-size: 0.78rem; color: #5b6b81; margin-bottom: 10px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .lsn-crumb button { border: 0; background: none; padding: 0; color: var(--lsn-blue); font: inherit; font-weight: 700; cursor: pointer; }
 .lsn-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
 .lsn-badge { display: inline-block; font-size: 0.74rem; font-weight: 800; color: #fff; background: var(--lsn-blue); padding: 4px 10px; border-radius: 999px; margin-bottom: 8px; }
@@ -164,7 +164,7 @@
 .lsn-opt.no { border-color: #fdba74; background: #fff7ed; }
 .lsn-opt .why { display: block; font-size: 0.8rem; color: var(--sta-ink-2); margin-top: 4px; }
 .lsn-qbar { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
-.lsn-check { border: 0; background: #059669; color: #fff; padding: 8px 14px; border-radius: 8px; font-weight: 800; font-size: 0.82rem; cursor: pointer; }
+.lsn-check { border: 0; background: #047857; color: #fff; padding: 8px 14px; border-radius: 8px; font-weight: 800; font-size: 0.82rem; cursor: pointer; }
 .lsn-check:disabled { opacity: 0.45; cursor: not-allowed; }
 .lsn-fb { font-size: 0.86rem; font-weight: 800; }
 .lsn-fb.ok { color: var(--sta-ok); } .lsn-fb.no { color: var(--sta-bad); }
@@ -177,7 +177,7 @@
 .lsn-deep-item p { margin: 4px 0 6px; font-size: 0.84rem; line-height: 1.6; color: var(--sta-ink-2); }
 .lsn-deep-item details summary { cursor: pointer; font-size: 0.8rem; font-weight: 800; color: #6d4fc2; }
 .lsn-deep-item details div { margin-top: 6px; font-size: 0.84rem; line-height: 1.7; color: var(--sta-ink); background: #faf8ff; border-radius: 8px; padding: 10px 12px; }
-.lsn-src { margin-top: 14px; font-size: 0.76rem; color: #7a8aa0; }
+.lsn-src { margin-top: 14px; font-size: 0.76rem; color: #5b6b81; }
 .lsn-src a { color: var(--lsn-blue); }
 
 .lsn-rail { position: sticky; top: 16px; display: grid; gap: 14px; }

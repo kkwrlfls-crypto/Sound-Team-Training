@@ -27,7 +27,7 @@
   --sta-surface-2: #f7f9fc;
   --sta-ink: #0f1f33;
   --sta-ink-2: #4b5c74;
-  --sta-ink-3: #74849a;
+  --sta-ink-3: #5b6b81;   /* 2026-11-09: 흰 바탕 5.4:1 (전 #74849a 3.8:1) */
   --sta-line: #e0e7f0;
   --sta-line-strong: #c9d4e2;
 
@@ -132,7 +132,7 @@ button[onclick^="reset"], button[onclick*="Reset"],
 .mod-tab { color: var(--sta-ink-2); font-weight: 700; }
 .mod-tab:hover { background: var(--sta-surface-2); color: var(--sta-ink); }
 .mod-tab[aria-selected="true"] { background: var(--sta-blue); color: #fff; }
-.mod-tab[aria-selected="true"] .n { background: rgba(255, 255, 255, 0.22); color: #fff; }
+.mod-tab[aria-selected="true"] .n { background: rgba(8, 20, 45, 0.3); color: #fff; }   /* 2026-11-09: 흰 숫자 대비 7:1 (전 3.7:1) */
 .home-filter[aria-selected="true"] { background: var(--sta-blue); border-color: var(--sta-blue); }
 
 /* ---------------------------------------------------------------- 6. 진행 상태 */
@@ -645,7 +645,7 @@ html.nav-open #toTopBtn { opacity: 0; pointer-events: none; }
 .mod-match__terms { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .mod-mrow { display: grid; gap: 6px; padding: 10px 12px; border-radius: 10px; background: var(--sta-surface); border: 1.5px dashed #b9cdf3; cursor: default; transition: border-color 0.15s, background 0.15s, box-shadow 0.15s; }
 .mod-mrow b { font-size: 0.98rem; font-weight: 800; color: var(--sta-navy); word-break: keep-all; }
-.mod-mslot { font-size: 0.78rem; color: #94a3b8; line-height: 1.45; word-break: keep-all; }
+.mod-mslot { font-size: 0.78rem; color: #5b6b81; line-height: 1.45; word-break: keep-all; }
 .mod-match.picking .mod-mrow:not(.ok) { cursor: pointer; border-color: var(--sta-blue); }
 .mod-mrow.over { border-style: solid; border-color: var(--sta-blue); background: #eef4ff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
 .mod-mrow.ok { border-style: solid; border-color: #86efac; background: #f0fdf4; }

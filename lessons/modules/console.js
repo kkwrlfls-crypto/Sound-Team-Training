@@ -338,7 +338,7 @@
       '.sim-con-patch select{font:inherit;font-size:.82rem;padding:5px 6px;border-radius:6px;border:1px solid var(--sta-line,#d6dee8)}',
       '.sim-con-flowwrap{grid-column:1/-1;border:1px solid var(--sta-line,#d6dee8);border-radius:12px;background:#fff;padding:8px;overflow-x:auto}',
       '.sim-con-flowwrap svg{display:block;width:100%;min-width:540px;height:auto}',
-      '.sim-con-flowwrap p{margin:4px 0 0;font-size:.72rem;color:#7a8aa0}',
+      '.sim-con-flowwrap p{margin:4px 0 0;font-size:.72rem;color:#5b6b81}',
       '@media (max-width:860px){.sim-con{grid-template-columns:minmax(0,1fr)}}',
       '@media (max-width:520px){.sim-con-col{width:88px}.sim-con-knob input{width:76px}}'
     ].join('\n');

@@ -351,7 +351,7 @@
       '.sim-pe-nav button:focus-visible,.sim-pe-chip:focus-visible,.sim-pe-knob:focus-visible{outline:2px solid #22d3ee;outline-offset:2px}',
       '.sim-pe-body{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px;align-items:start}',
       '.sim-pe-stage{border:1px solid var(--sta-line,#cbd5e1);border-radius:12px;background:#f8fafc;overflow:hidden;min-width:0}',
-      '.sim-pe-stage h4{margin:0;padding:9px 12px 0;font-size:.86rem;color:var(--sta-navy,#0f2747)}.sim-pe-stage h4 small{font-weight:500;color:#64748b;font-size:.72rem}',
+      '.sim-pe-stage h4{margin:0;padding:9px 12px 0;font-size:.86rem;color:var(--sta-navy,#0f2747)}.sim-pe-stage h4 small{font-weight:500;color:#4b5c74;font-size:.72rem}',
       '.sim-pe-svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}',
       '.sim-pe-svg [data-drag]{cursor:grab}.sim-pe-svg.dragging [data-drag]{cursor:grabbing}.sim-pe-svg [data-act]{cursor:pointer}',
       '.sim-pe-hint{font-size:.76rem;color:#475569;padding:6px 12px 9px;margin:0;line-height:1.5}',
