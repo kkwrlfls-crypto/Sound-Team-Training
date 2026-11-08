@@ -30,7 +30,7 @@
   var DIM = {}; VARIANTS.forEach(function (v) { var s = SPEC[v]; DIM[v] = { width: s.W, height: s.H, depth: s.D }; });
   // 사이트 뷰어(modules.js): 가운데에서 dir 방향으로 bbox 대각선 × dist 만큼 떨어진 곳에 카메라 (스크린샷으로 맞춘 값)
   var RECOMMENDED_DIR = { '12-2way': [0.55, 0.3, 1], '8-2way': [0.55, 0.32, 1], '15-2way': [0.55, 0.3, 1], 'sub18': [0.7, 0.5, 1], 'column': [0.5, 0.22, 1] };
-  var RECOMMENDED_DIST = { '12-2way': 2.0, '8-2way': 2.0, '15-2way': 2.0, 'sub18': 1.9, 'column': 1.7 };
+  var RECOMMENDED_DIST = { '12-2way': 1.75, '8-2way': 1.75, '15-2way': 1.75, 'sub18': 1.8, 'column': 2.2 };
 
   // ---------------------------------------------------------------- 텍스처
   var TEX = {};
@@ -40,9 +40,9 @@
   function grilleTex() {   // 타공 그릴: 한 칸(128 px) = 가로 피치 1개 · 엇갈린 구멍 2개
     if (TEX.grille) return TEX.grille;
     var c = canvas(128, 128), g = c.getContext('2d');
-    g.fillStyle = '#ffffff'; g.fillRect(0, 0, 128, 128);
+    g.fillStyle = '#b4b8be'; g.fillRect(0, 0, 128, 128);
     [[32, 32], [96, 96]].forEach(function (p) { [[0, 0], [128, 0], [0, 128], [-128, 0], [0, -128]].forEach(function (o) {
-      var gr = g.createRadialGradient(p[0] + o[0], p[1] + o[1], 0, p[0] + o[0], p[1] + o[1], 24); gr.addColorStop(0, '#1a1a1a'); gr.addColorStop(0.8, '#262626'); gr.addColorStop(1, '#4a4a4a');
+      var gr = g.createRadialGradient(p[0] + o[0], p[1] + o[1], 0, p[0] + o[0], p[1] + o[1], 24); gr.addColorStop(0, '#3a3c40'); gr.addColorStop(0.8, '#45474b'); gr.addColorStop(1, '#6a6d72');
       g.fillStyle = gr; g.beginPath(); g.arc(p[0] + o[0], p[1] + o[1], 24, 0, Math.PI * 2); g.fill(); }); });
     var t = tex(c, true); t.wrapS = t.wrapT = THREE.RepeatWrapping;
     var b = canvas(128, 128); b.getContext('2d').drawImage(c, 0, 0); var bt = tex(b, false); bt.wrapS = bt.wrapT = THREE.RepeatWrapping;
@@ -86,7 +86,7 @@
       cdrvX: new S({ color: 0x7dd3fc, roughness: 0.35, metalness: 0.5, emissive: 0x0284c7, emissiveIntensity: 0.45 })
     };
     var gt = grilleTex();
-    m.grille = new S({ color: 0x2f3237, map: gt.map, bumpMap: gt.bump, bumpScale: 0.3, roughness: 0.5, metalness: 0.5 });
+    m.grille = new S({ color: 0x3a3e45, map: gt.map, bumpMap: gt.bump, bumpScale: 0.3, roughness: 0.5, metalness: 0.5 });
     Object.keys(m).forEach(function (k) { var x = m[k]; if (x && x.isMaterial) { x.color.convertSRGBToLinear(); if (x.emissive) x.emissive.convertSRGBToLinear(); } });
     return m;
   }
@@ -189,7 +189,7 @@
     if (s.port) {   // 서브 아래쪽 포트(가로로 긴 구멍)
       var pw = s.W - 90, ph = s.port.y1 - s.port.y0;
       add(g, new THREE.BoxGeometry(pw, ph, 4), m.dark, 0, (s.port.y0 + s.port.y1) / 2, zf - 4);
-      add(g, new THREE.BoxGeometry(pw, 4, s.D * 0.55), m.magnet, 0, s.port.y1 + 2, zf - 4 - s.D * 0.275).visible = true;
+      add(g, new THREE.BoxGeometry(pw, 4, s.D * 0.55), m.dark, 0, s.port.y1 + 2, zf - 4 - s.D * 0.275).visible = true;
     }
 
     // 그릴(타공 금속) — 앞면을 덮음
