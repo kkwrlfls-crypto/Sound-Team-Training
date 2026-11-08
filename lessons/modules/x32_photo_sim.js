@@ -43,8 +43,8 @@
   var EQB = ['LOW', 'LO MID', 'HI MID', 'HIGH'], EQF = [100, 400, 2500, 8000];
   var MENU = [['home', 'HOME'], ['meters', 'METERS'], ['routing', 'ROUTING'], ['setup', 'SETUP'], ['library', 'LIBRARY'], ['effects', 'EFFECTS'], ['mutegrp', 'MUTE GRP'], ['utility', 'UTILITY']];
   var MENU_Y = [102, 130, 160, 190, 218, 248, 278, 306];
-  var INFO = { routing: '입력·출력 연결(패치)을 정하는 곳이에요. 잘못 바꾸면 소리가 엉뚱한 곳으로 가요. 그래서 이 실습에서는 보기만 해요.', setup: '날짜·밝기·네트워크(원격 앱 연결) 같은 콘솔 기본 설정이에요.',
-    library: '채널 하나나 이펙트 하나의 설정만 따로 저장하고 불러와요. 콘솔 전체 설정은 SCENES(씬)에서 해요.', effects: '안에 든 이펙터 8대(리버브 · 딜레이 등)를 고르고 조절해요.', utility: '지금 화면에서 쓰는 도움 기능(복사 · 이름 바꾸기 등)이 나와요.' };
+  var INFO = { routing: '소리가 들어오고 나가는 길(패치)을 정하는 곳이에요. 잘못 바꾸면 소리가 엉뚱한 곳으로 가요. 그래서 이 실습에서는 보기만 해요.', setup: '날짜·밝기·네트워크(원격 앱 연결) 같은 콘솔 기본 설정이에요.',
+    library: '채널 하나나 이펙트 하나의 설정만 따로 저장하고 불러와요. 콘솔 전체 설정은 SCENES(씬)에서 저장해요.', effects: '안에 든 이펙터 8대(리버브 · 딜레이 등)를 고르고 조절해요.', utility: '지금 화면에서 쓰는 도움 기능(복사 · 이름 바꾸기 등)이 나와요.' };
   var KN = { // 노브: [px, py, 지름 px, 이름]
     gain: [200, 202, 32, 'GAIN'], lcf: [342, 202, 32, 'LOW CUT FREQUENCY'], gthr: [200, 342, 32, 'GATE THRESHOLD'], dthr: [342, 342, 32, 'DYNAMICS THRESHOLD'],
     eqq: [553, 202, 32, 'EQ Q'], eqf: [603, 288, 32, 'EQ FREQ'], eqg: [518, 346, 32, 'EQ GAIN'],
@@ -185,11 +185,11 @@
     /* ---------- 뼈대 */
     var stage, scroll, read, hint, strips = [], knobs = {}, btns = {}, encs = [];
     el.innerHTML = '<div class="x32p">' +
-      '<div class="x32p-bar"><span class="sp">페이더 · 노브는 끌어서 움직여요(노브는 마우스 휠 · 화살표 키도 돼요). 버튼은 눌러요. 이름이 궁금하면 마우스를 올려 보세요.</span>' +
+      '<div class="x32p-bar"><span class="sp">페이더·노브는 끌어서 움직여요(노브는 마우스 휠·화살표 키도 돼요). 버튼은 눌러요. 이름이 궁금하면 마우스를 올려 봐요.</span>' +
         '<span role="group" aria-label="크게 보기"><button type="button" data-zoom="1" aria-pressed="true">전체</button> <button type="button" data-zoom="1.6" aria-pressed="false">크게</button> <button type="button" data-zoom="2.3" aria-pressed="false">더 크게</button></span></div>' +
       '<div class="x32p-scroll" data-role="scroll"><div class="x32p-stage" data-role="stage" role="application" aria-label="X32 콘솔 사진 위에서 조작하는 실습"><img src="' + IMG + '" alt="Behringer X32 윗면 (공식 제품 사진)" draggable="false"></div></div>' +
       '<div class="x32p-read" data-role="read" aria-live="polite"></div>' +
-      '<p class="x32p-note">사진: Behringer 공식 제품 사진. 페이더 · 노브 · 버튼 · 이름표 · 미터 · 화면은 사진 위에 겹쳐 그렸어요. 소리 크기(dB)는 공부용으로 비슷하게 만든 값(교육용 근사)이에요. 실제 X32 의 기능이 모두 되지는 않아요. AUX · FX · MATRIX 레이어, ASSIGN 등은 모양만 있어요.</p></div>';
+      '<p class="x32p-note">사진: Behringer 공식 제품 사진. 페이더 · 노브 · 버튼 · 이름표 · 미터 · 화면은 사진 위에 겹쳐 그렸어요. 소리 크기(dB)는 공부용으로 비슷하게 만든 값(교육용 근사)이에요. 실제 X32 기능이 모두 되지는 않아요. AUX · FX · MATRIX 레이어, ASSIGN 등은 모양만 있어요.</p></div>';
     scroll = el.querySelector('[data-role=scroll]'); stage = el.querySelector('[data-role=stage]'); read = el.querySelector('[data-role=read]');
     function P(x, y, w, h, node, centered) { var s = node.style; if (centered !== false) { x -= w / 2; y -= h / 2; } s.left = (x / PW * 100).toFixed(3) + '%'; s.top = (y / PH * 100).toFixed(3) + '%'; s.width = (w / PW * 100).toFixed(3) + '%'; s.height = (h / PH * 100).toFixed(3) + '%'; return node; }
     function mk(tag, cls, attrs) { var n = document.createElement(tag); if (cls) n.className = cls; if (attrs) Object.keys(attrs).forEach(function (k) { n.setAttribute(k, attrs[k]); }); stage.appendChild(n); return n; }
@@ -218,10 +218,10 @@
     [['layerR.dca', 1064, 718, 'GROUP DCA 1–8'], ['layerR.bus1', 1064, 774, 'BUS 1–8'], ['layerR.bus2', 1064, 830, 'BUS 9–16'], ['layerR.mtx', 1064, 886, 'MATRIX 1–6 / MAIN C']].forEach(function (b) { button(b[0], b[1], b[2], 28, 23, '버스 쪽 레이어: ' + b[3], 'g'); });
     button('sof', 1064, 496, 28, 23, 'SENDS ON FADER', 'o'); button('daw', 162, 498, 28, 23, 'DAW REMOTE (이 실습에서는 안 씀)', 'y').classList.add('dim');
     // 채널 스트립 구역 버튼
-    [['p48', 178, 264, '48V (팬텀 전원)', 'y'], ['phase', 232, 264, 'Ø (위상 반전: 소리 파도를 뒤집기)', 'y'], ['lc', 346, 264, 'LOW CUT', 'y'], ['gate', 204, 412, 'GATE / DUCKER 켜기', 'y'], ['dyn', 342, 412, 'COMP / EXP 켜기', 'y'],
+    [['p48', 178, 264, '48V (팬텀 전원)', 'y'], ['phase', 232, 264, 'Ø (극성 뒤집기: 소리 물결을 위아래로 뒤집기)', 'y'], ['lc', 346, 264, 'LOW CUT', 'y'], ['gate', 204, 412, 'GATE / DUCKER 켜기', 'y'], ['dyn', 342, 412, 'COMP / EXP 켜기', 'y'],
      ['eqmode', 492, 264, 'EQ MODE', 'y'], ['band3', 686, 226, 'EQ HIGH 밴드 고르기', 'y'], ['band2', 686, 276, 'EQ HIGH MID 밴드 고르기', 'y'], ['band1', 686, 326, 'EQ LOW MID 밴드 고르기', 'y'], ['band0', 686, 376, 'EQ LOW 밴드 고르기', 'y'], ['eq', 518, 412, 'EQUALIZER 켜기', 'y'],
      ['sb0', 844, 226, 'BUS SENDS 1–4', 'y'], ['sb1', 844, 277, 'BUS SENDS 5–8', 'y'], ['sb2', 844, 326, 'BUS SENDS 9–12', 'y'], ['sb3', 844, 374, 'BUS SENDS 13–16', 'y'],
-     ['mono', 954, 264, 'MONO BUS 로 보내기 (LEVEL 노브 = 모노 버스로 보내는 양)', 'y'], ['lr', 954, 396, 'STEREO BUS(메인) 로 보내기', 'y'],
+     ['mono', 954, 264, 'MONO BUS 로 보내기 (LEVEL 노브로 보내는 양을 정해요)', 'y'], ['lr', 954, 396, 'STEREO BUS(메인) 로 보내기', 'y'],
      ['monmono', 1714, 348, '모니터 MONO', 'y'], ['dim', 1714, 396, '모니터 DIM', 'y'], ['talka', 1826, 348, 'TALK A', 'y'], ['talkb', 1826, 396, 'TALK B', 'y'],
      ['sc.prev', 1628, 502, 'SCENES: PREV (앞 씬)', 'y'], ['sc.next', 1678, 502, 'SCENES: NEXT (다음 씬)', 'y'], ['sc.undo', 1732, 502, 'SCENES: UNDO (불러오기 되돌리기)', 'y'], ['sc.go', 1802, 502, 'SCENES: GO (불러오기)', 'g'], ['sc.view', 1858, 520, 'SCENES: VIEW (화면에 씬 목록)', 'y']
     ].forEach(function (b) { button(b[0], b[1], b[2], b[0] === 'sc.go' ? 38 : b[0] === 'sc.view' ? 18 : BW, b[0] === 'sc.go' ? 34 : b[0] === 'sc.view' ? 14 : BH, b[3], b[4]); });
@@ -325,7 +325,7 @@
     function renderRead() {
       var inn = chIn(S.sel);
       read.innerHTML = '<span>지금 상태 · 교육용 근사</span><span>고른 채널 CH ' + S.sel + ' ' + esc(CHS[S.sel - 1][0]) + ' 입력' + (isFinite(inn) ? '<b>' + fmt(inn) + ' dBFS</b>' : '<b class="bad">신호 없음</b>') + '</span>' +
-        '<span>메인(회중석)' + lv(mainLv()) + '</span>' + BUSES.map(function (b, k) { return '<span>BUS ' + (k + 1) + ' ' + esc(b[0]) + lv(busLv(k)) + '</span>'; }).join('') + '<span>DCA 1 악기<b>' + fmt(M.dca[0]) + ' dB</b></span>';
+        '<span>메인(예배당)' + lv(mainLv()) + '</span>' + BUSES.map(function (b, k) { return '<span>BUS ' + (k + 1) + ' ' + esc(b[0]) + lv(busLv(k)) + '</span>'; }).join('') + '<span>DCA 1 악기<b>' + fmt(M.dca[0]) + ' dB</b></span>';
     }
     function refreshValues() {   // 끄는 중에는 이것만 (요소를 다시 만들지 않음)
       strips.forEach(function (o) { if (!o.inf || o.inf.none) return; var v = o.inf.get(); if (!o.drag) capPos(o, fpos(v)); o.val.textContent = fmt(v); o.cap.setAttribute('aria-valuetext', fmt(v) + ' dB'); });

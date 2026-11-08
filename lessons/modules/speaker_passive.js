@@ -1,18 +1,13 @@
 /* =============================================================================
-   05-1 패시브 스피커 — 2026-11-04
-   - STA_MODULES['speaker-passive'] (모듈 데이터) + STAVisuals.ps* (그림 6개) + STASims.passiveRig (실습)
-   - 05-2 액티브 스피커(speaker.js · EV ZXA1)와 나눔: 이 과정은 「앰프에서 힘을 받는 스피커」를 깊게 다룸
-     (패시브 크로스오버 · 앰프 스피커 설정 · 임피던스와 병렬/직렬 · 파워 정격과 앰프 매칭 · 케이블 굵기/손실/댐핑 · speakON 핀 · 극성 · 바이앰프 · 보호)
-   - 장비 숫자(제조사 자료 — sources 참고):
-       d&b Vi10P  — 3웨이 패시브, 2 × 10" + 8" + 1.4" 컴프레션 드라이버, 패시브 크로스오버, 8 Ω, 500/2000 W(RMS/피크 10 ms), 110° × 40°,
-                    59 Hz–18 kHz(−5 dB), CUT 100 Hz–18 kHz, 채널당 2대, 설치용 앰프 40D, 핀 1+/1−(2± 는 액티브 서브우퍼용), 두 NL4 의 네 핀은 병렬
-       d&b Y7P    — 2웨이 패시브, 2 × 8" + 1.4", 8 Ω, 400/1600 W, 75° × 40°, NLT4 F/M, 핀 1+/1−, 앰프 40D · 25D · 10D 등
-       d&b Y10P   — 2웨이 패시브, 2 × 8" + 1.4", 8 Ω, 400/1600 W, 110° × 40°
-       d&b E8     — 패시브, 150/800 W, 90° × 50°(회전), 현재 제품 페이지 12 Ω(예전 설명서 16 Ω), 앰프 10D · 40D 등
-       d&b 40D    — 4 × 2000 W/8 Ω · 4 × 2400 W/4 Ω(EIA-426B, CF 12 dB), 출력 Euroblock, Dual Channel · Mix TOP/SUB · 2-Way Active, LoadMatch(최대 70 m), 부하 모니터링
-       d&b 10D    — 4 × 350 W/8 Ω · 4 × 700 W/4 Ω, V-Series 는 지원하지 않음(→ Vi10P 는 40D)
-       EV ZX1     — 패시브 8 Ω, 200 W 연속 / 400 W 프로그램 / 800 W 피크 · Crown XLi1500 — 330 W/8 Ω, 450 W/4 Ω, 브리지 900 W/8 Ω
+   05-1 패시브 스피커 — 2026-11-04 · 2026-11-08 「일반적인 패시브 스피커」로 다시 씀(3층 장비 예시 모두 뺌) + 2차 쉬운 말
+   - STA_MODULES['speaker-passive'] (모듈 데이터) + STAVisuals.ps* (그림) + STASims.passiveRig (실습)
+   - 05-2 액티브 스피커(speaker.js)와 나눔: 이 과정은 「앰프에서 힘을 받는 스피커」를 깊게 다룸
+     (구조 · 2웨이/3웨이 · 드라이버 · 임피던스와 병렬/직렬 · 파워 정격과 앰프 고르기 · 케이블 굵기/손실/댐핑 · speakON 핀 · 극성 · 서브우퍼 · 바이앰프 · 설치)
+   - 예시 장비는 제조사 · 모델명 없이 「12인치 2웨이 패시브(8 Ω · 연속 200 W / 프로그램 400 W / 피크 800 W)」「앰프 100 · 330 · 900 W」처럼 씀
+       (숫자는 흔한 제품의 정격을 본뜬 예시 — sources 의 EV ZX1 · Crown XLi1500 자료와 같은 크기)
        구리선 저항 — 10 AWG 3.277 · 12 AWG 5.211 · 14 AWG 8.286 · 16 AWG 13.17 · 18 AWG 20.95 mΩ/m
+   - 근거: 무대예술전문인 표준교재 「무대음향」 6장(임피던스 · 직병렬 · 정격허용입력 · 감도 · 드라이버 · 인클로저 · 서브우퍼 · 패시브 스피커),
+           15장(서브우퍼 자리 · 프로그램 파워 · 채널당 4 Ω), 16장(패시브/액티브 크로스오버), 5장(케이블 손실)
    - 실습의 손실·댐핑 팩터는 공칭 임피던스로 계산(앰프 출력 임피던스·온도는 뺌) — 교육용 근사. 「앰프 매칭 기준」도 교육용 기준.
    ============================================================================= */
 (function () {
@@ -32,29 +27,27 @@
   function gauge(g) { for (var i = 0; i < GAUGES.length; i++) if (GAUGES[i].g === g) return GAUGES[i]; return GAUGES[1]; }
   function cableCalc(g, len, R) { var rc = 2 * len * gauge(g).r; return { rc: rc, loss: 20 * Math.log10(R / (R + rc)), df: rc > 0 ? R / rc : Infinity }; }
 
-  /* ---------------------------------------------------------------- 그림 1: 패시브 시스템의 구조 (hero 로도 씀) */
+  /* ---------------------------------------------------------------- 그림 1: 패시브와 액티브의 구조 (첫 화면 그림으로도 씀) — 2026-11-08 일반 장비로 */
   V.psSystem = function () {
     var s = '';
-    // 줄 1 — 일반 패시브
-    s += t(8, 18, '1. 일반 패시브 시스템 (예: 확성 실습 3 — XLi1500 + ZX1)', { size: 11, weight: 800, anchor: 'start', fill: C.sub });
-    s += blk(8, 40, 72, 40, '콘솔', '라인 신호', C.ink) + arrow(80, 60, 108, 60, C.blue);
-    s += blk(110, 34, 112, 52, '파워앰프', '힘을 키움', C.red, '#fef2f2');
-    s += arrow(222, 60, 314, 60, C.red, 3.2) + t(268, 52, '스피커 레벨', { size: 9.5, fill: C.red, weight: 700 }) + t(268, 76, 'speakON', { size: 9, fill: C.sub });
-    s += box(316, 28, 276, 64, C.bg, C.ink, 10) + t(592, 20, '패시브 스피커 (통)', { size: 9.5, fill: C.sub, anchor: 'end', weight: 700 });
-    s += blk(326, 42, 112, 40, '패시브 크로스오버', '코일 · 콘덴서', C.violet, '#f5f3ff');
+    // 줄 1 — 패시브
+    s += t(8, 18, '1. 패시브 스피커 — 앰프가 바깥에 있어요', { size: 11.5, weight: 800, anchor: 'start', fill: C.ink });
+    s += blk(8, 40, 72, 40, '콘솔', '작은 소리', C.ink) + arrow(80, 60, 108, 60, C.blue);
+    s += blk(110, 34, 112, 52, '파워앰프', '힘을 키워요', C.red, '#fef2f2');
+    s += arrow(222, 60, 314, 60, C.red, 3.2) + t(268, 52, '큰 힘', { size: 10, fill: C.red, weight: 800 }) + t(268, 76, 'speakON 케이블', { size: 9.5, fill: C.sub });
+    s += box(316, 28, 276, 64, C.bg, C.ink, 10) + t(592, 20, '패시브 스피커 · 전원 단자 없음', { size: 9.5, fill: C.sub, anchor: 'end', weight: 700 });
+    s += blk(326, 42, 112, 40, '크로스오버', '높낮이 나누기', C.violet, '#f5f3ff');
     s += arrow(438, 54, 466, 50, C.violet, 1.8) + arrow(438, 70, 466, 76, C.violet, 1.8);
-    s += blk(468, 38, 116, 22, '우퍼 (저음)', '', C.teal) + blk(468, 64, 116, 22, '고음 드라이버', '', C.amber);
-    // 줄 2 — d&b 3층
-    s += t(8, 124, '2. 3층 d&b 시스템 — 앰프의 「스피커 설정」 + 통 안의 크로스오버가 한 세트', { size: 11, weight: 800, anchor: 'start', fill: C.teal });
-    s += blk(8, 150, 72, 40, '콘솔', '라인 신호', C.ink) + arrow(80, 170, 108, 170, C.blue);
-    s += box(110, 136, 112, 68, '#ecfeff', C.teal, 6) + t(166, 154, 'd&b 40D', { size: 11.5, weight: 800, fill: C.teal }) + t(166, 170, '설정: Vi10P', { size: 9.5, fill: C.ink, weight: 700 }) + t(166, 184, 'EQ · CUT/HFA', { size: 9, fill: C.sub }) + t(166, 197, '보호 · 딜레이', { size: 9, fill: C.sub });
-    s += arrow(222, 170, 314, 170, C.red, 3.2) + t(268, 162, '스피커 레벨', { size: 9.5, fill: C.red, weight: 700 }) + t(268, 186, '스피커 케이블', { size: 9, fill: C.sub });
-    s += box(316, 132, 276, 78, C.bg, C.teal, 10) + t(592, 124, 'Vi10P (3웨이 패시브)', { size: 9.5, fill: C.teal, anchor: 'end', weight: 700 });
-    s += blk(326, 152, 112, 44, '패시브 크로스오버', '통 안 부품', C.violet, '#f5f3ff');
-    s += arrow(438, 162, 466, 156, C.violet, 1.6) + arrow(438, 174, 466, 174, C.violet, 1.6) + arrow(438, 186, 466, 192, C.violet, 1.6);
-    s += blk(468, 148, 116, 16, '저음 2 × 10"', '', C.teal) + blk(468, 167, 116, 16, '중음 8"', '', C.violet) + blk(468, 186, 116, 16, '고음 1.4"', '', C.amber);
-    s += t(300, 232, '패시브 = 힘(앰프)은 바깥에, 소리 나누기(크로스오버)는 통 안에 · 구성은 제조사 자료, 그림은 단순화', { size: 10, fill: C.sub });
-    return svg(600, 240, s, '패시브 스피커 시스템의 구조 — 일반 패시브와 3층 d&b 시스템');
+    s += blk(468, 38, 116, 22, '우퍼 (저음)', '', C.teal) + blk(468, 64, 116, 22, '혼 (고음)', '', C.amber);
+    // 줄 2 — 액티브 (비교)
+    s += t(8, 124, '2. 액티브 스피커 — 앰프가 통 안에 있어요 (비교)', { size: 11.5, weight: 800, anchor: 'start', fill: C.teal });
+    s += blk(8, 150, 72, 40, '콘솔', '작은 소리', C.ink) + arrow(80, 170, 314, 170, C.blue, 2.4) + t(197, 162, '작은 소리 그대로', { size: 10, fill: C.blue, weight: 800 }) + t(197, 186, 'XLR 케이블', { size: 9.5, fill: C.sub });
+    s += box(316, 132, 276, 78, C.bg, C.teal, 10) + t(592, 124, '액티브 스피커 · 전원 꽂음', { size: 9.5, fill: C.teal, anchor: 'end', weight: 700 });
+    s += blk(326, 150, 74, 40, '크로스오버', '', C.violet, '#f5f3ff') + arrow(400, 162, 408, 156, C.violet, 1.6) + arrow(400, 178, 408, 186, C.violet, 1.6);
+    s += blk(410, 144, 50, 22, '앰프', '', C.red, '#fef2f2') + blk(410, 176, 50, 22, '앰프', '', C.red, '#fef2f2') + arrow(460, 155, 468, 155, C.red, 1.6) + arrow(460, 187, 468, 187, C.red, 1.6);
+    s += blk(470, 144, 114, 22, '우퍼 (저음)', '', C.teal) + blk(470, 176, 114, 22, '혼 (고음)', '', C.amber);
+    s += t(300, 232, '패시브 = 앰프는 바깥, 나누기는 통 안 · 액티브 = 둘 다 통 안 (그림은 단순하게 그렸어요)', { size: 10, fill: C.sub });
+    return svg(600, 240, s, '패시브 스피커와 액티브 스피커의 구조 비교');
   };
 
   /* ---------------------------------------------------------------- 그림 2: 병렬 · 직렬 */
@@ -63,39 +56,39 @@
     function amp(x, y) { return box(x, y, 54, 70, C.dark, null, 6) + t(x + 27, y + 16, '앰프 CH', { size: 9.5, fill: '#e5e7eb', weight: 700 }) + t(x + 46, y + 33, '+', { size: 13, fill: '#fca5a5', weight: 800 }) + t(x + 46, y + 59, '−', { size: 13, fill: '#e5e7eb', weight: 800 }); }
     function spk(x, y, w, lab) { return box(x, y, w, 30, '#fff', C.ink, 5) + '<circle cx="' + (x + 15) + '" cy="' + (y + 15) + '" r="9" fill="none" stroke="' + C.ink + '" stroke-width="1.6"/>' + t(x + w / 2 + 8, y + 20, lab, { size: 11, weight: 800 }); }
     // 병렬
-    s += box(6, 6, 290, 222, '#f0fdfa', '#99f6e4', 10) + t(151, 26, '병렬(나란히) — 링크 케이블로 이었을 때', { size: 12, weight: 800, fill: C.teal });
+    s += box(6, 6, 290, 222, '#f0fdfa', '#99f6e4', 10) + t(151, 26, '나란히(병렬) — 링크 케이블로 이었을 때', { size: 12, weight: 800, fill: C.teal });
     s += amp(16, 70);
     s += '<path d="M70 98H112V62H150M112 98V136H150" stroke="' + C.red + '" stroke-width="2.4" fill="none"/>';
     s += '<path d="M70 126H96V186H282V62H262M282 136H262" stroke="' + C.ink + '" stroke-width="2.4" fill="none"/>';
     s += spk(150, 47, 112, '8 Ω') + spk(150, 121, 112, '8 Ω');
-    s += t(151, 210, '8 ÷ 2 = 4 Ω  (부하가 낮아져요)', { size: 13, weight: 800, fill: C.teal });
-    s += t(206, 106, '두 단자는 안에서 병렬', { size: 9, fill: C.sub });
+    s += t(151, 210, '8 ÷ 2 = 4 Ω  (Ω 이 낮아져요)', { size: 13, weight: 800, fill: C.teal });
+    s += t(206, 106, '두 단자는 안에서 나란히', { size: 9, fill: C.sub });
     // 직렬
-    s += box(304, 6, 290, 222, '#fff7ed', '#fdba74', 10) + t(449, 26, '직렬(줄줄이) — 따로 만든 배선일 때', { size: 12, weight: 800, fill: C.amber });
+    s += box(304, 6, 290, 222, '#fff7ed', '#fdba74', 10) + t(449, 26, '한 줄로(직렬) — 따로 만든 배선일 때', { size: 12, weight: 800, fill: C.amber });
     s += amp(314, 70);
     s += '<path d="M368 98H380V62H392" stroke="' + C.red + '" stroke-width="2.4" fill="none"/>';
     s += spk(392, 47, 84, '8 Ω') + '<path d="M476 62H492" stroke="' + C.amber + '" stroke-width="2.4"/>' + spk(492, 47, 84, '8 Ω');
     s += '<path d="M576 62H586V150H380V126H368" stroke="' + C.ink + '" stroke-width="2.4" fill="none"/>';
     s += t(484, 40, '앞 스피커 − → 뒤 스피커 +', { size: 9, fill: C.amber });
-    s += t(449, 176, '한 대가 끊기면 둘 다 꺼져요', { size: 10, fill: C.sub }) + t(449, 192, '같은 전압이면 4 Ω 의 ¼ 전력', { size: 10, fill: C.sub });
-    s += t(449, 214, '8 + 8 = 16 Ω  (부하가 높아져요)', { size: 13, weight: 800, fill: C.amber });
+    s += t(449, 176, '한 대가 끊기면 둘 다 꺼져요', { size: 10, fill: C.sub }) + t(449, 192, '같은 전압이면 4 Ω 일 때 힘의 ¼', { size: 10, fill: C.sub });
+    s += t(449, 214, '8 + 8 = 16 Ω  (Ω 이 높아져요)', { size: 13, weight: 800, fill: C.amber });
     return svg(600, 234, s, '스피커 두 대를 병렬과 직렬로 연결했을 때의 부하');
   };
 
   /* ---------------------------------------------------------------- 그림 3: 파워 정격과 앰프 매칭 */
   V.psPower = function () {
     var s = '', x0 = 150, x1 = 584, xw = function (w) { return x0 + w / 1000 * (x1 - x0); };
-    s += t(8, 16, 'EV ZX1 (8 Ω) 정격 — 제조사 자료 · 앰프는 「같은 8 Ω 에서」 비교', { size: 11, weight: 800, anchor: 'start', fill: C.sub });
+    s += t(8, 16, '12인치 2웨이 패시브 스피커(8 Ω) 정격 예시 · 앰프는 「같은 8 Ω 에서」 비교', { size: 11, weight: 800, anchor: 'start', fill: C.sub });
     s += '<rect x="' + xw(200) + '" y="28" width="' + (xw(400) - xw(200)) + '" height="176" fill="' + C.green + '" fill-opacity=".09"/>';
     [0, 200, 400, 600, 800, 1000].forEach(function (w) { s += '<path d="M' + xw(w) + ' 28V204" stroke="' + C.line + '" stroke-dasharray="3 3"/>' + t(xw(w), 218, w + ' W', { size: 9.5, fill: C.sub }); });
-    [['연속 (AES · RMS)', 200, C.teal, '200 W — 오래 견디는 힘 (기준)'], ['프로그램', 400, C.blue, '400 W = 연속 × 2 (+3 dB)'], ['피크', 800, C.violet, '800 W = 연속 × 4 (+6 dB) · 아주 짧게']].forEach(function (r, i) {
+    [['연속 (RMS)', 200, C.teal, '200 W — 오래 견디는 힘 (기준)'], ['프로그램', 400, C.blue, '400 W = 연속의 2배'], ['피크', 800, C.violet, '800 W = 연속의 4배 · 아주 잠깐']].forEach(function (r, i) {
       var y = 36 + i * 30, inside = i === 2; s += t(x0 - 8, y + 15, r[0], { size: 10.5, weight: 700, anchor: 'end' }) + box(x0, y, xw(r[1]) - x0, 20, r[2], null, 4) + t(inside ? xw(r[1]) - 8 : xw(r[1]) + 6, y + 14, r[3], { size: 9.5, fill: inside ? '#fff' : r[2], anchor: inside ? 'end' : 'start', weight: 700 });
     });
     s += t(x0 - 8, 146, '앰프 (8 Ω)', { size: 10.5, weight: 700, anchor: 'end' });
-    [[100, '100 W 예시', C.red, '✗ 작아서 자주 클리핑'], [330, 'XLi1500 330 W', C.green, '✓ 연속 ~ 2배 사이'], [900, '브리지 900 W', C.amber, '⚠ 너무 큼']].forEach(function (a, i) {
+    [[100, '100 W 앰프', C.red, '✗ 작아서 자주 클리핑'], [330, '330 W 앰프', C.green, '✓ 연속 ~ 2배 사이'], [900, '900 W 앰프', C.amber, '⚠ 너무 커요']].forEach(function (a, i) {
       var x = xw(a[0]); s += '<path d="M' + x + ' 128V198" stroke="' + a[2] + '" stroke-width="3"/>' + t(x + (i === 2 ? -6 : 6), 152 + (i === 1 ? 20 : 0), a[1], { size: 10, weight: 800, fill: a[2], anchor: i === 2 ? 'end' : 'start' }) + t(x + (i === 2 ? -6 : 6), 166 + (i === 1 ? 20 : 0), a[3], { size: 9.5, fill: a[2], anchor: i === 2 ? 'end' : 'start' });
     });
-    s += t(300, 236, '초록 칸 = 이 과정의 교육용 기준(연속 정격 ~ 프로그램 정격) · 정격은 회사마다 재는 방법이 달라요', { size: 10, fill: C.sub });
+    s += t(300, 236, '초록 칸 = 이 과정의 기준(연속 ~ 2배) · 숫자는 예시예요 · 재는 방법은 회사마다 달라요', { size: 10, fill: C.sub });
     return svg(600, 244, s, '스피커 파워 정격(연속·프로그램·피크)과 앰프 크기 비교');
   };
 
@@ -107,11 +100,11 @@
     s += t(x0 + 6, yd(-0.5) + 14, '−0.5 dB 목표', { size: 9.5, fill: C.red, anchor: 'start', weight: 700 });
     [16, 14, 12, 10].forEach(function (g) { var d = ''; for (var m = 0; m <= L; m += 1) { var v = Math.max(-2, cableCalc(g, m, 8).loss); d += (m ? 'L' : 'M') + xl(m).toFixed(1) + ' ' + yd(v).toFixed(1); }
       var end = Math.max(-2, cableCalc(g, L, 8).loss); s += '<path d="' + d + '" fill="none" stroke="' + GCOL[g] + '" stroke-width="2.6"/>' + t(x1 + 4, yd(end) + 4, g + ' AWG', { size: 9.5, fill: GCOL[g], anchor: 'start', weight: 800 }); });
-    s += t(x0, 16, '8 Ω 스피커 한 대 · 케이블 손실(dB) — 공식으로 계산한 근사', { size: 10.5, fill: C.sub, anchor: 'start', weight: 700 });
+    s += t(x0, 16, '8 Ω 스피커 한 대 · 길이에 따라 줄어드는 힘(dB) — 어림 계산', { size: 10.5, fill: C.sub, anchor: 'start', weight: 700 });
     // 오른쪽: 계산 방법
     var bx = 462; s += box(bx, 22, 134, 196, C.bg, C.line, 8);
-    [['1) 왕복 저항', 700], ['= 2 × 길이 × Ω/m', 400], ['2) 손실 (dB)', 700], ['= 20·log(R ÷', 400], ['   (R + 왕복 저항))', 400], ['3) 댐핑 팩터', 700], ['≈ R ÷ 왕복 저항', 400], ['목표: 손실 −0.5 dB', 700], ['이내 · DF 20 이상', 700]].forEach(function (r, i) { s += t(bx + 8, 42 + i * 20, r[0], { size: 10, anchor: 'start', weight: r[1], fill: i >= 7 ? C.red : C.ink }); });
-    s += t(300, 226, 'R = 스피커 Ω(공칭 임피던스) · AWG 숫자가 작을수록 굵어요 (12 AWG ≈ 3.3 mm², 14 AWG ≈ 2.1 mm²)', { size: 10, fill: C.sub });
+    [['손실을 줄이려면', 700], ['① 굵은 선', 400], ['   (AWG 숫자 ↓)', 400], ['② 짧은 길이', 400], ['③ 나란히 이은', 400], ['   스피커 수 줄이기', 400], ['', 400], ['목표: −0.5 dB 안', 700], ['댐핑 팩터 20 이상', 700]].forEach(function (r, i) { s += t(bx + 8, 42 + i * 20, r[0], { size: 10, anchor: 'start', weight: r[1], fill: i >= 7 ? C.red : C.ink }); });
+    s += t(300, 226, 'AWG 숫자가 작을수록 굵어요 (12 AWG ≈ 3.3 mm² · 14 AWG ≈ 2.1 mm²) · 길이는 한 방향', { size: 10, fill: C.sub });
     return svg(600, 234, s, '케이블 굵기와 길이에 따른 손실, 계산 방법');
   };
 
@@ -126,36 +119,68 @@
     s += face(84, 92, 58, [[-24, -20, '1+', '#fca5a5'], [24, -20, '1−', '#e5e7eb'], [-24, 22, '2+', '#fde68a'], [24, 22, '2−', '#e5e7eb']], 'NL4 (4핀)', '1+ · 1− · 2+ · 2−');
     s += face(224, 92, 48, [[-18, 4, '1+', '#fca5a5'], [18, 4, '1−', '#e5e7eb']], 'NL2 (2핀)', '1+ · 1− 만');
     s += t(154, 196, '핀 위치는 단순화한 그림이에요', { size: 9, fill: C.sub });
-    var bx = 304, rows = [['풀레인지 패시브 (Vi10P · Yi7P)', '1+ / 1−', C.ink], ['d&b 4선 케이블의 2± 핀', '액티브 서브우퍼용', C.violet], ['바이앰프 모드 (예: QSC AP)', '저음 1± · 고음 2±', C.blue], ['NL2 플러그 → NL4 소켓', '✓ 1± 로 연결', C.green], ['NL4 플러그 → NL2 소켓', '✗ 맞지 않음', C.red]];
+    var bx = 304, rows = [['보통 패시브 스피커', '1+ / 1−', C.ink], ['4심 케이블의 2± 핀', '다른 신호용 (설명서)', C.violet], ['바이앰프 모드 스피커', '저음 1± · 고음 2±', C.blue], ['NL2 플러그 → NL4 소켓', '✓ 1± 로 이어져요', C.green], ['NL4 플러그 → NL2 소켓', '✗ 맞지 않아요', C.red]];
     s += box(bx, 8, 290, 168, C.bg, C.line, 8);
     rows.forEach(function (r, i) { var y = 34 + i * 32; s += t(bx + 10, y, r[0], { size: 10, anchor: 'start', weight: 700 }) + t(bx + 280, y, r[1], { size: 10, anchor: 'end', weight: 800, fill: r[2] }) + (i < rows.length - 1 ? '<path d="M' + (bx + 10) + ' ' + (y + 14) + 'H' + (bx + 280) + '" stroke="#e2e8f0"/>' : ''); });
-    s += box(304, 186, 290, 40, '#fef2f2', '#fecaca', 8) + t(449, 204, '+ ↔ − 가 바뀌면 극성 반대', { size: 11, weight: 800, fill: C.red }) + t(449, 219, '같은 구역을 덮는 스피커끼리 저음이 서로 지워져요(상쇄)', { size: 9.5, fill: C.red });
+    s += box(304, 186, 290, 40, '#fef2f2', '#fecaca', 8) + t(449, 204, '+ ↔ − 가 바뀌면 극성 반대', { size: 11, weight: 800, fill: C.red }) + t(449, 219, '같은 곳을 비추는 두 스피커의 저음이 서로 지워져요', { size: 9.5, fill: C.red });
     return svg(600, 234, s, 'speakON NL4 와 NL2 의 핀, 쓰임새와 극성');
   };
 
-  /* ---------------------------------------------------------------- 그림 6: 바이앰프 · 클리핑 */
+  /* ---------------------------------------------------------------- 그림 6: 바이앰프 · 서브우퍼 — 저음은 따로 (2026-11-08: 클리핑은 그림 6-2 psClip 으로 옮김) */
   V.psProtect = function () {
     var s = '';
-    s += box(6, 6, 290, 222, C.bg, C.line, 10) + t(151, 24, '패시브 모드 ↔ 바이앰프 모드 (지원하는 스피커만)', { size: 11, weight: 800, fill: C.ink });
-    s += t(16, 48, '패시브 모드', { size: 10.5, weight: 800, anchor: 'start', fill: C.teal });
-    s += blk(16, 56, 62, 30, '앰프 1채널', '', C.red) + arrow(78, 71, 100, 71, C.red, 2) + t(89, 64, '1±', { size: 9, fill: C.red, weight: 700 }) + blk(102, 56, 84, 30, '크로스오버', '', C.violet, '#f5f3ff') + arrow(186, 64, 206, 60, C.violet, 1.6) + arrow(186, 78, 206, 82, C.violet, 1.6) + blk(208, 50, 78, 18, '우퍼', '', C.teal) + blk(208, 74, 78, 18, '고음', '', C.amber);
-    s += t(16, 120, '바이앰프 모드', { size: 10.5, weight: 800, anchor: 'start', fill: C.blue });
-    s += blk(16, 128, 62, 26, 'DSP 로 나눔', '', C.blue, '#eff6ff') + arrow(78, 134, 100, 134, C.red, 2) + arrow(78, 148, 100, 170, C.red, 2);
+    s += box(6, 6, 290, 222, C.bg, C.line, 10) + t(151, 24, '패시브 모드 ↔ 바이앰프 모드', { size: 11.5, weight: 800, fill: C.ink });
+    s += t(16, 48, '패시브 모드 (보통)', { size: 10.5, weight: 800, anchor: 'start', fill: C.teal });
+    s += blk(16, 56, 62, 30, '앰프 1채널', '', C.red) + arrow(78, 71, 100, 71, C.red, 2) + t(89, 64, '1±', { size: 9, fill: C.red, weight: 700 }) + blk(102, 56, 84, 30, '크로스오버', '', C.violet, '#f5f3ff') + arrow(186, 64, 206, 60, C.violet, 1.6) + arrow(186, 78, 206, 82, C.violet, 1.6) + blk(208, 50, 78, 18, '우퍼', '', C.teal) + blk(208, 74, 78, 18, '혼 (고음)', '', C.amber);
+    s += t(16, 120, '바이앰프 모드 (스위치로 바꾸는 스피커)', { size: 10.5, weight: 800, anchor: 'start', fill: C.blue });
+    s += blk(16, 128, 62, 26, '프로세서', '', C.blue, '#eff6ff') + arrow(78, 134, 100, 134, C.red, 2) + arrow(78, 148, 100, 170, C.red, 2);
     s += blk(102, 124, 62, 22, '앰프 저음', '', C.red) + blk(102, 160, 62, 22, '앰프 고음', '', C.red) + arrow(164, 135, 206, 135, C.red, 2) + arrow(164, 171, 206, 171, C.red, 2) + t(185, 128, '1±', { size: 9, fill: C.red, weight: 700 }) + t(185, 164, '2±', { size: 9, fill: C.red, weight: 700 });
-    s += blk(208, 124, 78, 22, '우퍼', '', C.teal) + blk(208, 160, 78, 22, '고음', '', C.amber);
-    s += t(151, 206, '바이앰프로 바꾸면 크로스오버를 앰프 앞에서', { size: 9.5, fill: C.sub }) + t(151, 220, '꼭 해 줘야 해요 (고음에 저음이 가면 위험)', { size: 9.5, fill: C.red, weight: 700 });
-    // 클리핑
-    s += box(304, 6, 290, 222, '#fff', C.line, 10) + t(449, 24, '고음 드라이버가 타는 이유 — 클리핑', { size: 11, weight: 800, fill: C.red });
-    var ox = 318, oy = 90, w = 262, A = 32, cl = 19, d1 = '', d2 = '';
-    for (var i = 0; i <= 120; i++) { var x = ox + i / 120 * w, v = A * Math.sin(i / 120 * Math.PI * 4); d1 += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + (oy - v).toFixed(1); d2 += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + (oy - Math.max(-cl, Math.min(cl, v * 1.6))).toFixed(1); }
-    s += '<path d="M' + ox + ' ' + oy + 'H' + (ox + w) + '" stroke="' + C.line + '"/><path d="' + d1 + '" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/><path d="' + d2 + '" fill="none" stroke="' + C.red + '" stroke-width="2.6"/>';
-    s += t(ox, 44, '회색: 원래 파형 · 빨강: 앰프 한계에서 잘린 파형', { size: 9.5, fill: C.sub, anchor: 'start' });
-    // 성분 막대 (모양은 예시)
-    var hb = [[1, 34, 30], [3, 0, 10], [5, 0, 6], [7, 0, 4]];
-    s += t(380, 144, '깨끗한 신호', { size: 10, weight: 700, fill: C.sub }) + t(520, 144, '클리핑된 신호', { size: 10, weight: 700, fill: C.red });
-    hb.forEach(function (h, i) { var y0 = 194; s += (h[1] ? box(340 + i * 22, y0 - h[1], 14, h[1], '#94a3b8', null, 2) : '') + box(480 + i * 22, y0 - h[2], 14, h[2], i ? C.amber : C.red, null, 2) + t(347 + i * 22, y0 + 12, (i ? h[0] + '배' : '기본'), { size: 8.5, fill: C.sub }) + t(487 + i * 22, y0 + 12, (i ? h[0] + '배' : '기본'), { size: 8.5, fill: C.sub }); });
-    s += t(449, 220, '평균 힘 ↑ + 고음 성분 ↑ → 고음 드라이버가 뜨거워짐 (막대는 예시)', { size: 9.5, fill: C.red, weight: 700 });
-    return svg(600, 234, s, '바이앰프 모드와 클리핑이 고음 드라이버에 주는 부담');
+    s += blk(208, 124, 78, 22, '우퍼', '', C.teal) + blk(208, 160, 78, 22, '혼 (고음)', '', C.amber);
+    s += t(151, 206, '바이앰프에서는 소리 나누기를 앰프 앞에서', { size: 9.5, fill: C.sub }) + t(151, 220, '꼭 해요 (고음에 저음이 가면 망가져요)', { size: 9.5, fill: C.red, weight: 700 });
+    // 서브우퍼
+    s += box(304, 6, 290, 222, '#f5f3ff', '#c4b5fd', 10) + t(449, 24, '서브우퍼와 함께 — 저음은 따로', { size: 11.5, weight: 800, fill: C.violet });
+    s += blk(314, 96, 66, 44, '프로세서', '높낮이 나누기', C.blue, '#eff6ff');
+    s += arrow(380, 108, 404, 74, C.blue, 2) + arrow(380, 128, 404, 162, C.blue, 2);
+    s += blk(406, 58, 62, 30, '앰프 CH1', '', C.red, '#fef2f2') + blk(406, 148, 62, 30, '앰프 CH2', '', C.red, '#fef2f2');
+    s += arrow(468, 73, 488, 73, C.red, 2.4) + arrow(468, 163, 488, 163, C.red, 2.4);
+    s += box(490, 50, 94, 46, '#1f2937', null, 6) + '<circle cx="512" cy="73" r="12" fill="#374151" stroke="' + C.teal + '" stroke-width="2"/><path d="M532 64H574L566 82H540Z" fill="#374151" stroke="' + C.amber + '" stroke-width="1.6"/>';
+    s += t(537, 110, '위쪽 스피커', { size: 10.5, weight: 800, fill: C.ink }) + t(537, 124, '100 Hz 위 (예)', { size: 9.5, fill: C.sub });
+    s += box(490, 140, 94, 46, '#1f2937', null, 6) + '<circle cx="537" cy="163" r="19" fill="#374151" stroke="' + C.violet + '" stroke-width="2.4"/><circle cx="537" cy="163" r="7" fill="#4b5563"/>';
+    s += t(537, 200, '서브우퍼 18″', { size: 10.5, weight: 800, fill: C.violet }) + t(537, 214, '100 Hz 아래 (예)', { size: 9.5, fill: C.sub });
+    s += t(350, 168, '나누는 높이는', { size: 9.5, fill: C.sub }) + t(350, 182, '스피커마다 달라요', { size: 9.5, fill: C.sub });
+    return svg(600, 234, s, '바이앰프 모드와 서브우퍼 시스템 — 앰프 앞에서 소리를 나눠요');
+  };
+
+  /* 그림 6-2 (이론 3): 클리핑 — 앰프 힘이 모자라면 파형이 잘려요 */
+  V.psClip = function () {
+    var s = t(240, 20, '앰프 힘이 모자라면 — 클리핑', { size: 15, weight: 800, fill: C.red });
+    var ox = 20, oy = 78, w = 440, A = 36, cl = 21, d1 = '', d2 = '';
+    for (var i = 0; i <= 160; i++) { var x = ox + i / 160 * w, v = A * Math.sin(i / 160 * Math.PI * 4); d1 += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + (oy - v).toFixed(1); d2 += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + (oy - Math.max(-cl, Math.min(cl, v * 1.6))).toFixed(1); }
+    s += '<path d="M' + ox + ' ' + oy + 'H' + (ox + w) + '" stroke="' + C.line + '"/><path d="' + d1 + '" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-dasharray="4 3"/><path d="' + d2 + '" fill="none" stroke="' + C.red + '" stroke-width="3"/>';
+    s += t(20, 132, '회색 = 원래 소리 · 빨강 = 위아래가 잘린 소리', { size: 12.5, fill: C.sub, anchor: 'start' });
+    var hb = [[1, 34, 30], [3, 0, 12], [5, 0, 8], [7, 0, 5]];
+    s += t(110, 154, '깨끗한 소리', { size: 12.5, weight: 700, fill: C.sub }) + t(370, 154, '잘린 소리', { size: 12.5, weight: 700, fill: C.red });
+    hb.forEach(function (h, i) { var y0 = 198; s += (h[1] ? box(64 + i * 26, y0 - h[1], 16, h[1], '#94a3b8', null, 2) : '') + box(324 + i * 26, y0 - h[2], 16, h[2], i ? C.amber : C.red, null, 2) + t(72 + i * 26, y0 + 14, (i ? h[0] + '배' : '기본'), { size: 11, fill: C.sub }) + t(332 + i * 26, y0 + 14, (i ? h[0] + '배' : '기본'), { size: 11, fill: C.sub }); });
+    s += t(240, 234, '없던 고음이 생기고 평균 힘이 올라 → 고음 드라이버가 뜨거워져요 (막대는 예시)', { size: 12, fill: C.red, weight: 700 });
+    return pic(480, 242, s, '클리핑: 잘린 파형에 고음 성분이 새로 생겨요');
+  };
+
+  /* 그림 6-3 (이론 1): 12인치 2웨이 패시브 스피커 속 — 앞에서 · 옆에서 자른 모습 (일반 예시) */
+  V.psInside = function () {
+    var s = box(6, 6, 200, 216, C.bg, C.line, 10) + t(106, 28, '앞 (그릴을 뗀 모습)', { size: 13, weight: 800 });
+    s += box(46, 40, 120, 172, '#1f2937', null, 8);
+    s += '<path d="M60 50H152L134 94H78Z" fill="#334155" stroke="' + C.amber + '" stroke-width="2.5"/><circle cx="106" cy="72" r="5" fill="#94a3b8"/>';
+    s += t(106, 112, '혼 · 고음', { size: 12.5, weight: 800, fill: '#fde68a' });
+    s += '<circle cx="106" cy="158" r="44" fill="#111827" stroke="' + C.teal + '" stroke-width="3"/><circle cx="106" cy="158" r="28" fill="#374151"/><circle cx="106" cy="158" r="9" fill="#4b5563"/>';
+    s += t(106, 163, '우퍼 · 저음', { size: 12.5, weight: 800, fill: '#99f6e4' });
+    s += box(216, 6, 258, 216, '#fff', C.line, 10) + t(345, 28, '옆에서 자른 모습', { size: 13, weight: 800 });
+    s += box(236, 42, 204, 160, '#eef2f7', C.sub, 6) + '<path d="M236 42V202" stroke="#64748b" stroke-width="4" stroke-dasharray="2 3"/>' + t(232, 214, '그릴', { size: 11.5, fill: C.sub, anchor: 'start' });
+    s += '<path d="M240 52L296 70V82L240 100Z" fill="#334155"/>' + box(296, 64, 28, 24, '#475569', null, 3) + t(330, 80, '고음 드라이버', { size: 12, anchor: 'start', weight: 800, fill: C.amber });
+    s += '<path d="M240 112L288 134V170L240 192Z" fill="#111827"/>' + box(288, 140, 22, 24, '#475569', null, 3) + t(316, 157, '우퍼', { size: 12, anchor: 'start', weight: 800, fill: C.teal });
+    s += box(356, 104, 74, 28, '#dcfce7', C.green, 4) + t(393, 123, '크로스오버', { size: 11.5, weight: 800, fill: C.green });
+    s += '<path d="M440 176H422V132M380 132V146H310M368 104V76H324" fill="none" stroke="' + C.red + '" stroke-width="1.8"/>';
+    s += '<circle cx="440" cy="176" r="8" fill="' + C.dark + '"/>' + t(462, 214, 'speakON 입력', { size: 11.5, anchor: 'end', weight: 700, fill: C.ink });
+    return pic(480, 228, s, '12인치 2웨이 패시브 스피커 속 구조: 우퍼, 혼과 고음 드라이버, 크로스오버, speakON 입력');
   };
 
   /* ===================================================================== 2026-11-04 「그림으로 보기」 (교재 6장 · 15장 대조 뒤 추가)
@@ -293,7 +318,7 @@
   var VB = { wire: [640, 380], pins: [640, 360], cable: [640, 300], match: [640, 262] };
   var PORTS = {
     ch1: { x: 66, y: 142, kind: 'out', name: '앰프 CH1 OUT' }, ch2: { x: 156, y: 142, kind: 'out', name: '앰프 CH2 OUT' },
-    lin: { x: 66, y: 306, kind: 'line', name: 'ZXA1 LINE IN' },
+    lin: { x: 66, y: 306, kind: 'line', name: '액티브 스피커 LINE IN' },
     aIn: { x: 470, y: 128, cab: 'A', name: '스피커 A IN' }, aLk: { x: 570, y: 128, cab: 'A', name: '스피커 A LINK' },
     bIn: { x: 470, y: 312, cab: 'B', name: '스피커 B IN' }, bLk: { x: 570, y: 312, cab: 'B', name: '스피커 B LINK' }
   };
@@ -301,11 +326,11 @@
   var TERM = { '1+': [-40, -36], '1-': [40, -36], '2+': [-40, 38], '2-': [40, 38] };
   var PLUG = { A: { cx: 170, cy: 196 }, B: { cx: 470, cy: 196 } };
   var AMPS = {
-    small: { name: '작은 앰프 (예시)', w: 100, note: '8 Ω 에서 100 W' },
-    xli: { name: 'Crown XLi1500 한 채널', w: 330, note: '8 Ω 에서 330 W (제조사 자료)' },
-    bridge: { name: 'XLi1500 브리지', w: 900, note: '8 Ω 에서 900 W (제조사 자료)' }
+    small: { name: '앰프 ① (예시)', w: 100, note: '8 Ω 에서 100 W' },
+    xli: { name: '앰프 ② (예시)', w: 330, note: '8 Ω 에서 330 W' },
+    bridge: { name: '앰프 ③ (예시)', w: 900, note: '8 Ω 에서 900 W' }
   };
-  var SPK = { name: 'EV ZX1', R: 8, cont: 200, prog: 400, peak: 800 };
+  var SPK = { name: '12인치 2웨이 패시브 (예시)', R: 8, cont: 200, prog: 400, peak: 800 };   // 2026-11-08: 흔한 12인치 2웨이 패시브를 본뜬 예시 숫자
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
   function f1(v) { return (Math.round(v * 10) / 10).toFixed(1); }
   function f2(v) { return (Math.round(v * 100) / 100).toFixed(2); }
@@ -321,7 +346,7 @@
   function passiveRig(el, opts) {
     opts = opts || {}; injectCss();
     var S = { scene: 'wire', mode: 'parallel', cables: initCables(), wires: { A: { r: null, k: null }, B: { r: '1-', k: '1+' } }, gauge: 16, len: 15, R: 8, amp: null, done: {} };
-    var scenes = [['wire', '① 연결 · 부하', '두 대를 한 채널에'], ['pins', '② speakON 핀', '1± 배선 · 극성'], ['cable', '③ 케이블 굵기', '길이 · 손실 · 댐핑'], ['match', '④ 앰프 매칭', '정격과 여유']];
+    var scenes = [['wire', '① 두 대 잇기', '한 채널에 · Ω 보기'], ['pins', '② speakON 핀', '빨강 · 검정 선 놓기'], ['cable', '③ 케이블 굵기', '길이 · 줄어드는 힘'], ['match', '④ 앰프 고르기', '스피커 정격과 비교']];
     el.innerHTML =
       '<div class="sim-ps">' +
         '<div class="sim-ps-scenes" role="group" aria-label="실습 장면">' + scenes.map(function (s) { return '<button type="button" data-scene="' + s[0] + '" aria-pressed="' + (s[0] === S.scene) + '">' + s[1] + '<small>' + s[2] + '</small></button>'; }).join('') + '</div>' +
@@ -330,26 +355,26 @@
           '<div class="sim-side">' +
             // ① 연결
             '<div class="sim-ps-pane" data-pane="wire">' +
-              '<div class="sim-box"><h4>스피커끼리 잇는 방식 <small>실습용</small></h4><div class="sim-types">' +
-                '<label class="sim-type"><input type="radio" name="simPsMode" value="parallel" checked><span><b>링크 케이블 (병렬)</b><small>IN · LINK 단자가 안에서 병렬 — 보통의 연결</small></span></label>' +
-                '<label class="sim-type"><input type="radio" name="simPsMode" value="series"><span><b>직렬 배선 (특수 케이블)</b><small>앞 스피커 − 를 뒤 스피커 + 로 — 계산 비교용</small></span></label></div>' +
+              '<div class="sim-box"><h4>스피커끼리 잇는 방법 <small>실습용</small></h4><div class="sim-types">' +
+                '<label class="sim-type"><input type="radio" name="simPsMode" value="parallel" checked><span><b>링크 케이블 (나란히 · 병렬)</b><small>IN · LINK 가 안에서 나란히 — 보통 이렇게 이어요</small></span></label>' +
+                '<label class="sim-type"><input type="radio" name="simPsMode" value="series"><span><b>한 줄로 (직렬 · 특수 배선)</b><small>앞 스피커 − 를 뒤 스피커 + 로 — 비교용</small></span></label></div>' +
                 '<div class="sim-btns"><button type="button" class="sim-btn" data-act="resetWire">처음 상태로</button></div></div>' +
               '<div class="sim-box sim-read" data-role="readWire"></div></div>' +
             // ② 핀
             '<div class="sim-ps-pane" data-pane="pins" hidden>' +
               '<div class="sim-box sim-read" data-role="readPins"></div>' +
-              '<div class="sim-box"><p class="sim-note" style="margin:0">두 스피커(Vi10P · Yi7P 같은 풀레인지 패시브)는 <b>1+ / 1−</b> 로 소리를 받아요. 빨강 = 앰프 +, 검정 = 앰프 − 예요.</p><div class="sim-btns"><button type="button" class="sim-btn" data-act="resetPins">처음 상태로</button></div></div></div>' +
+              '<div class="sim-box"><p class="sim-note" style="margin:0">두 스피커는 보통 패시브 스피커처럼 <b>1+ / 1−</b> 로 소리를 받아요. 빨강 = 앰프 +, 검정 = 앰프 − 예요.</p><div class="sim-btns"><button type="button" class="sim-btn" data-act="resetPins">처음 상태로</button></div></div></div>' +
             // ③ 케이블
             '<div class="sim-ps-pane" data-pane="cable" hidden>' +
-              '<div class="sim-box"><h4>부하</h4><div class="sim-types">' +
-                '<label class="sim-type"><input type="radio" name="simPsR" value="8" checked><span><b>8 Ω — 스피커 1대</b><small>예: Vi10P · Yi7P 한 대</small></span></label>' +
-                '<label class="sim-type"><input type="radio" name="simPsR" value="4"><span><b>4 Ω — 8 Ω 2대 병렬</b><small>링크로 두 대를 이었을 때</small></span></label></div></div>' +
-              '<div class="sim-box"><h4>케이블 굵기 <small>구리선 저항: 제조사 표</small></h4><div class="sim-ps-gauges">' + GAUGES.map(function (g) { return '<label class="sim-type"><input type="radio" name="simPsG" value="' + g.g + '"' + (g.g === S.gauge ? ' checked' : '') + '><span><b>' + g.g + ' AWG</b><small>약 ' + g.mm + ' mm²</small></span></label>'; }).join('') + '</div>' +
+              '<div class="sim-box"><h4>스피커 Ω (부하)</h4><div class="sim-types">' +
+                '<label class="sim-type"><input type="radio" name="simPsR" value="8" checked><span><b>8 Ω — 스피커 1대</b><small>예: 12인치 2웨이 한 대</small></span></label>' +
+                '<label class="sim-type"><input type="radio" name="simPsR" value="4"><span><b>4 Ω — 8 Ω 2대 나란히</b><small>링크로 두 대를 이었을 때</small></span></label></div></div>' +
+              '<div class="sim-box"><h4>케이블 굵기 <small>구리선 저항: 표 값</small></h4><div class="sim-ps-gauges">' + GAUGES.map(function (g) { return '<label class="sim-type"><input type="radio" name="simPsG" value="' + g.g + '"' + (g.g === S.gauge ? ' checked' : '') + '><span><b>' + g.g + ' AWG</b><small>약 ' + g.mm + ' mm²</small></span></label>'; }).join('') + '</div>' +
                 '<label class="sim-range" style="margin-top:8px"><span>케이블 길이 (한 방향) <output data-out="len"></output></span><input type="range" min="0" max="60" step="1" data-sim="len" aria-label="케이블 길이(m)"></label></div>' +
               '<div class="sim-box sim-read" data-role="readCable"></div></div>' +
             // ④ 매칭
             '<div class="sim-ps-pane" data-pane="match" hidden>' +
-              '<div class="sim-box"><h4>스피커: EV ZX1 <small>제조사 자료</small></h4><p class="sim-note" style="margin:0">패시브 8 Ω · 연속 200 W · 프로그램 400 W · 피크 800 W</p></div>' +
+              '<div class="sim-box"><h4>스피커: 12인치 2웨이 패시브 <small>예시</small></h4><p class="sim-note" style="margin:0">8 Ω · 연속 200 W · 프로그램 400 W · 피크 800 W</p></div>' +
               '<div class="sim-box"><h4>앰프 고르기</h4><div class="sim-types">' + Object.keys(AMPS).map(function (k) { var a = AMPS[k]; return '<label class="sim-type"><input type="radio" name="simPsAmp" value="' + k + '"><span><b>' + a.name + '</b><small>' + a.note + '</small></span></label>'; }).join('') + '</div></div>' +
               '<div class="sim-box sim-read" data-role="readMatch"></div></div>' +
           '</div>' +
@@ -402,22 +427,22 @@
     function drawWire() {
       var w = R.w, s = '<rect width="640" height="380" fill="#eef3f8"/>'; LAB = [];
       // 앰프
-      s += box(14, 22, 200, 176, '#1f2937', '#0b0f14', 10) + T(114, 42, '실습 파워앰프 (예시)', { size: 12, weight: 800, fill: '#fff' }) + T(114, 60, '정격 8 Ω · 4 Ω — 4 Ω 미만 금지', { size: 9.5, fill: '#fbbf24', weight: 700 });
+      s += box(14, 22, 200, 176, '#1f2937', '#0b0f14', 10) + T(114, 42, '실습 파워앰프 (예시)', { size: 12, weight: 800, fill: '#fff' }) + T(114, 60, '8 Ω · 4 Ω 까지 — 4 Ω 아래는 안 돼요', { size: 9.5, fill: '#fbbf24', weight: 700 });
       [['ch1', w.ch1], ['ch2', w.ch2]].forEach(function (c) { var p = PORTS[c[0]], st = c[1], col = w.short ? '#ef4444' : !st.n ? '#64748b' : st.ok ? '#22c55e' : '#ef4444';
         s += sock(p, c[0] === 'ch1' ? 'CH1 OUT' : 'CH2 OUT', col, st.n ? '부하 ' + ohm(st.load) : '연결 없음'); });
       s += T(114, 88, 'speakON 출력', { size: 9, fill: '#94a3b8' });
-      // ZXA1
-      s += box(14, 236, 200, 128, '#e5e7eb', '#94a3b8', 10) + T(114, 256, '액티브 스피커 ZXA1 뒷면', { size: 11.5, weight: 800 }) + T(114, 272, 'LINE IN 은 라인 레벨만 받아요', { size: 9.5, fill: C.sub });
+      // 액티브 스피커 (잘못 꽂힌 케이블 찾기용)
+      s += box(14, 236, 200, 128, '#e5e7eb', '#94a3b8', 10) + T(114, 256, '액티브 스피커 뒷면', { size: 11.5, weight: 800 }) + T(114, 272, 'LINE IN 은 작은 소리(라인)만 받아요', { size: 9.5, fill: C.sub });
       var lp = PORTS.lin; s += '<circle cx="' + lp.x + '" cy="' + lp.y + '" r="17" fill="#fff" stroke="' + (w.lineDanger ? C.red : '#475569') + '" stroke-width="2.4"/><circle cx="' + (lp.x - 6) + '" cy="' + (lp.y - 4) + '" r="2.2" fill="#334155"/><circle cx="' + (lp.x + 6) + '" cy="' + (lp.y - 4) + '" r="2.2" fill="#334155"/><circle cx="' + lp.x + '" cy="' + (lp.y + 6) + '" r="2.2" fill="#334155"/>' + T(lp.x, lp.y + 32, 'LINE IN', { size: 10.5, weight: 800 }) + T(lp.x, lp.y + 45, 'XLR/TRS 콤보', { size: 9, fill: C.sub });
-      if (w.lineDanger) s += box(100, 284, 108, 44, '#fef2f2', C.red, 6) + T(154, 302, '⚠ 스피커 레벨이', { size: 10, weight: 800, fill: C.red }) + T(154, 318, '라인 입력에!', { size: 10, weight: 800, fill: C.red });
+      if (w.lineDanger) s += box(100, 284, 108, 44, '#fef2f2', C.red, 6) + T(154, 302, '⚠ 앰프의 큰 힘이', { size: 10, weight: 800, fill: C.red }) + T(154, 318, 'LINE IN 에!', { size: 10, weight: 800, fill: C.red });
       else if (w.linePlug) s += T(154, 306, '스피커 케이블은 빼요', { size: 9.5, fill: C.amber, weight: 700 });
       // 스피커
-      [['A', 22], ['B', 206]].forEach(function (c) { var y = c[1]; s += box(420, y, 204, 152, '#111827', '#000', 10) + T(522, y + 20, '패시브 스피커 ' + c[0] + ' · 8 Ω', { size: 12, weight: 800, fill: '#fff' }) + T(522, y + 36, 'IN · LINK 는 안에서 병렬', { size: 9.5, fill: '#94a3b8' }) +
+      [['A', 22], ['B', 206]].forEach(function (c) { var y = c[1]; s += box(420, y, 204, 152, '#111827', '#000', 10) + T(522, y + 20, '패시브 스피커 ' + c[0] + ' · 8 Ω', { size: 12, weight: 800, fill: '#fff' }) + T(522, y + 36, 'IN · LINK 는 안에서 나란히', { size: 9.5, fill: '#94a3b8' }) +
         '<circle cx="452" cy="' + (y + 64) + '" r="14" fill="#374151" stroke="#4b5563" stroke-width="2"/><circle cx="452" cy="' + (y + 64) + '" r="5" fill="#6b7280"/>' + T(474, y + 68, '스피커 단자판', { size: 9.5, fill: '#cbd5e1', anchor: 'start' }); });
       ['aIn', 'aLk', 'bIn', 'bLk'].forEach(function (k) { s += sock(PORTS[k], /In$/.test(k) ? 'IN' : 'LINK', '#64748b'); });
       // 보관함
       s += '<rect x="226" y="300" width="182" height="72" rx="10" fill="#fff" stroke="#94a3b8" stroke-dasharray="6 4"/>' + T(317, 316, '케이블 보관함 · 끝을 끌어 꽂아요', { size: 9.5, fill: C.sub });
-      if (w.short) s += box(222, 110, 186, 40, '#fef2f2', C.red, 6) + T(315, 127, '⚠ CH1 · CH2 출력이 서로 이어졌어요', { size: 10, weight: 800, fill: C.red }) + T(315, 142, '출력끼리 연결하면 안 돼요', { size: 9.5, fill: C.red });
+      if (w.short) s += box(222, 110, 186, 40, '#fef2f2', C.red, 6) + T(315, 127, '⚠ CH1 · CH2 출력이 서로 이어졌어요', { size: 10, weight: 800, fill: C.red }) + T(315, 142, '출력끼리는 잇지 않아요', { size: 9.5, fill: C.red });
       // 케이블
       S.cables.forEach(function (c, ci) { var a = endPos(c.ends[0]), b = endPos(c.ends[1]);
         s += '<path d="' + cablePath(a, b) + '" fill="none" stroke="#0f172a" stroke-width="8" stroke-linecap="round" opacity=".35"/><path d="' + cablePath(a, b) + '" fill="none" stroke="' + c.col + '" stroke-width="5.5" stroke-linecap="round"/>';
@@ -453,7 +478,7 @@
       var s = '<rect width="640" height="300" fill="#fff"/>', x0 = 70, x1 = 560, y0 = 30, y1 = 214, L = 60, xl = function (m) { return x0 + m / L * (x1 - x0); }, yd = function (d) { return y0 + Math.min(2, -d) / 2 * (y1 - y0); };
       [0, 10, 20, 30, 40, 50, 60].forEach(function (m) { s += '<path d="M' + xl(m) + ' ' + y0 + 'V' + y1 + '" stroke="#e2e8f0"/>' + T(xl(m), y1 + 14, m + ' m', { size: 10, fill: C.sub }); });
       [0, -0.5, -1, -1.5, -2].forEach(function (d) { s += '<path d="M' + x0 + ' ' + yd(d) + 'H' + x1 + '" stroke="' + (d === -0.5 ? C.red : '#e2e8f0') + '"' + (d === -0.5 ? ' stroke-dasharray="6 4" stroke-width="1.6"' : '') + '/>' + T(x0 - 6, yd(d) + 4, d === 0 ? '0 dB' : '−' + Math.abs(d), { size: 10, fill: C.sub, anchor: 'end' }); });
-      s += T(x0 + 6, yd(-0.5) + 15, '목표 −0.5 dB', { size: 10, fill: C.red, anchor: 'start', weight: 700 }) + T(x0, 18, '부하 ' + S.R + ' Ω · 굵기별 케이블 손실 (교육용 계산)', { size: 11, fill: C.sub, anchor: 'start', weight: 700 });
+      s += T(x0 + 6, yd(-0.5) + 15, '목표 −0.5 dB', { size: 10, fill: C.red, anchor: 'start', weight: 700 }) + T(x0, 18, '스피커 ' + S.R + ' Ω · 굵기별로 줄어드는 힘 (어림 계산)', { size: 11, fill: C.sub, anchor: 'start', weight: 700 });
       GAUGES.forEach(function (g) { var d = '', sel = g.g === S.gauge; for (var m = 0; m <= L; m++) { var v = cableCalc(g.g, m, S.R).loss; d += (m ? 'L' : 'M') + xl(m).toFixed(1) + ' ' + yd(v).toFixed(1); }
         var lv = cableCalc(g.g, L, S.R).loss; s += '<path d="' + d + '" fill="none" stroke="' + GCOL[g.g] + '" stroke-width="' + (sel ? 4 : 1.6) + '" opacity="' + (sel ? 1 : 0.55) + '"/>' + T(x1 + 6, yd(lv) + 4, g.g + (sel ? ' AWG ◀' : ''), { size: sel ? 11 : 9.5, fill: GCOL[g.g], anchor: 'start', weight: sel ? 800 : 600 }); });
       var c = R.c, x = xl(S.len), y = yd(c.loss), ok = c.loss > -0.5;
@@ -466,9 +491,9 @@
     }
     function drawMatch() {
       var s = '<rect width="640" height="262" fill="#fff"/>', x0 = 150, x1 = 610, xw = function (w) { return x0 + w / 1000 * (x1 - x0); };
-      s += '<rect x="' + xw(SPK.cont) + '" y="24" width="' + (xw(SPK.prog) - xw(SPK.cont)) + '" height="196" fill="' + C.green + '" fill-opacity=".1"/>' + T((xw(200) + xw(400)) / 2, 18, '교육용 기준 칸', { size: 10, fill: C.green, weight: 800 });
+      s += '<rect x="' + xw(SPK.cont) + '" y="24" width="' + (xw(SPK.prog) - xw(SPK.cont)) + '" height="196" fill="' + C.green + '" fill-opacity=".1"/>' + T((xw(200) + xw(400)) / 2, 18, '알맞은 칸 (연속 ~ 2배)', { size: 10, fill: C.green, weight: 800 });
       [0, 200, 400, 600, 800, 1000].forEach(function (w) { s += '<path d="M' + xw(w) + ' 24V220" stroke="#e2e8f0"/>' + T(xw(w), 236, w + ' W', { size: 10, fill: C.sub }); });
-      [['연속 (AES)', SPK.cont, C.teal], ['프로그램', SPK.prog, C.blue], ['피크', SPK.peak, C.violet]].forEach(function (r, i) { var y = 34 + i * 32;
+      [['연속', SPK.cont, C.teal], ['프로그램', SPK.prog, C.blue], ['피크', SPK.peak, C.violet]].forEach(function (r, i) { var y = 34 + i * 32;
         s += T(x0 - 8, y + 15, r[0], { size: 11, weight: 700, anchor: 'end' }) + box(x0, y, xw(r[1]) - x0, 22, r[2], null, 4) + T(xw(r[1]) + 6, y + 15, r[1] + ' W', { size: 10.5, weight: 800, fill: r[2], anchor: 'start' }); });
       s += T(x0 - 8, 196, '앰프 (8 Ω)', { size: 11, weight: 700, anchor: 'end' });
       Object.keys(AMPS).forEach(function (k, i) { var a = AMPS[k], x = xw(a.w), sel = S.amp === k, col = sel ? (k === 'xli' ? C.green : C.red) : '#94a3b8';
@@ -481,21 +506,21 @@
     function row(k, v, cls) { return '<div class="sim-row"><span>' + k + '</span><b class="' + (cls || '') + '">' + v + '</b></div>'; }
     function verdict(cls, html) { return '<div class="sim-ps-verdict ' + cls + '">' + html + '</div>'; }
     function readWire() {
-      var w = R.w, h = '<h4>앰프가 보는 부하</h4>';
+      var w = R.w, h = '<h4>앰프가 보는 Ω (부하)</h4>';
       [['CH1', w.ch1], ['CH2', w.ch2]].forEach(function (c) { var st = c[1];
         h += row(c[0], st.n ? st.cabs.join(' + ') + ' · ' + ohm(st.load) : '연결 없음', st.n ? (st.ok ? 'ok' : 'bad') : '');
-        if (st.n) h += row('　같은 전압일 때 전력', (st.load === 4 ? '8 Ω 한 대의 2배' : st.load === 16 ? '8 Ω 한 대의 ½' : '기준 (1배)')); });
+        if (st.n) h += row('　같은 전압일 때 힘', (st.load === 4 ? '8 Ω 한 대의 2배' : st.load === 16 ? '8 Ω 한 대의 ½' : '기준 (1배)')); });
       if (w.short) h += verdict('bad', '두 채널 출력이 스피커를 거쳐 서로 이어졌어요. 앰프 출력끼리는 절대 잇지 않아요.');
-      else if (w.lineDanger) h += verdict('bad', '앰프 스피커 출력이 액티브 스피커 <b>LINE IN</b> 에 들어가 있어요. 수십 V 가 라인 입력에 들어가면 장비가 망가질 수 있어요. 케이블 끝을 끌어서 빼요.');
-      else if (w.ch1.n === 2 || w.ch2.n === 2) { var c = w.ch1.n === 2 ? w.ch1 : w.ch2; h += verdict(c.ok ? 'ok' : 'bad', (S.mode === 'series' && w.cabCab ? '직렬: 8 + 8 = 16 Ω 이에요. 안전하지만 같은 전압에서 힘이 ¼ 이라 소리가 덜 커요.' : '병렬: 8 ÷ 2 = 4 Ω 이에요. 이 앰프 정격(4 Ω 이상) 안이에요. Vi10P 도 제조사 표에 「채널당 2대」예요.')); }
-      else h += verdict('warn', '보관함의 케이블 끝을 끌어 앰프 CH OUT → 스피커 A IN, 스피커 A LINK → 스피커 B IN 으로 이어 보세요.');
+      else if (w.lineDanger) h += verdict('bad', '앰프 출력이 액티브 스피커 <b>LINE IN</b> 에 꽂혀 있어요. 큰 전기(수십 V)가 들어가 장비가 망가질 수 있어요. 케이블 끝을 끌어서 빼요.');
+      else if (w.ch1.n === 2 || w.ch2.n === 2) { var c = w.ch1.n === 2 ? w.ch1 : w.ch2; h += verdict(c.ok ? 'ok' : 'bad', (S.mode === 'series' && w.cabCab ? '한 줄로(직렬): 8 + 8 = 16 Ω 이에요. 안전하지만 힘이 ¼ 이라 소리가 작아요.' : '나란히(병렬): 8 ÷ 2 = 4 Ω 이에요. 이 앰프가 견디는 4 Ω 안이에요.')); }
+      else h += verdict('warn', '보관함의 케이블 끝을 끌어요. 앰프 CH OUT → 스피커 A IN, 스피커 A LINK → 스피커 B IN 으로 이어 봐요.');
       q('[data-role=readWire]').innerHTML = h;
     }
     function readPins() {
       var txt = { normal: ['정상', 'ok'], reversed: ['극성 반대', 'warn'], pin2: ['소리 안 남 (2±)', 'bad'], bad: ['회로 안 됨', 'bad'], open: ['덜 꽂힘', ''] }, h = '<h4>점검 결과</h4>';
       h += row('스피커 A', txt[R.pa][0], txt[R.pa][1]) + row('스피커 B', txt[R.pb][0], txt[R.pb][1]);
       var sa = R.pa === 'normal' || R.pa === 'reversed', sb = R.pb === 'normal' || R.pb === 'reversed';
-      if (sa && sb) h += R.pa === R.pb ? verdict('ok', 'A · B 가 같은 극성이에요. 겹치는 곳에서 저음이 함께 밀어 줘요.') : verdict('warn', 'A · B 극성이 서로 달라요. 두 소리가 겹치는 곳에서 저음이 서로 지워져요(상쇄). +/− 가 바뀐 케이블을 고쳐요.');
+      if (sa && sb) h += R.pa === R.pb ? verdict('ok', 'A · B 가 같은 극성이에요. 겹치는 곳에서 저음이 함께 밀어 줘요.') : verdict('warn', 'A · B 극성이 서로 달라요. 겹치는 곳에서 저음이 지워져요(상쇄). +/− 가 바뀐 케이블을 고쳐요.');
       else h += verdict('warn', '선 끝(동그라미)을 끌어 단자에 놓아요. 빨강(+) → 1+, 검정(−) → 1− 이 기본이에요.');
       q('[data-role=readPins]').innerHTML = h;
     }
@@ -503,20 +528,20 @@
       var c = R.c, g = gauge(S.gauge), ok1 = c.loss > -0.5, ok2 = c.df >= 20, h = '<h4>계산 결과 <small>교육용 근사</small></h4>';
       h += row('왕복 길이', (2 * S.len) + ' m') + row('케이블 저항', f2(g.r * 1000) + ' mΩ/m × ' + (2 * S.len) + ' m = ' + f2(c.rc) + ' Ω');
       h += row('손실', sgnDb(c.loss), ok1 ? 'ok' : 'bad') + row('댐핑 팩터 (케이블만)', isFinite(c.df) ? f1(c.df) : '—', ok2 ? 'ok' : 'warn') + row('케이블에서 열로 사라져 스피커에 덜 가는 힘', f1((1 - Math.pow(10, c.loss / 10)) * 100) + ' %');
-      h += verdict(ok1 && ok2 ? 'ok' : ok1 ? 'warn' : 'bad', ok1 && ok2 ? '손실 0.5 dB 이내, 댐핑 팩터 20 이상이에요.' : ok1 ? '손실은 괜찮지만 댐핑 팩터가 20 보다 작아요. 더 굵은 케이블로 바꿔 보세요.' : '손실이 0.5 dB 를 넘어요. 더 굵은 케이블(AWG 숫자가 작은 것)을 골라요. 아니면 앰프를 스피커 가까이 둬요.');
-      if (S.gauge === 10) h += '<p class="sim-note">참고: 10 AWG(약 5.3 mm²)는 일반 speakON 커넥터 NL4FXX-W-L(1.5–4 mm²)에 바로 물리지 않을 수 있어요(심화 학습).</p>';
+      h += verdict(ok1 && ok2 ? 'ok' : ok1 ? 'warn' : 'bad', ok1 && ok2 ? '좋아요. 손실 0.5 dB 안, 댐핑 팩터 20 이상이에요.' : ok1 ? '손실은 괜찮아요. 하지만 댐핑 팩터가 20 보다 작아요. 더 굵은 케이블로 바꿔 봐요.' : '손실이 0.5 dB 를 넘어요. 더 굵은 케이블(AWG 숫자가 작은 것)을 골라요. 앰프를 스피커 가까이 둬도 돼요.');
+      if (S.gauge === 10) h += '<p class="sim-note">참고: 10 AWG(약 5.3 mm²)는 흔한 speakON 커넥터(1.5–4 mm²)에 안 들어갈 수 있어요(이론 4 더 알아보기).</p>';
       q('[data-role=readCable]').innerHTML = h; q('[data-out=len]').textContent = S.len + ' m';
     }
     function readMatch() {
-      var h = '<h4>판단 <small>교육용 기준</small></h4>';
-      if (!S.amp) h += verdict('warn', '앰프를 하나 골라 보세요. 기준은 앰프 W(8 Ω)가 스피커 <b>연속 정격 ~ 2배(프로그램 정격)</b> 사이인 거예요.');
+      var h = '<h4>판단 <small>이 과정의 기준</small></h4>';
+      if (!S.amp) h += verdict('warn', '앰프를 하나 골라 봐요. 앰프 W(8 Ω)가 스피커 <b>연속 정격 ~ 2배</b> 사이면 알맞아요.');
       else { var a = AMPS[S.amp], r = a.w / SPK.cont; h += row('고른 앰프', a.w + ' W / 8 Ω') + row('연속 정격의', f1(r) + ' 배', r >= 1 && r <= 2 ? 'ok' : 'bad');
-        h += S.amp === 'xli' ? verdict('ok', '연속 200 W ~ 프로그램 400 W 사이예요. 여유가 있어서 클리핑 없이 쓰기 쉬워요. 그래도 CLIP 표시등과 소리를 확인하며 음량을 맞춰요.')
-          : S.amp === 'small' ? verdict('bad', '앰프가 작으면 원하는 음량을 내려다 자주 <b>클리핑</b>돼요(소리 파형이 잘림). 찌그러진 신호는 고음 드라이버를 오히려 더 위험하게 해요. 작은 앰프가 안전한 게 아니에요.')
-          : verdict('bad', '연속 정격의 4.5배예요. 조금만 실수해도 스피커가 견디는 힘을 크게 넘을 수 있어요. 이런 조합은 리미터 · 설정으로 확실히 보호할 수 있을 때만 써요.'); }
+        h += S.amp === 'xli' ? verdict('ok', '알맞아요. 연속 200 W ~ 400 W 사이라 여유가 있어요. 그래도 CLIP 표시등을 보며 음량을 맞춰요.')
+          : S.amp === 'small' ? verdict('bad', '앰프가 작으면 음량을 내려다 자주 <b>클리핑</b>돼요(파형이 잘림). 잘린 소리는 고음 드라이버를 뜨겁게 해요. 작은 앰프가 안전한 게 아니에요.')
+          : verdict('bad', '연속 정격의 4.5배예요. 조금만 실수해도 스피커가 견디는 힘을 크게 넘어요. 리미터(크기를 막는 장치)로 꼭 막을 수 있을 때만 써요.'); }
       q('[data-role=readMatch]').innerHTML = h;
     }
-    var HINT = { wire: '케이블 끝(색 동그라미)을 끌어 단자에 놓으면 꽂혀요. 꽂힌 끝을 끌어내면 빠져요. 판정은 손을 놓을 때 해요. (좁은 화면에서는 그림을 옆으로 밀어 볼 수 있어요)', pins: 'NL4 플러그 뒤쪽 단자예요. 빨강 · 검정 선 끝을 끌어 단자(1+ · 1− · 2+ · 2−)에 놓아요.', cable: '굵기와 부하를 골라요. 아래 동그라미를 끌어 길이를 바꿔요(오른쪽 막대도 돼요). 판정은 손을 놓을 때 해요.', match: '오른쪽에서 앰프를 골라 ZX1 의 정격과 비교해요.' };
+    var HINT = { wire: '케이블 끝(색 동그라미)을 끌어 단자에 놓으면 꽂혀요. 꽂힌 끝을 끌어내면 빠져요. 손을 놓으면 결과가 나와요. (좁은 화면에서는 그림을 옆으로 밀어 봐요)', pins: 'NL4 플러그 뒤쪽 단자예요. 빨강 · 검정 선 끝을 끌어 단자(1+ · 1− · 2+ · 2−)에 놓아요.', cable: '굵기와 Ω 을 골라요. 아래 동그라미를 끌어 길이를 바꿔요(오른쪽 막대도 돼요). 손을 놓으면 결과가 나와요.', match: '오른쪽에서 앰프를 골라 스피커 정격과 비교해요.' };
     function update() {
       calc();
       var vb = VB[S.scene]; svgEl.setAttribute('viewBox', '0 0 ' + vb[0] + ' ' + vb[1]);
