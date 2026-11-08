@@ -14,8 +14,11 @@
   var KEY = 'soundTrainerModules_v1';
   var TABS = [['overview', '핵심 개념'], ['theory', '이론 학습'], ['practice', '실습하기'], ['quiz', '확인 문제'], ['deeper', '심화 학습']];   // 2026-11-05: 「관련 미션」 탭은 모든 과정에서 뺌
   var PRACTICE_INFO = {
-    tab1: ['확성 시스템의 기본', '마이크·믹서·앰프·스피커를 3D 로 직접 연결하고 조작해 봅니다.', 'vi10p.jpg'],
-    tab6: ['MG12XU 실습', '실제 콘솔 사진 위에서 연결하고, 소리를 들으며 조작합니다.', 'console_strip.jpg'],
+    tabPracMic: ['01. 마이크 실습', '유선 마이크와 무선 마이크를 직접 켜고 맞춰 봐요.', 'img/modules/hw_mic.jpg'],
+    tabPracCable: ['02. 케이블 실습', '케이블을 알맞은 단자에 꽂아 봐요.', 'img/modules/hw_cable.jpg'],
+    tab6: ['03. 콘솔 실습', 'MG12XU · X32 콘솔을 실제 사진 위에서 다뤄 봐요.', 'console_strip.jpg'],
+    tabPracSpk: ['04. 스피커 실습', '액티브 스피커를 켜고 소리를 들어 봐요.', 'img/modules/hw_speaker.jpg'],
+    tab1: ['05. 음향 시스템 설계 실습', '마이크·믹서·앰프·스피커를 3D 로 직접 연결하고 조작해 봅니다.', 'vi10p.jpg'],
     tab5: ['CL5 콘솔 트레이닝', '예배 식순에 맞춰 채널을 켜고 DCA 를 다루는 운용 훈련입니다.', 'img/modules/hw_console.jpg'],
     tab2: ['3층 음향 시스템', '본당에 실제로 설치된 장비 위치와 신호가 지나는 길을 3D 로 보고 직접 배선해 봅니다.', 'img/modules/hw_speaker.jpg'],
     tab7: ['음향 트러블슈팅', '고장 증상을 보고 원인을 찾아 고칩니다.', 'jack_strip.jpg'],
@@ -32,7 +35,7 @@
     'img/modules/hw_cable.jpg': { t: '사진: Jud McCranie, 「XLR connectors, male and female」, CC BY-SA 4.0 (Wikimedia Commons, 잘라서 사용)', url: 'https://commons.wikimedia.org/wiki/File:XLR_connectors,_male_and_female.jpg' },
     'img/modules/hw_console.jpg': { t: '사진: 3층에 설치된 Yamaha CL5 (제조사 제품 사진)' },
     'img/modules/hw_speaker.jpg': { t: '사진: 3층에 설치된 d&b 서브우퍼 · E8 · Vi10P (제조사 제품 사진)' },
-    'img/modules/mg12xu_full.jpg': { t: '사진: 「MG12XU 실습」 화면의 콘솔 (Yamaha 제품 사진 + 실습용 페이더)' },
+    'img/modules/mg12xu_full.jpg': { t: '사진: 「콘솔 실습」의 MG12XU 화면 콘솔 (Yamaha 제품 사진 + 실습용 페이더)' },
     'https://products.shureweb.eu/cdn-cgi/image/width=900,height=900,format=auto/shure_product_db/product_main_images/files/67c/0a4/37-/original/a63ca7f1e7b45a53c3f11898a7c6280a.webp': { t: '사진: Shure SLX-D+ 무선 마이크 시스템 공식 제품 사진 (shure.com)', url: 'https://www.shure.com/en-ASIA/products/wireless-systems/slxd-plus' },   /* 2026-11-04: 01-2 무선 마이크 카드 */
     'https://cdn-media.empowertribe.com/cdn-cgi/image/width=2000,quality=85,format=auto/e5ba63fb0e6f4e69a1626c5811115e16/Image_BE_0603-ACE_X32_Top_XL.png': { t: '사진: Behringer X32 공식 제품 사진 (behringer.com 제품 페이지)', url: 'https://www.behringer.com/en/products/0603-ace' }   /* 2026-11-03: 03-2 디지털 콘솔 — 제조사 사이트에서 바로 불러옴 */
   };
@@ -52,13 +55,19 @@
   function st(id) { var a = load(), s = a[id] || {}; s.checks = s.checks || {}; s.tasks = s.tasks || {}; s.quiz = s.quiz || {}; return s; }
   function put(id, s) { var a = load(); a[id] = s; save(a); }
   function okIdx(q) { for (var i = 0; i < q.options.length; i++) if (q.options[i].ok) return i; return -1; }
+  /* 2026-11-08: 「음향 장비 학습」은 과정 안의 「실습하기」 단계를 빼고 메뉴의 실습 탭(STA_PRAC_PAGES)으로 옮김 → 과정 완료 = 학습 + 이해도 */
+  var PRAC = window.STA_PRAC_PAGES || {};
+  function noPrac(m) { var p = m && pathById(m.path); return !!(p && p.practiceOut); }
+  function pageOf(id) { for (var k in PRAC) { var pp = PRAC[k].parts || []; for (var i = 0; i < pp.length; i++) if (pp[i][0] === id) return k; } return null; }
+  function tabsOf(m) { return noPrac(m) ? TABS.filter(function (t2) { return t2[0] !== 'practice'; }) : TABS; }
+  function pracCounts(m) { var s = st(m.id), d = m.practice.tasks.filter(function (t) { return s.tasks[t.id]; }).length; return { d: d, n: m.practice.tasks.length, done: d === m.practice.tasks.length }; }
   function counts(m) {
-    if (m.status !== 'ready') return null; var s = st(m.id);
+    if (m.status !== 'ready') return null; var s = st(m.id), np = noPrac(m);
     var learn = m.theory.filter(function (x, i) { return s.checks[i] === okIdx(x.check); }).length,
-      prac = m.practice.tasks.filter(function (t) { return s.tasks[t.id]; }).length,
+      prac = np ? 0 : m.practice.tasks.filter(function (t) { return s.tasks[t.id]; }).length,
       quiz = m.quiz.filter(function (q, i) { return s.quiz[i] === okIdx(q); }).length;
-    return { learn: learn, learnN: m.theory.length, prac: prac, pracN: m.practice.tasks.length, quiz: quiz, quizN: m.quiz.length,
-      learnDone: learn === m.theory.length, pracDone: prac === m.practice.tasks.length, quizDone: quiz === m.quiz.length, opened: !!s.opened };
+    return { learn: learn, learnN: m.theory.length, prac: prac, pracN: np ? 0 : m.practice.tasks.length, quiz: quiz, quizN: m.quiz.length,
+      learnDone: learn === m.theory.length, pracDone: np || prac === m.practice.tasks.length, quizDone: quiz === m.quiz.length, opened: !!s.opened };
   }
   function status(m) {
     if (!m || m.status !== 'ready') return 'soon'; var c = counts(m);
@@ -111,7 +120,7 @@
       '<span class="mod-card__body"><b>' + noTxt(m) + '. ' + esc(m.title) + '</b><span class="mod-card__sub">' + esc(m.sub) + '</span>' +
       (soon && m.topics ? '<span class="mod-card__topics">' + m.topics.slice(0, 3).map(esc).join(' · ') + '…</span>' : '') +
       '<span class="mod-card__meta"><span class="home-tag' + (soon ? ' soon' : '') + '">' + (soon ? '준비 중' : esc(m.level)) + '</span><span>⏱ ' + minutesTxt(m.minutes) + '</span></span>' +
-      (c ? '<span class="mod-card__prog" title="학습 · 실습 · 이해도">' + dot(c.learnDone, '학습') + dot(c.pracDone, '실습') + dot(c.quizDone, '이해도') + '</span>' : '') + '</span></button>';
+      (c ? '<span class="mod-card__prog" title="학습 · 실습 · 이해도">' + dot(c.learnDone, '학습') + (noPrac(m) ? '' : dot(c.pracDone, '실습')) + dot(c.quizDone, '이해도') + '</span>' : '') + '</span></button>';
   }
   function dot(on, t) { return '<span class="mod-dot' + (on ? ' on' : '') + '">' + (on ? '✓ ' : '') + t + '</span>'; }
   function renderPath() {
@@ -160,7 +169,7 @@
     var n = (m.practice.links || []).length;
     return '<span class="mod-mi">' + mi('level') + esc(m.level) + '</span><span class="mod-mi">' + mi('time') + minutesTxt(m.minutes) + '</span>' +
       (tsLinked(m) ? '<span class="mod-mi">' + mi('ts') + '트러블슈팅 연결</span>' : '') +
-      dot(c.learnDone, '학습 ' + c.learn + '/' + c.learnN) + dot(c.pracDone, '실습 ' + c.prac + '/' + c.pracN) + dot(c.quizDone, '이해도 ' + c.quiz + '/' + c.quizN);
+      dot(c.learnDone, '학습 ' + c.learn + '/' + c.learnN) + (noPrac(m) ? '' : dot(c.pracDone, '실습 ' + c.prac + '/' + c.pracN)) + dot(c.quizDone, '이해도 ' + c.quiz + '/' + c.quizN);
   }
   function progHtml(c) {
     var d = c.learn + c.prac + c.quiz, n = c.learnN + c.pracN + c.quizN, pct = n ? Math.round(d / n * 100) : 0;
@@ -232,17 +241,18 @@
           (x.visual && VIS[x.visual] ? '<div class="mod-visual">' + VIS[x.visual]() + '</div>' : '') + '<div class="mod-p mod-paras">' + paras(x.body) + '</div>' + picsHtml(x.pics) +
           (x.more ? '<details class="mod-more"><summary>더 알아보기</summary><div' + (/<(ul|ol|table)\b/.test(x.more) ? '>' + x.more : ' class="mod-paras">' + paras(x.more)) + '</div></details>' : '') +
           qHtml(x.check, i, s.checks[i], 'mcheck') + '</section>';
-      }).join('') + '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="practice">실습하기 →</button></div>';
+      }).join('') + (noPrac(m) ? pracLink(m) + '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="quiz">확인 문제 풀기 →</button></div>' : '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="practice">실습하기 →</button></div>');
   }
-  function tabPractice(m) {
-    var p = m.practice, s = st(m.id), c = counts(m);
+  function pracLink(m) { var k = pageOf(m.id), cfg = k && PRAC[k]; if (!cfg) return '';
+    return '<div class="mod-praclink"><span>🛠 이 장비는 메뉴 「실습」의 <b>' + cfg.no + '. ' + esc(cfg.title) + '</b>에서 직접 다뤄 볼 수 있어요.</span><button type="button" class="btn" data-prac-open="' + k + ':' + m.id + '">실습하러 가기 →</button></div>'; }
+  function tabPractice(m) { return pracBody(m) + '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="quiz">확인 문제 풀기 →</button></div>'; }
+  function pracBody(m) {
+    var p = m.practice, s = st(m.id), pc = pracCounts(m), c = { prac: pc.d, pracN: pc.n, pracDone: pc.done };
     return '<div class="mod-lead mod-paras">' + paras(esc(p.lead)) + '</div><div class="mod-simwrap"><div class="mod-sim" data-role="sim"></div>' +
       '<aside class="mod-tasks"><h3>실습 과제 <small>' + c.prac + '/' + c.pracN + '</small></h3><ol>' + p.tasks.map(function (t2) { var d = !!s.tasks[t2.id];
         return '<li class="' + (d ? 'done' : '') + '" data-task="' + t2.id + '"><span class="mod-task__ck">' + (d ? '✓' : '') + '</span><div><b>' + esc(t2.title) + '</b><p>' + esc(t2.text) + '</p></div></li>'; }).join('') + '</ol>' +
       (c.pracDone ? '<div class="mod-okline">🎉 실습 과제를 모두 마쳤어요. <b>실습 완료</b>!</div>' : '<p class="mod-small">과제는 실습 화면의 상태로 자동 확인돼요. 버튼을 누르기만 해서는 완료되지 않아요.</p>') + '</aside></div>' +
-      '<p class="mod-note">⚠️ ' + esc(p.note) + '</p>' +
-      /* 2026-11-04: 「이어서 해 볼 실습」 링크 뺌 */
-      '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="quiz">확인 문제 풀기 →</button></div>';
+      '<p class="mod-note">⚠️ ' + esc(p.note) + '</p>';   /* 2026-11-04: 「이어서 해 볼 실습」 링크 뺌 */
   }
   function tabQuiz(m) {
     var s = st(m.id), c = counts(m);
@@ -284,6 +294,7 @@
   function renderModule() {
     var root = $('tabModule'), m = MODS[view.mod]; if (!root || !m) return;
     destroySim(); destroyViewer(); zHide(true);
+    if (view.tab === 'practice' && noPrac(m)) view.tab = 'overview';
     var p = pathById(m.path), c = counts(m), s = status(m), tab = view.tab;
     var body = { overview: tabOverview, theory: tabTheory, practice: tabPractice, quiz: tabQuiz, missions: tabMissions, deeper: tabDeeper }[tab](m);
     /* 2026-10-23: 왼쪽 과정 목록은 사이드 메뉴로 옮김. 머리(제목·정보·진행도) → [핵심 개념 탭] 장비 사진 + 핵심 학습 포인트 → 단계 탭 → 내용 */
@@ -293,7 +304,7 @@
         (m.prereq ? '<div class="mod-head__pre">먼저 볼 레슨: ' + m.prereq.map(function (id) { var l = lessonById(id); return l ? '<button type="button" class="lsn-theory-link" data-lesson="' + id + '">' + (lessonDone(id) ? '✓ ' : '📘 ') + esc(l.title) + '</button>' : ''; }).join('') + '</div>' : '') +
         '</div><div class="mod-top__prog">' + progHtml(c) + '</div></header>' +
         (tab === 'overview' ? heroHtml(m) : '') +
-        '<div class="mod-tabs" role="tablist" aria-label="학습 단계">' + TABS.map(function (t2, i) { var done = (t2[0] === 'theory' && c.learnDone) || (t2[0] === 'practice' && c.pracDone) || (t2[0] === 'quiz' && c.quizDone);
+        '<div class="mod-tabs" role="tablist" aria-label="학습 단계">' + tabsOf(m).map(function (t2, i) { var done = (t2[0] === 'theory' && c.learnDone) || (t2[0] === 'practice' && c.pracDone) || (t2[0] === 'quiz' && c.quizDone);
           return '<button type="button" role="tab" class="mod-tab' + (done ? ' done' : '') + '" data-mtab="' + t2[0] + '" aria-selected="' + (t2[0] === tab) + '"><span class="n">' + (done ? '✓' : i + 1) + '</span>' + t2[1] + '</button>'; }).join('') + '</div>' +
         '<div class="mod-body" data-tab="' + tab + '">' + body + '</div></div>';
     if (tab === 'practice') mountSim(m);
@@ -529,8 +540,9 @@
   function openPath(id) { if (!pathById(id)) return; view.path = id; hideBack(); destroySim(); destroyViewer(); switchTo('tabPath'); renderPath(); setHash('path-' + id); focusTitle(); }
   function openModule(id, tab, find) {
     var m = MODS[id]; if (!m || m.status !== 'ready') return;
+    if (tab === 'practice' && noPrac(m) && pageOf(id)) { openPrac(pageOf(id), id); return; }   // 예전 주소(#module-mic-practice)는 실습 탭으로
     if (view.mod !== id) { view.fig = 'photo'; view.var3d = 0; }
-    view.mod = id; view.path = m.path; view.tab = tab && TABS.some(function (t2) { return t2[0] === tab; }) ? tab : 'overview';
+    view.mod = id; view.path = m.path; view.tab = tab && tabsOf(m).some(function (t2) { return t2[0] === tab; }) ? tab : 'overview';
     var s = st(id); if (!s.opened) { s.opened = true; put(id, s); }
     hideBack(); switchTo('tabModule'); renderModule(); setHash('module-' + id + (view.tab !== 'overview' ? '-' + view.tab : '')); focusTitle();
     if (find && view.tab === 'theory') { var sec = Array.prototype.find.call(document.querySelectorAll('#tabModule .mod-sec'), function (x) { return x.querySelector('.mod-sec__h').textContent.indexOf(find) >= 0; });
@@ -561,6 +573,48 @@
   }
   function hideBack() { var b = $('modBack'); if (b) b.hidden = true; }
   function go(goObj) { if (!goObj) return; destroySim(); destroyViewer(); if (goObj.tab && window.STALessons && STALessons.openPractice) { STALessons.openPractice(goObj); var lb = $('lsnBack'); if (lb) lb.hidden = true; showBack(); } }
+  /* ------------------------------------------------------------- 실습 탭 (2026-11-08)
+     메뉴 「음향 장비 학습 › 실습」의 01~04 탭: 과정마다 있던 실습 화면 + 과제 목록을 그대로 옮겨 와 보여 줌
+     - 탭이 둘 이상이면 위에 고르는 줄(유선 / 무선, MG12XU / X32)
+     - 과정 id 가 '#…' 인 칸은 index.html 에 원래 있던 화면([data-prac-static])을 그대로 보여 줌 */
+  var prac = { tab: null, part: {}, sim: null };
+  function destroyPracSim() { if (prac.sim) { try { prac.sim.destroy(); } catch (e) { /* noop */ } prac.sim = null; } }
+  function pracParts(cfg) { return (cfg.parts || []).filter(function (p) { return p[0].charAt(0) === '#' || (MODS[p[0]] && MODS[p[0]].status === 'ready'); }); }
+  function stopMg12() { try { if (typeof mg12xuAudioOn !== 'undefined' && mg12xuAudioOn && typeof toggleMg12xuAudio === 'function') toggleMg12xuAudio(); } catch (e) { /* noop */ } }
+  function partBtn(p, i, cur) { var m = MODS[p[0]], pc = m ? pracCounts(m) : null, done = !!(pc && pc.done);
+    return '<button type="button" role="tab" class="prac-part' + (done ? ' done' : '') + '" data-prac-part="' + p[0] + '" aria-selected="' + (p[0] === cur) + '"><span class="n">' + (done ? '✓' : i + 1) + '</span><span class="t">' + esc(p[1]) + '</span>' + (pc ? '<small>' + pc.d + '/' + pc.n + '</small>' : '') + '</button>'; }
+  function renderPrac(tabId) {
+    var cfg = PRAC[tabId], el = $(tabId), host = el && el.querySelector('[data-prac-host]'); if (!cfg || !host) return;
+    var parts = pracParts(cfg); if (!parts.length) return;
+    destroyPracSim(); prac.tab = tabId;
+    var cur = prac.part[tabId]; if (!parts.some(function (p) { return p[0] === cur; })) cur = prac.part[tabId] = parts[0][0];
+    var part = parts.find(function (p) { return p[0] === cur; }), m = cur.charAt(0) === '#' ? null : MODS[cur], stat = el.querySelector('[data-prac-static]');
+    var h = (cfg.staticHead ? '' : '<div class="level-header"><div class="level-title">' + esc(cfg.no) + '. ' + esc(cfg.title) + '</div>' + (cfg.desc ? '<div class="level-desc">' + esc(cfg.desc) + '</div>' : '') + '</div>') +
+      (parts.length > 1 ? '<div class="prac-parts" role="tablist" aria-label="실습 고르기">' + parts.map(function (p, i) { return partBtn(p, i, cur); }).join('') + '</div>' : '');
+    if (m) h += '<section class="prac-body"><div class="prac-body__head"><h2>' + esc(part[1]) + ' 실습</h2><button type="button" class="prac-golink" data-module="' + m.id + '">📘 ' + noTxt(m) + '. ' + esc(m.title) + ' 과정 보기</button></div>' + pracBody(m) + '</section>';
+    host.setAttribute('data-cur', cur); host.innerHTML = h;
+    if (stat) stat.hidden = !!m;
+    if (m) { stopMg12(); var sel = host.querySelector('[data-role=sim]'), fn = SIMS[m.practice.kind];
+      if (!fn) sel.innerHTML = '<p class="mod-note">실습 화면을 불러오지 못했어요.</p>';
+      else prac.sim = fn(sel, { onTask: function (id) { var s = st(m.id); if (s.tasks[id]) return; s.tasks[id] = true; put(m.id, s); refreshPrac(tabId, m); } }); }
+  }
+  function refreshPrac(tabId, m) {
+    var el = $(tabId); if (!el) return; var s = st(m.id), pc = pracCounts(m);
+    el.querySelectorAll('.prac-body .mod-tasks li').forEach(function (li) { var d = !!s.tasks[li.getAttribute('data-task')]; li.classList.toggle('done', d); li.querySelector('.mod-task__ck').textContent = d ? '✓' : ''; });
+    var h3 = el.querySelector('.prac-body .mod-tasks h3 small'); if (h3) h3.textContent = pc.d + '/' + pc.n;
+    var tasks = el.querySelector('.prac-body .mod-tasks'); if (tasks && pc.done && !tasks.querySelector('.mod-okline')) { var sm = tasks.querySelector('.mod-small'); if (sm) sm.outerHTML = '<div class="mod-okline" role="status">🎉 실습 과제를 모두 마쳤어요. <b>실습 완료</b>!</div>'; }
+    var pb = el.querySelector('.prac-part[data-prac-part="' + m.id + '"]'); if (pb) { var sm2 = pb.querySelector('small'); if (sm2) sm2.textContent = pc.d + '/' + pc.n; if (pc.done) { pb.classList.add('done'); pb.querySelector('.n').textContent = '✓'; } }
+  }
+  function openPrac(tabId, part) { var cfg = PRAC[tabId]; if (!cfg || !$(tabId)) return; if (part) prac.part[tabId] = part; hideBack(); destroySim(); destroyViewer();
+    if ($(tabId).classList.contains('active')) renderPrac(tabId); else if (typeof switchTab === 'function') switchTab(tabId);   // 탭이 켜지면 watchPrac 가 그림
+    try { window.scrollTo(0, 0); } catch (e) { /* noop */ } }
+  function watchPrac() {
+    Object.keys(PRAC).forEach(function (k) { var el = $(k); if (!el || !PRAC[k].parts || !window.MutationObserver) return;
+      var was = el.classList.contains('active');
+      new MutationObserver(function () { var on = el.classList.contains('active'); if (on === was) return; was = on;
+        if (on) renderPrac(k); else if (prac.tab === k) { destroyPracSim(); prac.tab = null; } }).observe(el, { attributes: true, attributeFilter: ['class'] });
+      if (was) renderPrac(k); });
+  }
   /* ------------------------------------------------------------- 이벤트 */
   document.addEventListener('click', function (e) {
     var t = e.target && e.target.closest ? e.target : null; if (!t) return;
@@ -568,6 +622,8 @@
     var mc = t.closest('[data-module]'); if (mc) { if (mc.getAttribute('aria-disabled') === 'true') return; openModule(mc.getAttribute('data-module')); return; }
     if (t.closest('#modBack')) { if (backTo) openModule(backTo.id, backTo.tab); return; }
     var hm = t.closest('[data-modhome]'); if (hm) { hideBack(); destroySim(); destroyViewer(); if (window.STALessons) STALessons.home(); if (hm.getAttribute('data-modhome') === 'paths') setTimeout(function () { var s = $('modHome'); if (s) s.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 50); if (!window.STAHistory) { try { history.replaceState(null, '', location.pathname + location.search); } catch (err) { /* noop */ } } return; }
+    var po = t.closest('[data-prac-open]'); if (po) { var pp2 = po.getAttribute('data-prac-open').split(':'); openPrac(pp2[0], pp2[1]); return; }
+    var pt = t.closest('[data-prac-part]'); if (pt) { var tc = pt.closest('.tab-content'); if (tc) { var y2 = window.scrollY; prac.part[tc.id] = pt.getAttribute('data-prac-part'); renderPrac(tc.id); window.scrollTo(0, y2); } return; }
     var gt = t.closest('[data-mgo-tab]'); if (gt) { if (typeof switchTab === 'function') switchTab(gt.getAttribute('data-mgo-tab')); window.scrollTo(0, 0); return; }
     if (!t.closest('#tabModule')) return;
     var tb = t.closest('[data-mtab]'); if (tb) { setTab(tb.getAttribute('data-mtab')); return; }
@@ -605,10 +661,11 @@
     buildNav();
     if (window.MutationObserver) document.querySelectorAll('.tab-content').forEach(function (el) { new MutationObserver(function () { syncGroups(); }).observe(el, { attributes: true, attributeFilter: ['class'] }); });
     if (window.MutationObserver) ['tabModule', 'tabPath', 'tabHome'].forEach(function (id) { var el = $(id); if (el) new MutationObserver(function (ms) { if (ms.some(function (x) { return x.attributeName === 'class'; })) onTabChange(); }).observe(el, { attributes: true, attributeFilter: ['class'] }); });
+    watchPrac();
     fromHash();
     window.addEventListener('hashchange', function () { if (!hashLock) fromHash(); });
   }
   window.STAModules = { homeHtml: homeHtml, openPath: openPath, openModule: openModule, setTab: setTab, state: function (id) { return st(id); }, counts: function (id) { return counts(MODS[id]); }, status: function (id) { return status(MODS[id]); },
-    reset: function () { save({}); }, sim: function () { return sim; }, viewer: function () { return viewer; }, view: function () { return view; } };
+    reset: function () { save({}); }, sim: function () { return sim; }, pracSim: function () { return prac.sim; }, openPrac: openPrac, pracCounts: function (id) { return pracCounts(MODS[id]); }, setPracPart: function (tab, part) { prac.part[tab] = part; var el = $(tab); if (el && el.classList.contains('active')) renderPrac(tab); }, viewer: function () { return viewer; }, view: function () { return view; } };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

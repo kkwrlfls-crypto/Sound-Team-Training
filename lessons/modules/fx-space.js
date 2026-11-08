@@ -558,7 +558,7 @@
       ],
       links: [
         { title: 'MG12XU 기능부 설명 · AUX2/FX · SPX · FX RTN', text: 'AUX2/FX 노브, SPX 이펙터, FX RTN 페이더가 콘솔 어디에 있는지 봐요.', go: { tab: 'tab6', sec: 'fx' } },
-        { title: 'MG12XU 실습 · 오디오 테스트', text: '실제 콘솔 화면에서 AUX2/FX 를 올리고 SPX 리버브·딜레이를 바꿔 들어 봐요.', go: { tab: 'tab6', audio: true } }
+        { title: '콘솔 실습(MG12XU) · 오디오 테스트', text: '실제 콘솔 화면에서 AUX2/FX 를 올리고 SPX 리버브·딜레이를 바꿔 들어 봐요.', go: { tab: 'tab6', audio: true } }
       ]
     },
     quiz: [

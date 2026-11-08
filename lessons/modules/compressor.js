@@ -565,7 +565,7 @@
       ],
       links: [
         { title: 'MG12XU 기능부 설명 · COMP', text: '1~4번 채널의 COMP 노브(노브 하나짜리 컴프)가 어디 있는지 봐요.', go: { tab: 'tab6', sec: 'comp' } },
-        { title: 'MG12XU 실습 · 오디오 테스트', text: '실제 콘솔 화면에서 보컬 채널의 COMP 노브를 돌리며 소리 변화를 들어 봐요.', go: { tab: 'tab6', audio: true } }
+        { title: '콘솔 실습(MG12XU) · 오디오 테스트', text: '실제 콘솔 화면에서 보컬 채널의 COMP 노브를 돌리며 소리 변화를 들어 봐요.', go: { tab: 'tab6', audio: true } }
       ]
     },
     quiz: [

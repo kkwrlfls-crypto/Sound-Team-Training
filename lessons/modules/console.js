@@ -541,7 +541,7 @@
     }
     el.addEventListener('input', onInput); el.addEventListener('change', onChange); el.addEventListener('click', onClick);
     update(); tick();
-    getVox(function (d) { if (!alive) return; vox = d; S.t0 = performance.now(); q('[data-role=src]').textContent = d.synthetic ? '녹음을 불러오지 못해 미터만 가상 신호로 보여 줘요.' : '보컬 녹음(MG12XU 실습과 같은 음원)이 계속 반복돼요. 들을 곳을 고르면 그 스피커로 가는 소리를 들려줘요.'; });
+    getVox(function (d) { if (!alive) return; vox = d; S.t0 = performance.now(); q('[data-role=src]').textContent = d.synthetic ? '녹음을 불러오지 못해 미터만 가상 신호로 보여 줘요.' : '보컬 녹음(콘솔 실습(MG12XU)과 같은 음원)이 계속 반복돼요. 들을 곳을 고르면 그 스피커로 가는 소리를 들려줘요.'; });
 
     return {
       destroy: function () { alive = false; cancelAnimationFrame(raf); stopAudio(); if (actx && actx.close) { try { actx.close(); } catch (e) { /* noop */ } }
@@ -647,8 +647,8 @@
         { id: 'fx', title: 'FX 보내고 돌려받기', text: '① 채널 AUX2/FX 노브와 SEND MASTER AUX2 를 올려요. ② FX RTN 의 ST 를 켜고 FX RTN 페이더를 올려요. ③ 메인에 리버브가 −30 dB 이상 섞이면 성공이에요.' }
       ],
       links: [
-        { title: 'MG12XU 실습 · 오디오 테스트', text: '실제 MG12XU 사진 위에서 여러 악기 소리를 섞어 봐요. AUX·FX 소리도 들어 봐요.', go: { tab: 'tab6', audio: true } },
-        { title: '확성 시스템의 기본 · 3D 실습 ③', text: 'MG12XU 를 파워앰프와 스피커에 이어 소리를 내 봐요.', go: { tab: 'tab1', card: 's3' } }
+        { title: '콘솔 실습(MG12XU) · 오디오 테스트', text: '실제 MG12XU 사진 위에서 여러 악기 소리를 섞어 봐요. AUX·FX 소리도 들어 봐요.', go: { tab: 'tab6', audio: true } },
+        { title: '음향 시스템 설계 실습 · 3D 실습 ③', text: 'MG12XU 를 파워앰프와 스피커에 이어 소리를 내 봐요.', go: { tab: 'tab1', card: 's3' } }
       ]
     },
     quiz: [
@@ -675,7 +675,7 @@
     ],
     missions: [
       { title: '음향 트러블슈팅 · 미션 A', text: '입력은 있는데 소리가 안 날 때를 연습해요. ON·ST·페이더·출력 순서로 막힌 곳을 찾아요.', go: { tab: 'tab7', ts: 'A' } },
-      { title: 'MG12XU 실습 · 채널 배정 게임', text: '악기와 보컬을 알맞은 채널에 꽂아요. 메인·모니터 연결도 직접 맞춰 봐요.', go: { tab: 'tab6' } }
+      { title: '콘솔 실습(MG12XU) · 채널 배정 게임', text: '악기와 보컬을 알맞은 채널에 꽂아요. 메인·모니터 연결도 직접 맞춰 봐요.', go: { tab: 'tab6' } }
     ],
     deeper: [
       { title: '아날로그 콘솔과 디지털 콘솔', text: '아날로그 콘솔은 채널마다 노브가 따로 있어요. 디지털 콘솔은 소리를 숫자로 바꿔서 다듬어요. 채널을 고른(SELECT) 뒤 노브 한 벌로 조절해요. 소리가 지나가는 순서는 둘이 똑같아요.', more: '<ul><li>두 콘솔 모두 GAIN → EQ·COMP → 페이더 → 버스 순서로 소리가 지나가요.</li> <li>디지털 콘솔은 모든 채널에 게이트(작은 잡음을 막는 문)·컴프레서·EQ 가 있어요. 이펙터도 콘솔 안에 들어 있어요.</li> <li>설정 전체를 <b>씬</b>으로 저장했다가 불러와요. 페이더 줄을 <b>레이어</b>로 바꿔 가며 많은 채널을 다뤄요.</li> <li>아날로그 콘솔은 보이는 그대로라 빠르고 쉽게 다뤄요. 대신 채널이 많아질수록 크고 무거워져요.</li> <li>디지털 콘솔은 작고 가벼우며, 씬 저장과 태블릿 원격 조작이 돼요.</li> <li>대신 디지털 콘솔은 소리를 숫자로 바꾸느라 아주 짧게 늦어져요(레이턴시). 메뉴도 익혀야 해요.</li> <li>자세한 내용은 다음 과정 <b>03-2 디지털 콘솔</b>(Behringer X32 기준)에서 배워요.</li></ul>' },

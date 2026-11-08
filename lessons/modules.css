@@ -265,3 +265,30 @@
 /* 2026-11-04: 「그림으로 보기」의 작은 그림은 휴대폰에서 화면 폭에 맞춰 줄어들게(큰 이론 그림만 옆으로 밀어 보기) */
 .mod-pics .mod-svg, .mod-term__vis .mod-svg, .mod-qvis .mod-svg, .mod-dvis .mod-svg { min-width: 0; }
 .lsn-deep-item, .mod-pic, .mod-q { min-width: 0; }
+
+/* ---------------------------------------------------------------- 2026-11-08 「음향 장비 학습」 실습 탭 (01 마이크 · 02 케이블 · 03 콘솔 · 04 스피커)
+   과정 안에 있던 실습 화면을 메뉴의 실습 탭으로 옮김 — lessons/modules.js renderPrac */
+.game-container:has(> #tabPracMic.active), .game-container:has(> #tabPracCable.active), .game-container:has(> #tabPracSpk.active),
+.game-container:has(> #tab6.active .prac-host[data-cur="console-digital"]) { max-width: 1200px; }
+.prac-parts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; }
+.prac-part { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px 8px 10px; border: 1px solid var(--sta-line-strong); border-radius: 999px; background: var(--sta-surface); color: var(--sta-ink-2); font: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+.prac-part:hover { border-color: var(--sta-blue-line); background: var(--sta-blue-soft); }
+.prac-part .n { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 0.78rem; background: #e2e8f0; color: var(--sta-ink-2); flex: none; }
+.prac-part small { font-size: 0.78rem; font-weight: 600; color: var(--sta-ink-3); font-variant-numeric: tabular-nums; }
+.prac-part.done .n { background: #059669; color: #fff; }
+.prac-part[aria-selected="true"] { background: var(--sta-blue); border-color: var(--sta-blue); color: #fff; }
+.prac-part[aria-selected="true"] .n { background: rgba(255, 255, 255, 0.22); color: #fff; }
+.prac-part[aria-selected="true"] small { color: rgba(255, 255, 255, 0.85); }
+.prac-part.done[aria-selected="true"] .n { background: #10b981; }
+.prac-body__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin: 0 0 10px; }
+.prac-body__head h2 { margin: 0; font-size: 1.2rem; color: var(--sta-ink); text-wrap: balance; }
+.prac-golink { border: 1px solid var(--sta-line); background: var(--sta-surface); color: var(--sta-blue); border-radius: var(--sta-r-sm); padding: 8px 12px; font: inherit; font-size: 0.86rem; font-weight: 700; cursor: pointer; }
+.prac-golink:hover { background: var(--sta-blue-soft); border-color: var(--sta-blue-line); }
+.prac-body .mod-lead.mod-paras > p { max-width: 46em; }
+.prac-body .mod-tasks li p { font-size: 0.8rem; line-height: 1.6; text-wrap: pretty; }
+.prac-body .mod-note { text-wrap: pretty; }
+#tab6 > .prac-host:empty { display: none; }
+/* 과정 이론 끝: 「실습 탭에서 해 보기」 안내 */
+.mod-praclink { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 14px; margin: 22px 0 0; padding: 14px 16px; border: 1px solid var(--sta-blue-line); border-radius: var(--sta-r); background: var(--sta-blue-soft); color: var(--sta-ink); font-size: 0.95rem; line-height: 1.6; }
+.mod-praclink span { min-width: 0; flex: 1 1 18em; }
+@media (max-width: 640px) { .prac-part { font-size: 0.86rem; padding: 6px 12px 6px 8px; } .prac-body__head h2 { font-size: 1.05rem; } }

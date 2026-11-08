@@ -491,7 +491,7 @@
     function load(key) {
       q('[data-role=srcnote]').textContent = '녹음을 불러오는 중…';
       loadStem(key, function (e) { if (!alive || S.src !== key) return; var wasOn = S.audio; if (wasOn) stopAudio(); env = e; S.t0 = performance.now();
-        q('[data-role=srcnote]').textContent = e.synthetic ? '녹음을 불러오지 못해 가상 신호로 표시등만 보여 줘요.' : (key === 'leadVox' ? '보컬' : '키보드') + ' 녹음(MG12XU 실습과 같은 음원)이 계속 반복돼요. 앰프가 클리핑하면 소리도 찌그러져요.';
+        q('[data-role=srcnote]').textContent = e.synthetic ? '녹음을 불러오지 못해 가상 신호로 표시등만 보여 줘요.' : (key === 'leadVox' ? '보컬' : '키보드') + ' 녹음(콘솔 실습(MG12XU)과 같은 음원)이 계속 반복돼요. 앰프가 클리핑하면 소리도 찌그러져요.';
         if (wasOn) { startAudio(); setPlayBtn(); } update(); });
     }
     function saveRef() { var c = last || calc(); S.ref = { p: c.p, v: c.vout, wiring: S.wiring, mode: S.mode }; update(); }
@@ -616,7 +616,7 @@
         { id: 'unsafe', title: '안전하지 않은 부하 피하기', text: '① 「4대 병렬」을 골라 2Ω 경고를 확인해요. ② 4대를 그대로 쓰면서 다른 연결로 바꿔요. ③ 4Ω 이상(정격 안)이 되면 성공이에요.' }
       ],
       links: [
-        { title: '확성 시스템의 기본 · 3D 실습 ③', text: 'MG12XU → Crown XLi1500 → ZX1 패시브 스피커를 speakON 으로 직접 이어 봐요.', go: { tab: 'tab1', card: 's3' } },
+        { title: '음향 시스템 설계 실습 · 3D 실습 ③', text: 'MG12XU → Crown XLi1500 → ZX1 패시브 스피커를 speakON 으로 직접 이어 봐요.', go: { tab: 'tab1', card: 's3' } },
         { title: '장비 브랜드 알아보기 · 파워앰프', text: '현장에서 자주 만나는 파워앰프 브랜드와 대표 제품을 살펴봐요.', go: { tab: 'tabBrands' } }
       ]
     },

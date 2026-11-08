@@ -723,7 +723,7 @@
       ],
       links: [
         { title: '장비 브랜드 알아보기 · 스피커', text: '현장에서 자주 만나는 스피커 회사와 대표 제품을 살펴봐요.', go: { tab: 'tabBrands' } },
-        { title: '확성 시스템의 기본 · 3D 실습 ③', text: '앰프의 speakON 출력에 패시브 스피커를 이어 소리를 내 봐요.', go: { tab: 'tab1', card: 's3' } }
+        { title: '음향 시스템 설계 실습 · 3D 실습 ③', text: '앰프의 speakON 출력에 패시브 스피커를 이어 소리를 내 봐요.', go: { tab: 'tab1', card: 's3' } }
       ]
     },
     quiz: [

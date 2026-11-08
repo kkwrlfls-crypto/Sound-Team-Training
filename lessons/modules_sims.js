@@ -327,7 +327,7 @@
     });
     setGain(S.gain); setFader(S.fader);
     el.querySelector('[data-role=src]').textContent = '녹음을 불러오는 중…';
-    loadVox(function (e) { env = e; el.querySelector('[data-role=src]').textContent = e.synthetic ? '녹음을 불러오지 못해 가상 소리로 미터만 보여 줘요.' : '보컬 녹음(MG12XU 실습과 같은 노래)이 계속 반복돼요. 처음에는 소리가 꺼져 있어요.'; S.t0 = performance.now(); tick(); });
+    loadVox(function (e) { env = e; el.querySelector('[data-role=src]').textContent = e.synthetic ? '녹음을 불러오지 못해 가상 소리로 미터만 보여 줘요.' : '보컬 녹음(콘솔 실습(MG12XU)과 같은 노래)이 계속 반복돼요. 처음에는 소리가 꺼져 있어요.'; S.t0 = performance.now(); tick(); });
     return {
       destroy: function () { alive = false; cancelAnimationFrame(raf); stopAudio(); if (actx && actx.close) { try { actx.close(); } catch (e) { /* noop */ } } el.innerHTML = ''; },
       state: function () { return { gain: S.gain, fader: S.fader, maxIn: S.maxIn, anyPeak: S.anyPeak, maxOut: S.maxOut, snr: S.snr, clipSeen: S.clipSeen, audio: S.audio, ready: !!env, synthetic: env && env.synthetic, done: Object.keys(S.done) }; },

@@ -419,7 +419,7 @@ window.STA_BRANDS = {
       ],
       meet: ['교회', '공연장', '학교·강당', '행사'],
       tip: '「단종」은 못 쓴다는 뜻이 아니라 새로 만들지 않는다는 뜻이에요. 부품·수리 지원 기간은 따로 확인해요.',
-      ours: { label: 'MG12XU · CL5', where: 'MG12XU 실습 · 3층 방송실 CL5' },
+      ours: { label: 'MG12XU · CL5', where: '콘솔 실습(MG12XU) · 3층 방송실 CL5' },
       tiers: [
         { id: 'console-yamaha-entry', tier: 'entry', model: 'MG12XU', family: 'MG 시리즈',
           text: '12채널 아날로그 믹서. SPX 이펙트와 USB 가 들어 있어요.',

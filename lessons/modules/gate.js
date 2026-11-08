@@ -509,7 +509,7 @@
       loadStem(info.stem, info.seg[0], info.seg[1], function (st) {
         if (!alive) return; stems[k] = st || synthStem(k, SR);
         var note = el.querySelector('[data-role=srcnote]');
-        if (S.src === k) note.textContent = st ? '실제 ' + (k === 'vox' ? '보컬' : '드럼') + ' 녹음(MG12XU 실습과 같은 음원)에 일정한 배경 잡음(쉬—)을 섞었어요. 처음엔 소리가 꺼져 있어요.' : '녹음을 불러오지 못해 가상 신호로 보여 줘요.';
+        if (S.src === k) note.textContent = st ? '실제 ' + (k === 'vox' ? '보컬' : '드럼') + ' 녹음(콘솔 실습(MG12XU)과 같은 음원)에 일정한 배경 잡음(쉬—)을 섞었어요. 처음엔 소리가 꺼져 있어요.' : '녹음을 불러오지 못해 가상 신호로 보여 줘요.';
         if (S.src === k) { S.pos = 0; resetAcc(); }
       });
     }

@@ -267,7 +267,7 @@
     return svgS(400, 186, s, '기타에서 짧은 TS 로 DI 박스, DI 박스에서 긴 XLR 로 콘솔 MIC 입력, THRU 로 기타 앰프');
   };
 
-  /* =========================================================================== 공통: 보컬 녹음 불러오기 (MG12XU 실습과 같은 음원) */
+  /* =========================================================================== 공통: 보컬 녹음 불러오기 (콘솔 실습(MG12XU)과 같은 음원) */
   function b64ToBuf(uri) { var b = atob(uri.slice(uri.indexOf(',') + 1)), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u.buffer; }
   function getVox(cb) {
     var G = window.__staVox || (window.__staVox = { cbs: [], data: null, busy: false });
@@ -615,7 +615,7 @@
     el.addEventListener('change', onChange); el.addEventListener('input', onInput); el.addEventListener('click', onClick);
     var ro = window.ResizeObserver ? new ResizeObserver(function () { sizeScope(); }) : null; if (ro) ro.observe(cv.parentNode); else window.addEventListener('resize', sizeScope);
     sizeScope(); renderRig(); renderHum(); renderTester(); loop();
-    getVox(function (d) { if (!alive) return; vox = d; S.t0 = performance.now(); q('[data-role=src]').textContent = d.synthetic ? '녹음을 불러오지 못해 물결 그림만 가상 신호로 보여 줘요.' : '보컬 녹음(MG12XU 실습과 같은 음원)에 60 Hz 험을 더해 들려줘요. 처음에는 소리가 꺼져 있어요.'; });
+    getVox(function (d) { if (!alive) return; vox = d; S.t0 = performance.now(); q('[data-role=src]').textContent = d.synthetic ? '녹음을 불러오지 못해 물결 그림만 가상 신호로 보여 줘요.' : '보컬 녹음(콘솔 실습(MG12XU)과 같은 음원)에 60 Hz 험을 더해 들려줘요. 처음에는 소리가 꺼져 있어요.'; });
 
     return {
       destroy: function () { alive = false; cancelAnimationFrame(raf); timers.forEach(clearTimeout); stopAudio(); if (actx && actx.close) { try { actx.close(); } catch (e) { /* noop */ } }
@@ -721,8 +721,8 @@
         { id: 'pin', title: '끊긴 핀 찾기', text: '③에서 케이블을 하나 골라 「검사하기」를 눌러요. 받는 쪽 불빛이 꺼진 핀을 찾아요. 불량 케이블의 끊긴 핀 번호를 맞히면 성공이에요.' }
       ],
       links: [
-        { title: '확성 시스템의 기본 · 3D 실습 ③', text: 'XLR · speakON · 전원 케이블로 MG12XU → Crown → ZX1 패시브 스피커를 직접 이어 봐요.', go: { tab: 'tab1', card: 's3' } },
-        { title: 'MG12XU 실습 · 장비 연결', text: '마이크 · 악기 · 스피커를 MG12XU 단자에 케이블로 직접 이어 봐요.', go: { tab: 'tab6' } }
+        { title: '음향 시스템 설계 실습 · 3D 실습 ③', text: 'XLR · speakON · 전원 케이블로 MG12XU → Crown → ZX1 패시브 스피커를 직접 이어 봐요.', go: { tab: 'tab1', card: 's3' } },
+        { title: '콘솔 실습(MG12XU) · 장비 연결', text: '마이크 · 악기 · 스피커를 MG12XU 단자에 케이블로 직접 이어 봐요.', go: { tab: 'tab6' } }
       ]
     },
     quiz: [

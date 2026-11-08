@@ -607,7 +607,7 @@
     function load(key) {
       q('[data-role=srcnote]').textContent = '녹음을 불러오는 중…';
       loadStem(key, function (e) { if (!alive || S.src !== key) return; var on = S.audio; if (on) stopAudio(); stem = e;
-        q('[data-role=srcnote]').textContent = e.synthetic ? '녹음을 불러오지 못해 소리는 들을 수 없어요.' : (key === 'leadVox' ? '보컬' : '키보드') + ' 녹음(MG12XU 실습과 같은 음원)이 반복돼요. ① 은 고른 좌석에서 듣는 소리, ③ 은 메인 + 딜레이 스피커가 더해진 소리예요.';
+        q('[data-role=srcnote]').textContent = e.synthetic ? '녹음을 불러오지 못해 소리는 들을 수 없어요.' : (key === 'leadVox' ? '보컬' : '키보드') + ' 녹음(콘솔 실습(MG12XU)과 같은 음원)이 반복돼요. ① 은 고른 좌석에서 듣는 소리, ③ 은 메인 + 딜레이 스피커가 더해진 소리예요.';
         if (on) { startAudio(); setPlayBtn(); } });
     }
 
@@ -775,7 +775,7 @@
       ],
       links: [
         { title: '장비 브랜드 알아보기 · 스피커', text: '현장에서 자주 만나는 스피커 회사와 대표 제품을 살펴봐요.', go: { tab: 'tabBrands' } },
-        { title: '확성 시스템의 기본 · 3D 실습 ①', text: 'SM58S 마이크를 ZXA1 액티브 스피커에 바로 이어 소리를 내 봐요.', go: { tab: 'tab1', card: 's1' } }
+        { title: '음향 시스템 설계 실습 · 3D 실습 ①', text: 'SM58S 마이크를 ZXA1 액티브 스피커에 바로 이어 소리를 내 봐요.', go: { tab: 'tab1', card: 's1' } }
       ]
     },
     quiz: [
@@ -802,7 +802,7 @@
     ],
     missions: [
       { title: '음향 트러블슈팅 · 미션 B', text: '좌우 스피커(ZXA1) 중 한쪽만 소리가 안 날 때를 연습해요. 케이블 → 전원 → 입력 순서로 봐요.', go: { tab: 'tab7', ts: 'B' } },
-      { title: '확성 시스템의 기본 · 3D 실습 ③', text: '패시브 ZX1 을 앰프의 speakON 출력에 이어 소리를 내 봐요.', go: { tab: 'tab1', card: 's3' } }
+      { title: '음향 시스템 설계 실습 · 3D 실습 ③', text: '패시브 ZX1 을 앰프의 speakON 출력에 이어 소리를 내 봐요.', go: { tab: 'tab1', card: 's3' } }
     ],
     deeper: [
       /* 2026-10-25: 「AUX와 모니터」 레슨에서 옮겨 옴 */

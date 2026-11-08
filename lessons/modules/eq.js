@@ -549,7 +549,7 @@
         stem = st; frames = analyze(st.data, st.sr, 0.1);
         rumData = mkRumble(st.sr, Math.round(st.sr * 4)); var rf = analyze(rumData, st.sr, 0.25); rumSpec = new Float32Array(NB);
         for (var i = 0; i < NB; i++) { var s = 0; for (var j = 0; j < rf.length; j++) s += Math.pow(10, rf[j][i] / 10); rumSpec[i] = 10 * Math.log10(s / rf.length + 1e-20); }
-        srcEl.textContent = '실제 보컬 녹음(MG12XU 실습과 같은 음원)이에요. 처음엔 소리가 꺼져 있어요.';
+        srcEl.textContent = '실제 보컬 녹음(콘솔 실습(MG12XU)과 같은 음원)이에요. 처음엔 소리가 꺼져 있어요.';
       } else {   // 녹음이 없으면 분홍 잡음 모양의 가상 스펙트럼
         frames = [new Float32Array(NB)]; for (var k = 0; k < NB; k++) frames[0][k] = -52 - 10 * Math.log10(BF[k] / 200) - (BF[k] < 120 ? 12 * Math.log2(120 / BF[k]) : 0);
         rumSpec = new Float32Array(NB); for (var m = 0; m < NB; m++) rumSpec[m] = BF[m] < 70 ? -48 : -48 - 40 * Math.log10(BF[m] / 70);
@@ -725,7 +725,7 @@
         { t: '그 높이를 올려 또렷하게 하기', why: '아니에요. 올리면 피드백이 더 쉽게 나요.' }] }
     ],
     missions: [
-      { title: 'MG12XU 실습 · 오디오 테스트', text: '악기마다 따로 녹음한 소리(멀티트랙)를 들어요. 보컬 채널의 HPF 를 켜고 EQ 노브도 돌려 봐요. 0 위치와 번갈아 비교해요.', go: { tab: 'tab6', audio: true } },
+      { title: '콘솔 실습(MG12XU) · 오디오 테스트', text: '악기마다 따로 녹음한 소리(멀티트랙)를 들어요. 보컬 채널의 HPF 를 켜고 EQ 노브도 돌려 봐요. 0 위치와 번갈아 비교해요.', go: { tab: 'tab6', audio: true } },
       { title: 'CL5 콘솔 트레이닝', text: '3층 CL5 에서 채널을 고르고 다루는 흐름을 익혀요. 4밴드 EQ 가 있는 콘솔이에요.', go: { tab: 'tab5' } }
     ],
     deeper: [

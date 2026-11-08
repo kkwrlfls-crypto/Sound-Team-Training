@@ -67,7 +67,7 @@
     var C = window.STA_IMG_CREDITS || {}, items = Object.keys(C).filter(function (k) { return C[k].url; }).map(function (k) {
       return '<li><a href="' + esc(C[k].url) + '" target="_blank" rel="noopener">' + esc(C[k].t.replace(/^사진:\s*/, '')) + '</a></li>'; });
     return '<div style="font-size:.9rem;line-height:1.7"><p style="margin:0 0 8px">자유 이용 사진(저작자 표시 필요)</p><ul style="margin:0 0 12px;padding-left:18px">' + items.join('') + '</ul>' +
-      '<p style="margin:0">장비 사진은 각 제조사 공식 웹사이트의 제품 이미지와 제품 사진이에요. 학습 화면의 MG12XU 사진은 「MG12XU 실습」 화면의 콘솔(Yamaha 제품 사진 + 실습용 페이더)이에요.</p></div>';
+      '<p style="margin:0">장비 사진은 각 제조사 공식 웹사이트의 제품 이미지와 제품 사진이에요. 학습 화면의 MG12XU 사진은 「콘솔 실습」의 MG12XU 화면 콘솔(Yamaha 제품 사진 + 실습용 페이더)이에요.</p></div>';
   }
   if (!nav.querySelector('.nav-credits')) {
     var cb = document.createElement('button'); cb.type = 'button'; cb.className = 'nav-credits'; cb.textContent = '사진 출처';

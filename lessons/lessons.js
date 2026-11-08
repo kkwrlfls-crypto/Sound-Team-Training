@@ -295,6 +295,7 @@
   function waitFor(test, cb, tries) { tries = tries || 0; if (test()) { cb(); return; } if (tries > 240) return; setTimeout(function () { waitFor(test, cb, tries + 1); }, 250); }
   function openPractice(go) {
     if (!go || typeof switchTab !== 'function') return;
+    if (go.tab === 'tab6' && window.STAModules && STAModules.setPracPart) STAModules.setPracPart('tab6', '#mg12xu');   // 2026-11-08: 콘솔 실습 탭은 MG12XU 칸으로
     switchTab(go.tab);
     showBack();
     setTimeout(function () {
