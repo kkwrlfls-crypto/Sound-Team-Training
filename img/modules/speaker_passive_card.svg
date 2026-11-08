@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <!-- 05-1 패시브 스피커 카드 그림 (2026-11-08) — 제조사 · 모델 없이 그린 일반 장비: 파워앰프 → speakON 케이블 → 12인치 2웨이 패시브 스피커 + 18인치 서브우퍼 -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f1f36"/>
+      <stop offset="1" stop-color="#0b1626"/>
+    </linearGradient>
+    <radialGradient id="glowO" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#fb923c" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#fb923c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowT" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cab" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1b2433"/>
+      <stop offset="1" stop-color="#121a26"/>
+    </linearGradient>
+    <linearGradient id="side" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0d131d"/>
+      <stop offset="1" stop-color="#1a2230"/>
+    </linearGradient>
+    <pattern id="grille" width="10" height="9" patternUnits="userSpaceOnUse">
+      <rect width="10" height="9" fill="#2a3446"/>
+      <circle cx="2.5" cy="2.2" r="2" fill="#0d131d"/>
+      <circle cx="7.5" cy="6.7" r="2" fill="#0d131d"/>
+    </pattern>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <g stroke="#16304f" stroke-width="1">
+    <path d="M0 100H800M0 200H800M0 300H800M0 400H800M0 500H800"/>
+    <path d="M100 0V600M200 0V600M300 0V600M400 0V600M500 0V600M600 0V600M700 0V600"/>
+  </g>
+  <circle cx="470" cy="270" r="250" fill="url(#glowT)"/>
+  <circle cx="470" cy="300" r="170" fill="url(#glowO)"/>
+
+  <!-- 바닥 그림자 -->
+  <ellipse cx="480" cy="548" rx="250" ry="16" fill="#050a12" opacity=".7"/>
+
+  <!-- 18인치 서브우퍼 (아래) -->
+  <path d="M340 400H612L628 412V540H324V412Z" fill="url(#side)"/>
+  <rect x="340" y="404" width="272" height="136" rx="6" fill="url(#cab)" stroke="#334155" stroke-width="2"/>
+  <rect x="350" y="414" width="252" height="102" rx="4" fill="url(#grille)"/>
+  <rect x="350" y="522" width="252" height="10" rx="3" fill="#0b1018"/>
+  <!-- 폴(기둥) -->
+  <rect x="468" y="356" width="16" height="50" fill="#64748b"/>
+  <rect x="464" y="398" width="24" height="8" rx="2" fill="#475569"/>
+
+  <!-- 12인치 2웨이 패시브 스피커 (위) — 사다리꼴 옆면 -->
+  <path d="M400 70L384 82V346L400 358Z" fill="#0d131d"/>
+  <path d="M552 70L568 82V346L552 358Z" fill="#0d131d"/>
+  <rect x="400" y="70" width="152" height="288" rx="10" fill="url(#cab)" stroke="#334155" stroke-width="2"/>
+  <rect x="410" y="80" width="132" height="268" rx="6" fill="url(#grille)"/>
+  <!-- 그릴 너머 비치는 혼과 우퍼 -->
+  <path d="M426 96H526L506 160H446Z" fill="#22d3ee" fill-opacity=".18" stroke="#7dd3fc" stroke-width="3"/>
+  <circle cx="476" cy="128" r="6" fill="#7dd3fc"/>
+  <circle cx="476" cy="256" r="62" fill="#fb923c" fill-opacity=".12" stroke="#fb923c" stroke-width="5"/>
+  <circle cx="476" cy="256" r="36" fill="none" stroke="#fdba74" stroke-width="3" opacity=".8"/>
+  <circle cx="476" cy="256" r="12" fill="#fb923c"/>
+  <!-- 손잡이 -->
+  <rect x="386" y="186" width="10" height="44" rx="4" fill="#0b1018" stroke="#334155" stroke-width="2"/>
+
+  <!-- 소리 퍼짐 -->
+  <path d="M600 200a60 60 0 0 1 0 110" fill="none" stroke="#fb923c" stroke-width="5" stroke-linecap="round" opacity=".75"/>
+  <path d="M626 176a96 96 0 0 1 0 158" fill="none" stroke="#fb923c" stroke-width="4" stroke-linecap="round" opacity=".45"/>
+  <path d="M652 152a132 132 0 0 1 0 206" fill="none" stroke="#fb923c" stroke-width="3" stroke-linecap="round" opacity=".25"/>
+
+  <!-- 파워앰프 (왼쪽) -->
+  <rect x="60" y="210" width="230" height="86" rx="8" fill="#1e293b" stroke="#475569" stroke-width="3"/>
+  <rect x="60" y="210" width="16" height="86" fill="#334155"/>
+  <rect x="274" y="210" width="16" height="86" fill="#334155"/>
+  <g fill="#0b1018">
+    <rect x="92" y="226" width="96" height="6" rx="3"/><rect x="92" y="240" width="96" height="6" rx="3"/><rect x="92" y="254" width="96" height="6" rx="3"/><rect x="92" y="268" width="96" height="6" rx="3"/>
+  </g>
+  <circle cx="214" cy="244" r="13" fill="#0f172a" stroke="#94a3b8" stroke-width="3"/>
+  <path d="M214 244L222 234" stroke="#e2e8f0" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="250" cy="244" r="13" fill="#0f172a" stroke="#94a3b8" stroke-width="3"/>
+  <path d="M250 244L242 234" stroke="#e2e8f0" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="206" cy="278" r="4" fill="#22c55e"/><circle cx="222" cy="278" r="4" fill="#22c55e"/><circle cx="242" cy="278" r="4" fill="#f59e0b"/><circle cx="258" cy="278" r="4" fill="#ef4444" opacity=".35"/>
+
+  <!-- speakON 케이블: 앰프 → 스피커 (빛 번짐 + 선) -->
+  <path d="M290 270C330 270 320 330 360 330S384 300 384 300" fill="none" stroke="#f97316" stroke-width="14" opacity=".25" filter="url(#soft)"/>
+  <path d="M290 270C330 270 320 330 360 330S384 300 384 300" fill="none" stroke="#f97316" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="290" cy="270" r="11" fill="#0b1018" stroke="#60a5fa" stroke-width="4"/>
+  <!-- 큰 힘 점 -->
+  <g fill="#fbbf24"><circle cx="318" cy="285" r="5"/><circle cx="342" cy="324" r="5"/><circle cx="370" cy="322" r="5"/></g>
+
+  <!-- 기호 -->
+  <g font-family="Pretendard, system-ui, sans-serif" font-weight="800" opacity=".85">
+    <text x="175" y="180" font-size="40" text-anchor="middle" fill="#cbd5e1">8 Ω</text>
+    <text x="175" y="350" font-size="26" text-anchor="middle" fill="#f97316">+ / −</text>
+  </g>
+</svg>

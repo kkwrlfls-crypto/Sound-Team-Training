@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <!-- 04-2 디지털 앰프 과정 카드 그림 (2026-11-08) — 일반적인 4채널 디지털 앰프(화면형 · LED형)와 스피커. 로고 · 모델명 없음 -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#10223b"/>
+      <stop offset="1" stop-color="#0b1626"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowO" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#fb923c" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#fb923c" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b323c"/>
+      <stop offset="1" stop-color="#171b21"/>
+    </linearGradient>
+    <linearGradient id="ear" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3a424d"/>
+      <stop offset="1" stop-color="#232930"/>
+    </linearGradient>
+    <linearGradient id="scr" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1d4f86"/>
+      <stop offset="1" stop-color="#0e2c52"/>
+    </linearGradient>
+    <linearGradient id="spk" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#242a33"/>
+      <stop offset="1" stop-color="#14181d"/>
+    </linearGradient>
+    <radialGradient id="cone" cx=".45" cy=".4" r=".6">
+      <stop offset="0" stop-color="#4b5563"/>
+      <stop offset="1" stop-color="#111418"/>
+    </radialGradient>
+    <pattern id="vent" width="10" height="8" patternUnits="userSpaceOnUse">
+      <rect width="10" height="8" fill="#14181d"/>
+      <circle cx="5" cy="4" r="2.2" fill="#07090b"/>
+    </pattern>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4"/></filter>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <g stroke="#16304f" stroke-width="1" opacity=".8">
+    <path d="M0 100H800M0 200H800M0 300H800M0 400H800M0 500H800"/>
+    <path d="M100 0V600M200 0V600M300 0V600M400 0V600M500 0V600M600 0V600M700 0V600"/>
+  </g>
+  <circle cx="300" cy="300" r="300" fill="url(#glow)"/>
+  <circle cx="660" cy="300" r="170" fill="url(#glowO)"/>
+
+  <!-- PWM 펄스 띠 (위) → 매끈한 소리 (아래) -->
+  <g opacity=".9">
+    <path d="M40 92 h18 v-34 h10 v34 h12 v-34 h20 v34 h8 v-34 h28 v34 h6 v-34 h34 v34 h6 v-34 h28 v34 h8 v-34 h20 v34 h12 v-34 h10 v34 h18 v-34 h8 v34 h14 v-34 h6 v34 h20" fill="none" stroke="#fb923c" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M40 525 C 95 470, 150 470, 205 525 S 315 580, 370 525 S 480 470, 535 525" fill="none" stroke="#22d3ee" stroke-width="5" stroke-linecap="round"/>
+    <path d="M40 525 C 95 470, 150 470, 205 525 S 315 580, 370 525 S 480 470, 535 525" fill="none" stroke="#22d3ee" stroke-width="12" opacity=".25" filter="url(#soft)"/>
+  </g>
+
+  <!-- 앰프 1: 화면형 (2U) -->
+  <g transform="translate(40 150)">
+    <rect x="0" y="0" width="500" height="132" rx="8" fill="url(#face)" stroke="#0a0c0f" stroke-width="2"/>
+    <rect x="0" y="0" width="26" height="132" rx="6" fill="url(#ear)"/>
+    <rect x="474" y="0" width="26" height="132" rx="6" fill="url(#ear)"/>
+    <ellipse cx="13" cy="22" rx="6" ry="8" fill="#0b0d10"/><ellipse cx="13" cy="110" rx="6" ry="8" fill="#0b0d10"/>
+    <ellipse cx="487" cy="22" rx="6" ry="8" fill="#0b0d10"/><ellipse cx="487" cy="110" rx="6" ry="8" fill="#0b0d10"/>
+    <!-- 화면 -->
+    <rect x="44" y="18" width="150" height="96" rx="5" fill="#05080c"/>
+    <rect x="50" y="24" width="138" height="84" rx="3" fill="url(#scr)"/>
+    <g fill="#93c5fd" opacity=".9">
+      <rect x="58" y="31" width="58" height="6" rx="2"/>
+      <rect x="150" y="31" width="30" height="6" rx="2" fill="#34d399"/>
+    </g>
+    <g>
+      <rect x="60" y="80" width="20" height="20" rx="2" fill="#0b2340"/><rect x="60" y="56" width="20" height="44" rx="2" fill="#22c55e"/>
+      <rect x="90" y="80" width="20" height="20" rx="2" fill="#0b2340"/><rect x="90" y="62" width="20" height="38" rx="2" fill="#22c55e"/>
+      <rect x="120" y="80" width="20" height="20" rx="2" fill="#0b2340"/><rect x="120" y="48" width="20" height="52" rx="2" fill="#facc15"/>
+      <rect x="150" y="80" width="20" height="20" rx="2" fill="#0b2340"/><rect x="150" y="70" width="20" height="30" rx="2" fill="#22c55e"/>
+      <path d="M58 46 H182" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3 3" opacity=".7"/>
+    </g>
+    <!-- 다이얼 -->
+    <circle cx="232" cy="66" r="24" fill="#0f1216" stroke="#3a424d" stroke-width="3"/>
+    <circle cx="232" cy="66" r="15" fill="#2a3038"/>
+    <path d="M232 52 V60" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+    <!-- 전원 버튼 · 상태 불빛 -->
+    <circle cx="280" cy="40" r="7" fill="#22c55e"/><circle cx="280" cy="40" r="12" fill="#22c55e" opacity=".25"/>
+    <circle cx="280" cy="66" r="5" fill="#38bdf8"/>
+    <circle cx="280" cy="92" r="5" fill="#334155"/>
+    <!-- 통풍구 -->
+    <rect x="304" y="22" width="156" height="88" rx="6" fill="url(#vent)" stroke="#0a0c0f" stroke-width="2"/>
+  </g>
+
+  <!-- 앰프 2: LED형 (2U) -->
+  <g transform="translate(40 300)">
+    <rect x="0" y="0" width="500" height="132" rx="8" fill="url(#face)" stroke="#0a0c0f" stroke-width="2"/>
+    <rect x="0" y="0" width="26" height="132" rx="6" fill="url(#ear)"/>
+    <rect x="474" y="0" width="26" height="132" rx="6" fill="url(#ear)"/>
+    <ellipse cx="13" cy="22" rx="6" ry="8" fill="#0b0d10"/><ellipse cx="13" cy="110" rx="6" ry="8" fill="#0b0d10"/>
+    <ellipse cx="487" cy="22" rx="6" ry="8" fill="#0b0d10"/><ellipse cx="487" cy="110" rx="6" ry="8" fill="#0b0d10"/>
+    <!-- 채널별 불빛 4줄 (신호 · 리미트 · 클립 · 보호) -->
+    <g>
+      <rect x="44" y="20" width="236" height="92" rx="6" fill="#111418" stroke="#2a3038"/>
+      <g transform="translate(60 34)">
+        <circle cx="0" cy="0" r="6" fill="#22c55e"/><circle cx="22" cy="0" r="6" fill="#facc15"/><circle cx="44" cy="0" r="6" fill="#3f3f46"/><circle cx="66" cy="0" r="6" fill="#3f3f46"/>
+        <circle cx="0" cy="22" r="6" fill="#22c55e"/><circle cx="22" cy="22" r="6" fill="#3f3f46"/><circle cx="44" cy="22" r="6" fill="#3f3f46"/><circle cx="66" cy="22" r="6" fill="#3f3f46"/>
+        <circle cx="0" cy="44" r="6" fill="#22c55e"/><circle cx="22" cy="44" r="6" fill="#3f3f46"/><circle cx="44" cy="44" r="6" fill="#ef4444"/><circle cx="66" cy="44" r="6" fill="#3f3f46"/>
+        <circle cx="0" cy="66" r="6" fill="#3f3f46"/><circle cx="22" cy="66" r="6" fill="#3f3f46"/><circle cx="44" cy="66" r="6" fill="#3f3f46"/><circle cx="66" cy="66" r="6" fill="#3f3f46"/>
+      </g>
+      <g fill="#475569">
+        <rect x="150" y="30" width="110" height="8" rx="3"/><rect x="150" y="52" width="110" height="8" rx="3"/>
+        <rect x="150" y="74" width="110" height="8" rx="3"/><rect x="150" y="96" width="110" height="8" rx="3"/>
+      </g>
+      <g>
+        <rect x="150" y="30" width="80" height="8" rx="3" fill="#22c55e"/><rect x="150" y="52" width="58" height="8" rx="3" fill="#22c55e"/>
+        <rect x="150" y="74" width="104" height="8" rx="3" fill="#f97316"/><rect x="150" y="96" width="0" height="8" rx="3" fill="#22c55e"/>
+      </g>
+    </g>
+    <!-- 전원 버튼 -->
+    <circle cx="300" cy="66" r="12" fill="#0f1216" stroke="#3a424d" stroke-width="3"/>
+    <path d="M300 58 V66 M294 62 a8 8 0 1 0 12 0" fill="none" stroke="#38bdf8" stroke-width="2.4" stroke-linecap="round"/>
+    <!-- 통풍구 -->
+    <rect x="324" y="22" width="136" height="88" rx="6" fill="url(#vent)" stroke="#0a0c0f" stroke-width="2"/>
+  </g>
+
+  <!-- 스피커 케이블 -->
+  <path d="M540 216 C 590 216, 590 250, 620 250" fill="none" stroke="#f97316" stroke-width="5" stroke-linecap="round"/>
+  <path d="M540 366 C 590 366, 590 330, 620 330" fill="none" stroke="#f97316" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- 일반 2웨이 스피커 -->
+  <g transform="translate(616 150)">
+    <path d="M0 10 Q0 0 10 0 H118 Q128 0 128 10 V270 Q128 280 118 280 H10 Q0 280 0 270 Z" fill="url(#spk)" stroke="#0a0c0f" stroke-width="2"/>
+    <path d="M28 28 H100 L86 70 H42 Z" fill="#0b0d10" stroke="#3a424d" stroke-width="2"/>
+    <ellipse cx="64" cy="50" rx="9" ry="6" fill="#1f2937"/>
+    <circle cx="64" cy="168" r="50" fill="#0b0d10" stroke="#3a424d" stroke-width="3"/>
+    <circle cx="64" cy="168" r="42" fill="url(#cone)"/>
+    <circle cx="64" cy="168" r="13" fill="#1f2937" stroke="#4b5563" stroke-width="2"/>
+    <rect x="44" y="240" width="40" height="12" rx="6" fill="#0b0d10"/>
+  </g>
+  <!-- 소리 물결 -->
+  <g fill="none" stroke="#fb923c" stroke-linecap="round">
+    <path d="M756 258 q 10 32 0 64" stroke-width="4" opacity=".9"/>
+    <path d="M767 240 q 16 50 0 100" stroke-width="4" opacity=".6"/>
+    <path d="M778 222 q 20 68 0 136" stroke-width="4" opacity=".35"/>
+  </g>
+</svg>
