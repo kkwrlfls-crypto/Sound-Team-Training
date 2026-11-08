@@ -70,35 +70,38 @@
     }
     function eqRun(bank, bands, x, n, second) { for (var i = 0; i < bands.length; i++) if (!bank[i].pass) runBQ(bank[i], x, n, second); }
 
-    function Dyn() { this.gr = 0; this.gl = 1; this.ms = 0; this.hold = 0; this.avg = 0; this.max = 0; this.kq = new BQ(); this.kb = new Float32Array(BL); }
-    // D: [on, mode(0 COMP 1 EXP), thr, ratio, knee, att, hold, rel, makeup, auto, rms, lin, mix(0..1), pre, key, kfType, kfFreq]
+    function Dyn() { this.gr = 0; this.gl = 1; this.ms = 0; this.hold = 0; this.avg = 0; this.max = 0; this.y1 = 0; this.yl = 0; this.env = 0; this.kq = new BQ(); this.kb = new Float32Array(BL); }
+    // D: [on, mode(0 COMP 1 EXP), thr, ratio, knee, att, hold, rel, makeup, auto, rms, lin, mix(0..1), pre, key, kfType, kfFreq, kfQ]
+    // 감지: COMP = 「매끈한 분리형 피크 감지」(줄일 양을 바로 잡고 HOLD 뒤 RELEASE 로 놓음 → ATTACK 으로 부드럽게),
+    //       EXP = 소리 크기 엔벨로프로 열고(ATTACK) 닫음(RELEASE). LOG = dB 로 부드럽게, LIN = 선형 게인으로 부드럽게
     function dynRun(st, D, x, key, n, fs, key2) {
-      var mode = D[1], T = D[2], R = D[3], W = D[4] * KNEE_DB, att = D[5], rel = D[7], mk = D[8], mix = D[12], i, k, lv, L, g, o, sl;
+      var mode = D[1], T = D[2], R = D[3], W = D[4] * KNEE_DB, att = D[5], rel = D[7], mk = D[8], mix = D[12], i, k, lv, L, g, o, sl, c;
       if (D[9]) { att = 10; rel = 40 + 60 * st.avg; if (rel > 1500) rel = 1500; }
-      var aC = tc(att, fs), rC = tc(rel, fs), holdN = D[6] * fs / 1000, rmsC = tc(10, fs), rms = D[10], lin = D[11];
+      var aC = tc(att, fs), rC = tc(rel, fs), holdN = D[6] * fs / 1000, rmsC = tc(10, fs), envR = tc(15, fs), rms = D[10], lin = D[11];
       var kb = key;
       if (D[15] >= 0) { kb = st.kb; for (i = 0; i < n; i++) kb[i] = key2 ? Math.max(Math.abs(key[i]), Math.abs(key2[i])) : key[i]; design(st.kq, D[15], D[16], 0, D[15] === 6 ? D[17] : 0.707, fs); runBQ(st.kq, kb, n); key2 = null; }
-      var gr = st.gr, gl = st.gl, ms = st.ms, hold = st.hold, mx = st.max, mkl = db2(mk), w2 = W / 2;
+      var ms = st.ms, hold = st.hold, mx = st.max, y1 = st.y1, yl = st.yl, env = st.env, mkl = db2(mk), w2 = W / 2, gl = st.gl, gr = st.gr;
       sl = mode === 0 ? 1 / R - 1 : -(R - 1);
       for (i = 0; i < n; i++) {
-        k = kb[i]; if (key2) { var k2 = key2[i]; if ((k2 < 0 ? -k2 : k2) > (k < 0 ? -k : k)) k = k2; }
-        if (rms) { ms = k * k + (ms - k * k) * rmsC; lv = Math.sqrt(ms); } else lv = k < 0 ? -k : k;
+        k = kb[i]; if (k < 0) k = -k; if (key2) { var k2 = key2[i]; if (k2 < 0) k2 = -k2; if (k2 > k) k = k2; }
+        if (rms) { ms = k * k + (ms - k * k) * rmsC; lv = Math.sqrt(ms); } else lv = k;
+        if (mode === 1) { env = lv > env ? lv : env * envR; lv = env; }
         L = l2db(lv);
-        if (mode === 0) { o = L - T; if (W > 0 && o > -w2 && o < w2) g = sl * (o + w2) * (o + w2) / (2 * W); else g = o > 0 ? sl * o : 0; }
-        else { o = T - L; if (W > 0 && o > -w2 && o < w2) g = sl * (o + w2) * (o + w2) / (2 * W); else g = o > 0 ? sl * o : 0; if (g < -80) g = -80; }
-        var engage = mode === 0 ? g < gr : g > gr;   // COMP: 더 누를 때 = attack, EXP: 열릴 때 = attack
-        if (lin) {
-          var tg = db2(g);
-          if (engage) { gl = tg + (gl - tg) * aC; hold = holdN; } else if (hold > 0) hold--; else gl = tg + (gl - tg) * rC;
-          gr = l2db(gl);
+        o = mode === 0 ? L - T : T - L;
+        if (W > 0 && o > -w2 && o < w2) g = sl * (o + w2) * (o + w2) / (2 * W); else g = o > 0 ? sl * o : 0;
+        if (g < -80) g = -80;
+        c = lin ? 1 - db2(g) : -g;   // 줄일 양(LOG: dB, LIN: 0..1)
+        if (mode === 0) {
+          if (c >= y1) { y1 = c; hold = holdN; } else if (hold > 0) hold--; else y1 = c + (y1 - c) * rC;
+          yl = y1 + (yl - y1) * aC;
         } else {
-          if (engage) { gr = g + (gr - g) * aC; hold = holdN; } else if (hold > 0) hold--; else gr = g + (gr - g) * rC;
-          gl = db2(gr);
+          if (c < yl) { yl = c + (yl - c) * aC; hold = holdN; } else if (hold > 0) hold--; else yl = c + (yl - c) * rC;
         }
+        if (lin) { gl = 1 - yl; if (gl < 1e-4) gl = 1e-4; gr = l2db(gl); } else { gr = -yl; gl = db2(gr); }
         if (-gr > mx) mx = -gr;
         var y = x[i] * gl * mkl; x[i] = mix >= 1 ? y : x[i] * (1 - mix) + y * mix;
       }
-      st.gr = gr; st.gl = gl; st.ms = ms; st.hold = hold; st.max = mx; st.avg = st.avg * 0.995 + (-gr) * 0.005;
+      st.gr = gr; st.gl = gl; st.ms = ms; st.hold = hold; st.max = mx; st.y1 = y1; st.yl = yl; st.env = env; st.avg = st.avg * 0.995 + (-gr) * 0.005;
     }
     function Gate() { this.env = 0; this.g = 0; this.hold = 0; this.open = false; this.max = 0; this.kq = new BQ(); this.kb = new Float32Array(BL); }
     // G: [on, mode(0 EXP2 1 EXP3 2 EXP4 3 GATE 4 DUCK), thr, range, att, hold, rel, key, kfType, kfFreq, kfQ]
@@ -179,7 +182,7 @@
         /* ---- 입력 채널 48개(ch 32 · aux 8 · fx return 8) ---- */
         for (var si = 0; si < NS; si++) {
           p = P.strips[si]; s = S[si];
-          if (!p) { if (s.wasOn) { s.tIN.fill(0); s.wasOn = false; s.gate.g = 0; s.dyn.gr = 0; s.dyn.gl = 1; } continue; }
+          if (!p) { if (s.wasOn) { s.tIN.fill(0); s.wasOn = false; s.gate.g = 0; s.dyn.gr = 0; s.dyn.gl = 1; s.dyn.y1 = s.dyn.yl = 0; } continue; }
           s.wasOn = true;
           x = s.x;
           // 1) 소리 넣기
@@ -206,7 +209,7 @@
           if (p.eq) eqRun(s.eq, p.eq, x, n);
           s.tPOST.set(x);
           if (p.dy && !p.dy[13]) { dk = p.dy[14] >= 0 && p.dy[14] !== si ? S[p.dy[14]].tIN : s.tPOST; dynRun(s.dyn, p.dy, x, dk, n, fs); }
-          if (!p.dy) { s.dyn.gr = 0; s.dyn.gl = 1; }
+          if (!p.dy) { s.dyn.gr = 0; s.dyn.gl = 1; s.dyn.y1 = s.dyn.yl = 0; }
           pk = 0; for (i = 0; i < n; i++) { v = x[i]; if (v < 0) v = -v; if (v > pk) pk = v; }
           if (pk > s.pk[1]) s.pk[1] = pk;
           // 5) 페이더 · 뮤트 · PAN → MAIN LR / M · 솔로 · 센드
@@ -416,7 +419,7 @@
   function stripSide(n) { return n.replace(/(^| )(l|r|left|right)$/, '').trim(); }
   // names: 무대 입력 이름 32개(Local 1..32). 파일 하나 → [{socket, side}]
   function matchOne(fileName, chans, inputNames, used) {
-    var f = norm(fileName), fs = stripSide(f).replace(/ ?(lr|st|stereo)$/, ''), fSide = sideOf(fileName);
+    var f0 = norm(fileName), num = /^(\d{1,2})(\D|$)/.exec(f0), f = f0.replace(/^\d{1,3} */, '') || f0, fs = stripSide(f).replace(/ ?(lr|st|stereo)$/, ''), fSide = sideOf(fileName);
     var out = [];
     function free(i) { return i >= 0 && !used[i]; }
     function findCh(g, side) {
@@ -442,7 +445,7 @@
     for (var i = 0; i < inputNames.length; i++) { var nz = norm(inputNames[i]).replace(/ /g, ''); if (nz && nz === fz && free(i)) return [{ socket: i, side: 'mono' }]; }
     for (i = 0; i < inputNames.length; i++) { var nz2 = norm(inputNames[i]).replace(/ /g, ''); if (nz2.length >= 2 && fz.length >= 2 && (fz.indexOf(nz2) >= 0 || nz2.indexOf(fz) >= 0) && free(i)) return [{ socket: i, side: 'mono' }]; }
     // 맨 앞 번호(01_Kick.wav → Local 1)
-    var num = /^(\d{1,2})(\D|$)/.exec(f); if (num) { var nn = +num[1] - 1; if (nn >= 0 && nn < 32 && free(nn)) return [{ socket: nn, side: chans > 1 ? 'mono' : 'mono' }]; }
+    if (num) { var nn = +num[1] - 1; if (nn >= 0 && nn < 32 && free(nn)) return [{ socket: nn, side: chans > 1 ? 'mono' : 'mono' }]; }
     return out;
   }
   function inputNamesOf(model) {
@@ -462,7 +465,7 @@
   function create(model, opts) {
     opts = opts || {};
     var st = function () { return model.state; };
-    var ctx = null, node = null, core = null, sp = null, master = null, fxIn = null, fxOut = null, fxDelay = null, fxSplit = null, streamMerger = null;
+    var ctx = null, node = null, core = null, sp = null, master = null, outTrim = null, limiter = null, fxIn = null, fxOut = null, fxDelay = null, fxSplit = null, streamMerger = null;
     var running = false, destroyed = false, building = null, listenT = parseListen(opts.listen || 'main'), volume = opts.volume == null ? 1 : opts.volume;
     var stems = [], stemSeq = 0, socketMap = {}, nextChanId = 0, mode = opts.mode || 'auto';
     var meterLayout = null, lastPos = 0, statusInfo = { phase: 'idle' };
@@ -874,7 +877,10 @@
         var AC = window.AudioContext || window.webkitAudioContext;
         if (opts.context) ctx = opts.context;
         else { try { ctx = new AC({ sampleRate: 44100, latencyHint: 'interactive' }); } catch (e) { ctx = new AC(); } }
-        master = ctx.createGain(); master.gain.value = 1; master.connect(ctx.destination);
+        // 콘솔 출력(master, 미터와 같은 크기) → 사이트 스피커 앰프(outTrim, 기본 +6 dB) → 찢어짐 막는 리미터 → 스피커
+        master = ctx.createGain(); master.gain.value = 1; outTrim = ctx.createGain(); outTrim.gain.value = Math.pow(10, (opts.outGain == null ? 6 : opts.outGain) / 20);
+        limiter = ctx.createDynamicsCompressor(); limiter.threshold.value = -1.5; limiter.knee.value = 0; limiter.ratio.value = 20; limiter.attack.value = 0.002; limiter.release.value = 0.12;
+        master.connect(outTrim); outTrim.connect(limiter); limiter.connect(ctx.destination);
         fxIn = ctx.createChannelMerger(8); fxDelay = ctx.createDelay(0.1); fxDelay.delayTime.value = 0; fxIn.connect(fxDelay);
         streamMerger = ctx.createChannelMerger(32);
         var ok = function () { meterLayout = makeCore(ctx.sampleRate).meterLayout; res(); };
@@ -954,7 +960,10 @@
       if (target == null) { Object.keys(socketMap).forEach(function (k) { if (s && socketMap[k].stem === s.key) delete socketMap[k]; }); schedule(); return api.mapping(); }
       var sock = targetSocket(target); if (sock < 0) return api.mapping();
       if (!s) { delete socketMap[sock]; schedule(); return api.mapping(); }
-      socketMap[sock] = { stem: s.key, side: side || (s.channels > 1 ? 'mono' : 'mono') }; mappedOnce = true; schedule(); return api.mapping();
+      side = side || 'mono';
+      // 옮기기: 같은 스템(같은 쪽)이 꽂혀 있던 잭은 비워요. 여러 잭에 똑같이 나누려면 assign(stem, target, side, { keep:true })
+      if (!(arguments[3] && arguments[3].keep)) Object.keys(socketMap).forEach(function (k) { var e = socketMap[k]; if (e.stem === s.key && (side === 'mono' || e.side === side || e.side === 'mono')) delete socketMap[k]; });
+      socketMap[sock] = { stem: s.key, side: side }; mappedOnce = true; schedule(); return api.mapping();
     };
     api.setSourceLevel = function (sock, peakDb) { var t = targetSocket(sock); if (socketMap[t]) { socketMap[t].peak = peakDb; schedule(); } };
     api.mapping = function () {
@@ -974,14 +983,17 @@
     api.listening = function () { return api.listen(); };
     api.setVolume = function (v) { volume = Math.max(0, Math.min(1.5, +v || 0)); schedule(); };
     api.seek = function (sec) { if (node) node.port.postMessage({ t: 'seek', sec: sec }); else if (core) core.seek(sec); stems.forEach(function (s) { if (s.el) try { s.el.currentTime = sec; } catch (e) {} }); };
-    api.position = function () { return lastPos; };
+    function streamEls() { return stems.filter(function (s) { return s.stream && s.ready && s.el; }).map(function (s) { return s.el; }); }
+    api.position = function () { var e = streamEls(); return e.length ? e[0].currentTime : lastPos; };
+    api.syncInfo = function () { var e = streamEls(), t = e.map(function (x) { return x.currentTime; }); return { mode: mode, times: t, spreadMs: t.length ? Math.round((Math.max.apply(null, t) - Math.min.apply(null, t)) * 1000) : 0 }; };
     api.status = function () { return statusInfo; };
     api.refresh = function () { schedule(); };
     api.whenLoaded = function () { return loading || Promise.resolve(); };
     api.mode = function () { return mode; };
     Object.defineProperty(api, 'running', { get: function () { return running; } });
     Object.defineProperty(api, 'ctx', { get: function () { return ctx; } });
-    Object.defineProperty(api, 'output', { get: function () { return master; } });   // 테스트 · 녹음용(사이트로 나가는 소리)
+    Object.defineProperty(api, 'output', { get: function () { return master; } });   // 테스트 · 녹음용(콘솔에서 나가는 소리, 미터와 같은 크기)
+    api._compile = function () { return compile(); };
     prepStems(opts.sources || DEFAULT_STEMS.slice()); autoMapNames(); mappedOnce = true;
     clearMeters();
     return api;

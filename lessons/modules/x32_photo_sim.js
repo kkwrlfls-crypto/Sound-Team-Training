@@ -82,7 +82,7 @@
       '.x32p-btn.dim{opacity:.55;cursor:default}',
       '.x32p-bl{display:block;font-size:.5cqw;font-weight:900;color:#e5e7eb;letter-spacing:-.01em;line-height:1;white-space:nowrap}.x32p-btn.on .x32p-bl{color:#052e16}',
       '.x32p-lcd{position:absolute;border-radius:.2cqw;background:var(--c,#475569);color:var(--fg,#0b0c0e);display:flex;flex-direction:column;justify-content:space-between;align-items:stretch;padding:.12cqw .22cqw;line-height:1.05;box-shadow:inset 0 0 0 .08cqw rgba(0,0,0,.35),0 0 .5cqw var(--glow,transparent);pointer-events:auto;cursor:pointer;overflow:hidden}',
-      '.x32p-lcd span{font-size:.62cqw;font-weight:900;display:flex;justify-content:space-between}.x32p-lcd span i{font-style:normal;opacity:.8;font-size:.5cqw}.x32p-lcd b{font-size:.74cqw;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:clip}',
+      '.x32p-lcd span{font-size:.5cqw;font-weight:900;display:flex;justify-content:space-between;white-space:nowrap}.x32p-lcd span i{font-style:normal;opacity:.85;font-size:.42cqw}.x32p-lcd b{font-size:.54cqw;font-weight:900;line-height:1.08;overflow:hidden;word-break:break-all;max-height:2.2em;display:flex;align-items:flex-end}',
       '.x32p-lcd.inv{box-shadow:inset 0 0 0 .1cqw var(--fg)}',
       '.x32p-lcd.sof{box-shadow:inset 0 0 0 .16cqw #f97316}',
       '.x32p-lcd.none{background:#111214;color:#4b5563}',
@@ -116,7 +116,7 @@
       '.x32p-scr .modal{position:absolute;inset:8% 6%;background:#0f172a;border:.1cqw solid #60a5fa;border-radius:.3cqw;padding:.4cqw;display:flex;flex-direction:column;gap:.3cqw;pointer-events:auto;font-size:.7cqw}',
       '.x32p-scr .modal input{font:inherit;padding:.15cqw .3cqw;border-radius:.15cqw;border:0}.x32p-scr .modal .cols{display:flex;flex-wrap:wrap;gap:.15cqw}.x32p-scr .modal .cols button{width:1.4cqw;height:1cqw;border:.08cqw solid #000;border-radius:.1cqw;cursor:pointer}',
       '.x32p-scr .modal .cols button[aria-pressed="true"]{outline:.12cqw solid #fff}.x32p-scr .modal .ok{align-self:flex-end;font:inherit;font-weight:800;padding:.1cqw .5cqw;border-radius:.15cqw;border:0;background:#2563eb;color:#fff;cursor:pointer}',
-      '.x32p-alcd{position:absolute;border-radius:.15cqw;background:#06210f;border:.08cqw solid #22c55e;color:#86efac;font-size:.48cqw;font-weight:800;line-height:1.15;padding:.08cqw .15cqw;overflow:hidden;pointer-events:none;white-space:nowrap;text-shadow:0 0 .2cqw #22c55e}',
+      '.x32p-alcd{position:absolute;border-radius:.15cqw;background:#06210f;border:.08cqw solid #22c55e;color:#86efac;font-size:.4cqw;font-weight:800;line-height:1.15;padding:.08cqw .15cqw;overflow:hidden;pointer-events:none;white-space:nowrap;text-shadow:0 0 .2cqw #22c55e}',
       '.x32p-hint{position:absolute;padding:.25cqw .5cqw;border-radius:.3cqw;background:rgba(17,24,39,.92);color:#fff;font-size:.8cqw;font-weight:700;pointer-events:none;white-space:nowrap;transform:translate(-50%,-130%);display:none;z-index:5}',
       '.x32p-read{display:flex;flex-wrap:wrap;gap:6px;font-size:.74rem}',
       '.x32p-read>span{padding:4px 9px;border-radius:7px;background:var(--sta-surface-2,#f1f5f9);border:1px solid var(--sta-line,#e2e8f0);color:var(--sta-ink-2,#475569)}',
@@ -204,11 +204,12 @@
       '<div class="x32p-bar">' +
         '<span class="grp"><button type="button" class="snd" data-act="sound" aria-pressed="false">🔊 소리 켜기</button>' +
         '<select data-act="src" aria-label="음원 고르기"><option value="stems">음원: 찬양 멀티트랙(기본)</option><option value="none">음원 없이(미터 꺼짐)</option></select>' +
-        '<label class="file">내 음원 파일 넣기<input type="file" accept="audio/*" multiple data-act="files"></label></span>' +
+        '<label class="file">내 음원 파일 넣기<input type="file" accept="audio/*" multiple data-act="files"></label>' +
+        '<select data-act="listen" aria-label="스피커로 들을 곳"><option value="main">듣기: 메인 LR (SOLO 켜면 솔로)</option><option value="monitor">듣기: 모니터 · 헤드폰</option><option value="bus0">듣기: BUS 1 인도자 모니터</option><option value="bus1">듣기: BUS 2 싱어 모니터</option><option value="bus2">듣기: BUS 3 드럼 모니터</option><option value="bus3">듣기: BUS 4 방송 · 녹음</option></select></span>' +
         '<span class="sp">페이더 · 노브는 끌어요(노브는 휠 · 화살표 키도 돼요). 단추는 눌러요. 이름이 궁금하면 마우스를 올려 봐요.</span>' +
         '<span class="grp" role="group" aria-label="크게 보기"><button type="button" data-zoom="1" aria-pressed="true">전체</button><button type="button" data-zoom="1.6" aria-pressed="false">크게</button><button type="button" data-zoom="2.3" aria-pressed="false">더 크게</button></span></div>' +
       '<div class="x32p-msg" data-role="msg" role="status"></div>' +
-      '<div class="x32p-scroll" data-role="scroll"><div class="x32p-stage" data-role="stage" role="application" aria-label="X32 콘솔 사진 위에서 조작하는 실습"><img src="' + IMG + '" alt="Behringer X32 윗면 (공식 제품 사진)" draggable="false"></div></div>' +
+      '<div class="x32p-scroll" data-role="scroll"><div class="x32p-stage" data-role="stage" role="application" aria-label="X32 콘솔 사진 위에서 조작하는 실습"><img src="' + IMG + '" alt="Behringer X32 윗면 (공식 제품 사진)" draggable="false" onerror="this.style.visibility=\'hidden\'"></div></div>' +
       '<div class="x32p-read" data-role="read" aria-live="polite"></div>' +
       '<p class="x32p-note">사진: Behringer 공식 제품 사진. 단추 · 페이더 · 노브 · 이름표(LCD) · 미터는 사진 위에 겹쳐 그렸어요. 미터는 「소리 켜기」를 눌러야 움직여요. 아래 「지금 상태」의 dB 는 공부용으로 어림한 값(교육용 근사)이에요.</p></div>';
     scroll = el.querySelector('[data-role=scroll]'); stage = el.querySelector('[data-role=stage]'); read = el.querySelector('[data-role=read]'); msg = el.querySelector('[data-role=msg]');
@@ -400,7 +401,8 @@
       var modal = '';
       if (S.screen.modal && S.screen.modal.kind === 'name') {
         var md = S.screen.modal, ms = m.strip(md.type, md.index);
-        modal = '<div class="modal" data-role="modal"><b>' + esc(m.shortId(md.type, md.index)) + ' 이름 · 색 바꾸기</b><input data-role="nm" maxlength="12" value="' + esc(ms.name) + '" aria-label="채널 이름">' +
+        var dk = md.type + '.' + md.index; if (!U.draft || U.draft.k !== dk) U.draft = { k: dk, v: ms.name };
+        modal = '<div class="modal" data-role="modal"><b>' + esc(m.shortId(md.type, md.index)) + ' 이름 · 색 바꾸기</b><input data-role="nm" maxlength="12" value="' + esc(U.draft.v) + '" aria-label="채널 이름">' +
           '<div class="cols">' + COLORS.map(function (c, k) { return '<button type="button" data-col="' + k + '" aria-pressed="' + (ms.color === k) + '" title="' + esc(c.name) + '" style="background:' + c.bg + ';color:' + c.fg + '"></button>'; }).join('') + '</div><button type="button" class="ok" data-role="ok">확인</button></div>';
       }
       var keepFocus = document.activeElement && document.activeElement.getAttribute && document.activeElement.getAttribute('data-role') === 'nm';
@@ -418,7 +420,7 @@
     /* ---------- 미터 (model.meters → 불빛, 소리가 없으면 모두 꺼짐) ---------- */
     function setLed(d, cls) { var c = 'x32p-led' + (cls ? ' ' + cls : ''); if (d.className !== c) d.className = c; }
     function stripLeds(o) {
-      if (o.side === 'main') { setLed(o.leds[0], S.main.st.dyn && S.main.st.dyn.on && isFinite(Math.max(m.meters.main.l, m.meters.main.r)) ? 'o' : ''); return; }
+      if (o.side === 'main') { setLed(o.leds[0], S.main.st.dyn && S.main.st.dyn.on && (+m.meters.gr.main || 0) > 0.5 ? 'o' : ''); return; }
       var inf = o.inf, v = meterOf(inf), t = inf && inf.type, i = inf && inf.index;
       var gr = t === 'ch' ? m.meters.gr.ch[i] : t === 'bus' && m.meters.gr.bus ? m.meters.gr.bus[i] : 0, gt = t === 'ch' ? m.meters.gate.ch[i] : 0;
       setLed(o.leds[0], gr > 0.5 ? 'o' : '');
@@ -428,7 +430,7 @@
     function tick() {
       if (!U.alive) return; U.raf = requestAnimationFrame(tick); U.frame++; if (U.frame % 2) return;
       strips.forEach(stripLeds);
-      var s = sel(), M = m.meters, inV = s.type === 'ch' ? M.ch[s.index] : s.type === 'aux' ? M.aux[s.index] : s.type === 'fxr' ? M.fxr[s.index] : s.type === 'bus' ? M.bus[s.index] : NINF;
+      var s = sel(), M = m.meters, inV = s.type === 'ch' ? (M.chIn || M.ch)[s.index] : s.type === 'aux' ? M.aux[s.index] : s.type === 'fxr' ? M.fxr[s.index] : s.type === 'bus' ? M.bus[s.index] : NINF;
       pmL.forEach(function (d, k) { var th = PRE_TH[k]; setLed(d, isFinite(inV) && inV >= th ? (k === 0 ? 'r' : k <= 3 ? 'y' : 'g') : ''); });
       var gr = s.type === 'ch' ? M.gr.ch[s.index] : 0; grL.forEach(function (d, k) { setLed(d, gr >= GR_TH[k] - 0.01 && gr > 0.3 ? 'y' : ''); });
       setLed(gateL, s.type === 'ch' && S.ch[s.index].gate.on && M.gate.ch[s.index] > 0.5 ? 'g' : '');
@@ -451,7 +453,8 @@
         if (!cap) setFader(o, faderFromY(o, e.clientY)); else { drag.dy = e.clientY; drag.p0 = db2f(m.get(o.inf.fpath)); } return; }
       if (kn) { e.preventDefault(); var id = kn.getAttribute('data-k'), k = knobs[id]; drag = { type: k.enc ? 'e' : 'k', id: id, y: e.clientY, x: e.clientX, v0: k.enc ? 0 : (k.map.get() || 0), acc: 0, moved: false }; try { kn.setPointerCapture(e.pointerId); } catch (x) { /* noop */ } kn.focus({ preventScroll: true }); }
     }
-    function encInput(i, o) { U.seq++; o.kind = 'enc'; o.index = i; o.seq = U.seq; m.set('screen.input', o, { from: 'surface' }); if (U.fbScreen) fallbackInput(o); }
+    function sendInput(o) { U.seq++; o.seq = U.seq; m.set('screen.input', o, { from: 'surface' }); if (U.fbScreen) fallbackInput(o); }
+    function encInput(i, o) { o.kind = 'enc'; o.index = i; sendInput(o); }
     function onMove(e) {
       if (!drag) return; e.preventDefault();
       if (drag.type === 'f') { var o = drag.o, r = o.slot.getBoundingClientRect(), span = r.height * (ROW.fBot - ROW.fTop) / (ROW.fBot - ROW.fTop + 24); var p = drag.dy != null ? clamp(drag.p0 - (e.clientY - drag.dy) / span, 0, 1) : faderFromY(o, e.clientY); setFader(o, p); return; }
@@ -473,7 +476,7 @@
     function goPage(page, tab) { m.batch(function () { m.set('screen.modal', null); m.set('screen.page', page); m.set('screen.tab', tab || 0); }); }
     function toggle(path) { m.set(path, !m.get(path), { from: 'surface' }); }
     function fallbackInput(o) {   // 화면 파일이 없을 때: PAGE ◀▶ 로 HOME 탭 이동만
-      if (o.kind === 'page' && S.screen.page === 'home') m.set('screen.tab', clamp(S.screen.tab + o.dir, 0, HOME_TABS.length - 1));
+      if (o.kind === 'page' && S.screen.page === 'home') m.set('screen.tab', (S.screen.tab + o.dir + HOME_TABS.length) % HOME_TABS.length);
     }
     function selectItem(it) {
       if (!it) return;
@@ -488,7 +491,8 @@
       if (/^tap:/.test(t)) { var fx = +t.split(':')[1], now = Date.now(), dt = now - U.tapT; U.tapT = now; if (dt > 100 && dt < 3000) { m.set('fx.' + fx + '.params.time', Math.round(dt)); say('TAP TEMPO: FX' + (fx + 1) + ' 딜레이 시간을 ' + Math.round(dt) + ' ms 로 맞췄어요.'); } else say('TAP TEMPO: 박자에 맞춰 한 번 더 눌러요.'); flash(btns['as.b' + k]); return; }
       if (typeof m.get(t) === 'boolean') toggle(t);
     }
-    function commitName() { var md = S.screen.modal; if (!md) return; var inp = scr.querySelector('[data-role=nm]'); if (inp) m.set((md.type === 'main' ? 'main.' + (md.index ? 'm' : 'st') : md.type + '.' + md.index) + '.name', inp.value); if (inp) inp.blur(); m.set('screen.modal', null); }
+    function commitName() { var md = S.screen.modal; if (!md) return; var inp = scr.querySelector('[data-role=nm]'); if (inp) { m.set((md.type === 'main' ? 'main.' + (md.index ? 'm' : 'st') : md.type + '.' + md.index) + '.name', inp.value); inp.blur(); } U.draft = null; m.set('screen.modal', null); }
+    function onInput(e) { if (e.target.getAttribute && e.target.getAttribute('data-role') === 'nm' && U.draft) U.draft.v = e.target.value; }
     function onClick(e) {
       var a = e.target.closest('[data-act]'); if (a && el.contains(a)) { var act = a.getAttribute('data-act'); if (act === 'sound') toggleSound(); return; }
       var zb = e.target.closest('[data-zoom]'); if (zb && el.contains(zb)) { var z = +zb.getAttribute('data-zoom'); stage.style.width = 'max(' + (100 * z) + '%,' + Math.round(940 * z) + 'px)'; el.querySelectorAll('[data-zoom]').forEach(function (b) { b.setAttribute('aria-pressed', String(b === zb)); }); return; }
@@ -522,16 +526,22 @@
       if (id === 'v.usb') { goPage('recorder'); return; }
       if (id === 'v.mon') { goPage('monitor', 0); return; }
       if (id === 'v.talk') { goPage('monitor', 1); return; }
-      if (id === 'v.assign') { goPage('assign'); return; }
+      if (id === 'v.assign') { goPage('assign', 1 + 'ABC'.indexOf(S.config.assign.set)); return; }
       if (id === 'sc.view') { goPage(S.screen.page === 'scenes' ? 'home' : 'scenes'); return; }
       if (id === 'monmono') { toggle('config.monitor.mono'); return; } if (id === 'dim') { toggle('config.monitor.dim'); return; }
       if (id === 'talka') { toggle('config.talkback.a'); return; } if (id === 'talkb') { toggle('config.talkback.b'); return; }
       if ((r = id.match(/^mg(\d)$/))) { toggle('muteGroups.' + r[1] + '.on'); return; }
       if ((r = id.match(/^menu\.(\w+)$/))) {
-        if (r[1] === 'utility' && S.screen.page === 'home' && S.screen.tab === 1) { m.set('screen.modal', { kind: 'name', type: s.type, index: s.index }); return; }   // X32: CONFIG 탭에서 UTILITY = 이름 · 색 · 아이콘 편집
+        if (r[1] === 'utility') {   // X32: UTILITY 는 지금 페이지의 도움 기능. CONFIG 탭에서 누르면 이름 · 색 · 아이콘 편집
+          if (!U.fbScreen) { sendInput({ kind: 'utility' }); return; }
+          if (S.screen.modal) { m.set('screen.modal', null); return; }
+          if (S.screen.page === 'home' && S.screen.tab === 1) { m.set('screen.modal', { kind: 'name', type: s.type, index: s.index }); return; }
+          goPage(S.screen.page === 'utility' ? 'home' : 'utility'); return;
+        }
+        if (S.screen.page === r[1] && !S.screen.modal) { sendInput({ kind: 'page', dir: 1 }); return; }   // 같은 메뉴 단추를 또 누르면 다음 탭
         goPage(r[1]); return;
       }
-      if ((r = id.match(/^nav\.(\w+)$/))) { U.seq++; var inp = r[1] === 'pgl' || r[1] === 'pgr' ? { kind: 'page', dir: r[1] === 'pgr' ? 1 : -1, seq: U.seq } : { kind: 'layer', dir: r[1] === 'down' ? 1 : -1, seq: U.seq }; m.set('screen.input', inp, { from: 'surface' }); if (U.fbScreen) fallbackInput(inp); flash(b); return; }
+      if ((r = id.match(/^nav\.(\w+)$/))) { sendInput(r[1] === 'pgl' || r[1] === 'pgr' ? { kind: 'page', dir: r[1] === 'pgr' ? 1 : -1 } : { kind: 'layer', dir: r[1] === 'down' ? 1 : -1 }); flash(b); return; }
       if (id === 'sc.prev' || id === 'sc.next') { m.batch(function () { m.set('config.scenes.next', clamp(S.config.scenes.next + (id === 'sc.next' ? 1 : -1), 0, S.config.scenes.list.length - 1)); }); goPage('scenes'); return; }
       if (id === 'sc.go') { var was = S.config.scenes.dirty, nx = S.config.scenes.next; if (m.loadScene(nx)) { if (was && nx === 0) hit('scene'); goPage('scenes'); flash(b); } return; }
       if (id === 'sc.undo') { if (!m.undoScene()) say('되돌릴 씬 불러오기가 없어요.'); return; }
@@ -548,22 +558,30 @@
     function onLeave() { hint.style.display = 'none'; }
 
     /* ---------- 소리 (X32Audio) ---------- */
-    function audioSources() { var v = el.querySelector('[data-act=src]').value; return v === 'none' ? [] : STEMS.map(function (s) { return { name: s.name, url: s.url, input: s.input, ch: s.input, stereo: !!s.stereo }; }); }
+    function audioSources() { var v = el.querySelector('[data-act=src]').value; return v === 'none' ? [] : undefined; }   // undefined = 오디오 엔진의 기본 스템(sources/ 8개, 이름으로 자동 연결)
     function toggleSound() {
       var b = el.querySelector('[data-act=sound]');
       if (U.audioOn) { try { U.audio && U.audio.stop(); } catch (e) { /* noop */ } U.audioOn = false; b.setAttribute('aria-pressed', 'false'); b.textContent = '🔊 소리 켜기'; return; }
       if (!window.X32Audio || typeof window.X32Audio.create !== 'function') { say('소리 파일(x32_audio.js)이 아직 준비되지 않았어요. 조작은 그대로 해 볼 수 있어요.'); return; }
       try {
-        if (!U.audio) U.audio = window.X32Audio.create(m, { sources: audioSources(), onReady: function () { schedule(); } });
-        U.audio.start(); U.audioOn = true; b.setAttribute('aria-pressed', 'true'); b.textContent = '🔊 소리 끄기';
+        if (!U.audio) { var o = { onReady: function () { schedule(); } }, src = audioSources(); if (src) o.sources = src; U.audio = window.X32Audio.create(m, o); }
+        var pr = U.audio.start(); U.audioOn = true; b.setAttribute('aria-pressed', 'true'); b.textContent = '🔊 소리 끄기'; applyListen();
+        if (pr && pr.catch) pr.catch(function () { say('소리를 켜지 못했어요. 브라우저가 소리를 막았을 수 있어요.'); U.audioOn = false; b.setAttribute('aria-pressed', 'false'); b.textContent = '🔊 소리 켜기'; });
       } catch (e) { if (window.console) console.warn('X32Audio 오류', e); say('소리를 켜지 못했어요. 브라우저가 소리를 막았을 수 있어요.'); }
     }
+    function applyListen() { if (!U.audio || !U.audio.listen) return; var v = el.querySelector('[data-act=listen]').value; try { U.audio.listen(/^bus/.test(v) ? { type: 'bus', index: +v.slice(3) } : v); } catch (x) { /* noop */ } }
     function onChange(e) {
       var t = e.target;
-      if (t.matches('[data-act=src]')) { if (U.audio && U.audio.setSources) try { U.audio.setSources(audioSources()); } catch (x) { /* noop */ } return; }
+      if (t.matches('[data-act=src]')) { if (U.audio && U.audio.setSources) try { var sl = audioSources(); U.audio.setSources(sl || STEMS.map(function (x) { return { name: x.name, url: x.url, target: x.input }; })); } catch (x) { /* noop */ } return; }
+      if (t.matches('[data-act=listen]')) { applyListen(); return; }
       if (t.matches('[data-act=files]') && t.files && t.files.length) {
         if (!window.X32Audio) { say('소리 파일(x32_audio.js)이 아직 준비되지 않았어요.'); return; }
-        try { if (!U.audio) U.audio = window.X32Audio.create(m, { sources: [], onReady: function () { schedule(); } }); if (U.audio.loadFiles) U.audio.loadFiles(t.files); say('내 음원 ' + t.files.length + '개를 CH 1 부터 차례로 넣었어요. 「소리 켜기」를 눌러 들어 봐요.'); } catch (x) { say('음원을 넣지 못했어요.'); }
+        try {
+          if (!U.audio) U.audio = window.X32Audio.create(m, { sources: [], onReady: function () { schedule(); } });
+          var n = t.files.length, pr = U.audio.loadFiles ? U.audio.loadFiles(t.files) : null;
+          var done = function (map) { var list = Array.isArray(map) ? map.filter(function (x) { return x && x.stem; }).map(function (x) { return x.input + ' ← ' + x.stem; }) : []; say('내 음원 ' + n + '개를 넣었어요. ' + (list.length ? list.slice(0, 6).join(', ') + (list.length > 6 ? ' …' : '') + '. ' : '') + '「소리 켜기」를 눌러 들어 봐요.'); };
+          if (pr && pr.then) pr.then(done, function () { say('음원을 넣지 못했어요.'); }); else done(null);
+        } catch (x) { say('음원을 넣지 못했어요.'); }
       }
     }
 
@@ -575,7 +593,7 @@
     }
     m.on(onModel);
     stage.addEventListener('pointerdown', onDown); window.addEventListener('pointermove', onMove, { passive: false }); window.addEventListener('pointerup', onUp); window.addEventListener('pointercancel', onUp);
-    stage.addEventListener('wheel', onWheel, { passive: false }); stage.addEventListener('keydown', onKey); el.addEventListener('click', onClick); el.addEventListener('change', onChange); stage.addEventListener('dblclick', onDbl);
+    stage.addEventListener('wheel', onWheel, { passive: false }); stage.addEventListener('keydown', onKey); el.addEventListener('click', onClick); el.addEventListener('change', onChange); stage.addEventListener('dblclick', onDbl); stage.addEventListener('input', onInput);
     stage.addEventListener('mouseover', onOver); stage.addEventListener('mouseleave', onLeave);
     mountScreen(); render(); tick();
 
