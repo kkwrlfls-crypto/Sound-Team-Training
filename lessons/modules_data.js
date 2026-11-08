@@ -37,7 +37,7 @@ window.STA_PATHS = [
     sum: '배운 것을 실제 예배 진행과 고장 상황에 써 봐요.',
     lead: '예배 순서(식순)에 맞춰 콘솔을 다뤄 봐요. 고장 원인을 찾는 미션도 풀어요. 배운 것을 실제 현장처럼 연습해요.',
     tip: '「음향 장비 학습」과 「믹싱 스킬」을 마친 뒤 도전해 보세요. 이 경로는 내용을 더 채울 예정이에요.',
-    practice: ['tab5', 'tab7', 'tabFeedback', 'tabCheck', 'tabTips'], practiceTitle: '실전 훈련' }
+    practice: ['tab2', 'tab5', 'tab7', 'tabFeedback', 'tabCheck', 'tabTips'], practiceTitle: '실전 훈련' }
 ];
 
 window.STA_MODULES = {
