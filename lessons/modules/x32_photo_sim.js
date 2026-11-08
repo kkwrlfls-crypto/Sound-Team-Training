@@ -151,7 +151,15 @@
       '.x32p-read>span b{margin-left:4px;color:var(--sta-ink,#0f172a);font-variant-numeric:tabular-nums}.x32p-read>span b.bad{color:#dc2626}',
       '.x32p-msg{font-size:.76rem;color:var(--sta-ink,#0f172a);background:#fef9c3;border:1px solid #fde68a;border-radius:8px;padding:5px 9px;display:none}',
       /* M32: 사진이 비스듬하고 조금 작아서 페이더 손잡이 · 글자를 줄임 */
-      '.x32p-stage.x32p-m32{overflow:hidden}.x32p-m32 .x32p-cap i{top:-.82cqw;height:1.64cqw}.x32p-m32 .x32p-lcd span{font-size:.4cqw}.x32p-m32 .x32p-lcd b{font-size:.42cqw}.x32p-m32 .x32p-bl{font-size:.42cqw}.x32p-m32 .x32p-val{font-size:.56cqw}.x32p-m32 .x32p-alcd{font-size:.34cqw}',
+      /* M32 (위에서 찍은 Sweetwater 사진, 3000 px 폭 → 1cqw = 30 px): 페이더 홈 = 사진의 판 색 + 검은 홈 + 사진과 같은 자리 눈금(+10 · +5 · 0 · −5 · −10 · −20 · −30 · −40 · −50 · −60 · −∞) */
+      '.x32p-stage.x32p-m32{overflow:hidden}',
+      '.x32p-m32 .x32p-slot{border-radius:.1cqw;background:linear-gradient(90deg,transparent 0 42%,#060707 42% 58%,transparent 58%),#2f3237}',
+      '.x32p-m32 .x32p-slot .tk{position:absolute;left:3%;right:12%;height:.13cqw;margin-top:-.065cqw;background:linear-gradient(90deg,#e9eaee 0 40%,transparent 40% 57%,#e9eaee 57% 100%);pointer-events:none}',
+      '.x32p-m32 .x32p-slot .tk.z{left:0;right:6%}',
+      '.x32p-m32 .x32p-cap{width:74%;z-index:1}',
+      '.x32p-m32 .x32p-cap i{top:-.62cqw;height:1.24cqw;border-radius:.16cqw;background:linear-gradient(180deg,#fbfbfc 0,#e3e5e9 30%,#b9bdc4 48%,#7d828b 52%,#c7cad0 70%,#9da1a9 100%);box-shadow:0 .2cqw .35cqw rgba(0,0,0,.7),inset 0 0 0 .04cqw rgba(0,0,0,.35)}',
+      '.x32p-m32 .x32p-cap i::after{left:6%;right:6%;top:48%;height:.07cqw;background:#1f2125}',
+      '.x32p-m32 .x32p-lcd span{font-size:.36cqw}.x32p-m32 .x32p-lcd b{font-size:.4cqw}.x32p-m32 .x32p-bl{font-size:.36cqw}.x32p-m32 .x32p-val{font-size:.5cqw}.x32p-m32 .x32p-alcd{font-size:.3cqw}',
       '.x32p-note{margin:0;font-size:.72rem;color:var(--sta-ink-2,#64748b)}'
     ].join('\n');
     document.head.appendChild(st);
@@ -243,7 +251,7 @@
       '<div class="x32p-msg" data-role="msg" role="status"></div>' +
       '<div class="x32p-scroll" data-role="scroll"><div class="x32p-stage x32p-' + LY.key + '" data-role="stage" role="application" aria-label="' + NM + ' 콘솔 사진 위에서 조작하는 실습" style="aspect-ratio:' + PW + '/' + PH + '"><img src="' + IMG + '" alt="' + esc(LY.alt) + '" draggable="false" onerror="this.style.visibility=\'hidden\'"></div></div>' +
       '<div class="x32p-read" data-role="read" aria-live="polite"></div>' +
-      '<p class="x32p-note">사진: ' + LY.brand + ' 공식 제품 사진' + (LY.photoNote || '') + '. 단추 · 페이더 · 노브 · 이름표(LCD) · 미터는 사진 위에 겹쳐 그렸어요. 미터는 「소리 켜기」를 눌러야 움직여요. 아래 「지금 상태」의 dB 는 공부용으로 어림한 값(교육용 근사)이에요.</p></div>';
+      '<p class="x32p-note">' + (LY.photoSrc ? '사진: ' + LY.photoSrc : '사진: ' + LY.brand + ' 공식 제품 사진' + (LY.photoNote || '')) + '. 단추 · 페이더 · 노브 · 이름표(LCD) · 미터는 사진 위에 겹쳐 그렸어요. 미터는 「소리 켜기」를 눌러야 움직여요. 아래 「지금 상태」의 dB 는 공부용으로 어림한 값(교육용 근사)이에요.</p></div>';
     scroll = el.querySelector('[data-role=scroll]'); stage = el.querySelector('[data-role=stage]'); read = el.querySelector('[data-role=read]'); msg = el.querySelector('[data-role=msg]');
     function P(x, y, w, h, node, centered) { var s = node.style; if (centered !== false) { x -= w / 2; y -= h / 2; } s.left = (x / PW * 100).toFixed(3) + '%'; s.top = (y / PH * 100).toFixed(3) + '%'; s.width = (w / PW * 100).toFixed(3) + '%'; s.height = (h / PH * 100).toFixed(3) + '%'; return node; }
     function mk(tag, cls, attrs, parent) { var n = document.createElement(tag); if (cls) n.className = cls; if (attrs) Object.keys(attrs).forEach(function (k) { n.setAttribute(k, attrs[k]); }); (parent || stage).appendChild(n); return n; }
@@ -274,10 +282,12 @@
       o.lcd = mk('div', 'x32p-lcd', { 'data-lcd': id, 'data-tip': '스크리블 LCD (이름 · 색) — 두 번 누르면 이름 바꾸기' }); P(g.lcd[0], g.lcd[1], LW[0], LW[1], o.lcd);
       o.mute = button(id + '.mute', g.mute[0], g.mute[1], BW, BH, 'MUTE (소리 끄기)', 'r');
       // 페이더 홈: 위(+10) · 아래(−∞) 두 점 사이. 비스듬하면 그만큼 돌려 놓음
-      var dx = g.fBot[0] - g.fTop[0], dy = g.fBot[1] - g.fTop[1], len = Math.sqrt(dx * dx + dy * dy), pad = LY.SLOT_PAD || 12;
+      // LY.SLOT_SKEW: 사진이 위에서 조금 비스듬해 페이더 홈이 기울어 보이면, 돌리지(rotate) 않고 옆으로 밀어(skewX) 눈금은 가로 그대로 · 홈만 기울게
+      var dx = g.fBot[0] - g.fTop[0], dy = g.fBot[1] - g.fTop[1], len = LY.SLOT_SKEW ? dy : Math.sqrt(dx * dx + dy * dy), pad = LY.SLOT_PAD || 12;
       o.span = len; o.pad = pad;
       o.slot = mk('div', 'x32p-slot', { 'data-slot': id }); P((g.fTop[0] + g.fBot[0]) / 2, (g.fTop[1] + g.fBot[1]) / 2, LY.SLOT_W || 40, len + pad * 2, o.slot);
-      if (Math.abs(dx) > 0.5) o.slot.style.transform = 'rotate(' + (-Math.atan2(dx, dy) * 180 / Math.PI).toFixed(2) + 'deg)';
+      if (Math.abs(dx) > 0.5) o.slot.style.transform = LY.SLOT_SKEW ? 'skewX(' + (Math.atan2(dx, dy) * 180 / Math.PI).toFixed(2) + 'deg)' : 'rotate(' + (-Math.atan2(dx, dy) * 180 / Math.PI).toFixed(2) + 'deg)';
+      if (LY.SLOT_TICKS) LY.SLOT_TICKS.forEach(function (f) { var tk = document.createElement('i'); tk.className = 'tk' + (f === 0.75 ? ' z' : ''); tk.style.top = ((pad + (1 - f) * len) / (len + pad * 2) * 100).toFixed(3) + '%'; o.slot.appendChild(tk); });
       o.cap = document.createElement('div'); o.cap.className = 'x32p-cap' + (side === 'main' ? ' main' : ''); o.cap.setAttribute('tabindex', '0'); o.cap.setAttribute('role', 'slider'); o.cap.setAttribute('data-f', id); o.slot.appendChild(o.cap); o.cap.innerHTML = '<i></i>';
       o.cap.style.transform = 'translateX(-50%)';
       o.val = mk('div', 'x32p-val'); P(g.val[0], g.val[1], 50, 16, o.val);
@@ -445,7 +455,7 @@
     function mountScreen() {
       U.fbScreen = true;
       if (window.X32Screen && typeof window.X32Screen.mount === 'function') {
-        try { U.screen = window.X32Screen.mount(scr, m, { width: 800, height: 480, rect: SCREEN_RECT, photo: { w: PW, h: PH } }); U.fbScreen = !U.screen; }
+        try { U.screen = window.X32Screen.mount(scr, m, { width: 800, height: 480, rect: SCREEN_RECT, photo: { w: PW, h: PH }, name: NM }); U.fbScreen = !U.screen; }
         catch (e) { if (window.console) console.warn('X32Screen.mount 실패 — 대체 화면을 써요', e); U.screen = null; U.fbScreen = true; scr.innerHTML = ''; }
       }
     }

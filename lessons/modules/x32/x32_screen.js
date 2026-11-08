@@ -4,7 +4,8 @@
    var s = X32Screen.mount(el, model, opts)
      el    : 화면을 그릴 자리(사진 위 화면 칸). 크기에 맞춰 800×480 화면을 줄이거나 키워 그려요.
      model : X32Model.create() 로 만든 콘솔
-     opts  : { bigHost: 요소(선택) — 「크게 보기」 판을 넣을 곳. 없으면 el 이 든 .x32p 안 사진 상자 바로 아래 · 없으면 el 바로 뒤
+     opts  : { bigHost: 요소(선택) — 「크게 보기」 판을 넣을 곳. 없으면 el 이 든 .x32p 안 사진 상자 바로 위(2026-11-08) · 없으면 el 바로 뒤
+               name: 'X32' | 'M32' — 크게 보기 판 제목 · 읽기 이름,
                big: false — 「크게 보기」 단추 숨기기,  help: true — 크게 보기 판 아래 쉬운 설명 }
    s.destroy()        s.openBig() / s.closeBig()        s.state() → { page, tab, tabId, layer, modal, big }
 
@@ -1315,7 +1316,7 @@
 
     /* ---------- 화면 하나(작은 것 · 큰 것) 만들기 */
     function makeView(host, isBig) {
-      var root = document.createElement('div'); root.className = 'x32s' + (host.clientHeight < 4 ? ' auto' : ''); root.setAttribute('role', 'application'); root.setAttribute('aria-label', 'X32 메인 화면' + (isBig ? ' (크게 보기)' : ''));
+      var root = document.createElement('div'); root.className = 'x32s' + (host.clientHeight < 4 ? ' auto' : ''); root.setAttribute('role', 'application'); root.setAttribute('aria-label', (opts.name || 'X32') + ' 메인 화면' + (isBig ? ' (크게 보기)' : ''));
       root.innerHTML = '<div class="x32s-scr"><div class="x32s-hd"></div><div class="x32s-tb"></div><div class="x32s-bd"></div><div class="x32s-md"></div><div class="x32s-en"></div></div><div class="x32s-cap" aria-hidden="true"></div>' + (isBig || opts.big === false ? '' : '<button type="button" class="x32s-zb" aria-label="화면 크게 보기">화면 크게</button>');
       host.appendChild(root);
       var v = { id: isBig ? 'B' : 'S', root: root, scr: root.querySelector('.x32s-scr'), hd: root.querySelector('.x32s-hd'), tb: root.querySelector('.x32s-tb'), bd: root.querySelector('.x32s-bd'), md: root.querySelector('.x32s-md'), en: root.querySelector('.x32s-en'), cap: root.querySelector('.x32s-cap'), frame: 0, acts: [], drags: [], big: isBig };
@@ -1333,14 +1334,14 @@
     /* ---------- 크게 보기 판 */
     function bigHost() {
       if (opts.bigHost) return { parent: opts.bigHost, before: null };
-      var px = el.closest && el.closest('.x32p'); if (px) { var sc = px.querySelector('.x32p-scroll') || px.querySelector('[data-role=scroll]'); if (sc && sc.parentNode) return { parent: sc.parentNode, before: sc.nextSibling }; return { parent: px, before: null }; }
+      var px = el.closest && el.closest('.x32p'); if (px) { var sc = px.querySelector('.x32p-scroll') || px.querySelector('[data-role=scroll]'); if (sc && sc.parentNode) return { parent: sc.parentNode, before: sc };   // 2026-11-08: 크게 보기 판은 사진 콘솔 위쪽에 return { parent: px, before: null }; }
       return { parent: el.parentNode && el.parentNode.parentNode ? el.parentNode.parentNode : document.body, before: null };
     }
     var PGB = [['home', 'HOME'], ['meters', 'METERS'], ['routing', 'ROUTING'], ['setup', 'SETUP'], ['library', 'LIBRARY'], ['effects', 'EFFECTS'], ['mutegrp', 'MUTE GRP'], ['utility', 'UTILITY'], ['scenes', 'SCENES'], ['monitor', 'MONITOR']];
     function openBig() {
       if (big) { big.box.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
       var hp = bigHost(), box = document.createElement('div'); box.className = 'x32s-big'; box.setAttribute('data-role', 'x32-screen-big');
-      box.innerHTML = '<div class="bar"><b>X32 화면 크게 보기</b><span class="sp">사진 속 화면과 같은 화면이에요. 여기서 눌러도, 사진 위에서 눌러도 똑같이 바뀌어요.</span><button type="button" data-x="close">닫기</button></div>' +
+      box.innerHTML = '<div class="bar"><b>' + esc(opts.name || 'X32') + ' 화면 크게 보기</b><span class="sp">사진 속 화면과 같은 화면이에요. 여기서 눌러도, 사진 위에서 눌러도 똑같이 바뀌어요.</span><button type="button" data-x="close">닫기</button></div>' +
         '<div class="row" data-x="pages">' + PGB.map(function (p) { return '<button type="button" data-pg="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>' +
         '<div class="host"></div>' +
         '<div class="row"><button type="button" data-x="pl">◀ PAGE</button><button type="button" data-x="pr">PAGE ▶</button><button type="button" data-x="lu">LAYER ▲</button><button type="button" data-x="ld">LAYER ▼</button></div>' +

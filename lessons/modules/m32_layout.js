@@ -1,82 +1,84 @@
 /* =============================================================================
-   03-3 디지털 콘솔 실습 — Midas M32 LIVE 사진 배치 (2026-11-08)
+   03-3 디지털 콘솔 실습 — Midas M32 LIVE 사진 배치 (2026-11-08 다시 만듦: 위에서 찍은 사진)
    - x32_photo_sim.js 의 사진 위 표면을 그대로 쓰고, 단추 · 노브 · 페이더 · 화면 위치만 M32 사진에 맞춰요.
      M32 는 X32 와 같은 운영 소프트웨어(펌웨어 4)를 써서 화면 · 단추 기능이 같아요. 소리 · 상태도 같은 X32Model · X32Audio 를 씀.
-   - 사진: Midas 공식 제품 사진 Image_MI_0603-AEO_M32-LIVE_Front_XL.png (2000×974). 위쪽 판(채널 섹션 · 화면)과
-     아래쪽 판(페이더)을 앞에서 비스듬히 찍은 사진이라, 아래로 갈수록 칸이 양옆으로 조금씩 벌어져요(원근).
-     좌표는 사진을 격자와 함께 1.5~2배로 확대해 실측(2026-11-08). 페이더 줄은 geo() 가 줄마다 x 를 옮겨 줘요.
+   - 사진: Sweetwater 의 M32 LIVE 제품 사진(위에서 찍음, 3000×1860). Midas 공식 사진은 앞에서 비스듬히 찍은 것뿐이라
+     X32 처럼 위에서 보는 사진을 썼어요. 사진은 Sweetwater 주소에서 바로 불러와요(저장소에 복사하지 않음).
+   - 좌표: 사진 픽셀을 직접 읽어(밝은 단추 · 눈금 · 불빛 덩어리의 가운데) 잼 + 격자를 겹친 확대 화면으로 확인(2026-11-08).
+     카메라가 가운데(x≈1530) 위쪽에 있어서 아래 줄일수록 칸이 양옆으로 조금 벌어져요 → 줄마다 x 를 따로 적었어요(STRIPS 표).
+   - 페이더: 사진 눈금 그대로 +10 = y1150, 0 = y1222, −10 = y1294, −30 = y1365, −60 = y1419, −∞ = y1437 (X32 와 같은 눈금 법칙).
+     칸마다 눈금 4줄에서 홈 가운데를 재서 직선으로 맞춤(어긋남 0.6 px 이하). 홈은 기울어진 만큼 skewX 로 기울임.
    ============================================================================= */
 (function () {
   'use strict';
   window.STASims = window.STASims || {};
   var L = window.STASims.x32Layouts = window.STASims.x32Layouts || {};
-  // 칸이 벌어지는 양(dx): SEL 줄 x 를 기준으로 [x, MUTE 줄(y541), 페이더 위(y582.5), 페이더 아래(y696)]
-  var DX = [[263.5, -28.5, -36, -63], [403, -20.5, -28, -48], [592.5, -13.5, -18.5, -33.5], [664, -13, -18, -29], [711, -10, -13.5, -25], [756, -6, -10, -17],
-    [947.5, -2.5, -1.5, -5], [992.5, 2.5, 2.5, 2.5], [1095, 5, 6.5, 10], [1382.5, 12.5, 17.5, 22.5], [1427.5, 16.5, 22.5, 30], [1502.5, 20, 27.5, 45]];
-  function lerp(a, b, t) { return a + (b - a) * t; }
-  function dxRow(cx, k) {   // k: 1 = MUTE, 2 = 페이더 위, 3 = 페이더 아래
-    if (cx <= DX[0][0]) return DX[0][k]; if (cx >= DX[DX.length - 1][0]) return DX[DX.length - 1][k];
-    for (var i = 0; i < DX.length - 1; i++) if (cx <= DX[i + 1][0]) return lerp(DX[i][k], DX[i + 1][k], (cx - DX[i][0]) / (DX[i + 1][0] - DX[i][0]));
-    return 0;
-  }
-  var Y_SEL = 428.5, Y_MUTE = 541, Y_FT = 582.5, Y_FB = 696;
-  function dxAt(cx, y) {
-    if (y <= Y_SEL) return 0;
-    if (y <= Y_MUTE) return dxRow(cx, 1) * (y - Y_SEL) / (Y_MUTE - Y_SEL);
-    if (y <= Y_FT) return lerp(dxRow(cx, 1), dxRow(cx, 2), (y - Y_MUTE) / (Y_FT - Y_MUTE));
-    return lerp(dxRow(cx, 2), dxRow(cx, 3), (y - Y_FT) / (Y_FB - Y_FT));
-  }
-  function at(cx, y) { return [cx + dxAt(cx, y), y]; }
-  var LEDY = [448.5, 452.5, 456.5, 460.5, 464.5, 468.5, 472.5, 476.5];   // COMP · CLIP · −6 · −12 · −18 · −30 · −60 · GATE
+  // 칸마다: [SEL x, 미터 불빛 x, SOLO x, MUTE x, 페이더 +10 x, 페이더 −∞ x]   (SEL y737 · SOLO y887 · LCD y965 · MUTE y1038)
+  var STRIPS = [
+    [383, 361.5, 362, 342, 328.0, 291.4], [453, 432.5, 434, 415, 402.6, 367.6], [524, 504, 506, 489, 476.9, 443.7], [595, 576, 578, 562, 551.4, 520.7],
+    [666, 647, 651, 636, 624.5, 597.8], [737, 719, 723, 709, 700.7, 675.0], [808, 791.5, 796, 783, 775.5, 751.9], [880, 863, 868, 857, 849.7, 829.1],
+    [987, 972, 978, 969, 964.4, 945.6], [1059, 1044.5, 1051, 1043, 1037.8, 1023.8], [1131, 1118, 1124, 1118, 1113.9, 1101.5], [1203, 1189, 1197, 1192, 1188.7, 1178.9],
+    [1275, 1263, 1270, 1267, 1264.4, 1256.5], [1347, 1336, 1344, 1341, 1340.0, 1334.9], [1419, 1408.5, 1417, 1416, 1415.6, 1412.8], [1491, 1481, 1490, 1491, 1491.1, 1490.6],
+    // 출력 8 (DCA · BUS · MTX)
+    [1647, 1640, 1649, 1652, 1655.4, 1660.0], [1719, 1712, 1723, 1727, 1731.0, 1737.9], [1791, 1785, 1796, 1802, 1806.3, 1816.0], [1863, 1857.5, 1869, 1876, 1881.3, 1894.3],
+    [1935, 1929.5, 1942, 1951, 1957.3, 1971.5], [2006, 2002.5, 2015, 2025, 2032.4, 2048.9], [2078, 2076.5, 2088, 2100, 2107.0, 2127.0], [2150, 2148, 2161, 2174, 2182.7, 2204.0],
+    // MAIN
+    [2265, 2265, 2278, 2293, 2303.3, 2328.8]
+  ];
+  var Y_SEL = 737, Y_SOLO = 887, Y_LCD = 965, Y_MUTE = 1038, Y_FT = 1150, Y_FB = 1437;
+  var LEDY = [786, 795, 803, 811, 819, 827, 835, 848];   // COMP · CLIP · −6 · −12 · −18 · −30 · −60 · GATE (켜진 불빛 −30 · −60 = y827 · y835 실측, 8 px 간격)
+  function rowOf(cx) { var best = STRIPS[0], d = 1e9; STRIPS.forEach(function (r) { var e = Math.abs(r[0] - cx); if (e < d) { d = e; best = r; } }); return best; }
   function geo(cx, side) {
-    var g = { sel: [cx, Y_SEL], ledX: cx + dxAt(cx, 462) - 6, ledYs: LEDY, solo: at(cx, 485), lcd: at(cx, 518), mute: at(cx, Y_MUTE), fTop: at(cx, 586), fBot: at(cx, 693), val: at(cx, 709) };
-    if (side === 'main') { g.comp = at(cx - 8, 446); g.clr = at(cx + 2, 463); g.solo = at(cx + 2, 484); g.lcd = at(cx, 518); }
+    var r = rowOf(cx), lcdX = r[2] + (r[3] - r[2]) * (Y_LCD - Y_SOLO) / (Y_MUTE - Y_SOLO);
+    var g = { sel: [r[0], Y_SEL], ledX: r[1], ledYs: LEDY, solo: [r[2], Y_SOLO], lcd: [lcdX, Y_LCD], mute: [r[3], Y_MUTE], fTop: [r[4], Y_FT], fBot: [r[5], Y_FB], val: [r[5] + 2, 1466] };
+    if (side === 'main') { g.comp = [2257, 779]; g.clr = [2274, 833]; g.solo = [2278, 886]; g.lcd = [2284, 965]; }
     return g;
   }
-  function ix(a, b, n) { var r = []; for (var i = 0; i < n; i++) r.push(+(a + (b - a) * i / (n - 1)).toFixed(1)); return r; }
   L.m32 = {
-    key: 'm32', name: 'M32', brand: 'Midas', alt: 'Midas M32 LIVE (공식 제품 사진, 앞에서 비스듬히)', photoNote: '(앞에서 비스듬히 찍은 사진이라 아래쪽 단추일수록 조금씩 옆으로 벌어져 있어요)',
-    IMG: 'https://cdn-media.empowertribe.com/88b7019edb6a4da19acbf5407a5d6caa/Image_MI_0603-AEO_M32-LIVE_Front_XL.png',
-    PW: 2000, PH: 900,
-    SCREEN_RECT: { x: 1067, y: 101, w: 301, h: 181 },
-    STRIP_IN: ix(263.5, 592.5, 8).concat(ix(664, 992.5, 8)),
-    STRIP_R: ix(1095, 1427.5, 8), STRIP_MAIN: 1503,
-    ROW: { select: Y_SEL, solo: 485, lcd: 518, mute: Y_MUTE, fTop: 586, fBot: 693, led: LEDY },
+    key: 'm32', name: 'M32', brand: 'Midas', alt: 'Midas M32 LIVE 윗면 (Sweetwater 제품 사진)',
+    photoSrc: 'Sweetwater 의 Midas M32 LIVE 제품 사진(위에서 찍음 · sweetwater.com). 카메라가 가운데 위쪽에 있어 아래쪽 칸일수록 조금씩 옆으로 벌어져 보여요',
+    IMG: 'https://media.sweetwater.com/m/products/image/a64e2cb6adOgOIeqtULtLoaS8lL9psIkkgGcZBQ4.jpg',
+    PW: 3000, PH: 1860,
+    SCREEN_RECT: { x: 1605, y: 192, w: 470, h: 278 },
+    STRIP_IN: STRIPS.slice(0, 16).map(function (r) { return r[0]; }),
+    STRIP_R: STRIPS.slice(16, 24).map(function (r) { return r[0]; }), STRIP_MAIN: 2265,
+    ROW: { select: Y_SEL, solo: Y_SOLO, lcd: Y_LCD, mute: Y_MUTE, fTop: Y_FT, fBot: Y_FB, led: LEDY },
     geo: geo,
-    BW: 23, BH: 12, KNOB_BOX: 40, ENC_BOX: 30, ENC_D: 26, LCD: [42, 20], SLOT_W: 26, SLOT_PAD: 9, LED_W: 4.5, LED_H: 2.6,
-    KN: {
-      gain: [265, 91, 36, 'GAIN'], lcf: [396, 91, 36, 'LOW CUT FREQUENCY'], gthr: [263, 240, 36, 'GATE THRESHOLD'], dthr: [392, 240, 36, 'DYNAMICS THRESHOLD'],
-      eqq: [568, 91, 36, 'EQ WIDTH (Q)'], eqf: [568, 167, 36, 'EQ FREQUENCY'], eqg: [568, 243, 36, 'EQ GAIN'],
-      s1: [740, 91, 36, 'BUS SENDS 노브 1'], s2: [740, 167, 36, 'BUS SENDS 노브 2'], s3: [740, 242, 36, 'BUS SENDS 노브 3'], s4: [740, 318, 36, 'BUS SENDS 노브 4'],
-      mlev: [911, 167, 36, 'MAIN BUS M/C LEVEL (MONO/CENTRE 로 보내는 양)'], mpan: [911, 241, 36, 'PAN / BAL'],
-      mon: [1629, 107, 34, 'MONITOR LEVEL (모니터 스피커 크기)'], phn: [1629, 183, 34, 'PHONES LEVEL (헤드폰 크기)'], talk: [1750, 182, 34, 'TALK LEVEL (토크백 마이크 크기)'],
-      as1: [1601, 465, 34, 'ASSIGN 노브 1'], as2: [1665, 465, 34, 'ASSIGN 노브 2'], as3: [1729, 465, 34, 'ASSIGN 노브 3'], as4: [1792, 465, 34, 'ASSIGN 노브 4']
+    BW: 40, BH: 29, KNOB_BOX: 88, ENC_BOX: 50, ENC_D: 40, LCD: [70, 40], LED_W: 10, LED_H: 4.2,
+    SLOT_W: 60, SLOT_PAD: 24, SLOT_SKEW: true, SLOT_TICKS: [1, 0.875, 0.75, 0.625, 0.5, 0.375, 0.25, 0.1875, 0.125, 0.0625, 0],
+    KN: {   // [x, y, 몸통 크기, 이름] — x · y 는 노브 치마(아랫단) 가운데. 사진은 노브 윗면이 바깥 · 아래로 조금 밀려 보여요
+      gain: [356, 198, 32, 'GAIN'], lcf: [549, 194, 32, 'LOW CUT FREQUENCY'], gthr: [365, 423, 32, 'GATE THRESHOLD'], dthr: [560, 421, 32, 'DYNAMICS THRESHOLD'],
+      eqq: [821, 192, 32, 'EQ WIDTH (Q)'], eqf: [826, 313, 32, 'EQ FREQUENCY'], eqg: [829, 432, 32, 'EQ GAIN'],
+      s1: [1093, 192, 32, 'BUS SENDS 노브 1'], s2: [1095, 313, 32, 'BUS SENDS 노브 2'], s3: [1096, 431, 32, 'BUS SENDS 노브 3'], s4: [1098, 548, 32, 'BUS SENDS 노브 4'],
+      mlev: [1360, 311, 32, 'MAIN BUS M/C LEVEL (MONO/CENTRE 로 보내는 양)'], mpan: [1362, 431, 32, 'PAN / BAL'],
+      mon: [2483, 226, 28, 'MONITOR LEVEL (모니터 스피커 크기)'], phn: [2480, 338, 28, 'PHONES LEVEL (헤드폰 크기)'], talk: [2662, 338, 28, 'TALK LEVEL (토크백 마이크 크기)'],
+      as1: [2419, 852, 30, 'ASSIGN 노브 1'], as2: [2513, 852, 30, 'ASSIGN 노브 2'], as3: [2611, 851, 30, 'ASSIGN 노브 3'], as4: [2700, 850, 30, 'ASSIGN 노브 4']
     },
-    ENC: [1095, 1145, 1197, 1247, 1299, 1349], ENC_Y: 317,
-    MENU: [['home', 'HOME', 99], ['meters', 'METERS', 130], ['routing', 'ROUTING', 162], ['setup', 'SETUP', 193], ['library', 'LIBRARY', 226], ['effects', 'EFFECTS', 258], ['mutegrp', 'MUTE GRP', 290], ['utility', 'UTILITY', 322]],
-    MENU_X: 1510, MENU_W: 44, MENU_H: 19,
-    LAYER_L: [['ch1-16', 595, 'INPUTS 1-16', 169], ['ch17-32', 622.5, 'INPUTS 17-32', 162.5], ['aux-fx', 651, 'AUX IN / USB · FX RETURNS', 156], ['bus1-8', 678.5, 'BUS MASTER', 149]],
-    LAYER_R: [['dca', 594, 'GROUP DCA 1-8'], ['bus1-8', 621, 'BUS 1-8'], ['bus9-16', 649, 'BUS 9-16'], ['mtx-main', 677, 'MTX 1-6 / MAIN C']],
-    LAYER_LX: 160, LAYER_RX: 1050, LAYER_W: 30, LAYER_H: 13, SOF: [1045, 460, 26, 13], SOF_TIP: 'FADER FLIP = SENDS ON FADER (페이더로 BUS 에 보내는 양 조절)', DAW: [204, 459, 26, 12],
-    EQ_TYPE_LED: [['HCut', 138], ['HShv', 147], ['VEQ', 171], ['PEQ', 181], ['LShv', 203], ['LCut', 213]], EQ_LED_X: 503, EQ_LED: [6, 4],
-    BTNS: [['p48', 245, 160, '+48V (팬텀 전원 — 콘덴서 마이크 전기)', 'r', 24, 14], ['phase', 292, 160, 'Ø (극성 뒤집기: 소리 물결을 위아래로 뒤집기)', 'y', 24, 14], ['lc', 397, 160, 'LOW CUT (낮은 소리 걸러 내기) 켜기', 'y', 24, 14], ['v.config', 436, 181, 'VIEW — 화면에 CONFIG/PREAMP 페이지', 'y', 18, 14],
-     ['gate', 265, 308, 'GATE 켜기 (작은 소리 막기)', 'y', 24, 14], ['v.gate', 305, 331, 'VIEW — 화면에 GATE 페이지', 'y', 18, 14], ['dyn', 394, 308, 'DYNAMICS(COMP) 켜기 (컴프: 큰 소리 누르기)', 'y', 24, 14], ['v.dyn', 433, 331, 'VIEW — 화면에 DYNAMICS 페이지', 'y', 18, 14],
-     ['eqmode', 505, 275, 'EQ MODE (고른 밴드의 모양 바꾸기)', 'y', 24, 14], ['band3', 657, 147, 'EQ HIGH 밴드 고르기', 'y', 24, 14], ['band2', 657, 190, 'EQ HI MID 밴드 고르기', 'y', 24, 14], ['band1', 657, 235, 'EQ LO MID 밴드 고르기', 'y', 24, 14], ['band0', 657, 277, 'EQ LOW 밴드 고르기', 'y', 24, 14],
-     ['eq', 569, 308, 'EQUALISER 켜기', 'y', 24, 14], ['v.eq', 655, 331, 'VIEW — 화면에 EQ 페이지', 'y', 18, 14],
-     ['sb0', 825, 148, 'BUS SENDS 1-4 (노브 4개가 BUS 1-4)', 'y', 24, 14], ['sb1', 825, 190, 'BUS SENDS 5-8', 'y', 24, 14], ['sb2', 825, 235, 'BUS SENDS 9-12', 'y', 24, 14], ['sb3', 825, 277, 'BUS SENDS 13-16', 'y', 24, 14], ['v.sends', 825, 331, 'VIEW — 화면에 SENDS 페이지', 'y', 18, 14],
-     ['mono', 995, 191, 'MONO CENTRE 로 보내기 (M/C 노브로 양 정하기)', 'y', 24, 14], ['lr', 995, 265, 'MAIN STEREO (메인 LR) 로 보내기', 'y', 24, 14], ['v.main', 995, 331, 'VIEW — 화면에 MAIN 페이지', 'y', 18, 14],
-     ['v.usb', 995, 109, 'RECORDER VIEW — 화면에 USB 녹음기 페이지', 'y', 18, 14],
-     ['monmono', 1629, 252, '모니터 MONO (헤드폰 · 모니터를 모노로)', 'y', 24, 14], ['dim', 1629, 295, '모니터 DIM (모니터 소리를 잠깐 줄이기)', 'y', 24, 14], ['v.mon', 1660, 331, 'MONITOR VIEW — 화면에 모니터 페이지', 'y', 18, 14],
-     ['talka', 1748, 252, 'TALK A (토크백 마이크를 A 로)', 'y', 24, 14], ['talkb', 1748, 295, 'TALK B (토크백 마이크를 B 로)', 'y', 24, 14], ['v.talk', 1780, 331, 'TALKBACK VIEW — 화면에 토크백 설정', 'y', 18, 14],
-     ['sc.prev', 1590, 428, 'SHOW CONTROL: LAST (앞 씬 고르기)', 'y', 26, 12], ['sc.next', 1641, 428, 'SHOW CONTROL: NEXT (다음 씬 고르기)', 'y', 26, 12], ['sc.undo', 1693, 428, 'SHOW CONTROL: UNDO (불러오기 되돌리기)', 'y', 26, 12], ['sc.go', 1745, 428, 'SHOW CONTROL: GO (고른 씬 불러오기)', 'g', 26, 12], ['sc.view', 1792, 443, 'SHOW CONTROL VIEW — 화면에 씬 목록', 'y', 18, 12],
-     ['as.setA', 1657, 602, 'ASSIGN SET A', 'r', 18, 11], ['as.setB', 1723, 602, 'ASSIGN SET B', 'r', 18, 11], ['as.setC', 1788, 602, 'ASSIGN SET C', 'r', 18, 11], ['v.assign', 1835, 617, 'ASSIGN VIEW — 화면에 ASSIGN 설정', 'y', 18, 12]],
-    ASSIGN_B: [[1613, 541], [1677, 541], [1741, 541], [1807, 541], [1617, 571], [1683, 571], [1748, 571], [1815, 571]], ASSIGN_BS: [26, 12],
-    MG_B: [[1668, 654], [1735, 654], [1801, 654], [1673, 687], [1741, 687], [1809, 687]], MG_BS: [27, 12],
-    NAV: [['up', 1433, 305, 'LAYER ▲ (화면 안에서 위 줄로)'], ['down', 1433, 333, 'LAYER ▼ (화면 안에서 아래 줄로)'], ['pgl', 1409, 320, 'PAGE SELECT ◀ (앞 탭)'], ['pgr', 1457, 320, 'PAGE SELECT ▶ (다음 탭)']], NAV_S: 15,
-    PRE_M: { box: [333, 130, 7, 56], x: 333, ys: [106.5, 113, 120, 126.5, 133, 140, 146.5, 154.5], s: [5, 3] },
-    GR_M: { box: [330, 280, 7, 52], x: 330, ys: [263, 271, 279, 287, 295, 303], gate: 255, s: [5, 3] },
-    USB_LED: [938, 81, 5, 4],
-    MAIN_M: { xs: [1395, 1425, 1443], y0: 120, y1: 263, s: [5, 2.8] },
-    ALCD: { xs: [1601, 1667, 1730, 1793], y: 513, w: 47, h: 20 }
+    ENC: [1646, 1725, 1803, 1881, 1959, 2037], ENC_Y: 554,
+    MENU: [['home', 'HOME', 196], ['meters', 'METERS', 245], ['routing', 'ROUTING', 296], ['setup', 'SETUP', 346], ['library', 'LIBRARY', 396], ['effects', 'EFFECTS', 446], ['mutegrp', 'MUTE GRP', 495], ['utility', 'UTILITY', 543]],
+    MENU_X: 2293, MENU_W: 72, MENU_H: 33,
+    LAYER_L: [['ch1-16', 1181, 'INPUTS 1-16', 244], ['ch17-32', 1252, 'INPUTS 17-32', 234], ['aux-fx', 1325, 'AUX IN / USB · FX RETURNS', 223], ['bus1-8', 1399, 'BUS MASTER', 213]],
+    LAYER_R: [['dca', 1183, 'GROUP DCA 1-8', 1573], ['bus1-8', 1256, 'BUS 1-8', 1574], ['bus9-16', 1330, 'BUS 9-16', 1575], ['mtx-main', 1405, 'MTX 1-6 / MAIN C', 1575]],
+    LAYER_LX: 230, LAYER_RX: 1574, LAYER_W: 44, LAYER_H: 30, SOF: [1570, 812, 42, 28], SOF_TIP: 'FADER FLIP = SENDS ON FADER (페이더로 BUS 에 보내는 양 조절)', DAW: [296, 814, 42, 28],
+    EQ_TYPE_LED: [['HCut', 254], ['HShv', 271], ['VEQ', 307], ['PEQ', 322], ['LShv', 359], ['LCut', 374]], EQ_LED_X: 731, EQ_LED: [16, 9],
+    BTNS: [['p48', 326, 290, '+48V (팬텀 전원 — 콘덴서 마이크 전기)', 'r', 41, 31], ['phase', 397, 290, 'Ø (극성 뒤집기: 소리 물결을 위아래로 뒤집기)', 'y', 41, 31], ['lc', 559, 289, 'LOW CUT (낮은 소리 걸러 내기) 켜기', 'y', 41, 31], ['v.config', 623, 325, 'VIEW — 화면에 CONFIG/PREAMP 페이지', 'y', 34, 34],
+     ['gate', 376, 523, 'GATE 켜기 (작은 소리 막기)', 'y', 41, 31], ['v.gate', 439, 558, 'VIEW — 화면에 GATE 페이지', 'y', 34, 34], ['dyn', 571, 522, 'DYNAMICS(COMP) 켜기 (컴프: 큰 소리 누르기)', 'y', 41, 31], ['v.dyn', 634, 557, 'VIEW — 화면에 DYNAMICS 페이지', 'y', 34, 34],
+     ['eqmode', 738, 474, 'EQ MODE (고른 밴드의 모양 바꾸기)', 'y', 41, 31], ['band3', 962, 271, 'EQ HIGH 밴드 고르기', 'y', 41, 31], ['band2', 965, 339, 'EQ HI MID 밴드 고르기', 'y', 41, 31], ['band1', 967, 406, 'EQ LO MID 밴드 고르기', 'y', 41, 31], ['band0', 969, 473, 'EQ LOW 밴드 고르기', 'y', 41, 31],
+     ['eq', 836, 522, 'EQUALISER 켜기', 'y', 41, 31], ['v.eq', 971, 557, 'VIEW — 화면에 EQ 페이지', 'y', 34, 34],
+     ['sb0', 1225, 271, 'BUS SENDS 1-4 (노브 4개가 BUS 1-4)', 'y', 41, 31], ['sb1', 1227, 339, 'BUS SENDS 5-8', 'y', 41, 31], ['sb2', 1228, 406, 'BUS SENDS 9-12', 'y', 41, 31], ['sb3', 1229, 473, 'BUS SENDS 13-16', 'y', 41, 31], ['v.sends', 1230, 557, 'VIEW — 화면에 SENDS 페이지', 'y', 34, 34],
+     ['mono', 1490, 340, 'MONO CENTRE 로 보내기 (M/C 노브로 양 정하기)', 'y', 41, 31], ['lr', 1491, 459, 'MAIN STEREO (메인 LR) 로 보내기', 'y', 41, 31], ['v.main', 1491, 560, 'VIEW — 화면에 MAIN 페이지', 'y', 34, 34],
+     ['v.usb', 1489, 205, 'RECORDER VIEW — 화면에 USB 녹음기 페이지', 'y', 34, 34],
+     ['monmono', 2464, 437, '모니터 MONO (헤드폰 · 모니터를 모노로)', 'y', 41, 31], ['dim', 2462, 503, '모니터 DIM (모니터 소리를 잠깐 줄이기)', 'y', 41, 31], ['v.mon', 2506, 558, 'MONITOR VIEW — 화면에 모니터 페이지', 'y', 34, 34],
+     ['talka', 2646, 438, 'TALK A (토크백 마이크를 A 로)', 'y', 41, 31], ['talkb', 2643, 504, 'TALK B (토크백 마이크를 B 로)', 'y', 41, 31], ['v.talk', 2686, 559, 'TALKBACK VIEW — 화면에 토크백 설정', 'y', 34, 34],
+     ['sc.prev', 2396, 737, 'SHOW CONTROL: LAST (앞 씬 고르기)', 'y', 41, 28], ['sc.next', 2473, 737, 'SHOW CONTROL: NEXT (다음 씬 고르기)', 'y', 41, 28], ['sc.undo', 2550, 738, 'SHOW CONTROL: UNDO (불러오기 되돌리기)', 'y', 41, 28], ['sc.go', 2628, 738, 'SHOW CONTROL: GO (고른 씬 불러오기)', 'g', 41, 28], ['sc.view', 2696, 777, 'SHOW CONTROL VIEW — 화면에 씬 목록', 'y', 34, 32],
+     ['as.setA', 2496, 1199, 'ASSIGN SET A', 'r', 43, 29], ['as.setB', 2594, 1198, 'ASSIGN SET B', 'r', 43, 29], ['as.setC', 2693, 1198, 'ASSIGN SET C', 'r', 43, 29], ['v.assign', 2763, 1240, 'ASSIGN VIEW — 화면에 ASSIGN 설정', 'y', 36, 32]],
+    ASSIGN_B: [[2428, 1037], [2526, 1037], [2623, 1037], [2720, 1037], [2437, 1117], [2535, 1117], [2633, 1116], [2731, 1116]], ASSIGN_BS: [43, 29],
+    MG_B: [[2511, 1337], [2611, 1337], [2711, 1336], [2520, 1423], [2622, 1422], [2723, 1421]], MG_BS: [45, 30],
+    NAV: [['up', 2162, 529, 'LAYER ▲ (화면 안에서 위 줄로)'], ['down', 2162, 570, 'LAYER ▼ (화면 안에서 아래 줄로)'], ['pgl', 2120, 548, 'PAGE SELECT ◀ (앞 탭)'], ['pgr', 2203, 548, 'PAGE SELECT ▶ (다음 탭)']], NAV_S: 28,
+    PRE_M: { box: [458, 243, 15, 92], x: 458, ys: [205, 216, 226, 236, 246, 256, 266, 281], s: [10, 4.5] },
+    GR_M: { box: [471, 476, 15, 84], x: 471, ys: [452, 462, 471, 481, 491, 501], gate: 514, s: [10, 4.5] },
+    USB_LED: [1356, 197, 8, 6],
+    MAIN_M: { xs: [2119, 2166, 2193], y0: 222, y1: 434, s: [11, 4] },
+    ALCD: { xs: [2418, 2516, 2612, 2707], y: 964, w: 68, h: 42 }
   };
 })();

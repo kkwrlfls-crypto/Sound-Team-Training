@@ -125,8 +125,8 @@
     ],
     practice: {
       kind: 'm32Photo',
-      lead: '실제 M32 LIVE 사진 위에서 마우스로 조작해요. ① 페이더 · 노브는 끌고, 단추는 눌러요. ② 왼쪽 레이어 단추로 INPUTS 1-16 과 17-32 를 바꿔요. ③ SELECT 로 고른 채널은 위쪽 노브와 화면으로 다뤄요. 예시 교회에서 1–16 번은 찬양팀 · 성가대, 17–20 번은 설교 · 사회 · 영상이에요.',
-      note: '사진: Midas 공식 제품 사진(앞에서 비스듬히 찍은 사진). 페이더 · 노브 · 단추 · 이름표 · 미터 · 화면은 사진 위에 겹쳐 그렸어요. 소리 크기(dB)와 미터는 공부용으로 비슷하게 만든 값(교육용 근사)이에요. 화면은 X32 와 같은 운영 소프트웨어(펌웨어 4) 화면이에요.',
+      lead: '위에서 찍은 실제 M32 LIVE 사진 위에서 마우스로 조작해요. ① 페이더 · 노브는 끌고, 단추는 눌러요. ② 왼쪽 레이어 단추로 INPUTS 1-16 과 17-32 를 바꿔요. ③ SELECT 로 고른 채널은 위쪽 노브와 화면으로 다뤄요. 예시 교회에서 1–16 번은 찬양팀 · 성가대, 17–20 번은 설교 · 사회 · 영상이에요.',
+      note: '사진: Sweetwater 의 M32 LIVE 제품 사진(위에서 찍은 사진). 페이더 · 노브 · 단추 · 이름표 · 미터 · 화면은 사진 위에 겹쳐 그렸어요. 소리 크기(dB)와 미터는 공부용으로 비슷하게 만든 값(교육용 근사)이에요. 화면은 X32 와 같은 운영 소프트웨어(펌웨어 4) 화면이에요.',
       tasks: [
         { id: 'p48', title: '레이어 바꿔 채널 찾고 48V 켜기', text: '① 왼쪽 레이어 단추 INPUTS 17-32 를 눌러요. ② 이름표가 「설교」인 CH 17 의 SEL 을 눌러요. ③ 위쪽 CONFIG/PREAMP 의 48V 를 켜면 성공이에요.' },
         { id: 'gain', title: 'GAIN 노브로 입력 맞추기', text: '① CONFIG/PREAMP 의 GAIN 노브를 위아래로 끌어요. ② 노브 옆 세로 불빛(입력 미터)과 화면을 봐요. ③ 가장 큰 순간이 −18 ~ −6 dBFS 에 오면 성공이에요.' },
@@ -170,6 +170,7 @@
       { t: 'Midas M32 LIVE 사양 — 입력 40 · Midas PRO 프리앰프 32 · 모터 페이더 25 · 7인치 화면 · DCA 8 · 뮤트 그룹 6 · 큐 500 · 씬 100 · 스니펫 100 · AES50 2 · SD 32채널 녹음 (Markertek)', url: 'https://www.markertek.com/product/m32live/midas-m32-live-digital-console-for-live-studio-40-input-channels-32-midas-pro-mic-preamps-25-mix-buses' },
       { t: 'M32 vs X32 — 같은 펌웨어 · Midas 프리앰프 · 만듦새 (Springtree)', url: 'https://www.springtree.net/audio-visual-blog/m32-vs-x32-which-digital-console-is-better/' },
       { t: 'M32-Mix (App Store)', url: 'https://apps.apple.com/app/id881937732' },
+      { t: 'Midas M32 LIVE 제품 사진(위에서 찍음) — 실습 사진 (Sweetwater)', url: 'https://www.sweetwater.com/store/detail/M32Live--midas-m32-live-digital-mixer' },
       { t: 'Behringer X32 User Manual — 화면 · 탭 설명(같은 운영 소프트웨어) (ManualsLib)', url: 'https://www.manualslib.com/manual/909783/Behringer-X32.html?page=34' }
     ]
   };
