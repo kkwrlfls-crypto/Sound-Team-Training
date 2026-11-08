@@ -99,7 +99,7 @@
       var n = i + 1, used = isFinite(s[2]);
       var sends = []; sends[0] = n === 1 ? OFFDB : n <= 3 ? -8 : OFFDB; sends[1] = n <= 3 ? -4 : OFFDB; sends[2] = n >= 7 && n <= 13 ? -6 : OFFDB; sends[3] = used ? -10 : OFFDB;
       sends[12] = n <= 3 || n === 15 || n === 16 ? -12 : OFFDB;   // BUS 13 → FX1 리버브
-      return inChan({ name: s[0], color: s[4], icon: s[3] ? 20 : 1, source: i, gain: GAIN0[n] || 0, phantom: !!s[3] && n !== 17, lc: [1, 2, 3, 15, 16, 18].indexOf(n) >= 0, lcf: n === 17 ? 40 : 100,
+      return inChan({ name: s[0], color: s[4], icon: s[3] ? 48 : 50,   /* 2026-11-08: X32 아이콘 48 = Condenser, 50 = Handheld Mic */  source: i, gain: GAIN0[n] || 0, phantom: !!s[3] && n !== 17, lc: [1, 2, 3, 15, 16, 18].indexOf(n) >= 0, lcf: n === 17 ? 40 : 100,
         gate: [8, 9, 11].indexOf(n) >= 0, gthr: -50, dyn: [1, 2, 3, 7].indexOf(n) >= 0, dthr: -20, sends: sends, taps: ['PRE', 'PRE', 'PRE', 'POST'],
         st: used, pan: n === 19 ? -100 : n === 20 ? 100 : n === 12 ? -60 : n === 13 ? 60 : n === 5 ? -100 : n === 6 ? 100 : 0, mute: !used, fader: !used ? OFFDB : n === 17 ? 0 : -5, dca: dcaOf(n), mg: mgOf(n) });
     });

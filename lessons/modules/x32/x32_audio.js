@@ -1,21 +1,26 @@
 /* READY — X32Audio (2026-11-08, 오디오 작업자). Web Audio 엔진 — X32Model 의 상태를 그대로 소리로 만들어요.
    =============================================================================
    var a = X32Audio.create(model, opts)
-     opts: { sources:[{name,url}|…] (안 주면 저장소 sources/ 스템 8개), onReady(a), onStatus(info), listen:'main',
-             mode:'auto'|'buffer'|'stream', volume:1, context(테스트용 AudioContext) }
+     opts: { sources:[{name,url}|…] (안 주면 X32Audio.DEFAULT_STEMS = 저장소 sources/ 스템 8개, 이름으로 자동 연결 · [] 면 음원 없음),
+             onReady(a), onStatus({phase,loaded,total,mode}), onMeters(meters), listen:'main', mode:'auto'|'buffer'|'stream',
+             volume:1, outGain:6(dB, 사이트 스피커 앰프 — 미터와 무관, 뒤에 리미터), worklet:true, context(테스트용) }
    a.start()            // 「소리 켜기」 단추에서 부르기(사용자 클릭 안). AudioContext 를 이때 만들어요. → Promise
-   a.stop()             // 잠깐 멈춤(위치 기억). 다시 a.start() 하면 이어서 재생
+   a.stop()             // 잠깐 멈춤(위치 기억 · 미터 −∞). 다시 a.start() 하면 이어서 재생
    a.destroy()          // 완전히 끝(모델 알림 끊기 · AudioContext 닫기)
    a.setSources(list)   // 스템 바꿔 끼우기. list: [{ name, url | file | data(ArrayBuffer) | buffer(AudioBuffer),
-                        //   target?:{type:'ch',index} | Local 번호(0..31), side?:'L'|'R'|'mono' }] → Promise(매핑)
-   a.loadFiles(files, { append })   // 사용자가 끌어 넣은 FileList — 파일 이름으로 채널을 찾아 꽂아요 → Promise(매핑)
-   a.assign(stem, target, side)     // 직접 고르기: stem = 이름 또는 번호, target = {type:'ch',index} | Local 번호 | null(빼기)
+                        //   target?:{type:'ch',index} | Local 번호(0..31) | 'Local 5', side?:'L'|'R'|'mono', stereo?:true(L→잭 n, R→n+1) }] → Promise(매핑)
+                        //   url 이 sources/xxx.mp3 이면 index.html 의 base64(MG12XU_SOURCE_AUDIO_BASE64) 를 먼저 써서 file:// 에서도 소리 남
+   a.loadFiles(files, { append })   // 사용자가 끌어 넣은 FileList — 파일 이름으로 채널을 찾아 꽂아요(앞 번호 01_ 무시, 못 찾으면 번호로) → Promise(매핑)
+   a.assign(stem, target, side)     // 직접 고르기(옮기기): stem = 이름 또는 번호, target = {type:'ch',index} | Local 번호 | null(빼기). 4번째 { keep:true } 면 나눠 꽂기
    a.mapping()          // [{ socket, input:'Local 05', stage, stem, side }]  지금 어느 입력 잭에 어떤 스템이 꽂혔나
-   a.stems()            // [{ key, name, channels, duration, loaded, error }]
-   a.listen(target)     // 사이트 스피커로 들을 곳: 'main'(기본, SOLO 켜지면 솔로 버스로) | 'solo' | 'monitor' | 'm'
-                        //   | {type:'bus',index:0..15} | {type:'mtx',index:0..5} | 'bus 3' (1부터)  → 지금 값
-   a.setVolume(0..1)    // 사이트 전체 소리 크기(콘솔과 무관한 마지막 볼륨)
-   a.seek(sec) / a.position()  a.running  a.ctx
+   a.stems()            // [{ key, name, channels, duration, loaded, error, peak, stream }]
+   a.listen(target)     // 사이트 스피커로 들을 곳: 'main'(기본, SOLO 켜지면 솔로 버스로) | 'solo' | 'monitor'(config.monitor.source) | 'm'
+                        //   | {type:'bus',index:0..15} | {type:'mtx',index:0..5} | 'bus 3' (1부터)  → 지금 값. SOLO 가 켜지면 어느 것이든 솔로 버스가 이겨요(X32 헤드폰처럼)
+                        //   main 말고는 모니터 레벨(config.monitor.level, −20 dB 일 때 메인과 같은 크기) · DIM · MONO 가 걸려요
+   a.setVolume(0..1.5)  // 사이트 전체 소리 크기(콘솔과 무관한 마지막 볼륨)
+   a.seek(sec) / a.position() / a.status() / a.whenLoaded() / a.mode() / a.syncInfo()  a.running  a.ctx  a.output(콘솔 출력 노드)
+   모델 쪽 선택 항목(있으면 씀): ch.N.dyn.pos 'PRE'(EQ 앞) | 'POST'(기본, EQ 뒤) · ch.N.preamp.lowcut.slope 12|18|24 · gate/dyn.keySrc 'Ch 05'·'Aux 2'·'FX 1L'
+     · gate/dyn.filter {on, type:'LC6'|'HC12'|'1.0'..'10.0'(대역 Q), freq} · fx[k].source {l,r:'MixBus 13'|'Main L'…} · fx[k].return(FX 리턴 채널 L 번호)
    미터(model.meters, 초당 약 43번, dBFS · 소리 없으면 −Infinity):
      ch/aux/fxr = 채널 미터(X32 채널 미터처럼 페이더 앞 · 처리 뒤), chIn/auxIn/fxrIn = GAIN 바로 뒤, chPost… = 페이더 뒤
      bus[16] mtx[6] main{l,r,m} solo{l,r} mon{l,r}(사이트로 나가는 소리) fx[8](FX1L,1R…4R 들어가는 소리)
@@ -634,6 +639,7 @@
       return M;
     }
     function onMeters(a) {
+      if (!running || destroyed) return;
       var L = meterLayout, M = ensureMeters(), i, b;
       for (i = 0; i < 48; i++) {
         b = i * L.M_STRIP; var t = i < 32 ? 'ch' : i < 40 ? 'aux' : 'fxr', j = i < 32 ? i : i < 40 ? i - 32 : i - 40;
@@ -759,11 +765,16 @@
     /* ---- 소리 파일 읽기 ---- */
     function isMobile() { var n = typeof navigator !== 'undefined' ? navigator : {}; return /Mobi|Android|iPhone|iPad|iPod/i.test(n.userAgent || '') || (n.deviceMemory && n.deviceMemory <= 4) || (n.maxTouchPoints > 1 && /Macintosh/.test(n.userAgent || '')); }
     function b64ToBuf(uri) { var i = uri.indexOf(','), s = atob(uri.slice(i + 1)), n = s.length, u = new Uint8Array(n); for (var k = 0; k < n; k++) u[k] = s.charCodeAt(k); return u.buffer; }
-    function embedded(name) { var E = window.MG12XU_SOURCE_AUDIO_BASE64; return E && name && E[name] ? E[name] : null; }
+    function embedded(name, url) {   // index.html 이 미리 넣어 둔 base64 음원(file:// 에서도 됨): 이름 · 파일 이름 · 「(leadVox)」 모두로 찾기
+      var E = window.MG12XU_SOURCE_AUDIO_BASE64; if (!E) return null;
+      var keys = [name, url && String(url).replace(/^.*\//, '').replace(/\.\w+$/, ''), (/\(([^)]+)\)/.exec(name || '') || [])[1]];
+      for (var i = 0; i < keys.length; i++) if (keys[i] && E[keys[i]]) return E[keys[i]];
+      return null;
+    }
     function getBytes(src) {
       if (src.data) return Promise.resolve(src.data.slice ? src.data.slice(0) : src.data);
       if (src.file) return src.file.arrayBuffer ? src.file.arrayBuffer() : new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(r.result); }; r.onerror = rej; r.readAsArrayBuffer(src.file); });
-      var e = embedded(src.name); if (e) return Promise.resolve(b64ToBuf(e));
+      var e = embedded(src.name, src.url); if (e) return Promise.resolve(b64ToBuf(e));
       if (!src.url) return Promise.reject(new Error('no source'));
       if (/^data:/.test(src.url)) return Promise.resolve(b64ToBuf(src.url));
       return fetch(src.url).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.arrayBuffer(); }).catch(function () {
@@ -772,9 +783,16 @@
     }
     function decode(ab) { return new Promise(function (res, rej) { var p = ctx.decodeAudioData(ab, res, rej); if (p && p.then) p.then(res, rej); }); }
     function estBytes(list) {   // 버퍼 모드로 풀면 대략 몇 바이트(16비트 · 모노 기준)
-      var t = 0; list.forEach(function (s) { var sz = s.file ? s.file.size : s.data ? s.data.byteLength : s.buffer ? s.buffer.length * s.buffer.numberOfChannels * 4 : (embedded(s.name) || '').length * 0.75 || 2.7e6; var wav = /\.wav$|\.aiff?$/i.test((s.file && s.file.name) || s.name || ''); t += wav ? sz * 0.5 : sz * 7; }); return t;
+      var t = 0; list.forEach(function (s) { var sz = s.file ? s.file.size : s.data ? s.data.byteLength : s.buffer ? s.buffer.length * s.buffer.numberOfChannels * 4 : (embedded(s.name, s.url) || '').length * 0.75 || 2.7e6; var wav = /\.wav$|\.aiff?$/i.test((s.file && s.file.name) || s.name || ''); t += wav ? sz * 0.5 : sz * 7; }); return t;
     }
-    function chooseMode(list) { if (opts.mode === 'buffer' || opts.mode === 'stream') return opts.mode; return estBytes(list) > (isMobile() ? 110e6 : 600e6) ? 'stream' : 'buffer'; }
+    function isIOS() { var n = typeof navigator !== 'undefined' ? navigator : {}; return /iPhone|iPad|iPod/i.test(n.userAgent || '') || (n.maxTouchPoints > 1 && /Macintosh/.test(n.userAgent || '')); }
+    // buffer = 다 풀어서 Worklet 안에서 한 시계로 재생(완벽히 맞음, 메모리 많이 씀: 16비트) · stream = <audio> 로 흘려 재생(메모리 적음, 1.5초마다 서로 맞춤)
+    // iOS Safari 는 클릭 뒤 늦게 시작하는 <audio> 재생을 막을 수 있어 버퍼(예산 400 MB)를 써요.
+    function chooseMode(list) {
+      if (opts.mode === 'buffer' || opts.mode === 'stream') return opts.mode;
+      var est = estBytes(list); if (isIOS()) return est > 400e6 ? 'stream' : 'buffer';
+      return est > (isMobile() ? 110e6 : 600e6) ? 'stream' : 'buffer';
+    }
 
     function stemKey(src, k) { return String(src.key || src.name || ('stem' + k)); }
     function prepStems(list) {
@@ -806,7 +824,7 @@
       });
     }
     function loadStemStream(s, chBase) {
-      var src = s.src, url = src.file ? (s.url = URL.createObjectURL(src.file)) : embedded(src.name) || src.url;
+      var src = s.src, url = src.file ? (s.url = URL.createObjectURL(src.file)) : embedded(src.name, src.url) || src.url;
       return new Promise(function (res, rej) {
         var el = new Audio(); el.preload = 'auto'; el.loop = true; el.crossOrigin = 'anonymous'; s.el = el;
         var done = false; el.addEventListener('canplaythrough', function () { if (done) return; done = true; res(); }, { once: true });
@@ -833,11 +851,18 @@
         else el.playbackRate = d > 0.012 ? 0.997 : d < -0.012 ? 1.003 : 1;
       });
     }
+    // target 이 정해진 스템: side 가 없고 stereo:true 면 L → 그 잭, R → 다음 잭
+    function placeTarget(s, used) {
+      var sock = targetSocket(s.src.target); if (sock < 0) return;
+      var side = s.src.side;
+      if (!side && s.src.stereo && sock + 1 < 42) { socketMap[sock] = { stem: s.key, side: 'L' }; socketMap[sock + 1] = { stem: s.key, side: 'R' }; used[sock] = used[sock + 1] = 1; return; }
+      socketMap[sock] = { stem: s.key, side: side || 'mono' }; used[sock] = 1;
+    }
     function autoMap() {
       var inputs = inputNamesOf(model), used = {}; socketMap = {};
+      stems.forEach(function (s) { if (s.src.target != null) placeTarget(s, used); });
       stems.forEach(function (s) {
-        var t = s.src.target, side = s.src.side;
-        if (t != null) { var sock = targetSocket(t); if (sock >= 0) { socketMap[sock] = { stem: s.key, side: side || (s.channels > 1 ? 'mono' : 'mono') }; used[sock] = 1; } return; }
+        if (s.src.target != null) return;
         matchOne(s.name, s.channels || (s.src.channels ? s.src.channels.length : 2), inputs, used).forEach(function (r) { used[r.socket] = 1; socketMap[r.socket] = { stem: s.key, side: r.side }; });
       });
       schedule();
@@ -877,6 +902,8 @@
         var AC = window.AudioContext || window.webkitAudioContext;
         if (opts.context) ctx = opts.context;
         else { try { ctx = new AC({ sampleRate: 44100, latencyHint: 'interactive' }); } catch (e) { ctx = new AC(); } }
+        // iOS: 누른 그 순간(같은 호출 안)에 resume + 아주 짧은 무음을 틀어야 소리가 풀려요
+        try { if (ctx.resume) ctx.resume(); var ub = ctx.createBufferSource(); ub.buffer = ctx.createBuffer(1, 1, ctx.sampleRate); ub.connect(ctx.destination); ub.start(0); } catch (e) {}
         // 콘솔 출력(master, 미터와 같은 크기) → 사이트 스피커 앰프(outTrim, 기본 +6 dB) → 찢어짐 막는 리미터 → 스피커
         master = ctx.createGain(); master.gain.value = 1; outTrim = ctx.createGain(); outTrim.gain.value = Math.pow(10, (opts.outGain == null ? 6 : opts.outGain) / 20);
         limiter = ctx.createDynamicsCompressor(); limiter.threshold.value = -1.5; limiter.knee.value = 0; limiter.ratio.value = 20; limiter.attack.value = 0.002; limiter.release.value = 0.12;
@@ -921,6 +948,7 @@
     api.start = function () {
       if (destroyed) return Promise.reject(new Error('destroyed'));
       var first = !ctx;
+      if (ctx && ctx.resume) try { ctx.resume(); } catch (e) {}   // 사용자 클릭 안에서 바로
       return build().then(function () {
         running = true; master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(1, ctx.currentTime, 0.01);
         var r = ctx.resume ? ctx.resume() : null;
@@ -949,7 +977,7 @@
       if (!ctx) { autoMapNames(); return Promise.resolve(api.mapping()); }
       return loadAll().then(function () { return api.mapping(); });
     };
-    function autoMapNames() { var inputs = inputNamesOf(model), used = {}; socketMap = {}; stems.forEach(function (s) { var t = s.src.target; if (t != null) { var so = targetSocket(t); if (so >= 0) { socketMap[so] = { stem: s.key, side: s.src.side || 'mono' }; used[so] = 1; } return; } matchOne(s.name, 2, inputs, used).forEach(function (r) { used[r.socket] = 1; socketMap[r.socket] = { stem: s.key, side: r.side }; }); }); }
+    function autoMapNames() { var inputs = inputNamesOf(model), used = {}; socketMap = {}; stems.forEach(function (s) { if (s.src.target != null) placeTarget(s, used); }); stems.forEach(function (s) { if (s.src.target != null) return; matchOne(s.name, 2, inputs, used).forEach(function (r) { used[r.socket] = 1; socketMap[r.socket] = { stem: s.key, side: r.side }; }); }); }
     api.loadFiles = function (files, o) {
       var arr = []; for (var i = 0; i < (files ? files.length : 0); i++) { var f = files[i]; if (!f || (f.type && !/^audio\//.test(f.type) && !/\.(wav|mp3|m4a|aac|ogg|flac|aiff?)$/i.test(f.name))) continue; arr.push({ name: f.name.replace(/\.\w+$/, ''), file: f, key: f.name }); }
       if (o && o.append) arr = stems.map(function (s) { return s.src; }).concat(arr);
