@@ -273,7 +273,7 @@
       '<div class="hm-me__row"><span>진행 중</span><b>' + (doing.length + doingL.length) + '개</b></div></div>' +
       '<p class="hm-me__note">기록은 이 브라우저에만 저장돼요.</p></aside></section>' +
       homeRoad() +
-      '<section class="hm-sec" id="modHome"><div class="hm-sec__head"><h2>이론 학습</h2><p>원리 → 장비 → 믹싱 순서로 배워요. 음향 장비 과정은 학습 목표부터 직접 실습 · 실전 미션까지 7단계로 이어져요.</p></div><div class="hm-cats hm-cats--3">' + HOME_CATS.filter(function (c) { return c.path; }).map(catCard).join('') + '</div></section>' +
+      '<section class="hm-sec" id="modHome"><div class="hm-sec__head"><h2>이론 학습</h2><p>원리 → 장비 → 믹싱 순서로 배워요. 음향 장비 · 믹싱 스킬 과정은 학습 목표부터 직접 실습 · 실전 미션까지 7단계로 이어져요.</p></div><div class="hm-cats hm-cats--3">' + HOME_CATS.filter(function (c) { return c.path; }).map(catCard).join('') + '</div></section>' +
       homeSec('home-lab', '가상 실습실', '실제 장비 사진 · 3D 화면에서 직접 조작해 봐요.', (function () { var L = navCat('lab').tabs, A = L.filter(function (t) { return ['tab5', 'tab3'].indexOf(t) < 0; }), B = L.filter(function (t) { return ['tab5', 'tab3'].indexOf(t) >= 0; });
         return '<h3 class="hm-sub">장비 실습 01 ~ 05</h3><div class="hm-tiles hm-tiles--5">' + A.map(function (t) { return tile(t, '장비 실습'); }).join('') + '</div>' +
           (B.length ? '<h3 class="hm-sub">콘솔 운영 · 귀 훈련</h3><div class="hm-tiles hm-tiles--wide">' + B.map(function (t) { return tile(t, t === 'tab5' ? '콘솔 운영' : '귀 훈련'); }).join('') + '</div>' : ''); })()) +

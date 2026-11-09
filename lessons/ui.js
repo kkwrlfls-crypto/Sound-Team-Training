@@ -89,3 +89,28 @@
   window.addEventListener('scroll', function () { if (!topTick) { topTick = true; requestAnimationFrame(updateTop); } }, { passive: true });
   updateTop();
 })();
+
+/* =============================================================================
+   2026-11-09 내부 화면 재구성 4차: 교안 편집 도구를 학습 화면과 분리 (편집 모드)
+   - 평소(학습자 화면)에는 「✏️ 교안 편집 · 설명 내용 편집 · 기능부 설명 편집」 줄을 숨김
+   - 주소 끝에 ?edit=1 을 붙여 열면 편집 모드: 편집 줄이 보이고, 화면 아래에 「편집 모드」 표시와 끄기 링크
+   - 편집 내용 저장(새 index.html 내려받기) 때는 편집 모드 표시를 빼고 저장 → 내려받은 파일을 그대로 올려도 학습자에게 편집 도구가 안 보임
+   - 기존 편집 함수(toggleContentEdit · saveEditedContent · cancelContentEdit)는 그대로
+   ============================================================================= */
+(function () {
+  'use strict';
+  var root = document.documentElement, on = false;
+  try { on = new URLSearchParams(location.search).get('edit') === '1'; } catch (e) { on = /[?&]edit=1(&|$)/.test(location.search); }
+  if (!on) return;
+  root.classList.add('sta-edit');
+  var pill = document.createElement('div'); pill.id = 'staEditPill'; pill.className = 'sta-edit-pill'; pill.setAttribute('role', 'status');
+  var off = location.pathname + location.search.replace(/([?&])edit=1(&|$)/, function (m0, a, b) { return b ? a : ''; }).replace(/[?&]$/, '') + location.hash;
+  pill.innerHTML = '<b>✏️ 교안 편집 모드</b><span>편집 줄이 보여요. 학습자 화면에는 나오지 않아요.</span><a href="' + off.replace(/"/g, '&quot;') + '">편집 모드 끄기</a>';
+  document.body.appendChild(pill);
+  // 저장 단추(onclick → saveEditedContent → 화면 전체를 index.html 로 저장)보다 먼저(캡처 단계) 표시를 빼고, 저장이 끝나면 다시 붙임
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest || !e.target.closest('.content-edit-btn.save')) return;
+    root.classList.remove('sta-edit'); if (!root.className) root.removeAttribute('class'); pill.remove();
+    setTimeout(function () { root.classList.add('sta-edit'); document.body.appendChild(pill); }, 0);
+  }, true);
+})();

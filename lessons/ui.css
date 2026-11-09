@@ -935,3 +935,13 @@ html.nav-open #toTopBtn { opacity: 0; pointer-events: none; }
   .m7-links, .m7-results { grid-template-columns: minmax(0, 1fr); }
   .m7-link__img { flex-basis: 30%; }
 }
+
+/* 2026-11-09 4차: 교안 편집 도구는 편집 모드(?edit=1)에서만 (lessons/ui.js) */
+html:not(.sta-edit) .content-edit-bar { display: none !important; }
+.intro-tools[hidden], html:not(.sta-edit) .intro-tools { display: none !important; }   /* 「본문 서식」 도구는 교안 편집 중에만 (예전엔 display:flex 가 hidden 을 이겨 늘 보였음) */
+html:not(.sta-edit) .intro-doc:empty::before { content: '아직 작성된 교안이 없어요. 준비되면 이곳에 내용이 올라와요.'; }
+.sta-edit-pill { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 90; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 12px; max-width: calc(100vw - 32px); padding: 10px 16px; border-radius: 999px; background: var(--sta-navy); color: #fff; box-shadow: 0 8px 24px rgba(8, 20, 45, 0.28); font-size: 0.84rem; }
+.sta-edit-pill b { font-weight: 800; }
+.sta-edit-pill span { color: var(--sta-navy-ink-2, #b9c7da); }
+.sta-edit-pill a { color: #67e8f9; font-weight: 800; text-decoration: underline; }
+@media (max-width: 760px) { .sta-edit-pill { border-radius: 14px; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); } .sta-edit-pill span { display: none; } }
