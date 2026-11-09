@@ -60,7 +60,19 @@
   var PRAC = window.STA_PRAC_PAGES || {};
   function noPrac(m) { var p = m && pathById(m.path); return !!(p && p.practiceOut); }
   function pageOf(id) { for (var k in PRAC) { var pp = PRAC[k].parts || []; for (var i = 0; i < pp.length; i++) if (pp[i][0] === id) return k; } return null; }
-  function tabsOf(m) { return noPrac(m) ? TABS.filter(function (t2) { return t2[0] !== 'practice'; }) : TABS; }
+  function tabsOf(m) { if (is7(m)) return steps7(m); return noPrac(m) ? TABS.filter(function (t2) { return t2[0] !== 'practice'; }) : TABS; }
+  /* 2026-11-09 내부 화면 재구성 3차: 과정 화면 7단계
+     학습 목표 → 핵심 개념 → 실제 장비 확인 → 직접 실습 → 결과 확인 → 이해도 확인 → 실전 미션 (심화 학습은 실전 미션 아래)
+     - 내용은 기존 데이터(theory · overview · quiz · missions · deeper · practice)를 그대로 다시 배치. 새로 지어낸 진행률 없음
+     - 예전 주소(#module-mic-overview · -theory · -deeper · -practice)도 그대로 열림 */
+  var STEP7 = { hardware: true };
+  function is7(m) { return !!(m && STEP7[m.path]); }
+  function steps7(m) { return [['goal', '학습 목표'], ['theory', '핵심 개념'], ['gear', '실제 장비 확인'], [noPrac(m) ? 'lab' : 'practice', '직접 실습'], ['result', '결과 확인'], ['quiz', '이해도 확인'], ['missions', '실전 미션']]; }
+  var STEP7_DESC = { goal: '이 과정에서 배울 내용', theory: '개념 · 용어 · 주제별 설명', gear: '실제 장비 사진 · 조작부', lab: '실습 화면에서 직접 조작', practice: '실습 화면에서 직접 조작', result: '내 기록으로 확인', quiz: '문제로 이해도 확인', missions: '현장 문제에 적용 · 심화' };
+  function defTab(m) { return is7(m) ? 'goal' : 'overview'; }
+  function alias7(m, tab) { if (!is7(m)) return tab; return tab === 'overview' ? 'goal' : tab === 'deeper' ? 'missions' : tab; }
+  var PRAC_ALIAS = { console: ['tab6', '#mg12xu'] };   // 아날로그 콘솔 과정 → 03. 콘솔 실습의 MG12XU 칸
+  function pracPageOf(m) { var k = pageOf(m.id); return k ? [k, m.id] : (PRAC_ALIAS[m.id] || null); }
   function pracCounts(m) { var s = st(m.id), d = m.practice.tasks.filter(function (t) { return s.tasks[t.id]; }).length; return { d: d, n: m.practice.tasks.length, done: d === m.practice.tasks.length }; }
   function counts(m) {
     if (m.status !== 'ready') return null; var s = st(m.id), np = noPrac(m);
@@ -222,13 +234,17 @@
         return '<li><button type="button" data-mtheory="' + i + '" class="' + (ok ? 'ok' : '') + '">' + mi(ok ? 'check' : 'dot') + '<span>' + esc(x.title) + '</span></button></li>'; }).join('') +
       '</ul><button type="button" class="ui-btn ui-btn--secondary ui-btn--block" data-mtab="theory">자세히 보기 · 이론 학습</button></aside></section>';
   }
-  function tabOverview(m) {
-    var o = m.overview, g = (GL[m.id] || {}), h = g.hero || {}, links = m.practice.links || [];
+  function conceptBox(m, title) {
+    var o = m.overview, g = (GL[m.id] || {}), h = g.hero || {};
     var showVis = VIS[o.model] && !(h.vis === o.model);
-    return '<div class="mod-ov"><div class="mod-ov__main"><section class="mod-box mod-concept"><h2 class="mod-box__h">' + mi('bulb') + '핵심 개념</h2><div class="mod-lead mod-paras">' + paras(o.lead) + '</div>' +
+    return '<section class="mod-box mod-concept"><h2 class="mod-box__h">' + mi('bulb') + (title || '핵심 개념') + '</h2><div class="mod-lead mod-paras">' + paras(o.lead) + '</div>' +
       (g.glance ? matchHtml(g.glance) : '')   /* 2026-11-04: 「한눈에 보기」 → 단어 · 설명 짝 맞추기 */ +
       '<h3 class="mod-h3">주요 용어 <small>눌러서 뜻 보기</small></h3><div class="mod-terms">' + o.terms.map(function (t2) { return '<details class="mod-term"><summary>' + esc(t2[0]) + '</summary><p>' + esc(t2[1]) + '</p>' + visBox(t2[2], 'mod-term__vis') + '</details>'; }).join('') + '</div>' +
-      (showVis ? '<div class="mod-visual">' + VIS[o.model]() + '</div>' : '') + '</section></div>' +
+      (showVis ? '<div class="mod-visual">' + VIS[o.model]() + '</div>' : '') + '</section>';
+  }
+  function tabOverview(m) {
+    var o = m.overview;
+    return '<div class="mod-ov"><div class="mod-ov__main">' + conceptBox(m) + '</div>' +
       '<aside class="mod-ov__side">' +   /* 2026-11-04: 「관련 실습 바로가기」 상자 뺌 */
       '<div class="lsn-points mod-points"><h4>기억할 점</h4><ul>' + o.points.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div></aside></div>' +
       '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="theory">이론 학습 시작 →</button></div>';
@@ -242,7 +258,7 @@
           (x.visual && VIS[x.visual] ? '<div class="mod-visual">' + VIS[x.visual]() + '</div>' : '') + '<div class="mod-p mod-paras">' + paras(x.body) + '</div>' + picsHtml(x.pics) +
           (x.more ? '<details class="mod-more"><summary>더 알아보기</summary><div' + (/<(ul|ol|table)\b/.test(x.more) ? '>' + x.more : ' class="mod-paras">' + paras(x.more)) + '</div></details>' : '') +
           qHtml(x.check, i, s.checks[i], 'mcheck') + '</section>';
-      }).join('') + (noPrac(m) ? pracLink(m) + '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="quiz">확인 문제 풀기 →</button></div>' : '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="practice">실습하기 →</button></div>');
+      }).join('') + (is7(m) ? next7(m, 'theory') : noPrac(m) ? pracLink(m) + '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="quiz">확인 문제 풀기 →</button></div>' : '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="practice">실습하기 →</button></div>');
   }
   function pracLink(m) { var k = pageOf(m.id), cfg = k && PRAC[k]; if (!cfg) return '';
     return '<div class="mod-praclink"><span>🛠 이 장비는 메뉴 「실습」의 <b>' + cfg.no + '. ' + esc(cfg.title) + '</b>에서 직접 다뤄 볼 수 있어요.</span><button type="button" class="btn" data-prac-open="' + k + ':' + m.id + '">실습하러 가기 →</button></div>'; }
@@ -260,7 +276,73 @@
     return '<div class="mod-progline">' + (c.quizDone ? '<span class="mod-okline">🎉 확인 문제를 모두 맞혔어요. <b>이해도 확인</b> 완료!</span>' : c.quizN + '문제를 모두 맞히면 이해도 확인이 완료돼요. (지금 ' + c.quiz + '/' + c.quizN + ')') +
       (!c.pracDone ? '<br><small>실습을 먼저 해 보면 더 쉽게 풀 수 있어요.</small>' : '') + '</div>' +
       m.quiz.map(function (q, i) { return qHtml(q, i, s.quiz[i], 'mquiz'); }).join('') +
-      '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="deeper">심화 학습 →</button></div>';
+      (is7(m) ? next7(m, 'quiz') : '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="deeper">심화 학습 →</button></div>');
+  }
+  /* ------------------------------------------------------------- 2026-11-09 7단계 화면 */
+  function next7(m, tab) {
+    var st7 = steps7(m), i = st7.findIndex(function (x) { return x[0] === tab; }), nx = st7[i + 1]; if (!nx) return '';
+    return '<div class="mod-next"><button type="button" class="btn mod-cta" data-mtab="' + nx[0] + '">' + (i + 2) + '단계 · ' + esc(nx[1]) + ' →</button></div>';
+  }
+  function stepHead(m, tab, sub) {
+    var st7 = steps7(m), i = st7.findIndex(function (x) { return x[0] === tab; });
+    return '<div class="m7-head"><span class="m7-head__n">' + (i + 1) + '단계 / ' + st7.length + '</span><h2>' + esc(st7[i][1]) + '</h2>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>';
+  }
+  function okMark(ok, n) { return '<span class="m7-ck' + (ok ? ' ok' : '') + '" aria-hidden="true">' + (ok ? '✓' : (n == null ? '' : n)) + '</span>'; }
+  function tabGoal(m) {
+    var s = st(m.id), c = counts(m), pp = pracPageOf(m);
+    return stepHead(m, 'goal', '이 과정을 마치면 아래 내용을 스스로 설명할 수 있어요. 항목을 누르면 그 설명으로 바로 가요.') +
+      '<div class="m7-split"><section class="m7-card m7-goals" aria-label="학습 목표"><ol>' + m.theory.map(function (x, i) { var ok = s.checks[i] === okIdx(x.check);
+        return '<li><button type="button" data-mtheory="' + i + '">' + okMark(ok, i + 1) + '<span><b>' + esc(x.title) + '</b>' + (ok ? '<small>개념 체크를 맞혔어요</small>' : '') + '</span></button></li>'; }).join('') + '</ol></section>' +
+      '<aside class="m7-side"><section class="m7-card"><h3>이 과정의 순서</h3><ol class="m7-flow">' + steps7(m).map(function (t2, i) {
+        return '<li><button type="button" data-mtab="' + t2[0] + '"' + (t2[0] === 'goal' ? ' aria-current="step"' : '') + '><span class="n">' + (i + 1) + '</span><span><b>' + esc(t2[1]) + '</b><small>' + esc(STEP7_DESC[t2[0]] || '') + '</small></span></button></li>'; }).join('') + '</ol></section>' +
+      '<section class="m7-card"><h3>완료 기준</h3><ul class="m7-crit"><li><span>개념 체크 모두 맞히기</span><b>' + c.learn + ' / ' + c.learnN + '</b></li><li><span>이해도 문제 모두 맞히기</span><b>' + c.quiz + ' / ' + c.quizN + '</b></li></ul>' +
+      '<p class="m7-note">' + (pp ? '직접 실습은 실습 화면에서 따로 기록돼요(완료 기준에는 들어가지 않아요).' : '이 과정의 직접 실습은 관련 실습 화면으로 이어져요.') + '</p></section></aside></div>' + next7(m, 'goal');
+  }
+  function tabTheory7(m) {
+    return stepHead(m, 'theory', '먼저 개념과 용어를 익히고, 아래 주제별 설명을 읽은 뒤 주제마다 개념 체크를 풀어요.') + conceptBox(m, '개념과 용어') +
+      '<h3 class="m7-subh" id="modTopics">주제별 학습</h3>' + tabTheory(m);
+  }
+  function tabGear(m) {
+    var h = (GL[m.id] || {}).hero || {}, d3 = MODEL3D[m.overview.model];
+    var how = h.zones ? '사진의 구역에 마우스를 올리거나(휴대폰은 누르기) 위의 이름을 누르면 그 부분의 이름과 역할이 나와요.' : h.vis ? '그림에서 신호가 지나는 길과 각 부분의 역할을 확인해요.' : '사진의 번호를 따라 각 부분의 이름과 역할을 확인해요.';
+    return stepHead(m, 'gear', '실제 장비에서 배운 부분이 어디에 있는지 찾아봐요. ' + how + (d3 ? ' 「3D 로 돌려 보기」로 장비를 이리저리 돌려 볼 수도 있어요.' : '')) +
+      '<div class="m7-gear">' + figHtml(m) + '<aside class="m7-card m7-side"><h3>장비를 볼 때 기억할 점</h3><ul class="m7-points">' + m.overview.points.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></aside></div>' + next7(m, 'gear');
+  }
+  function linkCard(x, attr, kicker) {
+    var info = x.go && x.go.tab !== 'tabBrands' && PRACTICE_INFO[x.go.tab], img = info && info[2];   // 브랜드 칸 사진은 다른 장비(CL5)라 쓰지 않음
+    return '<button type="button" class="m7-link" ' + attr + '>' + (img ? '<span class="m7-link__img"><img src="' + esc(img) + '" alt="" loading="lazy"></span>' : '') +
+      '<span class="m7-link__body"><small>' + esc(kicker) + '</small><b>' + esc(x.title) + '</b><span>' + esc(x.text || '') + '</span><em>열기 →</em></span></button>';
+  }
+  function tabLab(m) {
+    var pp = pracPageOf(m), cfg = pp && PRAC[pp[0]], info = pp && PRACTICE_INFO[pp[0]], links = m.practice.links || [], main = '';
+    if (cfg) {
+      var part = (cfg.parts || []).find(function (p) { return p[0] === pp[1]; }) || [pp[1], m.title], own = pp[1] === m.id, s = st(m.id), pc = own ? pracCounts(m) : null;
+      main = '<article class="m7-lab">' + (info && info[2] ? '<div class="m7-lab__img"><img src="' + esc(info[2]) + '" alt="" loading="lazy"></div>' : '') +
+        '<div class="m7-lab__body"><small>가상 실습실 · ' + esc(cfg.no) + '. ' + esc(cfg.title) + '</small><h3>' + esc(part[1]) + ' 실습</h3><p>' + esc(cfg.desc || (info && info[1]) || '') + '</p>' +
+        (own ? '<h4>실습 과제 <span>' + pc.d + ' / ' + pc.n + '</span></h4><ol class="m7-tasks">' + m.practice.tasks.map(function (t2) { var d = !!s.tasks[t2.id]; return '<li>' + okMark(d) + '<span>' + esc(t2.title) + '</span></li>'; }).join('') + '</ol><p class="m7-note">과제는 실습 화면의 상태로 자동 확인돼요.</p>' : '') +
+        '<button type="button" class="ui-btn ui-btn--primary" data-prac-open="' + pp[0] + ':' + pp[1] + '">실습 화면 열기 →</button></div></article>';
+    } else main = '<div class="m7-empty"><b>이 장비만 따로 다루는 실습 화면은 아직 없어요.</b><span>아래 실습에서 이 장비가 들어간 시스템을 직접 다뤄 볼 수 있어요.</span></div>';
+    return stepHead(m, 'lab', '배운 장비를 가상 실습실에서 직접 켜고, 꽂고, 조작해 봐요.') + main +
+      (links.length ? '<h3 class="m7-subh">함께 해 볼 실습</h3><div class="m7-links">' + links.map(function (x, i) { return linkCard(x, 'data-mgo="practice:' + i + '"', '관련 실습'); }).join('') + '</div>' : '') + next7(m, 'lab');
+  }
+  function tabResult(m) {
+    var s = st(m.id), c = counts(m), pp = pracPageOf(m), own = pp && pp[1] === m.id, pc = own ? pracCounts(m) : null, stt = status(m);
+    var card = function (title, d, n, done, body, btn) { return '<section class="m7-card m7-res' + (done ? ' done' : '') + '"><div class="m7-res__hd"><h3>' + title + '</h3>' + (n != null ? '<b>' + d + ' / ' + n + '</b>' : '') + '</div>' + body + (btn || '') + '</section>'; };
+    return stepHead(m, 'result', '이 브라우저에 저장된 내 기록이에요. 아직 못 한 항목을 눌러 그 단계로 바로 갈 수 있어요.') +
+      '<div class="m7-status ' + stt + '"><b>' + (stt === 'done' ? '🎉 이 과정을 완료했어요' : '지금 상태: ' + STATUS_TXT[stt]) + '</b><span>완료 기준 — 개념 체크 ' + c.learn + '/' + c.learnN + ' · 이해도 문제 ' + c.quiz + '/' + c.quizN + '</span></div>' +
+      '<div class="m7-results">' +
+      card('개념 체크', c.learn, c.learnN, c.learnDone, '<ul class="m7-reslist">' + m.theory.map(function (x, i) { var ok = s.checks[i] === okIdx(x.check); return '<li><button type="button" data-mtheory="' + i + '">' + okMark(ok) + '<span>' + esc(x.title) + '</span></button></li>'; }).join('') + '</ul>') +
+      card('직접 실습', pc ? pc.d : 0, pc ? pc.n : null, pc && pc.done, pc ? '<ul class="m7-reslist">' + m.practice.tasks.map(function (t2) { var d = !!s.tasks[t2.id]; return '<li><span class="m7-reslist__t">' + okMark(d) + '<span>' + esc(t2.title) + '</span></span></li>'; }).join('') + '</ul>' :
+        '<p class="m7-note">' + (pp ? '이 실습은 과제 기록이 따로 없어요. 실습 화면에서 직접 확인해요.' : '이 과정은 실습 기록이 따로 없어요. 「직접 실습」 단계의 관련 실습을 해 보세요.') + '</p>',
+        '<button type="button" class="ui-btn ui-btn--secondary ui-btn--block" data-mtab="' + (noPrac(m) ? 'lab' : 'practice') + '">직접 실습 단계로</button>') +
+      card('이해도 문제', c.quiz, c.quizN, c.quizDone, '<p class="m7-note">' + (c.quizDone ? '모두 맞혔어요.' : c.quizN + '문제를 모두 맞히면 이해도 확인이 끝나요.') + '</p>', '<button type="button" class="ui-btn ui-btn--secondary ui-btn--block" data-mtab="quiz">이해도 확인 단계로</button>') +
+      '</div><section class="m7-card m7-self"><h3>스스로 점검해 보기</h3><p class="m7-note">아래 내용을 다른 사람에게 말로 설명할 수 있으면 이 과정을 잘 이해한 거예요.</p><ul class="m7-points">' + m.overview.points.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></section>' + next7(m, 'result');
+  }
+  function tabMissions7(m) {
+    var ms = m.missions || [];
+    return stepHead(m, 'missions', '배운 내용을 실제 현장 문제에 적용해 봐요. 미션을 누르면 해당 훈련 화면이 열리고, 「모듈로 돌아가기」 버튼으로 다시 올 수 있어요.') +
+      (ms.length ? '<div class="m7-links">' + ms.map(function (x, i) { return linkCard(x, 'data-mgo="missions:' + i + '"', '실전 미션'); }).join('') + '</div>' : '<div class="m7-empty"><b>이 과정에 연결된 실전 미션은 아직 없어요.</b><span>아래 심화 학습으로 더 알아볼 수 있어요.</span></div>') +
+      '<h3 class="m7-subh" id="modDeeper">심화 학습</h3>' + tabDeeper(m);
   }
   function tabMissions(m) {
     return '<p class="mod-lead">배운 원리를 실제 문제 상황에 적용해 보세요.</p><div class="mod-links">' + m.missions.map(function (x, i) { return '<button type="button" class="mod-link mission" data-mgo="missions:' + i + '"><b>🎯 ' + esc(x.title) + '</b><span>' + esc(x.text) + '</span><em>미션 열기 →</em></button>'; }).join('') + '</div>' +
@@ -295,21 +377,25 @@
   function renderModule() {
     var root = $('tabModule'), m = MODS[view.mod]; if (!root || !m) return;
     destroySim(); destroyViewer(); zHide(true);
-    if (view.tab === 'practice' && noPrac(m)) view.tab = 'overview';
-    var p = pathById(m.path), c = counts(m), s = status(m), tab = view.tab;
-    var body = { overview: tabOverview, theory: tabTheory, practice: tabPractice, quiz: tabQuiz, missions: tabMissions, deeper: tabDeeper }[tab](m);
+    if (view.tab === 'practice' && noPrac(m)) view.tab = defTab(m);
+    view.tab = alias7(m, view.tab); if (!tabsOf(m).some(function (t2) { return t2[0] === view.tab; })) view.tab = defTab(m);
+    var p = pathById(m.path), c = counts(m), s = status(m), tab = view.tab, s7 = is7(m);
+    var body = (s7 ? { goal: tabGoal, theory: tabTheory7, gear: tabGear, lab: tabLab, practice: tabPractice, result: tabResult, quiz: tabQuiz, missions: tabMissions7 } :
+      { overview: tabOverview, theory: tabTheory, practice: tabPractice, quiz: tabQuiz, missions: tabMissions, deeper: tabDeeper })[tab](m);
     /* 2026-10-23: 왼쪽 과정 목록은 사이드 메뉴로 옮김. 머리(제목·정보·진행도) → [핵심 개념 탭] 장비 사진 + 핵심 학습 포인트 → 단계 탭 → 내용 */
     root.innerHTML = crumb([[p.title, 'data-path="' + p.id + '"'], [noTxt(m) + '. ' + m.title]]) +
       '<div class="mod-page"><header class="mod-head mod-top"><div class="mod-top__main"><div class="mod-top__title"><h1 id="modTitle">' + noTxt(m) + '. ' + esc(m.title) + ' <span class="mod-st ' + s + '">' + STATUS_TXT[s] + '</span></h1><button type="button" class="mod-pathtag" data-path="' + p.id + '">' + esc(p.title) + '</button></div>' +
         '<p class="mod-top__sub">' + esc(m.sub) + '</p><div class="mod-head__meta">' + metaHtml(m, c) + '</div>' +
         (m.prereq ? '<div class="mod-head__pre">먼저 볼 레슨: ' + m.prereq.map(function (id) { var l = lessonById(id); return l ? '<button type="button" class="lsn-theory-link" data-lesson="' + id + '">' + (lessonDone(id) ? '✓ ' : '📘 ') + esc(l.title) + '</button>' : ''; }).join('') + '</div>' : '') +
         '</div><div class="mod-top__prog">' + progHtml(c) + '</div></header>' +
-        (tab === 'overview' ? heroHtml(m) : '') +
-        '<div class="mod-tabs" role="tablist" aria-label="학습 단계">' + tabsOf(m).map(function (t2, i) { var done = (t2[0] === 'theory' && c.learnDone) || (t2[0] === 'practice' && c.pracDone) || (t2[0] === 'quiz' && c.quizDone);
+        (tab === 'overview' && !s7 ? heroHtml(m) : '') +
+        '<div class="mod-tabs' + (s7 ? ' mod-tabs--7' : '') + '" role="tablist" aria-label="학습 단계">' + tabsOf(m).map(function (t2, i) { var done = (t2[0] === 'theory' && c.learnDone) || (t2[0] === 'practice' && c.pracDone) || (t2[0] === 'quiz' && c.quizDone) || (t2[0] === 'lab' && labDone(m));
           return '<button type="button" role="tab" class="mod-tab' + (done ? ' done' : '') + '" data-mtab="' + t2[0] + '" aria-selected="' + (t2[0] === tab) + '"><span class="n">' + (done ? '✓' : i + 1) + '</span>' + t2[1] + '</button>'; }).join('') + '</div>' +
-        '<div class="mod-body" data-tab="' + tab + '">' + body + '</div></div>';
+        '<div class="mod-body' + (s7 ? ' mod-body--7' : '') + '" data-tab="' + tab + '">' + body + '</div></div>';
     if (tab === 'practice') mountSim(m);
-    if (tab === 'overview' && view.fig === '3d' && MODEL3D[m.overview.model]) mountViewer(MODEL3D[m.overview.model]);
+    if (tab === (s7 ? 'gear' : 'overview') && view.fig === '3d' && MODEL3D[m.overview.model]) mountViewer(MODEL3D[m.overview.model]);
+    var tbar = root.querySelector('.mod-tabs'), atab = tbar && tbar.querySelector('.mod-tab[aria-selected="true"]');   // 2026-11-09: 좁은 화면에서 지금 단계 탭이 단계 줄 안에 보이게
+    if (atab && tbar.scrollWidth > tbar.clientWidth) tbar.scrollLeft = Math.max(0, atab.offsetLeft - (tbar.clientWidth - atab.offsetWidth) / 2);
     markHomeNav();
   }
   function refreshHead() { var m = MODS[view.mod]; if (!m) return; var y = window.scrollY; var keepSim = sim; if (view.tab === 'practice' && keepSim) { // 실습 중에는 실습 화면을 다시 만들지 않고 과제 목록·머리만 새로
@@ -631,9 +717,11 @@
     var m = MODS[id]; if (!m || m.status !== 'ready') return;
     if (tab === 'practice' && noPrac(m) && pageOf(id)) { openPrac(pageOf(id), id); return; }   // 예전 주소(#module-mic-practice)는 실습 탭으로
     if (view.mod !== id) { view.fig = 'photo'; view.var3d = 0; }
-    view.mod = id; view.path = m.path; view.tab = tab && tabsOf(m).some(function (t2) { return t2[0] === tab; }) ? tab : 'overview';
+    var asked = tab; tab = alias7(m, tab); if (tab === 'practice' && is7(m) && noPrac(m)) tab = 'lab';   // 예전 실습 주소(실습 탭이 없는 과정) → 직접 실습 단계
+    view.mod = id; view.path = m.path; view.tab = tab && tabsOf(m).some(function (t2) { return t2[0] === tab; }) ? tab : defTab(m);
     var s = st(id); if (!s.opened) { s.opened = true; put(id, s); }
-    hideBack(); switchTo('tabModule'); renderModule(); setHash('module-' + id + (view.tab !== 'overview' ? '-' + view.tab : '')); focusTitle();
+    hideBack(); switchTo('tabModule'); renderModule(); setHash('module-' + id + (view.tab !== defTab(m) ? '-' + view.tab : '')); focusTitle();
+    if (asked === 'deeper' && is7(m)) scrollToId('modDeeper');
     if (find && view.tab === 'theory') { var sec = Array.prototype.find.call(document.querySelectorAll('#tabModule .mod-sec'), function (x) { return x.querySelector('.mod-sec__h').textContent.indexOf(find) >= 0; });
       if (sec) setTimeout(function () { sec.scrollIntoView({ block: 'start', behavior: 'smooth' }); sec.classList.add('mod-sec--focus'); setTimeout(function () { sec.classList.remove('mod-sec--focus'); }, 2200); }, 80); }
   }
@@ -646,14 +734,16 @@
     var y = tb.getBoundingClientRect().top + window.scrollY - off - 8; tb.style.position = prev;
     try { window.scrollTo({ top: Math.max(0, y), behavior: 'auto' }); } catch (e) { window.scrollTo(0, Math.max(0, y)); }
   }
-  function setTab(tab) { view.tab = tab; renderModule(); setHash('module-' + view.mod + (tab !== 'overview' ? '-' + tab : '')); scrollToTabs(); }
+  function setTab(tab) { var m = MODS[view.mod], asked = tab; tab = alias7(m, tab); view.tab = tab; renderModule(); setHash('module-' + view.mod + (view.tab !== defTab(m) ? '-' + view.tab : '')); scrollToTabs(); if (asked === 'deeper' && is7(m)) scrollToId('modDeeper'); }
+  function scrollToId(id) { setTimeout(function () { var el = $(id); if (el) el.scrollIntoView({ block: 'start' }); }, 30); }
+  function labDone(m) { var pp = pracPageOf(m); return !!(pp && pp[1] === m.id && pracCounts(m).done); }
   function focusTitle() { var t2 = $('modTitle'); if (t2) { t2.setAttribute('tabindex', '-1'); try { t2.focus({ preventScroll: true }); } catch (e) { /* noop */ } } }
   var hashLock = false;
   function setHash(h) { if (window.STAHistory) { STAHistory.record(); return; } hashLock = true; try { history.replaceState(null, '', '#' + h); } catch (e) { location.hash = h; } setTimeout(function () { hashLock = false; }, 0); }
   function fromHash() {
     var h = location.hash || '', m;
     if ((m = /^#path-([\w-]+)$/.exec(h))) { openPath(m[1]); return true; }
-    if ((m = /^#module-([\w-]+?)(?:-(overview|theory|practice|quiz|missions|deeper))?$/.exec(h))) { openModule(m[1], m[2]); return true; }
+    if ((m = /^#module-([\w-]+?)(?:-(overview|theory|practice|quiz|missions|deeper|goal|gear|lab|result))?$/.exec(h))) { openModule(m[1], m[2]); return true; }
     return false;
   }
   function showBack() {
