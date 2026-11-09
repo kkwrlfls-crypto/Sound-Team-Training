@@ -11,7 +11,7 @@
   function snap() {
     var tab = activeTab(), h = location.hash || '';
     if ((tab === 'tabModule' || tab === 'tabPath') && window.STAModules) { var v = STAModules.view();
-      return { tab: tab, hash: tab === 'tabPath' ? '#path-' + v.path : '#module-' + v.mod + (v.tab && v.tab !== 'overview' ? '-' + v.tab : '') }; }
+      return { tab: tab, hash: tab === 'tabPath' ? '#path-' + v.path : '#module-' + v.mod + (v.tab && v.tab !== 'overview' && v.tab !== 'goal' ? '-' + v.tab : '') }; }
     if (tab === 'tabLesson' && window.STALessons && STALessons.current) { var c = STALessons.current(); if (c) return { tab: tab, lesson: c.id, sec: c.sec, hash: '#lesson-' + c.id }; }
     return { tab: tab, hash: tab === 'tabHome' ? '' : '#go-' + tab };
   }
@@ -29,7 +29,7 @@
       if (!s || s.tab === 'tabHome') { if (window.STALessons) STALessons.home(); else switchTab('tabHome'); }
       else if (s.tab === 'tabLesson' && s.lesson && window.STALessons) STALessons.open(s.lesson, s.sec);
       else if (/^#path-([\w-]+)$/.test(s.hash || '') && window.STAModules) STAModules.openPath(s.hash.slice(6));
-      else if (/^#module-/.test(s.hash || '') && window.STAModules) { var m = /^#module-([\w-]+?)(?:-(overview|theory|practice|quiz|missions|deeper))?$/.exec(s.hash); if (m) STAModules.openModule(m[1], m[2]); }
+      else if (/^#module-/.test(s.hash || '') && window.STAModules) { var m = /^#module-([\w-]+?)(?:-(overview|theory|practice|quiz|missions|deeper|goal|gear|lab|result))?$/.exec(s.hash); if (m) STAModules.openModule(m[1], m[2]); }
       else if (typeof switchTab === 'function' && document.getElementById(s.tab)) { switchTab(s.tab); var hb = document.getElementById('modBack'); if (hb) hb.hidden = true; var lb = document.getElementById('lsnBack'); if (lb) lb.hidden = true; }
       try { history.replaceState({ sta: s || snap() }, '', url(s || snap())); } catch (e) { /* noop */ }
       window.scrollTo(0, 0);
