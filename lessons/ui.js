@@ -50,6 +50,7 @@
   function label(el) { var s = el && el.querySelector('span'); return s ? s.textContent.trim() : ''; }
   function updateCurrent() {
     if (!cur) return;
+    if (window.STA_WHERE) { var tr = window.STA_WHERE(), last = tr.pop(); cur.innerHTML = tr.filter(Boolean).map(esc).join(' › ') + (tr.length ? ' › ' : '') + '<b>' + esc(last || '') + '</b>'; return; }   // 2026-11-09 메뉴 계층과 같은 위치
     var g = nav.querySelector('.tab-group.active') || nav.querySelector('.tab-group.in');
     var b = nav.querySelector('.tab-btn.active');
     var gt = label(g), bt = label(b), md = nav.querySelector('.nav-mod.active');

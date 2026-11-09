@@ -199,6 +199,47 @@ button[onclick^="reset"], button[onclick*="Reset"],
 .site-header .tab-nav .tab-btn.tab-sub .tab-ico { width: 16px; height: 16px; }
 .site-header .tab-nav .tab-btn.tab-sub.active { font-weight: 700; }
 
+/* ---------------------------------------------------------------- 2026-11-09 메뉴 계층(내부 화면 재구성 1차)
+   학습 홈 · 학습 로드맵 / 상위 묶음(이론 학습 · 가상 실습실 · 현장 및 문제 해결 · 참고 자료) — 눌러서 열고 닫기 */
+.site-header .tab-nav .nav-cat { display: flex; flex-direction: column; gap: 2px; }
+.site-header .tab-nav .nav-cat + .nav-cat, .site-header .tab-nav .nav-top + .nav-cat { margin-top: 2px; }
+.site-header .tab-nav .nav-top + .nav-cat { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--sta-navy-line); }
+.site-header .tab-nav .nav-cat__btn {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 42px; padding: 8px 10px 8px 12px; border: 0; border-radius: 8px;
+  background: transparent; color: #e6edf6; font: inherit; font-size: 0.9rem; font-weight: 800; line-height: 1.3; text-align: left; cursor: pointer;
+}
+.site-header .tab-nav .nav-cat__btn > span { flex: 1 1 auto; min-width: 0; }
+.site-header .tab-nav .nav-cat__btn:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
+.site-header .tab-nav .nav-cat__btn:focus-visible, .site-header .tab-nav .nav-path__tog:focus-visible { outline: 2px solid var(--sta-cyan-bright); outline-offset: -2px; }
+.site-header .tab-nav .nav-chev { width: 16px; height: 16px; flex: 0 0 auto; opacity: 0.7; transition: transform .15s ease; }
+.site-header .tab-nav .nav-cat.open > .nav-cat__btn .nav-chev, .site-header .tab-nav .nav-path.open .nav-path__tog .nav-chev { transform: rotate(90deg); }
+.site-header .tab-nav .nav-cat.cur > .nav-cat__btn { color: #fff; }
+.site-header .tab-nav .nav-cat.cur > .nav-cat__btn .tab-ico { color: var(--sta-cyan-bright); }
+.site-header .tab-nav .nav-cat.cur > .nav-cat__btn::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--sta-cyan-bright); flex: 0 0 auto; order: 2; }
+.site-header .tab-nav .nav-cat.cur > .nav-cat__btn .nav-chev { order: 3; }
+.site-header .tab-nav .nav-cat__body { display: flex; flex-direction: column; gap: 2px; padding: 2px 0 8px; }
+.site-header .tab-nav .nav-cat__body[hidden] { display: none; }
+/* 이론 학습 안 경로(물리음향 · 음향 장비 학습 · 믹싱 스킬): 머리 + 펼치기 단추, 그 아래 과정 */
+.site-header .tab-nav .nav-path__row { display: flex; align-items: stretch; gap: 2px; margin-left: 12px; }
+.site-header .tab-nav .nav-path .tab-group { flex: 1 1 auto; width: auto; margin-top: 0; min-height: 38px; padding: 7px 10px; font-size: 0.86rem; font-weight: 700; color: var(--sta-navy-ink); }
+.site-header .tab-nav .nav-path .tab-group .tab-ico { width: 16px; height: 16px; }
+.site-header .tab-nav .nav-path.cur .tab-group:not(.active) { color: #fff; }
+.site-header .tab-nav .nav-path.cur .tab-group:not(.active) .tab-ico { color: var(--sta-cyan-bright); }
+.site-header .tab-nav .nav-path__tog { flex: 0 0 34px; display: grid; place-items: center; border: 0; border-radius: 8px; background: transparent; color: var(--sta-navy-ink); cursor: pointer; }
+.site-header .tab-nav .nav-path__tog:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
+.site-header .tab-nav .nav-path__mods { display: flex; flex-direction: column; gap: 2px; margin: 2px 0 4px 14px; }
+.site-header .tab-nav .nav-path__mods[hidden] { display: none; }
+/* 묶음 안 실습 · 현장 · 참고 자료 항목: 들여쓰기 + 왼쪽 안내선(기존 .tab-sub) */
+.site-header .tab-nav .nav-cat__body > .tab-btn.tab-sub { margin-left: 22px; width: calc(100% - 22px); }
+/* 「음향의 중요성」을 보는 동안 학습 로드맵이 선택된 것처럼(로드맵의 첫 단계) */
+.site-header .tab-nav .tab-btn.cur:not(.active) { background: rgba(37, 99, 235, 0.35); color: #fff; }
+.site-header .tab-nav .nav-rest { display: none; }
+@media (max-width: 1023px) {
+  .site-header .tab-nav .nav-cat__btn { min-height: 46px; }
+  .site-header .tab-nav .nav-path .tab-group, .site-header .tab-nav .nav-path__tog { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) { .site-header .tab-nav .nav-chev { transition: none; } }
+
 /* ---------------------------------------------------------------- 넓은 화면(1024px 이상): 왼쪽 내비게이션 */
 @media (min-width: 1024px) {
   body { padding: 28px 32px 56px calc(var(--side-w) + 32px); }
@@ -280,8 +321,9 @@ button[onclick^="reset"], button[onclick*="Reset"],
 .game-container:has(> #tabHome.active),
 .game-container:has(> #tabPath.active),
 .game-container:has(> #tabModule.active),
-.game-container:has(> #tabLesson.active) {
-  max-width: 1200px; background: transparent; border: 0; box-shadow: none; padding: 0; border-radius: 0;
+.game-container:has(> #tabLesson.active),
+.game-container:has(> #tabRoadmap.active) {
+  max-width: 1360px; background: transparent; border: 0; box-shadow: none; padding: 0; border-radius: 0;
 }
 /* 실습 화면: 흰 판 유지, 테두리·그림자만 정돈 */
 .game-container { border-color: var(--sta-line); box-shadow: var(--sta-shadow); border-radius: var(--sta-r-lg); }
@@ -678,3 +720,124 @@ html.nav-open #toTopBtn { opacity: 0; pointer-events: none; }
 @media (max-width: 640px) { .hm-cats { grid-template-columns: minmax(0, 1fr); } .hm-cats > .hm-cat:last-child:nth-child(odd) { grid-column: auto; } }
 @media (min-width: 1280px) and (max-width: 1439px) { .hm-cats > .hm-cat:nth-child(n+4) .hm-cat__img { aspect-ratio: 16 / 5; } }
 @media (min-width: 641px) and (max-width: 1279px) { .hm-cats > .hm-cat:last-child:nth-child(odd) .hm-cat__img { aspect-ratio: 16 / 4; } }
+
+/* =============================================================================
+   2026-11-09 내부 화면 재구성(1차): 넓은 화면 활용 · 공통 쪽 머리
+   ============================================================================= */
+/* 실습 · 현장 화면(흰 판)도 예전 960px 대신 1360px 까지 — 콘솔 · 3D 실습이 작아지지 않게 (CL5 는 원래대로 1500px) */
+.game-container { max-width: 1360px; }
+.game-container.cl5-wide-mode { max-width: 1500px; }
+/* 공통 쪽 머리: 현재 위치 줄 */
+.page-crumb { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 12px; font-size: 0.8rem; color: var(--sta-ink-3); }
+.page-crumb button { border: 0; background: none; padding: 2px 0; color: var(--sta-blue); font: inherit; font-weight: 700; cursor: pointer; }
+.page-crumb button:hover { text-decoration: underline; }
+.page-crumb button:focus-visible { outline: 2px solid var(--sta-blue); outline-offset: 2px; border-radius: 4px; }
+.page-crumb b { color: var(--sta-ink); font-weight: 700; }
+
+/* =============================================================================
+   2026-11-09 내부 화면 재구성(2차): 학습 홈 · 학습 로드맵
+   ============================================================================= */
+.hm-link { border: 0; background: none; padding: 0; margin-left: 6px; color: var(--sta-blue); font: inherit; font-weight: 700; cursor: pointer; }
+.hm-link:hover { text-decoration: underline; }
+.hm-link:focus-visible { outline: 2px solid var(--sta-blue); outline-offset: 2px; border-radius: 4px; }
+.hm-cats.hm-cats--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+/* 로드맵 요약: 6단계 한 줄 */
+.hm-road { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; counter-reset: none; }
+.hm-road > li { display: flex; min-width: 0; }
+.hm-road__it { position: relative; display: flex; flex-direction: column; gap: 6px; width: 100%; min-width: 0; padding: 14px 14px 12px; text-align: left; cursor: pointer;
+  border: 1px solid var(--sta-line); border-radius: var(--sta-r); background: var(--sta-surface); color: var(--sta-ink); font: inherit; box-shadow: var(--sta-shadow); }
+.hm-road__it:hover { border-color: var(--sta-blue); }
+.hm-road__it:focus-visible { outline: 2px solid var(--sta-blue); outline-offset: 2px; }
+.hm-road__n { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--sta-blue-soft); color: var(--sta-blue); font-size: 0.86rem; font-weight: 800; }
+.hm-road__it.doing .hm-road__n { background: var(--sta-blue); color: #fff; }
+.hm-road__it.done .hm-road__n { background: var(--sta-ok); color: #fff; }
+.hm-road__it b { font-size: 0.94rem; font-weight: 800; line-height: 1.35; }
+.hm-road__sum { font-size: 0.8rem; line-height: 1.5; color: var(--sta-ink-2); }
+.hm-road__prog { margin-top: auto; display: flex; flex-direction: column; gap: 4px; padding-top: 6px; }
+.hm-road__prog small { font-size: 0.74rem; color: var(--sta-ink-3); font-variant-numeric: tabular-nums; }
+.hm-road > li + li .hm-road__it::before { content: ""; position: absolute; left: -11px; top: 27px; width: 10px; height: 2px; background: var(--sta-line); }
+/* 실습 · 현장 · 참고 자료 카드(같은 크기 · 같은 비율의 사진) */
+.hm-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+.hm-tiles--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.hm-tiles--refs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.hm-tile { display: flex; flex-direction: column; min-width: 0; padding: 0; overflow: hidden; text-align: left; cursor: pointer;
+  border: 1px solid var(--sta-line); border-radius: var(--sta-r); background: var(--sta-surface); color: var(--sta-ink); font: inherit; box-shadow: var(--sta-shadow); }
+.hm-tile:hover { border-color: var(--sta-line-strong, #c8d5e6); box-shadow: var(--sta-shadow-hover, 0 6px 18px rgba(15,31,51,.08)); }
+.hm-tile:focus-visible { outline: 2px solid var(--sta-blue); outline-offset: 2px; }
+.hm-tile__media { display: block; aspect-ratio: 16 / 9; background: #0f1f33; overflow: hidden; }
+.hm-tile__media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hm-tile__ico { display: grid; place-items: center; width: 100%; height: 100%; background: linear-gradient(180deg, #12294a, #0b1d36); color: #67e8f9; }
+.hm-tile__ico svg { width: 44px; height: 44px; }
+.hm-tile__body { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px 14px; }
+.hm-tile__kicker { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; color: var(--sta-blue); }
+.hm-tile__body b { font-size: 0.95rem; font-weight: 800; line-height: 1.35; }
+.hm-tile__sum { font-size: 0.8rem; line-height: 1.5; color: var(--sta-ink-2); }
+.hm-tiles--refs .hm-tile { flex-direction: row; align-items: stretch; }
+.hm-tiles--refs .hm-tile__media { flex: 0 0 96px; aspect-ratio: auto; min-height: 84px; }
+.hm-tiles--refs .hm-tile__ico svg { width: 30px; height: 30px; }
+/* 학습 로드맵 화면 */
+#tabRoadmap { display: none; }
+#tabRoadmap.active { display: flex; flex-direction: column; gap: 22px; }
+#tabRoadmap .level-header { margin: 0; padding: 0; border: 0; }
+.rm-stages { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.rm-stage { position: relative; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; }
+.rm-stage + .rm-stage::before { content: ""; position: absolute; left: 19px; top: -14px; height: 14px; width: 2px; background: var(--sta-line); }
+.rm-stage__n { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--sta-blue-soft); color: var(--sta-blue); font-weight: 800; }
+.rm-stage.doing .rm-stage__n { background: var(--sta-blue); color: #fff; }
+.rm-stage.done .rm-stage__n { background: var(--sta-ok); color: #fff; }
+.rm-stage__card { min-width: 0; padding: 16px 18px; border: 1px solid var(--sta-line); border-radius: var(--sta-r); background: var(--sta-surface); box-shadow: var(--sta-shadow); }
+.rm-stage__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+.rm-stage__head h3 { margin: 0; font-size: 1.02rem; font-weight: 800; color: var(--sta-ink); }
+.rm-stage__prog { font-size: 0.78rem; color: var(--sta-ink-3); font-variant-numeric: tabular-nums; }
+.rm-stage__card > p { margin: 6px 0 10px; font-size: 0.86rem; line-height: 1.6; color: var(--sta-ink-2); }
+.rm-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.rm-list button { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 5px 12px; border: 1px solid var(--sta-line); border-radius: 999px; background: var(--sta-surface-2); color: var(--sta-ink); font: inherit; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
+.rm-list button:hover { border-color: var(--sta-blue); color: var(--sta-blue); }
+.rm-list button:focus-visible { outline: 2px solid var(--sta-blue); outline-offset: 2px; }
+.rm-list .no { font-size: 0.74rem; font-weight: 800; color: var(--sta-blue); }
+.rm-list .kind { font-size: 0.7rem; font-weight: 800; color: #0e7490; }
+.rm-list .st { font-size: 0.7rem; font-weight: 800; padding: 1px 6px; border-radius: 999px; }
+.rm-list .st.done { background: var(--sta-ok-bg, #ecfdf5); color: var(--sta-ok); }
+.rm-list .st.doing { background: var(--sta-blue-soft); color: var(--sta-blue); }
+.rm-week-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.rm-phase { grid-column: 1 / -1; margin-top: 6px; font-size: 0.8rem; font-weight: 800; letter-spacing: 0.04em; color: var(--sta-blue); }
+.rm-week { display: flex; flex-direction: column; gap: 6px; min-width: 0; padding: 12px 14px; border: 1px solid var(--sta-line); border-radius: var(--sta-r); background: var(--sta-surface); }
+.rm-week.done { border-color: var(--sta-ok-line, #a7e8cd); background: var(--sta-ok-bg, #ecfdf5); }
+.rm-week__chk { display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--sta-ink); cursor: pointer; }
+.rm-week__chk input { width: 18px; height: 18px; accent-color: var(--sta-ok); }
+.rm-week__body p { margin: 0 0 4px; font-size: 0.82rem; line-height: 1.55; color: var(--sta-ink-2); }
+.rm-week__body p b { color: var(--sta-ink); margin-right: 4px; }
+.rm-week__tool { color: var(--sta-ink-3) !important; }
+.rm-week__go { margin-top: 4px; align-self: flex-start; }
+@media (max-width: 1199px) {
+  .hm-road { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .hm-road > li:nth-child(3n+1) .hm-road__it::before { display: none; }
+  .hm-tiles--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .hm-cats.hm-cats--3, .hm-tiles--refs, .rm-week-list { grid-template-columns: minmax(0, 1fr); }
+  .hm-road { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hm-road__it::before { display: none; }
+  .hm-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .hm-tile__body { padding: 10px 12px 12px; }
+  .rm-stage { grid-template-columns: 32px minmax(0, 1fr); gap: 10px; }
+  .rm-stage__n { width: 32px; height: 32px; }
+  .rm-stage + .rm-stage::before { left: 15px; }
+}
+@media (max-width: 760px) { .hm-tiles.hm-tiles--refs { grid-template-columns: minmax(0, 1fr); } }   /* 참고 자료는 좁은 화면에서 한 줄에 하나(글자가 세로로 쪼개지지 않게) */
+
+/* 2026-11-09: 가상 실습실 두 줄(장비 실습 5개 · 콘솔 운영/귀 훈련 2개), 긴 과정 목록 「외 N개」 */
+.hm-sub { margin: 2px 0 -4px; font-size: 0.84rem; font-weight: 800; color: var(--sta-ink-2); }
+.hm-tiles--5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.hm-tiles--wide { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.hm-tiles--wide .hm-tile { flex-direction: row; }
+.hm-tiles--wide .hm-tile__media { flex: 0 0 42%; aspect-ratio: 16 / 9; }
+.hm-tiles--wide .hm-tile__body { justify-content: center; }
+.hm-cat__more button { border: 0; background: none; padding: 4px 0; color: var(--sta-blue); font: inherit; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+.hm-cat__more button:hover { text-decoration: underline; }
+@media (max-width: 1199px) { .hm-tiles--5 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .hm-tiles--5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hm-tiles--wide { grid-template-columns: minmax(0, 1fr); }
+}
+.hm-cat__list .hm-cat__more button::before { display: none; }

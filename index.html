@@ -2812,7 +2812,8 @@
         <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>메뉴</span></button>
       </div>
   <div class="tab-nav" id="siteNav">
-      <button class="tab-btn active" data-tab="tabHome" onclick="switchTab('tabHome')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/></svg><span>홈</span></button>
+      <button class="tab-btn active" data-tab="tabHome" onclick="switchTab('tabHome')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/></svg><span>학습 홈</span></button>
+      <button class="tab-btn" data-tab="tabRoadmap" onclick="switchTab('tabRoadmap')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5"/></svg><span>학습 로드맵</span></button>
       <button class="tab-btn" data-tab="tabIntro" onclick="switchTab('tabIntro')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M12 7v6M9 10h6"/></svg><span>음향의 중요성</span></button>
       <button class="tab-btn" data-tab="tab1" onclick="switchTab('tab1')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg><span>05. 음향 시스템 설계 실습</span></button>
       <button class="tab-btn" data-tab="tab6" onclick="switchTab('tab6')"><svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5v17M12 3.5v17M18 3.5v17"/><rect x="4" y="13" width="4" height="3" rx="0.8"/><rect x="10" y="7" width="4" height="3" rx="0.8"/><rect x="16" y="11" width="4" height="3" rx="0.8"/></svg><span>03. 콘솔 실습</span></button>
@@ -2862,7 +2863,9 @@
   <main class="game-container">
 
     <!-- 2026-10-19: 학습 대시보드(홈)와 미니 이론 레슨 화면. 내용은 lessons/lessons_data.js + lessons/lessons.js 가 그립니다. -->
-    <div id="tabHome" class="tab-content active" aria-label="홈"></div>
+    <div id="tabHome" class="tab-content active" aria-label="학습 홈"></div>
+    <!-- 2026-11-09 내부 화면 재구성: 학습 로드맵 (lessons/lessons.js renderRoadmap) -->
+    <div id="tabRoadmap" class="tab-content" aria-label="학습 로드맵"></div>
     <div id="tabLesson" class="tab-content" aria-label="이론 레슨"></div>
     <div id="tabPath" class="tab-content" aria-label="학습 경로"></div>
     <div id="tabModule" class="tab-content" aria-label="학습 모듈"></div>

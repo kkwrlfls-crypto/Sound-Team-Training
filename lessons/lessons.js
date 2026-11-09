@@ -129,8 +129,9 @@
       var started = ms.some(function (m) { return modStatus(m.id) !== 'new'; });
       var mins = ms.reduce(function (a, m) { return a + (m.minutes || 0); }, 0);
       var STT = { done: '완료', doing: '진행 중' };
-      body = '<ul class="hm-cat__list" aria-label="과정 순서">' + ms.map(function (m) { var s2 = modStatus(m.id);
-        return '<li><button type="button" data-module="' + esc(m.id) + '"><span class="no">' + (window.STA_NO_TXT ? STA_NO_TXT(m) : String(m.no).padStart(2, '0')) + '</span>' + esc(m.title) + (STT[s2] ? '<span class="st ' + s2 + '">' + STT[s2] + '</span>' : '') + '</button></li>'; }).join('') + '</ul>';
+      var more = ms.length > 6 ? ms.length - 5 : 0;   // 2026-11-09: 과정이 많은 경로는 5개만 보이고 「외 N개」 — 카드 높이를 맞춤
+      body = '<ul class="hm-cat__list" aria-label="과정 순서">' + ms.slice(0, more ? 5 : ms.length).map(function (m) { var s2 = modStatus(m.id);
+        return '<li><button type="button" data-module="' + esc(m.id) + '"><span class="no">' + (window.STA_NO_TXT ? STA_NO_TXT(m) : String(m.no).padStart(2, '0')) + '</span>' + esc(m.title) + (STT[s2] ? '<span class="st ' + s2 + '">' + STT[s2] + '</span>' : '') + '</button></li>'; }).join('') + (more ? '<li class="hm-cat__more"><button type="button" data-path="' + esc(P.id) + '">외 ' + more + '개 과정 모두 보기</button></li>' : '') + '</ul>';
       meta = '<div class="hm-cat__meta"><span>' + ms.length + '개 과정 · ' + minTxt(mins) + '</span><span>완료 <b>' + done + '</b> / ' + ms.length + '</span></div>' + bar(ms.length ? done / ms.length * 100 : 0, done === ms.length && ms.length);
       cta = '<button type="button" class="ui-btn ui-btn--primary ui-btn--block" data-path="' + esc(P.id) + '">' + (done === ms.length && ms.length ? '복습하기' : started ? '이어서 학습하기' : '학습 시작하기') + ARROW + '</button>';
     } else {
@@ -163,6 +164,91 @@
     return '<section class="hm-sec" id="homeNext"><div class="hm-sec__head"><h2>처음이라면 이 순서로 시작해요</h2><p>소리가 가는 길(신호 흐름) → 장비 → 실습 순서로 배우면 쉬워요.</p></div><div class="hm-next">' +
       rec.map(function (o, i) { o.step = i + 1; return itemCard(o); }).join('') + '</div></section>';
   }
+  /* ------------------------------------------------------------- 2026-11-09 내부 화면 재구성(2차): 학습 홈 · 학습 로드맵
+     학습 홈 = 소개 · 시작 안내 → 기초부터 배우는 로드맵 → 이론 학습 카드 → 가상 실습실 → 현장 및 문제 해결 → 참고 자료
+     - 카드는 실제로 있는 화면만 연결(기존 이동 속성 data-path · data-module · data-lesson · data-mgo-tab 을 그대로 씀)
+     - 진도 숫자는 이 브라우저에 저장된 실제 기록(레슨 · 과정 완료, 실습 과제)만 셈 */
+  var TILE = {   // 실습 · 현장 · 참고 자료 화면: 사진(프로젝트에 있는 실제 장비 사진만) · 한 줄 설명
+    tabPracMic: { img: 'img/modules/hw_mic.jpg', sum: '유선 · 무선 마이크를 켜고 맞춰 봐요.' },
+    tabPracCable: { img: 'img/modules/hw_cable.jpg', sum: '케이블을 알맞은 단자에 꽂아 봐요.' },
+    tab6: { img: 'console_strip.jpg', pos: '50% 20%', sum: 'MG12XU · X32 · M32 를 사진 위에서 조작해요.' },
+    tabPracSpk: { img: 'img/modules/ev_zxa1.jpg', sum: '액티브 스피커의 크기와 자리를 바꿔 들어 봐요.' },
+    tab1: { img: 'vi10p.jpg', pos: '50% 30%', sum: '마이크부터 스피커까지 3D 로 시스템을 꾸며요.' },
+    tab5: { img: 'cl5_top.jpg', sum: '예배 순서대로 CL5 채널 ON 을 눌러요.' },
+    tab3: { img: 'img/modules/mix2_ear.jpg', sum: '주파수 · 크기 차이를 귀로 구분해요.' },
+    tab2: { img: 'img/modules/hw_speaker.jpg', sum: '3층 본당 장비 배치와 신호 흐름을 3D 로 봐요.' },
+    tab7: { img: 'jack_strip.jpg', sum: '소리가 안 날 때 원인을 찾아 고쳐요.' },
+    tabFeedback: { ico: 'fb', sum: '삐— 소리(하울링)가 나는 주파수를 찾아 줄여요.' },
+    tabCheck: { ico: 'chk', sum: '우리 시스템을 항목별로 점검해요.' },
+    tabBrands: { ico: 'tag', sum: '자주 만나는 장비 회사와 특징' },
+    tabTips: { ico: 'tip', sum: '현장에서 바로 쓰는 요령 모음' },
+    tabMixVideo: { img: 'img/modules/mix2_video.jpg', sum: '실제 믹싱 과정을 영상으로 봐요.' }
+  };
+  var TILE_ICO = {
+    fb: '<path d="M3 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0"/><path d="M12 3v3M12 18v3"/>',
+    chk: '<rect x="5" y="3.5" width="14" height="18" rx="2"/><path d="M9 3.5V2h6v1.5M8.5 10l1.5 1.5 3-3M8.5 16l1.5 1.5 3-3"/>',
+    tag: '<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+    tip: '<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/>'
+  };
+  function navCat(id) { return (window.STA_NAV_CATS || []).find(function (c) { return c.id === id; }) || { tabs: [] }; }
+  function tile(t, kicker) {
+    var o = TILE[t] || {}, media = o.img ? '<img src="' + esc(o.img) + '" alt="" loading="lazy"' + (o.pos ? ' style="object-position:' + o.pos + '"' : '') + '>' : '<span class="hm-tile__ico">' + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (TILE_ICO[o.ico] || '') + '</svg></span>';
+    return '<button type="button" class="hm-tile' + (o.img ? '' : ' hm-tile--ico') + '" data-mgo-tab="' + t + '"><span class="hm-tile__media">' + media + '</span><span class="hm-tile__body"><span class="hm-tile__kicker">' + esc(kicker) + '</span><b>' + esc(tabName(t)) + '</b><span class="hm-tile__sum">' + esc(o.sum || '') + '</span></span></button>';
+  }
+  function pathOf(id) { return (window.STA_PATHS || []).find(function (p) { return p.id === id; }); }
+  function pathDone(id) { var P = pathOf(id); if (!P) return { done: 0, n: 0, doing: false }; var ms = (P.modules || []).map(function (k) { return (window.STA_MODULES || {})[k]; }).filter(function (m) { return m && m.status === 'ready'; });
+    return { done: ms.filter(function (m) { return modStatus(m.id) === 'done'; }).length, n: ms.length, doing: ms.some(function (m) { return modStatus(m.id) === 'doing'; }) }; }
+  /* 로드맵 단계 — 학습 홈 요약과 학습 로드맵 화면이 같은 목록을 씀 */
+  function roadStages() {
+    var sf = lessonById('signal-flow'), sfOk = sf && sf.status === 'ready';
+    return [
+      { n: 1, t: '시작하기', sum: '왜 음향이 중요한지, 소리가 어떤 길로 가는지부터 알아봐요.', go: 'data-mgo-tab="tabIntro"', items: [{ a: 'data-mgo-tab="tabIntro"', t: tabName('tabIntro') || '음향의 중요성' }].concat(sfOk ? [{ a: 'data-lesson="signal-flow"', t: sf.title, st: status(sf) }] : []) },
+      { n: 2, t: '물리음향', sum: '소리 · 전기 · 방이 어떻게 움직이는지 원리부터 알아봐요.', path: 'physics' },
+      { n: 3, t: '음향 장비 이해', sum: '마이크 · 케이블 · 콘솔 · 앰프 · 스피커가 하는 일을 배워요.', path: 'hardware' },
+      { n: 4, t: '장비 실습', sum: '배운 장비를 화면에서 직접 켜고, 꽂고, 조작해 봐요.', tabs: ['tabPracMic', 'tabPracCable', 'tab6', 'tabPracSpk', 'tab1'] },
+      { n: 5, t: '믹싱 스킬 · 귀 훈련', sum: 'Gain · EQ · Gate · Compressor · 공간계를 배우고 귀로 확인해요.', path: 'mixing', tabs: ['tab3'] },
+      { n: 6, t: '현장 운영 · 문제 해결', sum: '우리 교회 시스템을 다루고, 문제가 생기면 원인을 찾아 고쳐요.', tabs: ['tab5', 'tab2', 'tab7', 'tabFeedback', 'tabCheck'] }
+    ];
+  }
+  function stageProg(s) {
+    if (s.path) { var d = pathDone(s.path); return { txt: '완료 ' + d.done + ' / ' + d.n, pct: d.n ? d.done / d.n * 100 : 0, done: d.n && d.done === d.n, doing: d.doing || d.done > 0 }; }
+    if (s.items) { var L = s.items.filter(function (x) { return x.st; }), dn = L.filter(function (x) { return x.st === 'done'; }).length; return L.length ? { txt: '레슨 ' + dn + ' / ' + L.length, pct: dn / L.length * 100, done: dn === L.length, doing: L.some(function (x) { return x.st === 'doing'; }) } : null; }
+    return { txt: '실습 ' + s.tabs.length + '개', pct: null };
+  }
+  function stageGo(s) { return s.go || (s.path ? 'data-path="' + s.path + '"' : 'data-mgo-tab="' + s.tabs[0] + '"'); }
+  function homeRoad() {
+    return '<section class="hm-sec" id="home-roadmap"><div class="hm-sec__head"><h2>기초부터 배우는 학습 로드맵</h2><p>처음이라면 1단계부터 차례로 따라가요. <button type="button" class="hm-link" data-mgo-tab="tabRoadmap">전체 로드맵 보기 →</button></p></div>' +
+      '<ol class="hm-road">' + roadStages().map(function (s) { var pg = stageProg(s);
+        return '<li><button type="button" class="hm-road__it' + (pg && pg.done ? ' done' : pg && pg.doing ? ' doing' : '') + '" ' + stageGo(s) + '><span class="hm-road__n">' + (pg && pg.done ? '✓' : s.n) + '</span><b>' + esc(s.t) + '</b><span class="hm-road__sum">' + esc(s.sum) + '</span>' +
+          (pg ? '<span class="hm-road__prog">' + (pg.pct != null ? bar(pg.pct, pg.done) : '') + '<small>' + esc(pg.txt) + '</small></span>' : '') + '</button></li>'; }).join('') + '</ol></section>';
+  }
+  function homeSec(id, title, sub, inner) { return '<section class="hm-sec" id="' + id + '"><div class="hm-sec__head"><h2>' + esc(title) + '</h2><p>' + esc(sub) + '</p></div>' + inner + '</section>'; }
+  function renderRoadmap() {
+    var root = $('tabRoadmap'); if (!root) return;
+    var stg = roadStages().map(function (s) {
+      var pg = stageProg(s), items = [];
+      (s.items || []).forEach(function (x) { items.push('<li><button type="button" ' + x.a + '>' + esc(x.t) + (x.st === 'done' ? '<span class="st done">완료</span>' : x.st === 'doing' ? '<span class="st doing">진행 중</span>' : '') + '</button></li>'); });
+      if (s.path) { var P = pathOf(s.path); (P ? P.modules : []).forEach(function (id) { var m = (window.STA_MODULES || {})[id]; if (!m || m.status !== 'ready') return; var s2 = modStatus(m.id);
+        items.push('<li><button type="button" data-module="' + esc(m.id) + '"><span class="no">' + (window.STA_NO_TXT ? STA_NO_TXT(m) : String(m.no).padStart(2, '0')) + '</span>' + esc(m.title) + (s2 === 'done' ? '<span class="st done">완료</span>' : s2 === 'doing' ? '<span class="st doing">진행 중</span>' : '') + '</button></li>'); }); }
+      (s.tabs || []).forEach(function (t) { items.push('<li><button type="button" data-mgo-tab="' + t + '"><span class="kind">실습</span>' + esc(tabName(t)) + '</button></li>'); });
+      return '<li class="rm-stage' + (pg && pg.done ? ' done' : pg && pg.doing ? ' doing' : '') + '"><span class="rm-stage__n" aria-hidden="true">' + (pg && pg.done ? '✓' : s.n) + '</span><div class="rm-stage__card"><div class="rm-stage__head"><h3>' + s.n + '단계 · ' + esc(s.t) + '</h3>' + (pg ? '<span class="rm-stage__prog">' + esc(pg.txt) + '</span>' : '') + '</div><p>' + esc(s.sum) + '</p><ul class="rm-list">' + items.join('') + '</ul></div></li>';
+    }).join('');
+    var wk = '';
+    try { if (typeof curriculumWeeks !== 'undefined' && curriculumWeeks.length) {   // index.html 의 「신입 스텝 10주 커리큘럼」 내용(실제 교육 계획)을 그대로 보여 줌
+      var prog = typeof loadCurriculumProgress === 'function' ? loadCurriculumProgress() : {}, last = null;
+      wk = '<section class="hm-sec rm-weeks" id="roadmapWeeks"><div class="hm-sec__head"><h2>신입 스텝 10주 커리큘럼</h2><p>음향팀에 처음 온 스텝이 10주 동안 함께 하는 교육 순서예요. 끝낸 주는 체크해 두세요(이 브라우저에만 저장).</p></div><ol class="rm-week-list">' +
+        curriculumWeeks.map(function (w) { var ph = w.phase.replace(/ \d주$/, ''), head = ph !== last ? '<li class="rm-phase">' + esc(ph) + '</li>' : ''; last = ph; var dn = !!prog[w.week];
+          return head + '<li class="rm-week' + (dn ? ' done' : '') + '"><label class="rm-week__chk"><input type="checkbox" data-rm-week="' + w.week + '"' + (dn ? ' checked' : '') + '><span>' + esc(w.title) + '</span></label><div class="rm-week__body"><p><b>목표</b> ' + esc(w.goal) + '</p><p><b>실습 내용</b> ' + esc(w.practice) + '</p>' +
+            (w.tool ? '<p class="rm-week__tool">' + esc(w.tool) + '</p>' : '') + (w.tab && document.querySelector('.tab-btn[data-tab="' + w.tab + '"]') ? '<button type="button" class="ui-btn ui-btn--secondary rm-week__go" data-mgo-tab="' + w.tab + '">' + esc(tabName(w.tab)) + ' 열기' + ARROW + '</button>' : '') + '</div></li>'; }).join('') + '</ol></section>';
+    } } catch (e) { wk = ''; }
+    root.innerHTML = '<div class="level-header"><div class="level-title" id="roadmapTitle">학습 로드맵</div><div class="level-desc">처음 온 분도 무엇부터 배우고 어떤 실습을 할지 알 수 있게, 1단계부터 6단계까지 순서대로 정리했어요. 단계를 누르면 그 과정이나 실습이 바로 열려요.</div></div>' +
+      '<ol class="rm-stages">' + stg + '</ol>' + wk +
+      '<section class="hm-sec home-sec" id="homeAdv"><div class="hm-sec__head"><h2>더 깊이 배우기</h2><p>로드맵을 마친 뒤 더 알고 싶은 주제예요. 누르면 그 내용을 다루는 과정이 바로 열려요.</p></div><div class="home-cards">' + ADV.map(cardAdvOpen).join('') + '</div></section>';
+    if (window.STAPageHead) window.STAPageHead();
+  }
+  document.addEventListener('change', function (e) { var c = e.target && e.target.closest && e.target.closest('[data-rm-week]'); if (!c) return;
+    var wk = +c.getAttribute('data-rm-week'); if (typeof loadCurriculumProgress === 'function' && typeof saveCurriculumProgress === 'function') { var pr = loadCurriculumProgress(); pr[wk] = c.checked; saveCurriculumProgress(pr); }
+    var li = c.closest('.rm-week'); if (li) li.classList.toggle('done', c.checked); });
   function renderHome() {
     var root = $('tabHome'); if (!root) return;
     var ready = LESSONS.filter(function (l) { return l.status === 'ready'; });
@@ -174,7 +260,7 @@
     var total = ready.length + mods.length, pct = total ? Math.round((doneN + modDone) / total * 100) : 0;
     var started = doing.length || doingL.length || doneN || modDone;
     var cta = doing.length ? '<button type="button" class="ui-btn ui-btn--primary" data-module="' + esc(doing[0].id) + '">이어서 학습하기 · ' + esc(doing[0].title) + ARROW + '</button>'
-      : '<button type="button" class="ui-btn ui-btn--primary" data-path="hardware">' + (started ? '학습 계속하기' : '학습 시작하기') + ARROW + '</button>';
+      : '<button type="button" class="ui-btn ui-btn--primary" data-mgo-tab="tabRoadmap">' + (started ? '학습 로드맵에서 이어 가기' : '학습 시작하기 · 로드맵 보기') + ARROW + '</button>';
     root.innerHTML =
       '<section class="hm-hero" aria-labelledby="homeTitle"><div class="hm-hero__media" aria-hidden="true"><img src="cl5_top.jpg" alt=""></div>' +
       '<div class="hm-hero__text"><p class="hm-hero__eyebrow">Better Sound, Better Ministry</p>' +
@@ -186,10 +272,14 @@
       '<div class="hm-me__row"><span>학습 과정</span><b>' + modDone + ' / ' + mods.length + '</b>' + bar(mods.length ? modDone / mods.length * 100 : 0) + '</div>' +
       '<div class="hm-me__row"><span>진행 중</span><b>' + (doing.length + doingL.length) + '개</b></div></div>' +
       '<p class="hm-me__note">기록은 이 브라우저에만 저장돼요.</p></aside></section>' +
-      nextSection(doing, doingL) +
-      '<section class="hm-sec" id="modHome"><div class="hm-sec__head"><h2>전체 학습 과정</h2><p>배우고 싶은 분야를 골라요. 과정마다 이론 학습 → 실습 → 확인 문제 순서로 배워요.</p></div><div class="hm-cats">' + HOME_CATS.map(catCard).join('') + '</div></section>' +
-      /* 2026-10-25: 「기초 이론」 칸 삭제 — 남은 레슨(신호 흐름)은 위 「처음이라면」 1번과 음향 장비 학습 경로에서 열어요 */
-      '<section class="hm-sec home-sec" id="homeAdv"><div class="hm-sec__head"><h2>심화 주제</h2><p>더 깊이 알고 싶은 주제를 골라요. 누르면 그 내용을 배우는 과정이 바로 열려요.</p></div><div class="home-cards">' + ADV.map(cardAdvOpen).join('') + '</div></section>';
+      homeRoad() +
+      '<section class="hm-sec" id="modHome"><div class="hm-sec__head"><h2>이론 학습</h2><p>원리 → 장비 → 믹싱 순서로 배워요. 과정마다 핵심 개념 → 이론 → 확인 문제로 이어져요.</p></div><div class="hm-cats hm-cats--3">' + HOME_CATS.filter(function (c) { return c.path; }).map(catCard).join('') + '</div></section>' +
+      homeSec('home-lab', '가상 실습실', '실제 장비 사진 · 3D 화면에서 직접 조작해 봐요.', (function () { var L = navCat('lab').tabs, A = L.filter(function (t) { return ['tab5', 'tab3'].indexOf(t) < 0; }), B = L.filter(function (t) { return ['tab5', 'tab3'].indexOf(t) >= 0; });
+        return '<h3 class="hm-sub">장비 실습 01 ~ 05</h3><div class="hm-tiles hm-tiles--5">' + A.map(function (t) { return tile(t, '장비 실습'); }).join('') + '</div>' +
+          (B.length ? '<h3 class="hm-sub">콘솔 운영 · 귀 훈련</h3><div class="hm-tiles hm-tiles--wide">' + B.map(function (t) { return tile(t, t === 'tab5' ? '콘솔 운영' : '귀 훈련'); }).join('') + '</div>' : ''); })()) +
+      homeSec('home-field', '현장 및 문제 해결', '우리 교회 공간에서 일어나는 일을 미리 연습해요.', '<div class="hm-tiles hm-tiles--4">' + navCat('field').tabs.map(function (t) { return tile(t, t === 'tab2' ? '교회 시스템' : '문제 해결'); }).join('') + '</div>') +
+      homeSec('home-refs', '참고 자료', '필요할 때 찾아보는 자료예요.', '<div class="hm-tiles hm-tiles--refs">' + navCat('refs').tabs.map(function (t) { return tile(t, '참고 자료'); }).join('') + '</div>');
+      '';   /* 2026-11-09: 「심화 주제」는 학습 로드맵 맨 아래 「더 깊이 배우기」로 옮김 */
   }
 
   /* ------------------------------------------------------------- 레슨 화면 */
@@ -242,7 +332,7 @@
       '</section>';   /* 2026-10-23: 근거 자료 줄은 화면에서 뺌 */
     var panelOf = sec.panel;
     root.innerHTML =
-      '<nav class="lsn-crumb" aria-label="위치"><button type="button" data-home="1">홈</button><span>›</span><span>' + esc(l.level) + '</span><span>›</span><b>' + esc(l.title) + '</b></nav>' +
+      '<nav class="lsn-crumb" aria-label="위치"><button type="button" data-home="1">학습 홈</button><span>›</span><span>이론 학습</span><span>›</span><span>' + esc(l.level) + '</span><span>›</span><b>' + esc(l.title) + '</b></nav>' +
       '<div class="lsn-head"><div><span class="lsn-badge">' + esc(l.level) + ' 레슨</span><h1 id="lsnTitle">' + esc(l.title) + '</h1><p>' + esc(l.summary) + '</p></div>' +
       '<div class="lsn-head-r"><span id="lsnPos">' + curSec + ' / 5</span><span>⏱ 약 ' + l.minutes + '분</span><button type="button" class="lsn-next" id="lsnNext">' + (curSec < 5 ? '다음 ›' : '홈으로') + '</button></div></div>' +
       '<div class="lsn-steps" role="tablist" aria-label="레슨 단계">' + PANELS.map(function (pn) { return '<button type="button" role="tab" class="lsn-step" data-panel="' + pn.id + '" aria-selected="' + (pn.id === panelOf) + '">' + pn.name + '</button>'; }).join('') + '</div>' +
@@ -347,7 +437,7 @@
     if (lk && !lk.closest('.home-card[aria-disabled="true"]') && lk.getAttribute('aria-disabled') !== 'true') { openLesson(lk.getAttribute('data-lesson')); return; }
     var gt = t.closest('[data-go-tab]');
     if (gt && (gt.closest('#tabHome') || gt.closest('#tabLesson'))) { if (gt.closest('#tabLesson')) showBack(); if (typeof switchTab === 'function') switchTab(gt.getAttribute('data-go-tab')); window.scrollTo(0, 0); return; }
-    var av = t.closest('#tabHome [data-adv]');
+    var av = t.closest('#tabHome [data-adv], #tabRoadmap [data-adv]');
     if (av) { if (av.getAttribute('aria-disabled') === 'true') return; var w = advWhere(ADV[+av.getAttribute('data-adv')]); if (!w) return;
       if (w.g.tab) { if (typeof switchTab === 'function') switchTab(w.g.tab); window.scrollTo(0, 0); } else if (window.STAModules) STAModules.openModule(w.g.module, 'theory', w.g.find); return; }
     if (!t.closest('#tabLesson') && !t.closest('#lsnBack')) return;
@@ -390,11 +480,12 @@
     if (!$('lsnBack')) { var b = document.createElement('button'); b.type = 'button'; b.id = 'lsnBack'; b.className = 'lsn-back'; b.hidden = true; document.body.appendChild(b); }
     else hideBack();
     renderHome(); addTabLinks();
+    var rm = $('tabRoadmap'); if (rm && window.MutationObserver) new MutationObserver(function () { if (rm.classList.contains('active')) renderRoadmap(); }).observe(rm, { attributes: true, attributeFilter: ['class'] });
     if (window.MutationObserver) document.querySelectorAll('#tabHome, #tabLesson').forEach(function (el) { new MutationObserver(function (ms) { if (ms.some(function (m) { return m.attributeName === 'class'; })) onTabChange(); }).observe(el, { attributes: true, attributeFilter: ['class'] }); });
     // 주소 끝 #lesson-<id> 로 레슨 바로 열기 (예: #lesson-gain-fader)
     var m = /^#lesson-([\w-]+)/.exec(location.hash || ''); if (m) openLesson(m[1]);
     window.addEventListener('hashchange', function () { var h = /^#lesson-([\w-]+)/.exec(location.hash || ''); if (h) openLesson(h[1]); });
   }
-  window.STALessons = { current: function () { return cur && $('tabLesson') && $('tabLesson').classList.contains('active') ? { id: cur.id, sec: curSec } : null; }, open: openLesson, home: goHome, renderHome: renderHome, state: function (id) { return st(id); }, reset: function () { save({}); renderHome(); }, openPractice: openPractice };
+  window.STALessons = { current: function () { return cur && $('tabLesson') && $('tabLesson').classList.contains('active') ? { id: cur.id, sec: curSec } : null; }, open: openLesson, home: goHome, renderHome: renderHome, renderRoadmap: renderRoadmap, state: function (id) { return st(id); }, reset: function () { save({}); renderHome(); }, openPractice: openPractice };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

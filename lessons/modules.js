@@ -113,7 +113,7 @@
   }
 
   /* ------------------------------------------------------------- 경로 화면 */
-  function crumb(parts) { return '<nav class="lsn-crumb mod-crumb" aria-label="위치"><button type="button" data-modhome="1">홈</button><span>›</span><button type="button" data-modhome="paths">전체 학습 과정</button>' + parts.map(function (x) { return '<span>›</span>' + (x[1] ? '<button type="button" ' + x[1] + '>' + esc(x[0]) + '</button>' : '<b>' + esc(x[0]) + '</b>'); }).join('') + '</nav>'; }
+  function crumb(parts) { return '<nav class="lsn-crumb mod-crumb" aria-label="위치"><button type="button" data-modhome="1">학습 홈</button><span>›</span><button type="button" data-modhome="paths">이론 학습</button>' + parts.map(function (x) { return '<span>›</span>' + (x[1] ? '<button type="button" ' + x[1] + '>' + esc(x[0]) + '</button>' : '<b>' + esc(x[0]) + '</b>'); }).join('') + '</nav>'; }
   function modCard(m) {
     var s = status(m), soon = s === 'soon', c = counts(m);
     return '<button type="button" class="mod-card' + (soon ? ' soon' : '') + '" data-module="' + m.id + '"' + (soon ? ' aria-disabled="true"' : '') + '>' +
@@ -515,27 +515,115 @@
     document.querySelectorAll('.nav-mod').forEach(function (b) { var id = b.getAttribute('data-module'), on = !!(onMod && id === view.mod);
       b.classList.toggle('active', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
       var sx = status(MODS[id]); b.classList.toggle('done', sx === 'done'); var n = b.querySelector('.nav-mod__n'); if (n) n.innerHTML = sx === 'done' ? NAV_OK : NAV_PLAY; });
+    syncNav();
   }
-  function syncGroups() { var act = document.querySelector('.tab-content.active'); if (!act || act.id === 'tabPath' || act.id === 'tabModule') return; var tabId = act.id;
+  function syncGroups() { var act = document.querySelector('.tab-content.active'); if (!act || act.id === 'tabPath' || act.id === 'tabModule') return;
     document.querySelectorAll('.nav-mod').forEach(function (b) { b.classList.remove('active'); b.removeAttribute('aria-current'); });
-    document.querySelectorAll('.tab-group').forEach(function (g) { g.classList.remove('active'); g.classList.toggle('in', !!PATHS.find(function (p) { return p.id === g.getAttribute('data-navpath') && (p.practice || []).indexOf(tabId) >= 0; })); }); }
+    document.querySelectorAll('.tab-group').forEach(function (g) { g.classList.remove('active'); g.classList.remove('in'); });   // 2026-11-09: 실습 탭은 이제 「가상 실습실」 아래라 경로 머리에 표시하지 않음
+    syncNav(); }
+  /* ------------------------------------------------------------- 2026-11-09 내부 화면 재구성(1차): 메뉴 계층
+     학습 홈 · 학습 로드맵 · 이론 학습(물리음향 · 음향 장비 학습 · 믹싱 스킬) · 가상 실습실 · 현장 및 문제 해결 · 참고 자료
+     - 기존 메뉴 버튼(.tab-btn · onclick="switchTab(…)")은 그대로 옮겨 담기만 함 → ID · 함수 · 이벤트 그대로
+     - 상위 묶음은 눌러서 열고 닫음. 지금 보는 화면이 든 묶음은 저절로 열리고 표시(cur)
+     - 「음향의 중요성」은 학습 로드맵의 첫 단계(메뉴에서는 학습 로드맵이 표시됨) */
+  var NAV_SVG = function (d) { return '<svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>'; };
+  var NAV_CATS = [
+    { id: 'theory', title: '이론 학습', ico: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/>', paths: ['physics', 'hardware', 'mixing'] },
+    { id: 'lab', title: '가상 실습실', ico: '<path d="M6 3.5v17M12 3.5v17M18 3.5v17"/><rect x="4" y="13" width="4" height="3" rx="0.8"/><rect x="10" y="7" width="4" height="3" rx="0.8"/><rect x="16" y="11" width="4" height="3" rx="0.8"/>', tabs: ['tabPracMic', 'tabPracCable', 'tab6', 'tabPracSpk', 'tab1', 'tab5', 'tab3'] },
+    { id: 'field', title: '현장 및 문제 해결', ico: '<path d="M12 3l8 4v6c0 4-3.5 7-8 8-4.5-1-8-4-8-8V7z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>', tabs: ['tab2', 'tab7', 'tabFeedback', 'tabCheck'] },
+    { id: 'refs', title: '참고 자료', ico: '<path d="M6 3h12v18l-6-4-6 4z"/>', tabs: ['tabBrands', 'tabTips', 'tabMixVideo'] }
+  ];
+  window.STA_NAV_CATS = NAV_CATS;   // 쪽 머리(현재 위치) · 학습 홈 · 로드맵이 같은 분류를 씀
+  var CHEV = '<svg class="nav-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+  function setCat(w, open) { if (!w || w.classList.contains('open') === !!open) return; var b = w.querySelector('.nav-cat__btn'), body = w.querySelector('.nav-cat__body');
+    w.classList.toggle('open', !!open); if (b) b.setAttribute('aria-expanded', open ? 'true' : 'false'); if (body) body.hidden = !open; }
+  function setPathOpen(pw, open) { if (!pw || pw.classList.contains('open') === !!open) return; pw.classList.toggle('open', !!open);
+    var t = pw.querySelector('.nav-path__tog'); if (t) t.setAttribute('aria-expanded', open ? 'true' : 'false'); var ms = pw.querySelector('.nav-path__mods'); if (ms) ms.hidden = !open; }
+  function navAct(nav) {   // 지금 보는 화면에 해당하는 메뉴 항목 하나
+    return nav.querySelector('.nav-cat .tab-btn.active') || nav.querySelector('.nav-mod.active') || nav.querySelector('.tab-group.active') || nav.querySelector(':scope > .tab-btn.active') || null;
+  }
+  var navLast;
+  function syncNav() {
+    var nav = document.querySelector('.site-header .tab-nav'); if (!nav || !nav.querySelector('.nav-cat')) return;
+    var act = navAct(nav), road = nav.querySelector('.tab-btn[data-tab="tabRoadmap"]'), intro = $('tabIntro');
+    if (road) { var on = !!(intro && intro.classList.contains('active')); if (road.classList.contains('cur') !== on) road.classList.toggle('cur', on); }   // 음향의 중요성 = 학습 로드맵 첫 단계
+    var moved = act !== navLast; navLast = act;   // 다른 화면으로 옮겨 가면 그 화면의 묶음만 열고 나머지는 접음(직접 연 묶음은 다음 이동 때까지 그대로)
+    nav.querySelectorAll('.nav-cat').forEach(function (w) { var has = !!(act && w.contains(act)); if (w.classList.contains('cur') !== has) w.classList.toggle('cur', has); if (has || moved) setCat(w, has); });
+    nav.querySelectorAll('.nav-path').forEach(function (pw) { var has = !!(act && pw.contains(act)); if (pw.classList.contains('cur') !== has) pw.classList.toggle('cur', has); if (has || moved) setPathOpen(pw, has); });
+    if (window.STAPageHead) window.STAPageHead();
+  }
+  /* 2026-11-09 공통 쪽 머리: 지금 위치(학습 홈 › 묶음 › 화면). 과정 · 경로 · 레슨 · 학습 홈은 자기 머리가 있어 빼고, 나머지 화면 맨 위에 넣음 */
+  function tabLabel(t) { var b = document.querySelector('.tab-btn[data-tab="' + t + '"] span'); return b ? b.textContent.trim() : ''; }
+  function catOfTab(t) { return NAV_CATS.find(function (c) { return (c.tabs || []).indexOf(t) >= 0; }); }
+  function whereTrail() {
+    var act = document.querySelector('.tab-content.active'), id = act && act.id;
+    if (!id || id === 'tabHome') return ['학습 홈'];
+    if (id === 'tabRoadmap') return ['학습 로드맵'];
+    if (id === 'tabIntro') return ['학습 로드맵', tabLabel('tabIntro') || '음향의 중요성'];
+    if (id === 'tabModule' && MODS[view.mod]) { var m = MODS[view.mod], p = pathById(m.path); return ['이론 학습', p ? p.title : '', noTxt(m) + '. ' + m.title]; }
+    if (id === 'tabPath' && pathById(view.path)) return ['이론 학습', pathById(view.path).title];
+    if (id === 'tabLesson') return ['이론 학습', '기초 레슨'];
+    var c = catOfTab(id); return c ? [c.title, tabLabel(id)] : [tabLabel(id)];
+  }
+  window.STA_WHERE = whereTrail;
+  var HEAD_SKIP = { tabHome: 1, tabModule: 1, tabPath: 1, tabLesson: 1 };
+  function pageHead() {
+    var act = document.querySelector('.tab-content.active'); if (!act || HEAD_SKIP[act.id]) return;
+    var tr = whereTrail(), el = act.querySelector(':scope > .page-crumb');
+    var h = '<button type="button" data-crumb-go="tabHome">학습 홈</button>' + tr.map(function (x, i) {
+      var last = i === tr.length - 1; if (last) return '<span aria-hidden="true">›</span><b aria-current="page">' + esc(x) + '</b>';
+      if (x === '학습 로드맵') return '<span aria-hidden="true">›</span><button type="button" data-crumb-go="tabRoadmap">' + esc(x) + '</button>';
+      var c = NAV_CATS.find(function (k) { return k.title === x; });
+      return '<span aria-hidden="true">›</span>' + (c ? '<button type="button" data-crumb-cat="' + c.id + '">' + esc(x) + '</button>' : '<span>' + esc(x) + '</span>');
+    }).join('');
+    if (!el) { el = document.createElement('nav'); el.className = 'page-crumb lsn-crumb'; el.setAttribute('aria-label', '현재 위치'); act.insertBefore(el, act.firstChild); }
+    if (el.innerHTML !== h) el.innerHTML = h;
+  }
+  window.STAPageHead = pageHead;
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('.page-crumb [data-crumb-go], .page-crumb [data-crumb-cat]'); if (!t) return;
+    var go = t.getAttribute('data-crumb-go');
+    if (go) { if (go === 'tabHome' && window.STALessons) STALessons.home(); else if (typeof switchTab === 'function') switchTab(go); try { window.scrollTo(0, 0); } catch (x) { /* noop */ } return; }
+    // 묶음 이름: 학습 홈의 그 묶음 칸으로
+    var cat = t.getAttribute('data-crumb-cat'); if (window.STALessons) STALessons.home();
+    setTimeout(function () { var sec = document.getElementById(cat === 'theory' ? 'modHome' : 'home-' + cat); if (sec) sec.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 60);
+  });
   function buildNav() {
-    var nav = document.querySelector('.site-header .tab-nav'); if (!nav || nav.querySelector('.tab-group')) return;
-    var ico = { physics: '<path d="M2 12c2-5 4-5 6 0s4 5 6 0 4-5 6 0"/><path d="M20 12h2"/>', hardware: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/>', mixing: '<path d="M6 4v16M12 4v16M18 4v16"/><rect x="4" y="13" width="4" height="3"/><rect x="10" y="7" width="4" height="3"/><rect x="16" y="11" width="4" height="3"/>', field: '<path d="M12 3l8 4v6c0 4-3.5 7-8 8-4.5-1-8-4-8-8V7z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>' };
-    PATHS.forEach(function (p) {
-      var g = document.createElement('button'); g.type = 'button'; g.className = 'tab-group'; g.setAttribute('data-navpath', p.id);
-      g.innerHTML = '<svg class="tab-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ico[p.id] || '') + '</svg><span>' + esc(p.title) + '</span>';
-      g.addEventListener('click', function () { openPath(p.id); });
-      nav.appendChild(g);
-      (p.modules || []).forEach(function (id) { var m = MODS[id]; if (!m || m.status !== 'ready') return;
-        var b = document.createElement('button'); b.type = 'button'; b.className = 'nav-mod'; b.setAttribute('data-module', id);
-        b.innerHTML = '<span class="nav-mod__n" aria-hidden="true">' + NAV_PLAY + '</span><span>' + noTxt(m) + '. ' + esc(m.title) + '</span>';
-        nav.appendChild(b); });
-      if (p.modules && p.practice && p.practice.length) { var lb = document.createElement('div'); lb.className = 'nav-sublabel'; lb.setAttribute('aria-hidden', 'true'); lb.textContent = '실습'; nav.appendChild(lb); }
-      (p.practice || []).forEach(function (tab) { var b = nav.querySelector('.tab-btn[data-tab="' + tab + '"]'); if (b) { b.classList.add('tab-sub'); nav.appendChild(b); } });
+    var nav = document.querySelector('.site-header .tab-nav'); if (!nav || nav.querySelector('.nav-cat')) return;
+    var byTab = function (t) { return nav.querySelector('.tab-btn[data-tab="' + t + '"]'); };
+    var frag = document.createDocumentFragment();
+    ['tabHome', 'tabRoadmap'].forEach(function (t) { var b = byTab(t); if (b) { b.classList.add('nav-top'); frag.appendChild(b); } });
+    var ico = { physics: '<path d="M2 12c2-5 4-5 6 0s4 5 6 0 4-5 6 0"/><path d="M20 12h2"/>', hardware: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/>', mixing: '<path d="M6 4v16M12 4v16M18 4v16"/><rect x="4" y="13" width="4" height="3"/><rect x="10" y="7" width="4" height="3"/><rect x="16" y="11" width="4" height="3"/>' };
+    NAV_CATS.forEach(function (c) {
+      var w = document.createElement('div'); w.className = 'nav-cat'; w.setAttribute('data-cat', c.id);
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'nav-cat__btn'; b.setAttribute('aria-expanded', 'false'); b.setAttribute('aria-controls', 'navcat-' + c.id);
+      b.innerHTML = NAV_SVG(c.ico) + '<span>' + esc(c.title) + '</span>' + CHEV;
+      var body = document.createElement('div'); body.className = 'nav-cat__body'; body.id = 'navcat-' + c.id; body.hidden = true;
+      (c.paths || []).forEach(function (pid) { var p = pathById(pid); if (!p) return;
+        var pw = document.createElement('div'); pw.className = 'nav-path'; pw.setAttribute('data-navpath-wrap', p.id);
+        var g = document.createElement('button'); g.type = 'button'; g.className = 'tab-group'; g.setAttribute('data-navpath', p.id);
+        g.innerHTML = NAV_SVG(ico[p.id] || '') + '<span>' + esc(p.title) + '</span>';
+        g.addEventListener('click', function () { setPathOpen(pw, true); openPath(p.id); });
+        var tg = document.createElement('button'); tg.type = 'button'; tg.className = 'nav-path__tog'; tg.setAttribute('aria-expanded', 'false'); tg.setAttribute('aria-label', p.title + ' 과정 목록 펼치기 · 접기'); tg.innerHTML = CHEV;
+        tg.addEventListener('click', function () { setPathOpen(pw, !pw.classList.contains('open')); });
+        var row = document.createElement('div'); row.className = 'nav-path__row'; row.appendChild(g); row.appendChild(tg);
+        var ms = document.createElement('div'); ms.className = 'nav-path__mods'; ms.hidden = true;
+        (p.modules || []).forEach(function (id) { var m = MODS[id]; if (!m || m.status !== 'ready') return;
+          var mb = document.createElement('button'); mb.type = 'button'; mb.className = 'nav-mod'; mb.setAttribute('data-module', id);
+          mb.innerHTML = '<span class="nav-mod__n" aria-hidden="true">' + NAV_PLAY + '</span><span>' + noTxt(m) + '. ' + esc(m.title) + '</span>';
+          ms.appendChild(mb); });
+        pw.appendChild(row); pw.appendChild(ms); body.appendChild(pw); });
+      (c.tabs || []).forEach(function (t) { var tb = byTab(t); if (tb) { tb.classList.add('tab-sub'); body.appendChild(tb); } });
+      b.addEventListener('click', function () { setCat(w, !w.classList.contains('open')); });
+      w.appendChild(b); w.appendChild(body); frag.appendChild(w);
     });
-    nav.querySelectorAll('.tab-btn').forEach(function (b) { if (!b.classList.contains('tab-sub') && b.dataset.tab !== 'tabHome' && b.dataset.tab !== 'tabIntro') nav.appendChild(b); });
-    var intro = nav.querySelector('.tab-btn[data-tab="tabIntro"]'), g1 = nav.querySelector('.tab-group'); if (intro && g1) nav.insertBefore(intro, g1);   // 2026-10-22: 「음향의 중요성」은 홈 바로 다음, 맨 앞
+    var rest = document.createElement('div'); rest.className = 'nav-rest'; rest.hidden = true;   // 메뉴에 따로 안 보이는 버튼(음향의 중요성 등) — switchTab 이 찾을 수 있게 남겨 둠
+    Array.prototype.slice.call(nav.querySelectorAll(':scope > .tab-btn')).forEach(function (x) { rest.appendChild(x); });
+    nav.appendChild(frag); nav.appendChild(rest);
+    if (window.MutationObserver) { var q = 0; new MutationObserver(function (ms) {
+      if (!ms.some(function (r) { var t = r.target; return t.classList && (t.classList.contains('tab-btn') || t.classList.contains('nav-mod') || t.classList.contains('tab-group')); })) return;
+      if (q) return; q = requestAnimationFrame(function () { q = 0; syncNav(); }); }).observe(nav, { subtree: true, attributes: true, attributeFilter: ['class'] }); }
+    syncNav();
   }
   function switchTo(id) { if (typeof switchTab === 'function') switchTab(id); markHomeNav(); try { window.scrollTo(0, 0); } catch (e) { /* noop */ } }
   function openPath(id) { if (!pathById(id)) return; view.path = id; hideBack(); destroySim(); destroyViewer(); switchTo('tabPath'); renderPath(); setHash('path-' + id); focusTitle(); }
@@ -619,7 +707,7 @@
   /* ------------------------------------------------------------- 이벤트 */
   document.addEventListener('click', function (e) {
     var t = e.target && e.target.closest ? e.target : null; if (!t) return;
-    var pc = t.closest('#tabHome [data-path], #tabPath [data-path], #tabModule [data-path]'); if (pc && !pc.closest('[aria-disabled="true"]')) { openPath(pc.getAttribute('data-path')); return; }
+    var pc = t.closest('#tabHome [data-path], #tabPath [data-path], #tabModule [data-path], #tabRoadmap [data-path]'); if (pc && !pc.closest('[aria-disabled="true"]')) { openPath(pc.getAttribute('data-path')); return; }
     var mc = t.closest('[data-module]'); if (mc) { if (mc.getAttribute('aria-disabled') === 'true') return; openModule(mc.getAttribute('data-module')); return; }
     if (t.closest('#modBack')) { if (backTo) openModule(backTo.id, backTo.tab); return; }
     var hm = t.closest('[data-modhome]'); if (hm) { hideBack(); destroySim(); destroyViewer(); if (window.STALessons) STALessons.home(); if (hm.getAttribute('data-modhome') === 'paths') setTimeout(function () { var s = $('modHome'); if (s) s.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 50); if (!window.STAHistory) { try { history.replaceState(null, '', location.pathname + location.search); } catch (err) { /* noop */ } } return; }
