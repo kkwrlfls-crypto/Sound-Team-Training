@@ -717,7 +717,7 @@
     var m = MODS[id]; if (!m || m.status !== 'ready') return;
     if (tab === 'practice' && noPrac(m) && pageOf(id)) { openPrac(pageOf(id), id); return; }   // 예전 주소(#module-mic-practice)는 실습 탭으로
     if (view.mod !== id) { view.fig = 'photo'; view.var3d = 0; }
-    var asked = tab; tab = alias7(m, tab);
+    var asked = tab; tab = alias7(m, tab); if (tab === 'practice' && is7(m) && noPrac(m)) tab = 'lab';   // 예전 실습 주소(실습 탭이 없는 과정) → 직접 실습 단계
     view.mod = id; view.path = m.path; view.tab = tab && tabsOf(m).some(function (t2) { return t2[0] === tab; }) ? tab : defTab(m);
     var s = st(id); if (!s.opened) { s.opened = true; put(id, s); }
     hideBack(); switchTo('tabModule'); renderModule(); setHash('module-' + id + (view.tab !== defTab(m) ? '-' + view.tab : '')); focusTitle();
