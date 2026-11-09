@@ -220,7 +220,7 @@
   window.STA_MODULES = window.STA_MODULES || {};
   window.STA_MODULES['console-digital'] = {
     id: 'console-digital', path: 'hardware', no: 3, noLabel: '03-2', status: 'ready', level: '중급', minutes: 45, img: X32,
-    title: '디지털 콘솔', sub: '화면과 SELECT 로 다루는 콘솔 — Behringer X32',
+    title: '디지털 콘솔 · X32', sub: '화면과 SELECT 로 다루는 콘솔 — Behringer X32',
     overview: {
       lead: '디지털 콘솔은 들어온 소리를 숫자로 바꿔서 다듬는 콘솔이에요. 이 과정은 교회에서 많이 쓰는 <b>Behringer X32</b> 로 배워요. 가장 큰 차이는 채널을 먼저 고른다(<b>SELECT</b>)는 점이에요. 그다음 노브 한 벌로 조절해요.',
       terms: [

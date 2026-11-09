@@ -37,9 +37,10 @@
     'img/modules/hw_speaker.jpg': { t: '사진: 3층에 설치된 d&b 서브우퍼 · E8 · Vi10P (제조사 제품 사진)' },
     'img/modules/mg12xu_full.jpg': { t: '사진: 「콘솔 실습」의 MG12XU 화면 콘솔 (Yamaha 제품 사진 + 실습용 페이더)' },
     'https://products.shureweb.eu/cdn-cgi/image/width=900,height=900,format=auto/shure_product_db/product_main_images/files/67c/0a4/37-/original/a63ca7f1e7b45a53c3f11898a7c6280a.webp': { t: '사진: Shure SLX-D+ 무선 마이크 시스템 공식 제품 사진 (shure.com)', url: 'https://www.shure.com/en-ASIA/products/wireless-systems/slxd-plus' },   /* 2026-11-04: 01-2 무선 마이크 카드 */
-    'https://cdn-media.empowertribe.com/cdn-cgi/image/width=2000,quality=85,format=auto/e5ba63fb0e6f4e69a1626c5811115e16/Image_BE_0603-ACE_X32_Top_XL.png': { t: '사진: Behringer X32 공식 제품 사진 (behringer.com 제품 페이지)', url: 'https://www.behringer.com/en/products/0603-ace' }   /* 2026-11-03: 03-2 디지털 콘솔 — 제조사 사이트에서 바로 불러옴 */
+    'https://cdn-media.empowertribe.com/cdn-cgi/image/width=2000,quality=85,format=auto/e5ba63fb0e6f4e69a1626c5811115e16/Image_BE_0603-ACE_X32_Top_XL.png': { t: '사진: Behringer X32 공식 제품 사진 (behringer.com 제품 페이지)', url: 'https://www.behringer.com/en/products/0603-ace' },   /* 2026-11-03: 03-2 디지털 콘솔 — 제조사 사이트에서 바로 불러옴 */
+    'https://cdn-media.empowertribe.com/88b7019edb6a4da19acbf5407a5d6caa/Image_MI_0603-AEO_M32-LIVE_Front_XL.png': { t: '사진: Midas M32 LIVE 공식 제품 사진 (midasconsoles.com 제품 페이지)', url: 'https://www.midasconsoles.com/en/products/0603-AEO' }   /* 2026-11-09: 03-3 M32 첫 화면 사진 */
   };
-  var IMG_R = { 'img/modules/mg12xu_full.jpg': 1754 / 1862, 'img/modules/crown_xli1500.jpg': 1600 / 817, 'img/modules/ev_zxa1.jpg': 1160 / 900, 'https://cdn-media.empowertribe.com/cdn-cgi/image/width=2000,quality=85,format=auto/e5ba63fb0e6f4e69a1626c5811115e16/Image_BE_0603-ACE_X32_Top_XL.png': 2000 / 1389 };   // 사진 가로÷세로 (그 밖의 장비 사진은 1200×900)
+  var IMG_R = { 'img/modules/mg12xu_full.jpg': 1754 / 1862, 'img/modules/crown_xli1500.jpg': 1600 / 817, 'img/modules/ev_zxa1.jpg': 1160 / 900, 'https://cdn-media.empowertribe.com/cdn-cgi/image/width=2000,quality=85,format=auto/e5ba63fb0e6f4e69a1626c5811115e16/Image_BE_0603-ACE_X32_Top_XL.png': 2000 / 1389, 'https://cdn-media.empowertribe.com/88b7019edb6a4da19acbf5407a5d6caa/Image_MI_0603-AEO_M32-LIVE_Front_XL.png': 2000 / 974 };   // 사진 가로÷세로 (그 밖의 장비 사진은 1200×900)
   window.STA_IMG_CREDITS = IMG_CREDITS;   // 2026-10-23: 화면의 출처 줄은 없애고, 메뉴 맨 아래 「사진 출처」 창에서만 보여 줌(lessons/ui.js)
   function creditHtml() { return ''; }
   var view = { path: null, mod: null, tab: 'overview', fig: 'photo' }, sim = null, viewer = null, backTo = null;

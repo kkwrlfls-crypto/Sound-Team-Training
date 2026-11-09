@@ -227,6 +227,8 @@ window.STA_GLANCE = {
 
   /* 2026-11-08: 03-3 디지털 콘솔 · M32 (Midas M32 LIVE — X32 와 같은 운영 소프트웨어) */
   'console-m32': {
+    // 2026-11-09: 공식 앞 사진(2000×974, 가로가 아주 넓음)을 16:10 칸에 「전체」가 보이게 — 세로 1.284 배 보기(위아래 여백), 가운데 정렬
+    hero: { img: 'https://cdn-media.empowertribe.com/88b7019edb6a4da19acbf5407a5d6caa/Image_MI_0603-AEO_M32-LIVE_Front_XL.png', bg: '#0f1b2b', view: [0.5, -0.142, 1.284] },
     glance: [
       ['FADER FLIP', 'X32 의 Sends on Fader — 페이더가 「버스로 보내는 양」'],
       ['SHOW CONTROL', 'LAST · NEXT · UNDO · GO 로 씬 · 큐를 순서대로'],

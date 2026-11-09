@@ -271,6 +271,17 @@
       '.x32s-big .enc .pr{width:100%;padding:5px 0}',
       '.x32s-big .help{margin:0;font-size:.8rem;line-height:1.5;color:#b6c2cf}',
       '.x32s-big .help.rot{display:none;color:#7dd3fc}',
+      /* 2026-11-09: 크게 보기 판 + 아래 사진 콘솔이 한 화면에 — 넓은 화면(판 폭 600 px 이상)은 실물처럼 화면 오른쪽에 메뉴 단추 · 아래에 엔코더,
+         화면 크기는 「창 높이 − 사진 콘솔 높이 − 나머지」로 맞춤(bigLayout) */
+      '.x32s-big .mid{display:grid;gap:8px;grid-template-columns:minmax(0,1fr);grid-template-areas:"pages" "host" "nav" "encs"}',
+      '.x32s-big .mid>[data-x=pages]{grid-area:pages}.x32s-big .mid>.host{grid-area:host}.x32s-big .mid>.nav{grid-area:nav}.x32s-big .mid>.encs{grid-area:encs}',
+      '.x32s-big.side{gap:6px;padding:8px 10px}.x32s-big.side .bar{flex-wrap:nowrap;min-width:0}.x32s-big.side .bar .sp{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.76rem;color:#b6c2cf}',
+      '.x32s-big.side .mid{grid-template-columns:var(--hw,560px) 132px;grid-template-areas:"host pages" "host nav" "encs .";justify-content:center;align-items:start;gap:6px 10px}',
+      '.x32s-big.side .host{width:var(--hw,560px);max-width:none;margin:0}.x32s-big.side .encs{width:var(--hw,560px);max-width:none;margin:0;gap:6px}',
+      '.x32s-big.side .mid>[data-x=pages],.x32s-big.side .mid>.nav{display:grid;grid-template-columns:1fr 1fr;gap:4px}',
+      '.x32s-big.side button{padding:5px 3px;font-size:.7rem;border-radius:6px}.x32s-big.side .bar button{padding:4px 10px;font-size:.74rem}',
+      '.x32s-big.side .knob{width:min(38px,100%)}.x32s-big.side .enc{gap:3px}.x32s-big.side .enc .pm button,.x32s-big.side .enc .pr{padding:3px 0;font-size:.68rem}',
+      '.x32s-big.side .help{font-size:.74rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}',
       '@media (max-width:560px){.x32s-big .help.rot{display:block}.x32s-big{padding:8px}.x32s-big .encs{gap:3px}.x32s-big button{padding:6px 6px;font-size:.72rem}}'
     ].join('\n');
     document.head.appendChild(st);
@@ -1342,10 +1353,10 @@
       if (big) { big.box.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
       var hp = bigHost(), box = document.createElement('div'); box.className = 'x32s-big'; box.setAttribute('data-role', 'x32-screen-big');
       box.innerHTML = '<div class="bar"><b>' + esc(opts.name || 'X32') + ' 화면 크게 보기</b><span class="sp">사진 속 화면과 같은 화면이에요. 여기서 눌러도, 사진 위에서 눌러도 똑같이 바뀌어요.</span><button type="button" data-x="close">닫기</button></div>' +
-        '<div class="row" data-x="pages">' + PGB.map(function (p) { return '<button type="button" data-pg="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>' +
+        '<div class="mid"><div class="row" data-x="pages">' + PGB.map(function (p) { return '<button type="button" data-pg="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>' +
         '<div class="host"></div>' +
-        '<div class="row"><button type="button" data-x="pl">◀ PAGE</button><button type="button" data-x="pr">PAGE ▶</button><button type="button" data-x="lu">LAYER ▲</button><button type="button" data-x="ld">LAYER ▼</button></div>' +
-        '<div class="encs">' + range(6).map(function (k) { return '<div class="enc"><div class="knob" data-k="' + k + '" role="slider" tabindex="0" aria-label="엔코더 ' + (k + 1) + ' (돌리기: 위아래로 끌기 · 휠 · 화살표 키)"></div><div class="pm"><button type="button" data-x="dec" data-k="' + k + '" aria-label="엔코더 ' + (k + 1) + ' 왼쪽으로">−</button><button type="button" data-x="inc" data-k="' + k + '" aria-label="엔코더 ' + (k + 1) + ' 오른쪽으로">+</button></div><button type="button" class="pr" data-x="press" data-k="' + k + '">누르기 ' + (k + 1) + '</button></div>'; }).join('') + '</div>' +
+        '<div class="row nav"><button type="button" data-x="pl">◀ PAGE</button><button type="button" data-x="pr">PAGE ▶</button><button type="button" data-x="lu">LAYER ▲</button><button type="button" data-x="ld">LAYER ▼</button></div>' +
+        '<div class="encs">' + range(6).map(function (k) { return '<div class="enc"><div class="knob" data-k="' + k + '" role="slider" tabindex="0" aria-label="엔코더 ' + (k + 1) + ' (돌리기: 위아래로 끌기 · 휠 · 화살표 키)"></div><div class="pm"><button type="button" data-x="dec" data-k="' + k + '" aria-label="엔코더 ' + (k + 1) + ' 왼쪽으로">−</button><button type="button" data-x="inc" data-k="' + k + '" aria-label="엔코더 ' + (k + 1) + ' 오른쪽으로">+</button></div><button type="button" class="pr" data-x="press" data-k="' + k + '">누르기 ' + (k + 1) + '</button></div>'; }).join('') + '</div></div>' +
         (opts.help === false ? '' : '<p class="help"></p>') + '<p class="help rot">휴대폰을 가로로 돌리면 화면이 더 크게 보여요.</p>';
       if (hp.before) hp.parent.insertBefore(box, hp.before); else hp.parent.appendChild(box);
       var v = makeView(box.querySelector('.host'), true); v.help = box.querySelector('.help'); v.pgBtns = [].slice.call(box.querySelectorAll('[data-pg]'));
@@ -1364,16 +1375,44 @@
       box.addEventListener('wheel', function (e) { var kn = e.target.closest('.knob'); if (!kn) return; e.preventDefault(); turn(+kn.getAttribute('data-k'), e.deltaY < 0 ? 1 : -1); }, { passive: false });
       box.addEventListener('keydown', function (e) { var kn = e.target.closest && e.target.closest('.knob'); if (!kn) return; var d = e.key === 'ArrowUp' || e.key === 'ArrowRight' ? 1 : e.key === 'ArrowDown' || e.key === 'ArrowLeft' ? -1 : 0; if (d) { e.preventDefault(); turn(+kn.getAttribute('data-k'), d); } else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); send({ kind: 'enc', index: +kn.getAttribute('data-k'), press: true }); } });
       big = { box: box, view: v }; if (ro) ro.observe(v.root);
-      touch(); setTimeout(function () { if (alive && big) { fit(big.view); box.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } }, 30);
+      var pxr = el.closest && el.closest('.x32p'); if (pxr) pxr.classList.add('x32p-bigon');
+      touch(); setTimeout(function () { if (alive && big) { bigLayout(); requestAnimationFrame(function () { if (!big) return; bigLayout(); var y = big.box.getBoundingClientRect().top - topOffset() - 6; window.scrollBy({ top: y, behavior: 'smooth' }); }); } }, 30);
       views.forEach(function (w) { var zb = w.root.querySelector('.x32s-zb'); if (zb) zb.textContent = '크게 닫기'; });
     }
-    function closeBig() { if (!big) return; var v = big.view; views = views.filter(function (w) { return w !== v; }); if (ro) try { ro.unobserve(v.root); } catch (x) { /* noop */ } if (big.box.parentNode) big.box.parentNode.removeChild(big.box); big = null; views.forEach(function (w) { var zb = w.root.querySelector('.x32s-zb'); if (zb) zb.textContent = '화면 크게'; }); }
+    /* 넓은 화면: 크게 보기 판(화면 + 메뉴 + 엔코더)과 아래 사진 콘솔이 창 하나에 들어오게 화면 폭(--hw)을 정함 */
+    function topOffset() { var off = 0; [].slice.call(document.querySelectorAll('header, .site-header')).forEach(function (h) { var cs = getComputedStyle(h), r = h.getBoundingClientRect(); if ((cs.position === 'sticky' || cs.position === 'fixed') && r.top <= 1 && r.bottom > 0 && r.width > window.innerWidth * 0.5) off = Math.max(off, r.bottom); }); return off; }
+    function bigLayout() {
+      if (!big) return; bigLayout1(0);
+      // 재 보고 넘치면(창 아래로 사진이 나가면) 그만큼 줄여 두 번 더 맞춤
+      for (var i = 0; i < 2 && big && big.box.classList.contains('side'); i++) { var sc = big.box.nextElementSibling, st = sc && sc.querySelector && sc.querySelector('.x32p-stage'); if (!st) break; var over = st.getBoundingClientRect().bottom - big.box.getBoundingClientRect().top + topOffset() + 6 - (window.innerHeight - 10); if (over <= 1) break; big.cut = (big.cut || 0) + over; bigLayout1(big.cut); }
+      if (big) big.cut = 0;
+    }
+    function bigLayout1(cut) {
+      if (!big) return; var box = big.box, mid = box.querySelector('.mid'), encs = box.querySelector('.encs');
+      var pxr = el.closest && el.closest('.x32p'), sc = box.nextElementSibling; if (!(sc && /x32p-scroll/.test(sc.className))) sc = null;
+      var st = sc && sc.querySelector('.x32p-stage'), zoom1 = !st || st.getAttribute('data-z') === '1';
+      var bw = box.clientWidth - 20, side = bw >= 600 && window.innerHeight >= 480;
+      box.classList.toggle('side', side);
+      if (!side) { box.style.removeProperty('--hw'); if (pxr) pxr.style.removeProperty('--pw'); fit(big.view); return; }
+      // 남는 높이 = 창 − 위 막대 − 제목 줄 · 엔코더 · 도움말 · 여백. 이것을 화면(약 42 %)과 사진 콘솔(나머지)이 나눠 가짐
+      var other = box.offsetHeight - mid.offsetHeight + encs.offsetHeight + 8, avail = window.innerHeight - topOffset() - 24 - other - (cut || 0);
+      var maxHw = Math.min(800, bw - 142), hw, ph = 0, pw = 0;
+      if (st && zoom1) {
+        var ar = st.offsetHeight / Math.max(1, st.offsetWidth) || 0.6, maxPw = sc.clientWidth;
+        hw = Math.max(260, Math.min(maxHw, avail * 0.42 * W / H));
+        ph = avail - hw * H / W; pw = Math.min(maxPw, ph / ar);
+        if (pw >= maxPw) { hw = Math.max(260, Math.min(maxHw, (avail - maxPw * ar) * W / H)); }
+        pxr.style.setProperty('--pw', Math.floor(Math.max(320, pw)) + 'px');
+      } else hw = Math.max(300, Math.min(maxHw, (avail - (sc ? sc.getBoundingClientRect().height : 0)) * W / H));
+      box.style.setProperty('--hw', Math.floor(hw) + 'px'); fit(big.view);
+    }
+    function closeBig() { if (!big) return; var pxr = el.closest && el.closest('.x32p'); if (pxr) { pxr.classList.remove('x32p-bigon'); pxr.style.removeProperty('--pw'); } var v = big.view; views = views.filter(function (w) { return w !== v; }); if (ro) try { ro.unobserve(v.root); } catch (x) { /* noop */ } if (big.box.parentNode) big.box.parentNode.removeChild(big.box); big = null; views.forEach(function (w) { var zb = w.root.querySelector('.x32s-zb'); if (zb) zb.textContent = '화면 크게'; }); }
 
     /* ---------- 시작 */
     var main = makeView(el, false);
     if (window.ResizeObserver) { ro = new ResizeObserver(function () { views.forEach(fit); }); ro.observe(main.root); }
     window.addEventListener('resize', onResize);
-    function onResize() { views.forEach(fit); }
+    function onResize() { views.forEach(fit); if (big) bigLayout(); }
     m.on(onModel);
     ui.lastPage = page(); ui.lastTab = tabId(page()); ui.tabVal = G('screen.tab'); ui.tabMem = {}; ui.tabMem[page()] = ui.tabVal;
     var lastPaint = 0;

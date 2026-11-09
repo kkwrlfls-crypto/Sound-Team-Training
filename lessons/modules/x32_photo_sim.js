@@ -94,6 +94,7 @@
       '.x32p-bar label.file input{display:none}',
       '.x32p-bar .grp{display:flex;gap:6px;flex-wrap:wrap;align-items:center;min-width:0}',
       '.x32p-scroll{overflow:auto;border-radius:12px;background:#0f1b2b;border:1px solid #0b1220;max-height:82vh}',
+      '.x32p.x32p-bigon .x32p-stage[data-z="1"]{width:var(--pw,100%)!important;margin:0 auto}',   /* 2026-11-09: 화면 크게 보기를 열면(「전체」일 때) 사진 콘솔을 판 폭에 맞춰 가로 스크롤 없이 */
       '.x32p-stage{position:relative;aspect-ratio:2000/1200;width:max(100%,940px);container-type:inline-size;user-select:none;-webkit-user-select:none;touch-action:pan-x pan-y;background:#2a2c31}',
       '.x32p-stage>img{position:absolute;left:0;top:0;width:100%;height:auto;pointer-events:none}',
       '.x32p-stage *{box-sizing:border-box}',
@@ -250,7 +251,7 @@
         '<span class="sp">페이더 · 노브는 끌어요(노브는 휠 · 화살표 키도 돼요). 단추는 눌러요. 이름이 궁금하면 마우스를 올려 봐요.</span>' +
         '<span class="grp" role="group" aria-label="크게 보기"><button type="button" data-zoom="1" aria-pressed="true">전체</button><button type="button" data-zoom="1.6" aria-pressed="false">크게</button><button type="button" data-zoom="2.3" aria-pressed="false">더 크게</button></span></div>' +
       '<div class="x32p-msg" data-role="msg" role="status"></div>' +
-      '<div class="x32p-scroll" data-role="scroll"><div class="x32p-stage x32p-' + LY.key + '" data-role="stage" role="application" aria-label="' + NM + ' 콘솔 사진 위에서 조작하는 실습" style="aspect-ratio:' + PW + '/' + PH + '"><img src="' + IMG + '" alt="' + esc(LY.alt) + '" draggable="false" onerror="this.style.visibility=\'hidden\'"></div></div>' +
+      '<div class="x32p-scroll" data-role="scroll"><div class="x32p-stage x32p-' + LY.key + '" data-z="1" data-role="stage" role="application" aria-label="' + NM + ' 콘솔 사진 위에서 조작하는 실습" style="aspect-ratio:' + PW + '/' + PH + '"><img src="' + IMG + '" alt="' + esc(LY.alt) + '" draggable="false" onerror="this.style.visibility=\'hidden\'"></div></div>' +
       '<div class="x32p-read" data-role="read" aria-live="polite"></div>' +
       '<p class="x32p-note">' + (LY.photoSrc ? '사진: ' + LY.photoSrc : '사진: ' + LY.brand + ' 공식 제품 사진' + (LY.photoNote || '')) + '. 단추 · 페이더 · 노브 · 이름표(LCD) · 미터는 사진 위에 겹쳐 그렸어요. 미터는 「소리 켜기」를 눌러야 움직여요. 아래 「지금 상태」의 dB 는 공부용으로 어림한 값(교육용 근사)이에요.</p></div>';
     scroll = el.querySelector('[data-role=scroll]'); stage = el.querySelector('[data-role=stage]'); read = el.querySelector('[data-role=read]'); msg = el.querySelector('[data-role=msg]');
@@ -539,7 +540,7 @@
     function onInput(e) { if (e.target.getAttribute && e.target.getAttribute('data-role') === 'nm' && U.draft) U.draft.v = e.target.value; }
     function onClick(e) {
       var a = e.target.closest('[data-act]'); if (a && el.contains(a)) { var act = a.getAttribute('data-act'); if (act === 'sound') toggleSound(); return; }
-      var zb = e.target.closest('[data-zoom]'); if (zb && el.contains(zb)) { var z = +zb.getAttribute('data-zoom'); stage.style.width = 'max(' + (100 * z) + '%,' + Math.round(940 * z) + 'px)'; el.querySelectorAll('[data-zoom]').forEach(function (b) { b.setAttribute('aria-pressed', String(b === zb)); }); return; }
+      var zb = e.target.closest('[data-zoom]'); if (zb && el.contains(zb)) { var z = +zb.getAttribute('data-zoom'); stage.style.width = 'max(' + (100 * z) + '%,' + Math.round(940 * z) + 'px)'; stage.setAttribute('data-z', String(z)); try { window.dispatchEvent(new Event('resize')); } catch (x) { /* noop */ } el.querySelectorAll('[data-zoom]').forEach(function (b) { b.setAttribute('aria-pressed', String(b === zb)); }); return; }
       if (U.fbScreen) { var cb = e.target.closest('[data-col]'); var md = S.screen.modal; if (cb && md) { m.set((md.type === 'main' ? 'main.' + (md.index ? 'm' : 'st') : md.type + '.' + md.index) + '.color', +cb.getAttribute('data-col')); return; } if (e.target.closest('[data-role=ok]')) { commitName(); return; } }
       var b = e.target.closest('.x32p-btn'); if (!b || !el.contains(b) || b.classList.contains('dim')) return; var id = b.getAttribute('data-b'), s = sel(), base = selBase(), st = selStrip(), r;
       if ((r = id.match(/^(L|R|MAIN)(\d*)\.(sel|mute|solo)$/))) {
