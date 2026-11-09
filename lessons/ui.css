@@ -824,7 +824,7 @@ html.nav-open #toTopBtn { opacity: 0; pointer-events: none; }
   .rm-stage__n { width: 32px; height: 32px; }
   .rm-stage + .rm-stage::before { left: 15px; }
 }
-@media (max-width: 400px) { .hm-tiles--4 { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) { .hm-tiles.hm-tiles--refs { grid-template-columns: minmax(0, 1fr); } }   /* 참고 자료는 좁은 화면에서 한 줄에 하나(글자가 세로로 쪼개지지 않게) */
 
 /* 2026-11-09: 가상 실습실 두 줄(장비 실습 5개 · 콘솔 운영/귀 훈련 2개), 긴 과정 목록 「외 N개」 */
 .hm-sub { margin: 2px 0 -4px; font-size: 0.84rem; font-weight: 800; color: var(--sta-ink-2); }
