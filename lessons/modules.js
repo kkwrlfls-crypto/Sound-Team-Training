@@ -381,9 +381,9 @@
   /* 2026-11-10: 직접 실습 카드 사진 — 콘솔은 칸마다 그 콘솔 사진(예전엔 03. 콘솔 실습 칸 사진 = MG12XU 일부를 셋 다 씀)
      X32 · M32 는 실습 화면(x32_photo_sim · m32_layout)이 쓰는 공식 제품 사진과 같은 주소 */
   var LAB_IMG = {
-    '#mg12xu': ['img/modules/mg12xu_full.jpg', 'Yamaha MG12XU 윗면 사진'],
-    'console-digital': ['https://cdn-media.empowertribe.com/cdn-cgi/image/width=2000,quality=85,format=auto/e5ba63fb0e6f4e69a1626c5811115e16/Image_BE_0603-ACE_X32_Top_XL.png', 'Behringer X32 윗면 (공식 제품 사진)'],
-    'console-m32': ['https://media.sweetwater.com/m/products/image/a64e2cb6adOgOIeqtULtLoaS8lL9psIkkgGcZBQ4.jpg', 'Midas M32 LIVE 윗면 (Sweetwater 제품 사진)']
+    '#mg12xu': ['img/modules/mg12xu_full.jpg', 'Yamaha MG12XU 윗면 사진', 'MG12XU 사진 위에서 채널 GAIN · EQ · AUX · 페이더를 직접 돌리고 올려 봐요.'],
+    'console-digital': ['https://cdn-media.empowertribe.com/cdn-cgi/image/width=2000,quality=85,format=auto/e5ba63fb0e6f4e69a1626c5811115e16/Image_BE_0603-ACE_X32_Top_XL.png', 'Behringer X32 윗면 (공식 제품 사진)', 'X32 윗면 사진 위에서 레이어 · 채널 · 화면을 직접 눌러 보며 조작해 봐요.'],
+    'console-m32': ['https://media.sweetwater.com/m/products/image/a64e2cb6adOgOIeqtULtLoaS8lL9psIkkgGcZBQ4.jpg', 'Midas M32 LIVE 윗면 (Sweetwater 제품 사진)', 'M32 윗면 사진 위에서 레이어 · 채널 · 화면을 직접 눌러 보며 조작해 봐요.']
   };
   function tabLab(m) {   // 2026-11-10: 음향 장비 학습의 직접 실습에서 「함께 해 볼 실습」은 뺌
     var pp = pracPageOf(m), cfg = pp && PRAC[pp[0]], info = pp && PRACTICE_INFO[pp[0]], main = '';
@@ -391,7 +391,7 @@
       var part = (cfg.parts || []).find(function (p) { return p[0] === pp[1]; }) || [pp[1], m.title], own = pp[1] === m.id, s = st(m.id), pc = own ? pracCounts(m) : null;
       var li = LAB_IMG[pp[1]], src = li ? li[0] : info && info[2];
       main = '<article class="m7-lab">' + (src ? '<div class="m7-lab__img' + (li ? ' m7-lab__img--gear' : '') + '"><img src="' + esc(src) + '" alt="' + esc(li ? li[1] : '') + '" loading="lazy"></div>' : '') +
-        '<div class="m7-lab__body"><small>가상 실습실 · ' + esc(cfg.no) + '. ' + esc(cfg.title) + '</small><h3>' + esc(part[1]) + ' 실습</h3><p>' + esc(cfg.desc || (info && info[1]) || '') + '</p>' +
+        '<div class="m7-lab__body"><small>가상 실습실 · ' + esc(cfg.no) + '. ' + esc(cfg.title) + '</small><h3>' + esc(part[1]) + ' 실습</h3><p>' + esc((li && li[2]) || cfg.desc || (info && info[1]) || '') + '</p>' +   // 콘솔은 칸마다 그 콘솔 설명
         (own ? '<h4>실습 과제 <span>' + pc.d + ' / ' + pc.n + '</span></h4><ol class="m7-tasks">' + m.practice.tasks.map(function (t2) { var d = !!s.tasks[t2.id]; return '<li>' + okMark(d) + '<span>' + esc(t2.title) + '</span></li>'; }).join('') + '</ol><p class="m7-note">과제는 실습 화면의 상태로 자동 확인돼요.</p>' : '') +
         '<button type="button" class="ui-btn ui-btn--primary" data-prac-open="' + pp[0] + ':' + pp[1] + '">실습 화면 열기 →</button></div></article>';
     } else main = '<div class="m7-empty"><b>이 장비만 따로 다루는 실습 화면은 아직 없어요.</b><span>실습 화면이 준비되면 이곳에 바로가기가 생겨요. 지금은 「실제 장비 확인」 단계에서 장비를 살펴보세요.</span></div>';
