@@ -883,6 +883,8 @@ html.nav-open #toTopBtn { opacity: 0; pointer-events: none; }
 .m7-lab { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); overflow: hidden; background: var(--sta-surface); border: 1px solid var(--sta-line); border-radius: var(--sta-r-lg); }
 .m7-lab__img { position: relative; background: var(--sta-navy); min-height: 240px; overflow: hidden; }
 .m7-lab__img img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+.m7-lab__img--gear { background: #15171c; }
+.m7-lab__img--gear img { inset: 14px; width: calc(100% - 28px); height: calc(100% - 28px); object-fit: contain; }   /* 2026-11-10: 콘솔 사진은 잘리지 않게 전체를 */
 .m7-lab__body { display: flex; flex-direction: column; gap: 8px; padding: 22px; min-width: 0; }
 .m7-lab__body small, .m7-link__body small { font-size: 0.74rem; font-weight: 800; letter-spacing: 0.03em; color: var(--sta-blue); }
 .m7-lab__body h3 { margin: 0; font-size: 1.2rem; font-weight: 800; color: var(--sta-ink); }
@@ -945,3 +947,44 @@ html:not(.sta-edit) .intro-doc:empty::before { content: '아직 작성된 교안
 .sta-edit-pill span { color: var(--sta-navy-ink-2, #b9c7da); }
 .sta-edit-pill a { color: #67e8f9; font-weight: 800; text-decoration: underline; }
 @media (max-width: 760px) { .sta-edit-pill { border-radius: 14px; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); } .sta-edit-pill span { display: none; } }
+
+/* =============================================================================
+   2026-11-10 (1) 「그림 읽는 법」 · 깔끔한 과정 머리 · 먼저 보면 좋은 레슨
+   ============================================================================= */
+.m7-read h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; }
+.m7-read h3 .mod-ico { width: 20px; height: 20px; color: var(--sta-blue); }
+.m7-read ol { margin: 0; padding: 0; list-style: none; counter-reset: rd; display: flex; flex-direction: column; gap: 12px; }
+.m7-read li { counter-increment: rd; position: relative; padding-left: 34px; font-size: 0.97rem; line-height: 1.7; color: var(--sta-ink-2); }
+.m7-read li::before { content: counter(rd); position: absolute; left: 0; top: 2px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--sta-blue-soft); color: var(--sta-blue); font-size: 0.78rem; font-weight: 800; }
+.m7-read li b { color: var(--sta-ink); }
+.m7-read--under { margin-top: 16px; padding: 18px 20px; border-radius: var(--sta-r-lg); background: var(--sta-surface-2); border: 1px solid var(--sta-line); }
+.m7-side--read { position: sticky; top: 16px; }
+.m7-gear + .m7-side { margin-top: 0; }
+#tabModule .mod-top--clean { align-items: center; }
+#tabModule .mod-top--clean .mod-top__sub { margin-top: 8px; }
+#tabModule .mod-top--clean .mod-top__bar .ui-bar { display: none; }
+.m7-pre__list { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 1199px) { .m7-side--read { position: static; } }
+
+/* =============================================================================
+   2026-11-10 (2) 글씨 크기 위계 — 제목 · 소제목 · 본문 차이를 분명하게 (다른 사용자 의견)
+   페이지 제목 ≈ 32~36px › 단계 · 구역 제목 26px › 소제목 20px › 작은 제목 17px › 본문 16px › 보조 13px
+   실습 화면(콘솔 · 장비 UI) 안쪽 글씨는 건드리지 않음
+   ============================================================================= */
+:root { --fs-h2: 1.625rem; --fs-h3: 1.25rem; --fs-h4: 1.0625rem; --fs-body: 1rem; --fs-small: 0.8125rem; }
+/* 단계 · 구역 제목 */
+#tabModule .m7-head h2, .hm-sec__head h2, #tabPath .home-sec-head h2, #tabLesson .lsn-sec-h { font-size: var(--fs-h2); line-height: 1.3; letter-spacing: -0.01em; }
+/* 소제목 */
+#tabModule .mod-sec__h, #tabModule .mod-box__h, #tabModule .m7-subh, #tabModule .m7-card h3, #tabModule .m7-read h3, #tabModule .mod-tasks h3,
+.hm-cat__title, .rm-stage__head h3, #tabLesson .lsn-sub, .prac-body__head h2, #tab7 .ts-h3 { font-size: var(--fs-h3); line-height: 1.4; }
+/* 작은 제목 */
+#tabModule .mod-h3, #tabModule .mod-match__hd h3, #tabModule .m7-goals b, .hm-sub, #tabLesson .lsn-card h4, #tabLesson .lsn-points h4, #tabTips h4, #tabPath .mod-side-box h3 { font-size: var(--fs-h4); line-height: 1.5; }
+/* 본문 */
+#tabModule .m7-head p, #tabModule .mod-lead, #tabModule .mod-paras p, #tabModule .mod-sec p, #tabModule .mod-sec li, #tabModule .m7-points li, #tabModule .lsn-deep-item p,
+#tabLesson .lsn-p, #tabLesson .lsn-lead, #tabLesson li, .hm-hero__lead, #tabTips .tip-lead, #tabTips li, #tab7 p { font-size: var(--fs-body); line-height: 1.75; }
+#tabModule .m7-head p { color: var(--sta-ink-2); }
+/* 보조 */
+#tabModule .m7-note, #tabModule .mod-small, #tabModule .mod-match__hint { font-size: var(--fs-small); }
+@media (max-width: 760px) {
+  :root { --fs-h2: 1.375rem; --fs-h3: 1.125rem; --fs-h4: 1rem; --fs-body: 0.97rem; }
+}
